@@ -100,7 +100,7 @@ static const char *get_env(const char *key, const char *env[]) {
 }
 
 
-LFString *rfc2253_quote(const char *name)
+static LFString *rfc2253_quote(const char *name)
 {
 	const char specialChars[] = " \t\"#+,;<>\\";
 	LFString *result = [[LFString alloc] init];
@@ -245,38 +245,4 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	}
 
 	return (OPENVPN_PLUGIN_FUNC_ERROR);
-}
-
-int main(int argc, const char *argv[]) {
-	openvpn_plugin_handle_t handle;
-	const char *envp[] = {
-		"username=vpn/arctic.threerings.net",
-		"password=c666f4d6aab3bf169d77b359c54580d8",
-		NULL
-	};
-	const char *argp[] = {
-		"plugin.so",
-		"auth-ldap.conf",
-		"uid=%u,ou=People,dc=earth,dc=threerings,dc=net",
-		"uid=%u,ou=Service Accounts,dc=earth,dc=threerings,dc=net",
-		NULL
-	};
-	unsigned int type;
-	int ret;
-
-	handle = openvpn_plugin_open_v1(&type, argp, envp);
-
-	if (!handle)
-		errx(1, "Initialization Failed!\n");
-
-	ret = openvpn_plugin_func_v1(handle, 1, argp, envp);
-	if (ret != OPENVPN_PLUGIN_FUNC_SUCCESS) {
-		printf("Authorization Failed!\n");
-	} else {
-		printf("Authorization Succeed!\n");
-	}
-
-	openvpn_plugin_close_v1(handle);
-
-	exit (0);
 }

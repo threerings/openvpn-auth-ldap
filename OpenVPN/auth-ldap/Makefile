@@ -13,6 +13,7 @@ CFLAGS=		-g -O2 -Wall -fPIC $(INCLUDE)
 OBJCFLAGS=	$(CFLAGS) -fno-strict-aliasing
 LIBS=		-lldap -lobjc -lpthread
 OBJS=		auth-ldap.o LFString.o LFLDAPConnection.o LFAuthLDAPConfig.o
+TEST_OBJS=	$(OBJS) test.o
 
 .c.o:
 	gcc -c $< -o $@ ${CFLAGS}
@@ -24,8 +25,8 @@ openvpn-auth-ldap.so : $(OBJS)
 	gcc ${CFLAGS} -fPIC -shared -Wl,-soname,$@ -o $@ $(OBJS) $(LIBS) $(LDFLAGS)
 
 .PHONY: test
-test: $(OBJS)
-	gcc -o $@ $(OBJS) $(LIBS) $(LDFLAGS)
+test: $(TEST_OBJS)
+	gcc -o $@ $(TEST_OBJS) $(LIBS) $(LDFLAGS)
 	./test
 
 clean :
