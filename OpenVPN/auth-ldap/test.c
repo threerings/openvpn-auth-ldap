@@ -42,15 +42,15 @@ int main(int argc, const char *argv[]) {
 	int err;
 
 	const char *envp[] = {
-		"username=vpn@arctic.threerings.net",
-		"password=c50fefa34ca6f51a5b90c74d5d86f827",
+		"username=user@example.org",
+		"password=804b0037457abae05f646463faf53fa0",
 		NULL
 	};
 	const char *argp[] = {
 		"plugin.so",
 		"auth-ldap.conf",
-		"uid=%u,ou=People,dc=earth,dc=threerings,dc=net",
-		"uid=%u,ou=Service Accounts,dc=earth,dc=threerings,dc=net",
+		"uid=%u,ou=People,dc=example,dc=org",
+		"uid=%u,ou=Service Accounts,dc=example,dc=org",
 		NULL
 	};
 
