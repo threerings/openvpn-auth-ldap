@@ -45,6 +45,8 @@
 	LFAuthLDAPConfig *config;
 }
 
++ (bool) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig;
+
 - (void) dealloc;
 - (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig;
 

@@ -46,42 +46,42 @@ static int ldap_get_errno(LDAP *ld) {
 	return err;
 }
 
-static int ldap_set_tls_options(LFAuthLDAPConfig *config) {
+static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	int err;
 	int arg;
 
 	if ([config tlsCACertFile]) {
 		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, [config tlsCACertFile])) != LDAP_SUCCESS) {
 			warnx("Unable to set tlsCACertFile to %s: %d: %s", [config tlsCACertFile], err, ldap_err2string(err));
-			return (0);
+			return (false);
 		}
         }
 
 	if ([config tlsCACertDir]) {
 		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, [config tlsCACertDir])) != LDAP_SUCCESS) {
 			warnx("Unable to set tlsCACertDir to %s: %d: %s", [config tlsCACertDir], err, ldap_err2string(err));
-			return (0);
+			return (false);
 		}
         }
 
 	if ([config tlsCertFile]) {
 		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CERTFILE, [config tlsCertFile])) != LDAP_SUCCESS) {
 			warnx("Unable to set tlsCertFile to %s: %d: %s", [config tlsCertFile], err, ldap_err2string(err));
-			return (0);
+			return (false);
 		}
         }
 
 	if ([config tlsKeyFile]) {
 		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_KEYFILE, [config tlsKeyFile])) != LDAP_SUCCESS) {
 			warnx("Unable to set tlsKeyFile to %s: %d: %s", [config tlsKeyFile], err, ldap_err2string(err));
-			return (0);
+			return (false);
 		}
         }
 
 	if ([config tlsCipherSuite]) {
 		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CIPHER_SUITE, [config tlsCipherSuite])) != LDAP_SUCCESS) {
 			warnx("Unable to set tlsCipherSuite to %s: %d: %s", [config tlsCipherSuite], err, ldap_err2string(err));
-			return (0);
+			return (false);
 		}
         }
 
@@ -89,16 +89,19 @@ static int ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	arg = LDAP_OPT_X_TLS_HARD;
 	if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &arg)) != LDAP_SUCCESS) {
 		warnx("Unable to set LDAP_OPT_X_TLS_HARD to %d: %d: %s", arg, err, ldap_err2string(err));
-		return (0);
+		return (false);
 	}
 	
-	return (1);
+	return (true);
 }
 
 @implementation LFLDAPConnection
 
++ (bool) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig {
+	return (ldap_set_tls_options(ldapConfig));
+}
+
 - (void) dealloc {
-	[config dealloc];
 	[super free];
 }
 
@@ -111,9 +114,6 @@ static int ldap_set_tls_options(LFAuthLDAPConfig *config) {
 		return NULL;
 
 	config = ldapConfig;
-
-	/* Set up TLS */
-	ldap_set_tls_options(config);
 
 	ldap_initialize(&ldapConn, [config url]);
 
@@ -174,7 +174,7 @@ static int ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	err = ldap_result2error(ldapConn, res, 1);
 	if (err == LDAP_SUCCESS)
 		return (true);
-	
+
 	return (false);
 }
 

@@ -25,7 +25,7 @@ openvpn-auth-ldap.so : $(OBJS)
 	gcc ${CFLAGS} -fPIC -shared -Wl,-soname,$@ -o $@ $(OBJS) $(LIBS) $(LDFLAGS)
 
 .PHONY: test
-test: $(TEST_OBJS)
+test: $(TEST_OBJS) openvpn-auth-ldap.so
 	gcc -o $@ $(TEST_OBJS) $(LIBS) $(LDFLAGS)
 	./test
 

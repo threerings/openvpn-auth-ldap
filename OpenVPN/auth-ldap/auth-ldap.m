@@ -44,8 +44,9 @@
 /* Plugin Context */
 struct ldap_ctx {
 	LFAuthLDAPConfig *config;
-	LFLDAPConnection *ldap;
+	char **dnTemplates;
 } typedef ldap_ctx;
+
 
 /* Safe Malloc */
 void *xmalloc(size_t size) {
@@ -198,13 +199,46 @@ static LFString *mapUserToDN(const char *template, const char *username) {
 OPENVPN_EXPORT openvpn_plugin_handle_t
 openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[]) {
 	ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
+	int i;
+
 
 	ctx->config = [[LFAuthLDAPConfig alloc] initWithConfigFile: argv[1]];
-	ctx->ldap = [[LFLDAPConnection alloc] initWithConfig: ctx->config];
-	if (!ctx->config)
+	if (!ctx->config) {
 		return (NULL);
+	}
+
+	/* Set global LDAP Options */
+	if (![LFLDAPConnection initGlobalOptionsWithConfig: ctx->config]) {
+		return (NULL);
+	}
 
 	*type = OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY);
+
+	/*
+	 * XXX WORKAROUND:
+	 * Copy out DN templates from argv[0]
+	 * With $OpenVPN rc17, argc == NULL when openvpn_plugin_func_v1 is called
+	 */
+
+	/* Get array size, minus first two arguments */
+	for (i = 0; argv[i]; i++);
+	if (i == 0) {
+		warnx("DN template(s) not specified");
+		return (NULL);
+	}
+
+	/* Space for NULL terminator */
+	i++;
+
+	/* Allocate dnTemplates array */
+	ctx->dnTemplates = xmalloc(sizeof(char *) * i);
+
+	/* DN templates start at argv[2] */
+	for (i = 2; argv[i]; i++) {
+		ctx->dnTemplates[i - 2] = strdup(argv[i]);
+	}
+
+	ctx->dnTemplates[i - 2] = NULL; /* Offset - 2 for i = 2 above */
 
 	return (ctx);
 }
@@ -213,7 +247,14 @@ OPENVPN_EXPORT void
 openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 {
 	ldap_ctx *ctx = handle;
-	[ctx->ldap dealloc]; /* deallocs our config, too */
+	int i;
+
+	for (i = 0; ctx->dnTemplates[i]; i++)
+		free(ctx->dnTemplates[i]);
+
+	free(ctx->dnTemplates);
+
+	[ctx->config dealloc];
 	free (handle);
 }
 
@@ -223,26 +264,33 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	const char *password = get_env("password", envp);
 	ldap_ctx *ctx = handle;
 	LFString *dn;
+	LFLDAPConnection *ldap;
 	int i;
+
+	if (type != OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY)
+		return (OPENVPN_PLUGIN_FUNC_ERROR);
 
 	if (!username || !password)
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
 
-	/* DN templates start at argv[2] */
-	for (i = 2; argv[i]; i++) {
-		dn = mapUserToDN(argv[i], username);
+	ldap = [[LFLDAPConnection alloc] initWithConfig: ctx->config];
+
+	for (i = 0; ctx->dnTemplates[i]; i++) {
+		dn = mapUserToDN(ctx->dnTemplates[i], username);
 		if (!dn) {
-			fprintf(stderr, "Invalid DN template: %s\n", argv[i]);
+			fprintf(stderr, "Invalid DN template: %s\n", ctx->dnTemplates[i]);
 			[dn dealloc];
 			continue;
 		}
-		if ([ctx->ldap bindWithDN: [dn cString] password: password]) {
+		if ([ldap bindWithDN: [dn cString] password: password]) {
 			[dn dealloc];
-			[ctx->ldap unbind];
+			[ldap unbind];
+			[ldap dealloc];
 			return (OPENVPN_PLUGIN_FUNC_SUCCESS);
 		}
 		[dn dealloc];
 	}
 
+	[ldap dealloc];
 	return (OPENVPN_PLUGIN_FUNC_ERROR);
 }

@@ -42,8 +42,8 @@ int main(int argc, const char *argv[]) {
 	int err;
 
 	const char *envp[] = {
-		"username=vpn/arctic.threerings.net",
-		"password=c666f4d6aab3bf169d77b359c54580d8",
+		"username=vpn@arctic.threerings.net",
+		"password=c50fefa34ca6f51a5b90c74d5d86f827",
 		NULL
 	};
 	const char *argp[] = {
@@ -59,7 +59,7 @@ int main(int argc, const char *argv[]) {
 	if (!handle)
 		errx(1, "Initialization Failed!\n");
 
-	err = openvpn_plugin_func_v1(handle, 1, argp, envp);
+	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY, argp, envp);
 	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
 		printf("Authorization Failed!\n");
 	} else {
