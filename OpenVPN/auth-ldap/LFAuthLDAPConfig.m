@@ -45,6 +45,7 @@ static struct {
 	AuthLDAPConfigOptions opcode;
 } keywords [] = {
 	{ "ldap_url",		LF_LDAP_URL },
+	{ "ldap_timeout",	LF_LDAP_TIMEOUT },
 	{ "tls_enable",		LF_LDAP_TLS },
 	{ "tls_ca_certfile",	LF_LDAP_TLS_CA_CERTFILE },
 	{ "tls_ca_certdir",	LF_LDAP_TLS_CA_CERTDIR },
@@ -132,11 +133,31 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 
 		opcode = parse_opcode(key, fileName, linenum);
 		switch (opcode) {
+		LFString *temp;
+			
 			case LF_LDAP_BADOPTION:
 				bad_options++;
 				continue;
 			case LF_LDAP_URL:
 				url = xstrdup(val);
+				break;
+			case LF_LDAP_TIMEOUT:
+				temp = [[LFString alloc] initWithCString: val];
+				if(![temp intValue: &timeout]) {
+					if (timeout == 0) {
+						warnx("%s line %d: Non-integer setting '%s' for %s.", fileName, linenum, val, key);
+					} else {
+						warnx("%s line %d: Integer value %s out of range for %s setting.", fileName, linenum, val, key);
+					}
+
+					timeout = 0;	
+					bad_options++;
+				} else {
+					if (timeout < 0) {
+						warnx("%s line %d: You can not specify a negative timeout value for %s setting.", fileName, linenum, key);
+					}
+				}
+				[temp dealloc];
 				break;
 			case LF_LDAP_TLS:
 				if(strcmp("yes", val) == 0) {
@@ -145,6 +166,7 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 					tlsEnabled = 0;
 				} else {
 					warnx("%s line %d: Invalid setting '%s' for %s. Use either 'yes' or 'no'.", fileName, linenum, val, key);
+					bad_options++;
 				}
 				break;
 
@@ -196,6 +218,14 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 
 - (void) setURL: (const char *) newURL {
 	url = xstrdup(newURL);
+}
+
+- (int) timeout {
+	return (timeout);
+}
+
+- (void) setTimeout: (int) newTimeout {
+	timeout = newTimeout;
 }
 
 - (const char *) tlsCACertFile {

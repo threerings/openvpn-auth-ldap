@@ -34,6 +34,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "LFString.h"
 
@@ -74,6 +75,30 @@
 	return (numBytes);
 }
 
+- (bool) intValue: (int *) value {
+	long i;
+	char *endptr;
+	i = strtol(bytes, &endptr, 10);
+
+	if (*endptr != '\0') {
+		*value = 0;
+		return (false);
+	}
+
+	if (i >= INT_MAX) {
+		*value = INT_MAX;
+		return (false);
+	}
+
+	if (i <= INT_MIN) {
+		*value = INT_MIN;
+		return (false);
+	}
+
+	*value = i;
+	return (true);
+}
+
 - (void) appendCString: (const char *) cString {
 	size_t len;
 
@@ -108,6 +133,13 @@
 	numBytes = len + numBytes - 1;
 	bytes = xrealloc(bytes, numBytes);
 	strncat(bytes, [string cString], len + 1);
+}
+
+- (void) appendChar: (char) c {
+	char s[2];
+	s[0] = c;
+	s[1] = '\0';
+	[self appendCString: (const char *) &s];
 }
 
 - (size_t) indexToCString: (const char *) cString {
@@ -155,6 +187,40 @@
 	return (index);
 }
 
+- (size_t) indexToCharset: (const char *) cString {
+	size_t index = 0;
+	char *p;
+	const char *s;
+	for (p = bytes; *p != '\0'; p++) {
+		for (s = cString; *s != '\0'; s++) {
+			if (*p == *s)
+				return (index);
+		}
+		index++;
+	}
+	return (index);
+}
+
+- (size_t) indexFromCharset: (const char *) cString {
+	size_t index = 0;
+	char *p;
+	const char *s;
+	for (p = bytes; *p != '\0'; p++) {
+		for (s = cString; *s != '\0'; s++) {
+			if (*p == *s) {
+				index++;
+				return (index);
+			}
+		}
+		index++;
+	}
+	return (index);
+}
+
+- (char) charAtIndex: (size_t) index {
+	return (*(bytes + index));
+}
+
 - (LFString *) substringToIndex: (size_t) index {
 	LFString *string;
 	char *cString;
@@ -196,4 +262,13 @@
 - (LFString *) substringFromCString: (const char *) cString {
 	return ([self substringFromIndex: [self indexFromCString: cString]]);
 }
+
+- (LFString *) substringToCharset: (const char *) cString {
+	return ([self substringToIndex: [self indexToCharset: cString]]);
+}
+
+- (LFString *) substringFromCharset: (const char *) cString {
+	return ([self substringFromIndex: [self indexFromCharset: cString]]);
+}
+
 @end

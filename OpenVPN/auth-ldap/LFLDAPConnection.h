@@ -34,6 +34,7 @@
 #define LFLDAPCONNECTION_H
 
 #include <objc/Object.h>
+#include <stdbool.h>
 
 #include <ldap.h>
 
@@ -46,6 +47,9 @@
 
 - (void) dealloc;
 - (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig;
+
+- (bool) bindWithDN: (const char *) bindDN password: (const char *) password;
+- (bool) unbind;
 
 @end
 

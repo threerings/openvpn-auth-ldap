@@ -33,6 +33,8 @@
 #ifndef LFSTRING_H
 #define LFSTRING_H
 
+#include <stdbool.h>
+
 #include <objc/Object.h>
 
 @interface LFString : Object {
@@ -42,15 +44,27 @@
 
 - (id) initWithCString: (const char *) cString;
 - (id) initWithString: (LFString *) string;
+
 - (const char *) cString;
 - (size_t) length;
+
+- (bool) intValue: (int *) value;
+
 - (size_t) indexToCString: (const char *) cString;
+- (size_t) indexToCharset: (const char *) cString;
+
+- (char) charAtIndex: (size_t) index;
 - (LFString *) substringToIndex: (size_t) index;
 - (LFString *) substringFromIndex: (size_t) index;
 - (LFString *) substringToCString: (const char *) cString;
 - (LFString *) substringFromCString: (const char *) cString;
+- (LFString *) substringToCharset: (const char *) cString;
+- (LFString *) substringFromCharset: (const char *) cString;
+
+- (void) appendChar: (char) c;
 - (void) appendCString: (const char *) cString;
 - (void) appendString: (LFString *) string;
+
 - (void) dealloc;
 
 @end

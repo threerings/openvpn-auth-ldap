@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
+#include <sys/time.h>
 
 #include "LFLDAPConnection.h"
 
@@ -47,6 +48,8 @@ static int ldap_get_errno(LDAP *ld) {
 
 static int ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	int err;
+	int arg;
+
 	if ([config tlsCACertFile]) {
 		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, [config tlsCACertFile])) != LDAP_SUCCESS) {
 			warnx("Unable to set tlsCACertFile to %s: %d: %s", [config tlsCACertFile], err, ldap_err2string(err));
@@ -76,11 +79,18 @@ static int ldap_set_tls_options(LFAuthLDAPConfig *config) {
         }
 
 	if ([config tlsCipherSuite]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_KEYFILE, [config tlsCipherSuite])) != LDAP_SUCCESS) {
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CIPHER_SUITE, [config tlsCipherSuite])) != LDAP_SUCCESS) {
 			warnx("Unable to set tlsCipherSuite to %s: %d: %s", [config tlsCipherSuite], err, ldap_err2string(err));
 			return (0);
 		}
         }
+
+	/* Always require a valid certificate */	
+	arg = LDAP_OPT_X_TLS_HARD;
+	if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &arg)) != LDAP_SUCCESS) {
+		warnx("Unable to set LDAP_OPT_X_TLS_HARD to %d: %d: %s", arg, err, ldap_err2string(err));
+		return (0);
+	}
 	
 	return (1);
 }
@@ -93,6 +103,9 @@ static int ldap_set_tls_options(LFAuthLDAPConfig *config) {
 }
 
 - (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig {
+	struct timeval timeout;
+	int arg, err;
+
 	self = [self init];
 	if (!self)
 		return NULL;
@@ -106,10 +119,73 @@ static int ldap_set_tls_options(LFAuthLDAPConfig *config) {
 
 	if (!ldapConn) {
 		warnx("Unable to initialize LDAP server %s", [config url]);
+		[self dealloc];
 		return (NULL);
 	}
 
+	timeout.tv_sec = [config timeout];
+	timeout.tv_usec = 0;
+
+	if (ldap_set_option(ldapConn, LDAP_OPT_NETWORK_TIMEOUT, &timeout) != LDAP_OPT_SUCCESS)
+		warnx("Unable to set LDAP network timeout.");
+
+	arg = LDAP_VERSION3;
+	if (ldap_set_option(ldapConn, LDAP_OPT_PROTOCOL_VERSION, &arg) != LDAP_OPT_SUCCESS) {
+		warnx("Unable to enable LDAPv3.");
+		[self dealloc];
+		return (NULL);
+	}
+
+	if ([config tlsEnabled]) {
+		err = ldap_start_tls_s(ldapConn, NULL, NULL);
+		if (err != LDAP_SUCCESS) {
+			warnx("Unable to enable STARTTLS: %s", ldap_err2string(err));
+			[self dealloc];
+			return (NULL);
+		}
+	}
+
 	return (self);
+}
+
+- (bool) bindWithDN: (const char *) bindDN password: (const char *) password {
+	int msgid, err;
+	LDAPMessage *res;
+	struct timeval timeout;
+
+	if ((msgid = ldap_simple_bind(ldapConn, bindDN, password)) == -1) {
+		err = ldap_get_errno(ldapConn);
+		warnx("ldap_bind failed immediately: %s", ldap_err2string(err));
+		return (false);
+	}
+
+	timeout.tv_sec = [config timeout];
+	timeout.tv_usec = 0;
+
+	if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
+		err = ldap_get_errno(ldapConn);
+		if (err == LDAP_TIMEOUT)
+			ldap_abandon(ldapConn, msgid);
+		warnx("ldap_bind failed: %s\n", ldap_err2string(err));
+		return (false);
+	}
+
+	/* TODO: Provide more diagnostics when a logging API is available */
+	err = ldap_result2error(ldapConn, res, 1);
+	if (err == LDAP_SUCCESS)
+		return (true);
+	
+	return (false);
+}
+
+- (bool) unbind {
+	int err;
+	err = ldap_unbind_s(ldapConn);
+	if (err != LDAP_SUCCESS) {
+		warnx("Unable to unbind from LDAP server: %s", ldap_err2string(err));
+		return (false);
+	}
+	return (true);
 }
 
 @end

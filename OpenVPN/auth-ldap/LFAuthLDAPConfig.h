@@ -37,6 +37,7 @@
 
 typedef enum {
 	LF_LDAP_URL,
+	LF_LDAP_TIMEOUT,
 	LF_LDAP_TLS,
 	LF_LDAP_TLS_CA_CERTFILE,
 	LF_LDAP_TLS_CA_CERTDIR,
@@ -49,6 +50,7 @@ typedef enum {
 @interface LFAuthLDAPConfig : Object {
 	char *url;
 	int tlsEnabled;
+	int timeout;
 	char *tlsCACertFile;
 	char *tlsCACertDir;
 	char *tlsCertFile;
@@ -61,6 +63,9 @@ typedef enum {
 
 - (const char *) url;
 - (void) setURL: (const char *) newURL;
+
+- (int) timeout;
+- (void) setTimeout: (int) newTimeout;
 
 - (int) tlsEnabled;
 - (void) setTLSEnabled: (int) newTLSSetting;

@@ -39,10 +39,12 @@
 
 #include <LFString.h>
 #include <LFAuthLDAPConfig.h>
+#include <LFLDAPConnection.h>
 
 /* Plugin Context */
 struct ldap_ctx {
 	LFAuthLDAPConfig *config;
+	LFLDAPConnection *ldap;
 } typedef ldap_ctx;
 
 /* Safe Malloc */
@@ -97,9 +99,65 @@ static const char *get_env(const char *key, const char *env[]) {
 	return (NULL);
 }
 
+
+LFString *rfc2253_quote(const char *name)
+{
+	const char specialChars[] = " \t\"#+,;<>\\";
+	LFString *result = [[LFString alloc] init];
+	LFString *unquotedName, *part;
+
+	/* Convert to a LFString */
+	unquotedName = [[LFString alloc] initWithCString: name];
+
+	/* Initialize the result */
+	result = [[LFString alloc] init];
+
+	/*
+	 * RFC 2253 only requires that we quote leading or trailing
+	 * white space, and leading '#' characters. For simplicity's 
+	 * sake, we quote all occurrences of the special characters.
+	 */
+	
+	while ((part = [unquotedName substringToCharset: specialChars]) != NULL) {
+		LFString *temp;
+		int index;
+		char c;
+
+		/* Append everything until the first special character */
+		[result appendString: part];
+
+		/* Append the backquote */
+		[result appendCString: "\\"];
+
+		/* Get the special character */
+		index = [unquotedName indexToCharset: specialChars];
+		temp = [unquotedName substringFromIndex: index];
+		c = [temp charAtIndex: 0];
+		[temp dealloc];
+
+		/* Append it, too! */
+		[result appendChar: c];
+
+		/* Move unquotedName past the special character */
+		temp = [unquotedName substringFromCharset: specialChars];
+
+		[unquotedName dealloc];
+		unquotedName = temp;
+	}
+
+	/* Append the remainder, if any */
+	if (unquotedName) {
+		[result appendString: unquotedName];
+		[unquotedName dealloc];
+	}
+
+	return (result);
+}
+
 static LFString *mapUserToDN(const char *template, const char *username) {
 	LFString *templateString;
 	LFString *result, *part;
+	LFString *quotedName;
 	const char userFormat[] = "%u";
 
 	/* Convert to a LFString */
@@ -108,6 +166,9 @@ static LFString *mapUserToDN(const char *template, const char *username) {
 	/* Initialize the result */
 	result = [[LFString alloc] init];
 
+	/* Quote the username */
+	quotedName = rfc2253_quote(username);
+
 	while ((part = [templateString substringToCString: userFormat]) != NULL) {
 		LFString *temp;
 
@@ -115,13 +176,15 @@ static LFString *mapUserToDN(const char *template, const char *username) {
 		[result appendString: part];
 
 		/* Append the username */
-		[result appendCString: username];
+		[result appendString: quotedName];
 
 		/* Move templateString past the %u */
 		temp = [templateString substringFromCString: userFormat];
 		[templateString dealloc];
 		templateString = temp;
 	}
+
+	[quotedName dealloc];
 
 	/* Append the remainder, if any */
 	if (templateString) {
@@ -137,6 +200,7 @@ openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[
 	ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
 
 	ctx->config = [[LFAuthLDAPConfig alloc] initWithConfigFile: argv[1]];
+	ctx->ldap = [[LFLDAPConnection alloc] initWithConfig: ctx->config];
 	if (!ctx->config)
 		return (NULL);
 
@@ -147,7 +211,9 @@ openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[
 
 OPENVPN_EXPORT void
 openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
-{   
+{
+	ldap_ctx *ctx = handle;
+	[ctx->ldap dealloc]; /* deallocs our config, too */
 	free (handle);
 }
 
@@ -155,6 +221,8 @@ OPENVPN_EXPORT int
 openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const char *argv[], const char *envp[]) {
 	const char *username = get_env("username", envp);
 	const char *password = get_env("password", envp);
+	ldap_ctx *ctx = handle;
+	LFString *dn;
 	int i;
 
 	if (!username || !password)
@@ -162,12 +230,16 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 
 	/* DN templates start at argv[2] */
 	for (i = 2; argv[i]; i++) {
-		LFString *dn;
 		dn = mapUserToDN(argv[i], username);
 		if (!dn) {
 			fprintf(stderr, "Invalid DN template: %s\n", argv[i]);
 			[dn dealloc];
 			continue;
+		}
+		if ([ctx->ldap bindWithDN: [dn cString] password: password]) {
+			[dn dealloc];
+			[ctx->ldap unbind];
+			return (OPENVPN_PLUGIN_FUNC_SUCCESS);
 		}
 		[dn dealloc];
 	}
@@ -178,8 +250,8 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 int main(int argc, const char *argv[]) {
 	openvpn_plugin_handle_t handle;
 	const char *envp[] = {
-		"username=test",
-		"password=test",
+		"username=vpn/arctic.threerings.net",
+		"password=c666f4d6aab3bf169d77b359c54580d8",
 		NULL
 	};
 	const char *argp[] = {
