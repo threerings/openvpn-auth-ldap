@@ -30,4 +30,4 @@ test: $(TEST_OBJS) openvpn-auth-ldap.so
 	./test
 
 clean :
-	rm -f $(OBJS) openvpn-auth-ldap.so test
+	rm -f $(TEST_OBJS) $(OBJS) openvpn-auth-ldap.so test
