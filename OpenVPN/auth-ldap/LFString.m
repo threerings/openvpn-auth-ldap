@@ -1,0 +1,199 @@
+/*
+ * LFString.m
+ * Brain-dead Dynamic Strings
+ *
+ * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
+ *    may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include <objc/Object.h>
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "LFString.h"
+
+#include "auth-ldap.h"
+
+@implementation LFString
+
+- (void) dealloc {
+	free(bytes);
+	[super free];
+}
+
+- (id) initWithCString: (const char *) cString {
+	self = [self init];
+	if (self != NULL) {
+		numBytes = strlen(cString) + 1;
+		bytes = xmalloc(numBytes);
+		strlcpy(bytes, cString, numBytes);
+	}
+	return (self);
+}
+
+- (id) initWithString: (LFString *) string {
+	self = [self init];
+	if (self != NULL) {
+		numBytes = [string length];
+		bytes = xmalloc(numBytes);
+		strlcpy(bytes, [string cString], numBytes);
+	}
+	return (self);
+}
+
+- (const char *) cString {
+	return (bytes);
+}
+
+- (size_t) length {
+	return (numBytes);
+}
+
+- (void) appendCString: (const char *) cString {
+	size_t len;
+
+	if (numBytes == 0) {
+		/* String not yet initialized */
+		numBytes = strlen(cString) + 1;
+		bytes = xmalloc(numBytes);
+		strlcpy(bytes, cString, numBytes);
+		return;
+	}
+
+	len = strlen(cString);
+	/* numBytes includes the NULL terminator */
+	numBytes = len + numBytes;
+	bytes = xrealloc(bytes, numBytes);
+	strncat(bytes, cString, len + 1);
+}
+
+- (void) appendString: (LFString *) string {
+	size_t len;
+
+	if (numBytes == 0) {
+		/* String not yet initialized */
+		numBytes = [string length];
+		bytes = xmalloc(numBytes);
+		strlcpy(bytes, [string cString], numBytes);
+		return;
+	}
+
+	len = [string length];
+	/* numBytes and [string length] both include the NULL terminator */
+	numBytes = len + numBytes - 1;
+	bytes = xrealloc(bytes, numBytes);
+	strncat(bytes, [string cString], len + 1);
+}
+
+- (size_t) indexToCString: (const char *) cString {
+	size_t index = 0;
+	char *p;
+	const char *s;
+	for (p = bytes; *p != '\0'; p++) {
+		char *q = p;
+		for (s = cString; *s != '\0'; s++) {
+			if (*q == *s) {
+				q++;
+				continue;
+			} else
+				break;
+		}
+		if (*s == '\0') {
+			/* Full Match */
+			return (index);
+		}
+		index++;
+	}
+	return (index);
+}
+
+- (size_t) indexFromCString: (const char *) cString {
+	size_t index = 0;
+	char *p;
+	const char *s;
+	for (p = bytes; *p != '\0'; p++) {
+		char *q = p;
+		for (s = cString; *s != '\0'; s++) {
+			if (*q == *s) {
+				q++;
+				continue;
+			} else
+				break;
+		}
+		if (*s == '\0') {
+			/* Full Match */
+			index += strlen(cString);
+			return (index);
+		}
+		index++;
+	}
+	return (index);
+}
+
+- (LFString *) substringToIndex: (size_t) index {
+	LFString *string;
+	char *cString;
+
+	if (*(bytes + index) == '\0') {
+		return (NULL);
+	}
+
+	string = [LFString alloc];
+	cString = xmalloc(index + 1);
+
+	strlcpy(cString, bytes, index + 1);
+	[string initWithCString: cString];
+	free(cString);
+	return (string);
+}
+
+- (LFString *) substringFromIndex: (size_t) index {
+	LFString *string;
+	char *cString;
+
+	if (*(bytes + index) == '\0') {
+		return (NULL);
+	}
+
+	string = [LFString alloc];
+	cString = xmalloc(numBytes - index);
+	strlcpy(cString, bytes + index, numBytes - index);
+
+	[string initWithCString: cString];
+	free(cString);
+	return (string);
+}
+
+- (LFString *) substringToCString: (const char *) cString {
+	return ([self substringToIndex: [self indexToCString: cString]]);
+}
+
+- (LFString *) substringFromCString: (const char *) cString {
+	return ([self substringFromIndex: [self indexFromCString: cString]]);
+}
+@end

@@ -1,0 +1,32 @@
+#
+# Build the OpenVPN auth-ldap module.
+#
+
+# This directory is where we will look for openvpn-plugin.h
+OPENVPN?=	/usr/local/src/openvpn-2.0_rc17
+LDAP?=		/usr/local/
+
+INCLUDE=	-I$(OPENVPN) -I$(LDAP)/include -I.
+LDFLAGS=	-L$(LDAP)/lib
+
+CFLAGS=		-g -O2 -Wall -fPIC $(INCLUDE)
+OBJCFLAGS=	$(CFLAGS) -fno-strict-aliasing
+LIBS=		-lldap -lobjc -lpthread
+OBJS=		auth-ldap.o LFString.o LFLDAPConnection.o LFAuthLDAPConfig.o
+
+.c.o:
+	gcc -c $< -o $@ ${CFLAGS}
+
+.m.o:
+	gcc -c $< -o $@ ${OBJCFLAGS}
+
+openvpn-auth-ldap.so : $(OBJS)
+	gcc ${CFLAGS} -fPIC -shared -Wl,-soname,$@ -o $@ $(OBJS) $(LIBS) $(LDFLAGS)
+
+.PHONY: test
+test: $(OBJS)
+	gcc -o $@ $(OBJS) $(LIBS) $(LDFLAGS)
+	./test
+
+clean :
+	rm -f $(OBJS) openvpn-auth-ldap.so test
