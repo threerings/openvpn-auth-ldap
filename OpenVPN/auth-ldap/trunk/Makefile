@@ -15,11 +15,13 @@ LIBS=		-lldap -lobjc -lpthread
 OBJS=		auth-ldap.o LFString.o LFLDAPConnection.o LFAuthLDAPConfig.o
 TEST_OBJS=	$(OBJS) test.o
 
-.c.o:
-	gcc -c $< -o $@ ${CFLAGS}
+# For GNU make.
+.SUFFIXES: .m .c
 
 .m.o:
 	gcc -c $< -o $@ ${OBJCFLAGS}
+.c.o:
+	gcc -c $< -o $@ ${CFLAGS}
 
 openvpn-auth-ldap.so : $(OBJS)
 	gcc ${CFLAGS} -fPIC -shared -Wl,-soname,$@ -o $@ $(OBJS) $(LIBS) $(LDFLAGS)
