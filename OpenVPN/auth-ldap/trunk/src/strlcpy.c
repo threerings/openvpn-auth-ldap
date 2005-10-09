@@ -33,12 +33,6 @@
 
 #ifndef HAVE_STRLCPY
 
-#if defined(LIBC_SCCS) && !defined(lint)
-static char *rcsid = "$OpenBSD: strlcpy.c,v 1.4 1999/05/01 18:56:41 millert Exp $");
-#endif /* LIBC_SCCS and not lint */
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD: src/lib/libc/string/strlcpy.c,v 1.7 2003/05/01 19:03:14 nectar Exp $");
-
 #include <sys/types.h>
 #include <string.h>
 
