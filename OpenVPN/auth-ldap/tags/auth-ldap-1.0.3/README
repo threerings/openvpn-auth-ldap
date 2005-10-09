@@ -1,0 +1,41 @@
+INTRODUCTION
+
+The openvpn-auth-ldap plugin implements username/password authentication via
+LDAP.
+
+You may send patches, bug reports, and complaints to:
+	landonf@opendarwin.org
+
+REQUIREMENTS
+
+* OpenLDAP Headers & Library
+* GNU Objective-C Compiler
+* OpenVPN Plugin Header (included with the OpenVPN sources)
+
+BUILD
+
+To build, you will need to configure the sources appropriately. Example:
+	./configure --prefix=/usr/local --with-openldap=/usr/local --with-openvpn=/usr/ports/security/openvpn/work/openvpn-2.0.2
+
+The module will be build in src/openvpn-auth-ldap.so and installed as
+${prefix}/lib/openvpn-auth-ldap.so.
+
+USAGE
+
+Add the following to your OpenVPN configuration file (adjusting
+the plugin path as required):
+
+	plugin /usr/local/lib/openvpn-auth-ldap.so "<config> <dn template> ..."
+
+The config directive must point to an auth-ldap configuration file.
+An example is provided with the distribution.
+
+More than one DN template may be provided - the module will attempt to bind
+to each in order. %u specifies username substitution. Example:
+	uid=%u,ou=People,dc=example,dc=org
+
+
+CAVEATS
+
+This plugin only works with the OpenLDAP libraries. It may not compile out
+of the box on your system. It may not work for you at all.

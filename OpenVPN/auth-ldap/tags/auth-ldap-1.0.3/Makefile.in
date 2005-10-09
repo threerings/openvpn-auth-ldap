@@ -1,0 +1,17 @@
+top_srcdir=	@top_srcdir@
+
+SUBDIR=		src
+
+include Mk/subdir.mk
+include Mk/autoconf.mk
+
+.PHONY: docs
+
+all::
+
+clean::
+
+distclean::
+	rm -f config.log config.status configure.lineno config.cache config.h
+	rm -rf autom4te.cache docs
+	rm -f Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk
