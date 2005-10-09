@@ -38,8 +38,15 @@
 
 int main(int argc, const char *argv[]) {
 	openvpn_plugin_handle_t handle;
+	const char *config;
 	unsigned int type;
 	int err;
+
+	if (argc != 2) {
+		errx(1, "Usage: %s <config file>", argv[0]);
+	} else {
+		config = argv[1];
+	}
 
 	const char *envp[] = {
 		"username=user@example.org",
@@ -48,7 +55,7 @@ int main(int argc, const char *argv[]) {
 	};
 	const char *argp[] = {
 		"plugin.so",
-		"auth-ldap.conf",
+		config,
 		"uid=%u,ou=People,dc=example,dc=org",
 		"uid=%u,ou=Service Accounts,dc=example,dc=org",
 		NULL

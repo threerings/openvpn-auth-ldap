@@ -1,0 +1,33 @@
+srcdir=         @srcdir@
+top_srcdir=     @top_srcdir@
+top_builddir=   @top_builddir@
+VPATH=          @srcdir@
+
+include ${top_builddir}/Mk/autoconf.mk
+include ${top_builddir}/Mk/compile.mk
+include ${top_builddir}/Mk/subdir.mk
+
+MODULE_OBJS=	auth-ldap.o LFString.o LFLDAPConnection.o LFAuthLDAPConfig.o
+TEST_OBJS=	$(MODULE_OBJS) test.o
+
+CFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
+OBJCFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
+LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS)
+
+all:: openvpn-auth-ldap.so
+
+openvpn-auth-ldap.so : $(MODULE_OBJS)
+	$(CC) ${CFLAGS} -shared -Wl,-soname,$@ -o $@ $(MODULE_OBJS) $(LIBS) $(LDFLAGS)
+
+test:: $(TEST_OBJS) openvpn-auth-ldap.so
+	$(CC) ${CFLAGS} -o $@ $(TEST_OBJS) $(LIBS) $(LDFLAGS)
+	./test $(top_srcdir)/auth-ldap.conf
+
+install:: openvpn-auth-ldap.so
+	$(INSTALL) -m 755 openvpn-auth-ldap.so $(DESTDIR)$(prefix)/lib/
+
+clean::
+	rm -f $(TEST_OBJS) $(MODULE_OBJS) openvpn-auth-ldap.so test
+
+distclean:: clean
+	rm -f Makefile

@@ -1,0 +1,7 @@
+.SUFFIXES: .m
+
+.m.o:
+	${CC} ${OBJCFLAGS} -c $< -o $@ -I. -I${top_srcdir} -I${top_builddir}
+
+.c.o:
+	${CC} ${CFLAGS} -c $< -o $@ -I. -I${top_srcdir} -I${top_builddir}
