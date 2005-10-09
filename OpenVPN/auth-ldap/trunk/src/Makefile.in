@@ -7,7 +7,7 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-MODULE_OBJS=	auth-ldap.o LFString.o LFLDAPConnection.o LFAuthLDAPConfig.o
+MODULE_OBJS=	auth-ldap.o LFString.o LFLDAPConnection.o LFAuthLDAPConfig.o strlcpy.o
 TEST_OBJS=	$(MODULE_OBJS) test.o
 
 CFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)

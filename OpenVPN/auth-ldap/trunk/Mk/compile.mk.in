@@ -1,7 +1,7 @@
 .SUFFIXES: .m
 
 .m.o:
-	${CC} ${OBJCFLAGS} -c $< -o $@ -I. -I${top_srcdir} -I${top_builddir}
+	${CC} ${OBJCFLAGS} -c $< -o $@ -I${srcdir} -I${top_srcdir} -I${top_builddir}
 
 .c.o:
-	${CC} ${CFLAGS} -c $< -o $@ -I. -I${top_srcdir} -I${top_builddir}
+	${CC} ${CFLAGS} -c $< -o $@ -I${srcdir} -I${top_srcdir} -I${top_builddir}

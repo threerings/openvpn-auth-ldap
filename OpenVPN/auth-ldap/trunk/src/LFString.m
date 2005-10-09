@@ -30,11 +30,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <objc/Object.h>
 
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+
+#include "strlcpy.h"
 
 #include "LFString.h"
 

@@ -33,9 +33,15 @@
 #ifndef LFSTRING_H
 #define LFSTRING_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdbool.h>
 
 #include <objc/Object.h>
+
+#include "strlcpy.h"
 
 @interface LFString : Object {
 	char *bytes;

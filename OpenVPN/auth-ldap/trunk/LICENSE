@@ -1,3 +1,14 @@
+The src/strlcpy.c and src/strlcpy.h files were taken from FreeBSD libc
+and are subject to the following copyright:
+
+	Copyright (c) 1998 Todd C. Miller <Todd.Miller@courtesan.com>
+	All rights reserved.
+
+Please refer to the strlcpy source files for a copy of their (BSD)
+license.
+
+All other code is subject to the following copyright and license:
+
 Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
 All rights reserved.
 
