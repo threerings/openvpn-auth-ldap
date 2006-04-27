@@ -28,10 +28,6 @@ LDFLAGS                 = @LDFLAGS@
 INSTALL                 = @INSTALL@
 LN_S                    = @LN_S@
 
-LEX			= @LEX@
-LEX_LIBS		= @LEXLIB@
-YACC			= @YACC@
-
 prefix			= @prefix@
 sysconfdir		= @sysconfdir@
 exec_prefix		= @exec_prefix@
