@@ -31,6 +31,7 @@ AC_CACHE_SAVE
 
 # Libraries
 OD_OPENLDAP
+OD_LIBCHECK
 
 # OpenVPN
 OD_OPENVPN_HEADER
@@ -40,6 +41,6 @@ OD_OBJC_RUNTIME
 AC_CACHE_SAVE
 
 # Output
-AC_CONFIG_FILES([Makefile src/Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk])
+AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk])
 
 AC_OUTPUT

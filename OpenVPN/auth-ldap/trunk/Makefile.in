@@ -1,6 +1,7 @@
 top_srcdir=	@top_srcdir@
 
-SUBDIR=		src
+SUBDIR=		src \
+		@CHECK_DIRS@
 
 include Mk/subdir.mk
 include Mk/autoconf.mk
