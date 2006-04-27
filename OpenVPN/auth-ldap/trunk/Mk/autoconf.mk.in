@@ -29,7 +29,7 @@ INSTALL                 = @INSTALL@
 LN_S                    = @LN_S@
 
 LEX			= @LEX@
-LEXLIB			= @LEXLIB@
+LEX_LIBS		= @LEXLIB@
 YACC			= @YACC@
 
 prefix			= @prefix@
