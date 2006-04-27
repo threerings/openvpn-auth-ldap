@@ -40,6 +40,7 @@
 
 #include <check.h>
 #include <string.h>
+#include <limits.h>
 
 #define TEST_STRING "Hello, World!"
 
@@ -50,8 +51,56 @@ START_TEST (test_initWithCString) {
 	str = [[LFString alloc] initWithCString: cString];
 	fail_if(str == NULL, "-[[LFString alloc] initWithCString:] returned NULL");
 	cString = [str cString];
-	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected %s, got %s)", TEST_STRING, cString);
+	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 	[str dealloc];
+}
+END_TEST
+
+START_TEST (test_initWithString) {
+	const char *cString = TEST_STRING;
+	LFString *srcString = [[LFString alloc] initWithCString: cString];
+	LFString *str;
+
+	str = [[LFString alloc] initWithString: srcString];
+	fail_if(str == NULL, "-[[LFString alloc] initWithString:] returned NULL");
+	cString = [str cString];
+	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+
+	[srcString dealloc];
+	[str dealloc];
+}
+END_TEST
+
+START_TEST (test_length) {
+	LFString *str = [[LFString alloc] initWithCString: TEST_STRING];
+	size_t length = [str length];
+
+	fail_unless(length == sizeof(TEST_STRING), "-[LFString length] returned incorrect value. (Expected %u, got %u)", sizeof(TEST_STRING), length);
+	[str dealloc];
+}
+END_TEST
+
+START_TEST (test_intValue) {
+	LFString *str = [[LFString alloc] initWithCString: "20"];
+	int i;
+	bool success = [str intValue: &i];
+
+	fail_unless(success, "-[LFString intValue:] returned false");
+
+	fail_unless(i == 20, "-[LFString intValue:] returned incorrect value. (Expected %d, got %d)", 20, i);
+	[str dealloc];
+
+	/* Test with INT_MAX */
+	str = [[LFString alloc] initWithCString: "2147483647"];
+	success = [str intValue: &i];
+	fail_if(success, "-[LFstring intValue:] returned true for INT_MAX.");
+	fail_unless(i == INT_MAX, "-[LFString intValue: returned incorrect value for INT_MAX. (Expected %d, got %d)", INT_MAX, i);
+
+	/* Test with INT_MIN */
+	str = [[LFString alloc] initWithCString: "-2147483648"];
+	success = [str intValue: &i];
+	fail_if(success, "-[LFstring intValue:] returned true for INT_MIN.");
+	fail_unless(i == INT_MIN, "-[LFString intValue: returned incorrect value for INT_MIN. (Expected %d, got %d)", INT_MIN, i);
 }
 END_TEST
 
@@ -61,6 +110,9 @@ Suite *LFString_suite(void) {
 	TCase *tc_string = tcase_create("String Handling");
 	suite_add_tcase(s, tc_string);
 	tcase_add_test(tc_string, test_initWithCString);
+	tcase_add_test(tc_string, test_initWithString);
+	tcase_add_test(tc_string, test_length);
+	tcase_add_test(tc_string, test_intValue);
 
 	return s;
 }
