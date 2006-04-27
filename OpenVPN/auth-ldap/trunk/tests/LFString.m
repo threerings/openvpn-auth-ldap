@@ -1,8 +1,10 @@
 /*
- * LFString.h
- * Brain-dead Dynamic Strings
+ * LFString.m
+ * LFString Unit Tests
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Author: Landon Fuller <landonf@threerings.net>
+ *
+ * Copyright (c) 2006 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,50 +32,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LFSTRING_H
-#define LFSTRING_H
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include <stdbool.h>
+#include <src/LFString.h>
 
-#include <objc/Object.h>
-#include <stdlib.h>
+#include <check.h>
+#include <string.h>
 
-#include "strlcpy.h"
+#define TEST_STRING "Hello, World!"
 
-@interface LFString : Object {
-	char *bytes;
-	size_t numBytes;
+START_TEST (test_initWithCString) {
+	const char *cString = TEST_STRING;
+	LFString *str;
+
+	str = [[LFString alloc] initWithCString: cString];
+	fail_if(str == NULL, "-[[LFString alloc] initWithCString:] returned NULL");
+	cString = [str cString];
+	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected %s, got %s)", TEST_STRING, cString);
+	[str dealloc];
 }
+END_TEST
 
-- (id) initWithCString: (const char *) cString;
-- (id) initWithString: (LFString *) string;
+Suite *LFString_suite(void) {
+	Suite *s = suite_create("LFString");
 
-- (const char *) cString;
-- (size_t) length;
+	TCase *tc_string = tcase_create("String Handling");
+	suite_add_tcase(s, tc_string);
+	tcase_add_test(tc_string, test_initWithCString);
 
-- (bool) intValue: (int *) value;
-
-- (size_t) indexToCString: (const char *) cString;
-- (size_t) indexToCharset: (const char *) cString;
-
-- (char) charAtIndex: (size_t) index;
-- (LFString *) substringToIndex: (size_t) index;
-- (LFString *) substringFromIndex: (size_t) index;
-- (LFString *) substringToCString: (const char *) cString;
-- (LFString *) substringFromCString: (const char *) cString;
-- (LFString *) substringToCharset: (const char *) cString;
-- (LFString *) substringFromCharset: (const char *) cString;
-
-- (void) appendChar: (char) c;
-- (void) appendCString: (const char *) cString;
-- (void) appendString: (LFString *) string;
-
-- (void) dealloc;
-
-@end
-
-#endif /* LFSTRING_H */
+	return s;
+}

@@ -1,8 +1,10 @@
 /*
- * LFString.h
- * Brain-dead Dynamic Strings
+ * tests.h
+ * OpenVPN LDAP Authentication Plugin Unit Tests
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Author: Landon Fuller <landonf@threerings.net>
+ *
+ * Copyright (c) 2006 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,50 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LFSTRING_H
-#define LFSTRING_H
+/*
+ * Unit Tests
+ */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <stdbool.h>
-
-#include <objc/Object.h>
-#include <stdlib.h>
-
-#include "strlcpy.h"
-
-@interface LFString : Object {
-	char *bytes;
-	size_t numBytes;
-}
-
-- (id) initWithCString: (const char *) cString;
-- (id) initWithString: (LFString *) string;
-
-- (const char *) cString;
-- (size_t) length;
-
-- (bool) intValue: (int *) value;
-
-- (size_t) indexToCString: (const char *) cString;
-- (size_t) indexToCharset: (const char *) cString;
-
-- (char) charAtIndex: (size_t) index;
-- (LFString *) substringToIndex: (size_t) index;
-- (LFString *) substringFromIndex: (size_t) index;
-- (LFString *) substringToCString: (const char *) cString;
-- (LFString *) substringFromCString: (const char *) cString;
-- (LFString *) substringToCharset: (const char *) cString;
-- (LFString *) substringFromCharset: (const char *) cString;
-
-- (void) appendChar: (char) c;
-- (void) appendCString: (const char *) cString;
-- (void) appendString: (LFString *) string;
-
-- (void) dealloc;
-
-@end
-
-#endif /* LFSTRING_H */
+Suite *LFString_suite(void);

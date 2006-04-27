@@ -6,20 +6,22 @@ VPATH=          @srcdir@
 include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 
-TEST_OBJS=	tests.o
+
+TEST_OBJS=	tests.o LFString.o
 
 CFLAGS+=	@CHECK_CFLAGS@
 OBJCFLAGS+=	@CHECK_CFLAGS@
-LIBS+=		$(OBJC_LIBS) @CHECK_LIBS@
+LIBS+=		-lauth-ldap-testing $(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@
+LDFLAGS+=	-L${top_builddir}src $(LIBS)
 
 
 all: tests
 
 tests: ${TEST_OBJS}
-	${CC} -o $@ ${LDFLAGS} ${TEST_OBJS}
+	${CC} -o $@ ${TEST_OBJS} ${LDFLAGS}
 
 test:: tests
-	./tests $(top_srcdir)/auth-ldap.conf
+	./tests
 
 clean::
 	rm -f $(TEST_OBJS) tests

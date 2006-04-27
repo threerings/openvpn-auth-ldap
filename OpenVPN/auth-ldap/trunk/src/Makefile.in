@@ -9,7 +9,7 @@ include ${top_builddir}/Mk/subdir.mk
 
 PLUGIN_NAME=	openvpn-auth-ldap
 PLUGIN_OBJS=	auth-ldap.o LFString.o LFLDAPConnection.o LFAuthLDAPConfig.o strlcpy.o
-TEST_OBJS=	$(PLUGIN_OBJS) test.o
+TEST_LIB=	libauth-ldap-testing${PLUGIN_SUFFIX}
 
 CFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
 OBJCFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
@@ -19,15 +19,16 @@ LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS)
 INSTALL_LIB=		$(INSTALL) -m 755
 PLUGIN_INSTALL_DIR=	$(DESTDIR)$(libdir)
 
-all:: $(PLUGIN_FILE)
+all:: $(PLUGIN_FILE) $(TEST_LIB)
 
 $(PLUGIN_FILE): $(PLUGIN_OBJS)
 	$(MAKE_PLUGIN)
 
-test:: $(TEST_OBJS) $(PLUGIN_FILE)
-	$(CC) ${CFLAGS} -o $@ $(TEST_OBJS) $(LIBS) $(LDFLAGS)
-	./test $(top_srcdir)/auth-ldap.conf
+$(TEST_LIB): $(PLUGIN_OBJS)
+	$(AR) -r $@ $(PLUGIN_OBJS)
 
+test:: $(TEST_LIB_NAME)
+	
 install:: $(PLUGIN_FILE)
 	$(INSTALL_PLUGIN)
 

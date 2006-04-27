@@ -1,7 +1,8 @@
 /*
  * tests.c
- * OpenVPN LDAP Authentication Plugin
- * Unit Tests
+ * OpenVPN LDAP Authentication Plugin Unit Tests
+ *
+ * Author: Landon Fuller <landonf@threerings.net>
  *
  * Copyright (c) 2006 Three Rings Design, Inc.
  * All rights reserved.
@@ -36,21 +37,39 @@
 #include <check.h>
 #include <stdio.h>
 
+#include <tests.h>
+
 void print_usage(const char *name) {
 	printf("Usage: %s [filename]\n", name);
 	printf(" [filename]\tWrite XML log to <filename>\n");
 }
 
 int main(int argc, char *argv[]) {
+	Suite *s;
+	SRunner *sr;
+	int nf;
+
 	if (argc > 2) {
 		print_usage(argv[0]);
 		exit(1);
 	}
 
-	/* TODO Create Test Suites
+	/* Load all test suites */
+	s = LFString_suite();
+	sr = srunner_create(s);
+
+	/* Enable XML output */
 	if (argc == 2)
 		srunner_set_xml(sr, argv[1]);
-	*/
 
-	exit(0);
+	/* Run tests */
+	srunner_run_all(sr, CK_NORMAL);
+
+	nf = srunner_ntests_failed(sr);
+	srunner_free(sr);
+
+	if (nf == 0)
+		exit(EXIT_SUCCESS);
+	else
+		exit(EXIT_FAILURE);
 }
