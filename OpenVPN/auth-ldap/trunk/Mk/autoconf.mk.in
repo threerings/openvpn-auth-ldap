@@ -2,7 +2,7 @@ SHELL			= @SHELL@
 
 CC			= @CC@
 
-CFLAGS			= @CFLAGS@ -Wall
+CFLAGS			= @CFLAGS@ @DEFS@ -Wall
 OBJCFLAGS		= @OBJCFLAGS@ ${OBJC_RUNTIME_FLAGS} -fno-strict-aliasing ${CFLAGS}
 OBJC_LIBS		= @OBJC_LIBS@
 OBJC_RUNTIME            = @OBJC_RUNTIME@
