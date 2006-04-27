@@ -25,6 +25,8 @@ OPENVPN_CFLAGS		= @OPENVPN_CFLAGS@
 
 LDFLAGS                 = @LDFLAGS@
 
+LEMON			= @LEMON@
+
 INSTALL                 = @INSTALL@
 LN_S                    = @LN_S@
 
