@@ -28,7 +28,7 @@ AC_CACHE_SAVE
 # Libraries
 OD_OPENLDAP
 
-# OpenVpn
+# OpenVPN
 OD_OPENVPN_HEADER
 
 # Objective-C Runtime
