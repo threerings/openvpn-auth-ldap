@@ -37,3 +37,4 @@
  */
 
 Suite *LFString_suite(void);
+Suite *LFAuthLDAPConfig_suite(void);

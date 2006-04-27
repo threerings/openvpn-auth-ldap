@@ -1,6 +1,6 @@
 /*
- * tests.c
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * LFAuthLDAPConfig.m
+ * LFAuthLDAPConfig Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -32,45 +32,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <unistd.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <src/LFAuthLDAPConfig.h>
+
 #include <check.h>
-#include <stdio.h>
+#include <string.h>
 
-#include <tests.h>
+/* Data Constants */
+#define LDAP_URL	"ldap://ldap1.example.org"
 
-void print_usage(const char *name) {
-	printf("Usage: %s [filename]\n", name);
-	printf(" [filename]\tWrite XML log to <filename>\n");
+/* Path Constants */
+#define DATA_PATH(relative)	TEST_DATA "/" relative
+#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
+
+START_TEST (test_initWithConfigFile) {
+	LFAuthLDAPConfig *config;
+	const char *url;
+
+	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
+	fail_if(config == NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
+
+	url = [config url];
+	fail_unless(strcmp(url, LDAP_URL) == 0, "-[LFAuthLDAPConfig url] returned incorrect value. (Expected %s, Got %s)", LDAP_URL, url);
+
+	[config dealloc];
 }
+END_TEST
 
-int main(int argc, char *argv[]) {
-	Suite *s;
-	SRunner *sr;
-	int nf;
 
-	if (argc > 2) {
-		print_usage(argv[0]);
-		exit(1);
-	}
+Suite *LFAuthLDAPConfig_suite(void) {
+	Suite *s = suite_create("LFAuthLDAPConfig");
 
-	/* Load all test suites */
-	s = LFString_suite();
-	sr = srunner_create(s);
-	srunner_add_suite(sr, LFAuthLDAPConfig_suite());
+	TCase *tc_string = tcase_create("Parse Configuration");
+	suite_add_tcase(s, tc_string);
+	tcase_add_test(tc_string, test_initWithConfigFile);
 
-	/* Enable XML output */
-	if (argc == 2)
-		srunner_set_xml(sr, argv[1]);
-
-	/* Run tests */
-	srunner_run_all(sr, CK_NORMAL);
-
-	nf = srunner_ntests_failed(sr);
-	srunner_free(sr);
-
-	if (nf == 0)
-		exit(EXIT_SUCCESS);
-	else
-		exit(EXIT_FAILURE);
+	return s;
 }
