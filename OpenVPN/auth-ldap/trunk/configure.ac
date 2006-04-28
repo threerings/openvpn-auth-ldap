@@ -11,10 +11,6 @@ AC_PROG_OBJC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PATH_PROG([LEMON], [lemon], [no])
-if test "$LEMON" = "no"; then
-	AC_MSG_ERROR([Lemon is required to build this plugin, but it was not found in your PATH. Lemon can be downloaded from http://www.hwaci.com/sw/lemon/lemon.html])
-fi
 AC_CACHE_SAVE
 
 # Headers
@@ -45,6 +41,6 @@ OD_OBJC_RUNTIME
 AC_CACHE_SAVE
 
 # Output
-AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk])
+AC_CONFIG_FILES([Makefile tools/Makefile src/Makefile tests/Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk])
 
 AC_OUTPUT
