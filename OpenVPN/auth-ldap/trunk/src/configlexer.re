@@ -1,6 +1,6 @@
 /*
- * config.y
- * Configuration Parser
+ * configlexer.re
+ * Configuration Lexer
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -31,11 +31,3 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-%include {
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-}
-
-expr ::= VALUE.

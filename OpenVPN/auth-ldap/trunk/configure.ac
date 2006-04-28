@@ -11,6 +11,10 @@ AC_PROG_OBJC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
+AC_PATH_PROG([RE2C], [re2c], [no])
+if test x"$RE2C" = x"no"; then
+	AC_MSG_ERROR([re2c was not found in your PATH. It can be downloaded from http://re2c.org])
+fi
 AC_CACHE_SAVE
 
 # Headers

@@ -28,6 +28,8 @@ LDFLAGS                 = @LDFLAGS@
 INSTALL                 = @INSTALL@
 LN_S                    = @LN_S@
 
+RE2C			= @RE2C@
+
 prefix			= @prefix@
 sysconfdir		= @sysconfdir@
 exec_prefix		= @exec_prefix@

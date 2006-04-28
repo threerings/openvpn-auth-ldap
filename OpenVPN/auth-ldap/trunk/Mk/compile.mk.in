@@ -1,4 +1,4 @@
-.SUFFIXES: .m .lemon
+.SUFFIXES: .m .lemon .re
 # Disable GNU make's removal intermediate files, we handle this manually
 .SECONDARY:
 
@@ -10,3 +10,6 @@
 
 .lemon.m:
 	${top_builddir}/tools/lemon -q $<
+
+.re.m:
+	${RE2C} -o $@ $<

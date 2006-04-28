@@ -12,7 +12,7 @@ PLUGIN_OBJS=	auth-ldap.o \
 		LFString.o \
 		LFLDAPConnection.o \
 		LFAuthLDAPConfig.o \
-		config.o \
+		configparser.o configlexer.o \
 		strlcpy.o
 
 GEN_SRCS=	config.m \
