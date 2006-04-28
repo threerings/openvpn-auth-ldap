@@ -1,7 +1,12 @@
-.SUFFIXES: .m
+.SUFFIXES: .m .lemon
+# Disable GNU make's removal intermediate files, we handle this manually
+.SECONDARY:
 
 .m.o:
 	${CC} ${OBJCFLAGS} -c $< -o $@ -I${srcdir} -I${top_srcdir} -I${top_builddir}
 
 .c.o:
 	${CC} ${CFLAGS} -c $< -o $@ -I${srcdir} -I${top_srcdir} -I${top_builddir}
+
+.lemon.m:
+	${top_builddir}/tools/lemon -q $<
