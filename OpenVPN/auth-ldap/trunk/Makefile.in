@@ -1,6 +1,7 @@
 top_srcdir=	@top_srcdir@
 
-SUBDIR=		src \
+SUBDIR=		tools \
+		src \
 		@CHECK_DIRS@
 
 include Mk/subdir.mk
