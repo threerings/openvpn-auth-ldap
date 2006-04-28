@@ -11,6 +11,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <libgen.h>
 
 #ifndef __WIN32__
 #   if defined(_WIN32) || defined(WIN32)
@@ -2584,7 +2585,7 @@ char *suffix;
     fprintf(stderr,"Can't allocate space for a filename.\n");
     exit(1);
   }
-  strcpy(name,lemp->filename);
+  strcpy(name,basename(lemp->filename));
   cp = strrchr(name,'.');
   if( cp ) *cp = 0;
   strcat(name,suffix);
@@ -3354,7 +3355,7 @@ int mhflag;     /* Output in makeheaders format if true */
 
   in = tplt_open(lemp);
   if( in==0 ) return;
-  out = file_open(lemp,".c","wb");
+  out = file_open(lemp,".m","wb");
   if( out==0 ){
     fclose(in);
     return;
