@@ -50,9 +50,9 @@
  * re2c Configuration
  */
 #define YYCTYPE      char	/* Input Symbol Type */
-#define YYCURSOR     cursor	/* L-expression of type *YYCTYPE that points to the current input symbol */
-#define YYLIMIT      limit	/* Expression of type *YYCTYPE that marks the end of the buffer */
-#define YYMARKER     marker	/* L-expression of type *YYCTYPE that is used for backtracking information */
+#define YYCURSOR     _cursor	/* L-expression of type *YYCTYPE that points to the current input symbol */
+#define YYLIMIT      _limit	/* Expression of type *YYCTYPE that marks the end of the buffer */
+#define YYMARKER     _marker	/* L-expression of type *YYCTYPE that is used for backtracking information */
 #define YYFILL(n)    [self fill: n]	/* YYFILL(n) is called when the buffer needs (re)filling */
 
 #define YYDEBUG(state, current) printf("state: %d, current: '%c' (%d)\n", state, current, current);
@@ -61,7 +61,17 @@
  * Macros
  */
 
-#define CHECKEOI()   if (eoi) { return; }
+/* Switch to a start condition */
+#define BEGIN(cond)	( _condition = LEXER_SC_ ## cond)
+
+/* Declare a start condition */
+#define SC(cond)	LEXER_SC_ ## cond: LEXER_SC_ ## cond
+
+/* Skip a token */
+#define SKIP(cond)	goto LEXER_SC_ ## cond
+
+/* Check for end-of-input */
+#define CHECK_EOI()	if (_eoi) { return false; }
 
 @implementation ConfigLexer
 
@@ -87,23 +97,26 @@
 	assert(buffer != MAP_FAILED);
 
 	/* Initialize lexer state */
-	cursor = buffer;
-	limit = cursor + bufferLength - 1;
+	_condition = LEXER_SC_INITIAL;
+	_cursor = buffer;
+	_limit = _cursor + bufferLength - 1;
 
 	return (self);
 }
 
 - (void) fill: (int) length {
 	/* We just need to prevent re2c from walking off the end of our buffer */
-	assert(limit - cursor >= 0);
-	if (cursor == limit) {
+	assert(_limit - _cursor >= 0);
+	if (_cursor == _limit) {
 		/* Signal EOI */
-		cursor = "\n";
-		eoi = true;
+		_cursor = "\n";
+		_eoi = true;
 	}
 }
 
-- (void) scan {
+- (bool) scan: (Token *) token {
+	printf("scan called\n");
+
 /*!re2c
 /* vim syntax fix */
 
@@ -111,57 +124,70 @@
 
 */
 
-config:
-	token = cursor;
+	switch (_condition) {
+		case SC(INITIAL):
+			_token = _cursor;
+			/*!re2c /* vim syntax fix */
 
-/*!re2c
-/* vim syntax fix */
+			/* Skip comments */
+			"#".* {
+				_token = _cursor;
+				SKIP(INITIAL);
+			}
 
-	/* Skip comments */
-	"#".* {
-		goto config;
+			/* Skip leading whitespace and blank lines (but be sure to check for EOI) */
+			[ \t\n]+ {
+				_token = _cursor;
+				CHECK_EOI()
+				SKIP(INITIAL);
+			}
+
+			/* Handle keys */
+			[A-Za-z_-]+ {
+				printf("Key: '%.*s'\n", _cursor - _token, _token);
+				token->id = KEY;
+				BEGIN(VALUE);
+				return true;
+			}
+
+			/* Handle unknown characters */
+			any {
+				// TODO explode here
+				return false;
+			}
+			*/
+			break;
+
+		/* Parse setting values */
+		case SC(VALUE):
+			_token = _cursor;
+			/*!re2c /* vim syntax fix */
+
+			/* Skip leading/trailing whitespace */
+			[ \t]+ {
+				SKIP(VALUE);
+			}
+
+			/* The value may contain anything except \n, and any leading or trailing
+			 * whitespace is skipped */
+			[^ \t].*[^ \t\n] {
+				printf("Value: '%.*s'\n", _cursor - _token, _token);
+				token->id = VALUE;
+				BEGIN(INITIAL);
+				return true;
+			}
+
+			/* Handle EOI conditions */
+			"\n" {
+				CHECK_EOI();
+			}
+
+			*/
+			break;
+		default:
+			/* Impossible */
+			assert(0);
 	}
-
-	/* Skip leading whitespace and blank lines (but be sure to check for EOI) */
-	[ \t\n]+ {
-		CHECKEOI()
-		goto config;
-	}
-
-	/* Handle keys */
-	[A-Za-z_-]+ {
-		printf("Key: %.*s\n", cursor - token, token);
-		goto value;
-	}
-
-	/* Handle unknown characters */
-	any {
-		// TODO explode here
-		goto config;
-	}
-
-*/
-
-value:
-	token = cursor;
-/*!re2c
-/* vim syntax fix */
-
-	/* Skip leading whitespace */
-	[ \t]+
-
-	/* The value may contain anything except \n */
-	.* {
-		printf("Value: %.*s\n", cursor - token, token);
-	}
-
-	/* Handle EOI conditions */
-	"\n" {
-		CHECKEOI()
-		goto config;
-	}
-
-*/
 }
 
 @end

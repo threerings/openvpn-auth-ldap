@@ -93,6 +93,7 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 
 - (LFAuthLDAPConfig *) initWithConfigFile: (const char *) fileName {
 	ConfigLexer *lexer = NULL;
+	Token token;
 	int configFD;
 
 	/* Initialize */
@@ -115,7 +116,9 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 	}
 
 	/* Parse the configuration file */
-	[lexer scan];
+	while ([lexer scan: &token]) {
+		printf("Got a token: %d\n", token.id);
+	}
 
 	return self;
 

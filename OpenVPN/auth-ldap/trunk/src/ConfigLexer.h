@@ -41,6 +41,19 @@
 #include <ldap.h>
 
 #include "LFAuthLDAPConfig.h"
+#include "LFString.h"
+
+typedef struct {
+	/* Token type */
+	int id;
+	/* String value */
+	LFString *string;
+} Token;
+
+typedef enum {
+	LEXER_SC_INITIAL,
+	LEXER_SC_VALUE
+} LexerStartCondition;
 
 @interface ConfigLexer : Object {
 	/* Input buffer */
@@ -48,18 +61,19 @@
 	size_t bufferLength;
 
 	/* re2c lexer state */
-	char *cursor;
-	char *limit;
-	char *marker;
-	char *token;
-	bool eoi;
+	char *_cursor;
+	char *_limit;
+	char *_marker;
+	char *_token;
+	bool _eoi;
+	LexerStartCondition _condition;
 }
 
 - (void) dealloc;
 
 - (ConfigLexer *) initWithFD: (int) fd;
 
-- (void) scan;
+- (bool) scan: (Token *) token;
 
 @end
 

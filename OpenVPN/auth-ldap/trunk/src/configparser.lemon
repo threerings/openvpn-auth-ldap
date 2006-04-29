@@ -36,8 +36,11 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#include "ConfigLexer.h"
 }
 
-%token_type {char *}
+%name ConfigParse
+%token_type {Token *}
 
-declaration ::= KEY(A) VALUE(B). { printf("Setting %s to %s\n", A, B); }
+declaration ::= KEY(A) VALUE(B). { printf("Setting %s to %s\n", [A->string cString], [B->string cString]); }
