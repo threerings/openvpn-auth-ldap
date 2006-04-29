@@ -51,6 +51,7 @@
 
 - (id) initWithCString: (const char *) cString;
 - (id) initWithString: (LFString *) string;
+- (id) initWithBytes: (const char *) data numBytes: (size_t) length;
 
 - (const char *) cString;
 - (size_t) length;

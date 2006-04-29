@@ -73,6 +73,23 @@
 	return (self);
 }
 
+/* Initialize with a potentially non-NULL terminated string */
+- (id) initWithBytes: (const char *) data numBytes: (size_t) length {
+	self = [self init];
+	if (self != NULL) {
+		if (data[length] != '\0') {
+			numBytes = length + 1;
+			bytes = xmalloc(numBytes);
+			strncpy(bytes, data, length);
+			bytes[length] = '\0';
+		} else {
+			numBytes = length;
+			bytes = xstrdup(data);
+		}
+	}
+	return (self);
+}
+
 - (const char *) cString {
 	return (bytes);
 }

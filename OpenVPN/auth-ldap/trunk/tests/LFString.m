@@ -71,6 +71,29 @@ START_TEST (test_initWithString) {
 }
 END_TEST
 
+START_TEST (test_initWithBytes) {
+	const char *data = TEST_STRING;
+	const char *cString;
+	LFString *str;
+
+	/* Test with non-NULL terminated data */
+	str = [[LFString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING) - 1];
+	fail_if(str == NULL, "-[[LFString alloc] initWithBytes:] returned NULL");
+	cString = [str cString];
+	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+
+	[str dealloc];
+
+	/* Test with NULL terminated data */
+	str = [[LFString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING)];
+	fail_if(str == NULL, "-[[LFString alloc] initWithBytes:] returned NULL");
+	cString = [str cString];
+	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+
+	[str dealloc];
+}
+END_TEST
+
 START_TEST (test_length) {
 	LFString *str = [[LFString alloc] initWithCString: TEST_STRING];
 	size_t length = [str length];
@@ -111,6 +134,7 @@ Suite *LFString_suite(void) {
 	suite_add_tcase(s, tc_string);
 	tcase_add_test(tc_string, test_initWithCString);
 	tcase_add_test(tc_string, test_initWithString);
+	tcase_add_test(tc_string, test_initWithBytes);
 	tcase_add_test(tc_string, test_length);
 	tcase_add_test(tc_string, test_intValue);
 
