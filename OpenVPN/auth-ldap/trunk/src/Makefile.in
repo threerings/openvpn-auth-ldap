@@ -31,6 +31,12 @@ PLUGIN_INSTALL_DIR=	$(DESTDIR)$(libdir)
 
 all:: $(PLUGIN_FILE) $(TEST_LIB)
 
+# Work-around for gnumake bug.
+# It fails to check if 'configparser.h' has been created
+# after lemon has been called, and goes looking for a
+# rule to build it.
+configparser.h: configparser.m
+
 $(PLUGIN_FILE): $(GEN_SRCS) $(PLUGIN_OBJS)
 	$(MAKE_PLUGIN)
 
