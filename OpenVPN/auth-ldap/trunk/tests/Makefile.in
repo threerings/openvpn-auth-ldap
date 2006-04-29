@@ -14,10 +14,10 @@ OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 LIBS+=		-lauth-ldap-testing $(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@
 LDFLAGS+=	-L${top_builddir}src $(LIBS)
 
-
+# Recompile the tests every time
 all: tests
 
-tests: ${TEST_OBJS}
+tests: ${TEST_OBJS} ../src/libauth-ldap-testing.a
 	${CC} -o $@ ${TEST_OBJS} ${LDFLAGS}
 
 test:: tests

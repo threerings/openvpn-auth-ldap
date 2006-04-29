@@ -38,4 +38,6 @@
 #endif
 }
 
-expr ::= VALUE.
+%token_type {char *}
+
+declaration ::= KEY(A) VALUE(B). { printf("Setting %s to %s\n", A, B); }

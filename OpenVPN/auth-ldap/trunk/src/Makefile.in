@@ -12,11 +12,12 @@ PLUGIN_OBJS=	auth-ldap.o \
 		LFString.o \
 		LFLDAPConnection.o \
 		LFAuthLDAPConfig.o \
-		configparser.o configlexer.o \
+		configparser.o ConfigLexer.o \
 		strlcpy.o
 
-GEN_SRCS=	config.m \
-		config.h
+GEN_SRCS=	configparser.m \
+		configparser.h \
+		ConfigLexer.m
 
 TEST_LIB=	libauth-ldap-testing.a
 
@@ -30,10 +31,10 @@ PLUGIN_INSTALL_DIR=	$(DESTDIR)$(libdir)
 
 all:: $(PLUGIN_FILE) $(TEST_LIB)
 
-$(PLUGIN_FILE): $(PLUGIN_OBJS)
+$(PLUGIN_FILE): $(GEN_SRCS) $(PLUGIN_OBJS)
 	$(MAKE_PLUGIN)
 
-$(TEST_LIB): $(PLUGIN_OBJS)
+$(TEST_LIB): $(GEN_SRCS) $(PLUGIN_OBJS)
 	$(AR) -r $@ $(PLUGIN_OBJS)
 
 test:: $(TEST_LIB_NAME)

@@ -33,11 +33,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
 #include <err.h>
+#include <errno.h>
 #include <assert.h>
 
 #include "LFAuthLDAPConfig.h"
 #include "LFString.h"
+#include "ConfigLexer.h"
 
 #include "auth-ldap.h"
 
@@ -89,6 +92,43 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 }
 
 - (LFAuthLDAPConfig *) initWithConfigFile: (const char *) fileName {
+	ConfigLexer *lexer = NULL;
+	int configFD;
+
+	/* Initialize */
+	self = [self init];
+
+	if (self == NULL)
+		return (self);
+
+	/* Open our configuration file */
+	configFD = open(fileName, O_RDONLY);
+	if (configFD == -1) {
+		warn("Failed to open \"%s\" for reading: %s", fileName, strerror(errno));
+		goto error;
+	}
+
+	/* Initialize a lexer */
+	lexer = [[ConfigLexer alloc] initWithFD: configFD];
+	if (lexer == NULL) {
+		goto error;
+	}
+
+	/* Parse the configuration file */
+	[lexer scan];
+
+	return self;
+
+error:
+	if (lexer)
+		[lexer dealloc];
+	[self dealloc];
+	return (NULL);
+}
+
+
+
+#if 0
 	AuthLDAPConfigOptions opcode;
 	char line[1024];
 	FILE *config;
@@ -204,6 +244,7 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 
 	return (self);
 }
+#endif
 
 - (int) tlsEnabled {
 	return (tlsEnabled);
