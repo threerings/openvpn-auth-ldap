@@ -67,11 +67,11 @@
 /* Declare a start condition */
 #define SC(cond)	LEXER_SC_ ## cond: LEXER_SC_ ## cond
 
-/* Skip a token */
-#define SKIP(cond)	goto LEXER_SC_ ## cond
-
 /* Check for end-of-input */
 #define CHECK_EOI()	if (_eoi) { return false; }
+
+/* Skip a token */
+#define SKIP(cond)	CHECK_EOI(); goto LEXER_SC_ ## cond
 
 @implementation ConfigLexer
 
@@ -135,10 +135,9 @@
 				SKIP(INITIAL);
 			}
 
-			/* Skip leading whitespace and blank lines (but be sure to check for EOI) */
+			/* Skip leading whitespace and blank lines */
 			[ \t\n]+ {
 				_token = _cursor;
-				CHECK_EOI()
 				SKIP(INITIAL);
 			}
 
