@@ -104,12 +104,14 @@ START_TEST (test_length) {
 END_TEST
 
 START_TEST (test_intValue) {
-	LFString *str = [[LFString alloc] initWithCString: "20"];
+	LFString *str;
 	int i;
-	bool success = [str intValue: &i];
+	bool success;
 
+	/* Test with integer */
+	str = [[LFString alloc] initWithCString: "20"];
+	success = [str intValue: &i];
 	fail_unless(success, "-[LFString intValue:] returned false");
-
 	fail_unless(i == 20, "-[LFString intValue:] returned incorrect value. (Expected %d, got %d)", 20, i);
 	[str dealloc];
 
@@ -118,12 +120,14 @@ START_TEST (test_intValue) {
 	success = [str intValue: &i];
 	fail_if(success, "-[LFstring intValue:] returned true for INT_MAX.");
 	fail_unless(i == INT_MAX, "-[LFString intValue: returned incorrect value for INT_MAX. (Expected %d, got %d)", INT_MAX, i);
+	[str dealloc];
 
 	/* Test with INT_MIN */
 	str = [[LFString alloc] initWithCString: "-2147483648"];
 	success = [str intValue: &i];
 	fail_if(success, "-[LFstring intValue:] returned true for INT_MIN.");
 	fail_unless(i == INT_MIN, "-[LFString intValue: returned incorrect value for INT_MIN. (Expected %d, got %d)", INT_MIN, i);
+	[str dealloc];
 }
 END_TEST
 
