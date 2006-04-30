@@ -142,9 +142,7 @@
 
 			/* Handle keys */
 			[A-Za-z_-]+ {
-				token = [[TRConfigToken alloc] init];
-				printf("Key: '%.*s'\n", _cursor - _token, _token);
-				// token->_id = KEY;
+				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: _cursor - _token tokenID: KEY];
 				BEGIN(VALUE);
 				return token;
 			}
@@ -170,9 +168,7 @@
 			/* The value may contain anything except \n, and any leading or trailing
 			 * whitespace is skipped */
 			[^ \t].*[^ \t\n] {
-				token = [[TRConfigToken alloc] init];
-				printf("Value: '%.*s'\n", _cursor - _token, _token);
-				// token->id = VALUE;
+				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: _cursor - _token tokenID: VALUE];
 				BEGIN(INITIAL);
 				return token;
 			}

@@ -1,6 +1,6 @@
 /*
  * TRConfigToken.m
- * Configuration Lexer Tokens
+ * TRConfigToken Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,24 +36,34 @@
 #include <config.h>
 #endif
 
-#include "TRConfigToken.h"
+#include <src/TRConfigToken.h>
+#include <src/TRConfigParser.h>
 
-@implementation TRConfigToken
+#include <check.h>
+#include <string.h>
 
-- (void) dealloc {
-	[super dealloc];
+#define TEST_STRING "The answer to life, the universe, and everything"
+
+START_TEST (test_initWithBytes_ID) {
+	int tokenID;
+	TRConfigToken *token;
+
+	token = [[TRConfigToken alloc] initWithBytes: TEST_STRING numBytes: sizeof(TEST_STRING) tokenID: VALUE];
+	fail_if(token == NULL, "-[[TRConfigToken alloc] initWithBytes: numBytes: tokenID:] returned NULL");
+
+	tokenID = [token getTokenID];
+	fail_unless(tokenID == VALUE, "-[TRConfigToken getTokenID] returned incorrect value. (Expected %d, got %d)", tokenID, VALUE);
+
+	[token dealloc];
 }
+END_TEST
 
-- (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length tokenID: (int) tokenID {
-	self = [self initWithBytes: data numBytes: length];
-	if (self != NULL) {
-		_tokenID = tokenID;
-	}
-	return (self);
+Suite *TRConfigToken_suite(void) {
+	Suite *s = suite_create("TRConfigToken");
+
+	TCase *tc_token = tcase_create("Token Operations");
+	suite_add_tcase(s, tc_token);
+	tcase_add_test(tc_token, test_initWithBytes_ID);
+
+	return s;
 }
-
-- (int) getTokenID {
-	return _tokenID;
-}
-
-@end

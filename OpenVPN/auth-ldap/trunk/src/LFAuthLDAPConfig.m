@@ -118,7 +118,7 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 
 	/* Parse the configuration file */
 	while ((token = [lexer scan]) != NULL) {
-		printf("Got a token: %p\n", token);
+		printf("Got token: %d\n", [token getTokenID]);
 		[token dealloc];
 	}
 
