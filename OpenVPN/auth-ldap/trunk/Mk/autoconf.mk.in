@@ -29,6 +29,7 @@ INSTALL                 = @INSTALL@
 LN_S                    = @LN_S@
 
 RE2C			= @RE2C@
+DOXYGEN			= @DOXYGEN@
 
 prefix			= @prefix@
 sysconfdir		= @sysconfdir@

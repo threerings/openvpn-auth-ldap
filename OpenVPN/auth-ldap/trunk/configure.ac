@@ -11,10 +11,25 @@ AC_PROG_OBJC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
+
 AC_PATH_PROG([RE2C], [re2c], [no])
 if test x"$RE2C" = x"no"; then
 	AC_MSG_ERROR([re2c was not found in your PATH. It can be downloaded from http://re2c.org])
 fi
+
+AC_PATH_PROG([DOXYGEN], [doxygen], [no])
+if test x"$DOXYGEN" = x"no"; then
+	DOXYGEN="false"
+fi
+
+AC_PATH_PROG([DOT], [dot], [no])
+if test x"$DOT" = x"no"; then
+	DOTDIR=""
+else
+	DOTDIR=`AS_DIRNAME([$DOT])`
+fi
+AC_SUBST([DOTDIR])
+
 AC_CACHE_SAVE
 
 # Headers
@@ -45,6 +60,6 @@ OD_OBJC_RUNTIME
 AC_CACHE_SAVE
 
 # Output
-AC_CONFIG_FILES([Makefile tools/Makefile src/Makefile tests/Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk])
+AC_CONFIG_FILES([Makefile tools/Makefile src/Makefile tests/Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk doxyfile])
 
 AC_OUTPUT
