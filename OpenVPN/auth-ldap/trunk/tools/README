@@ -1,5 +1,10 @@
 This directory contains tools required to build the OpenVPN Auth-LDAP Plugin:
  - lemon 1.33 was downloaded from http://www.hwaci.com/sw/lemon/
-   The Lemon tool was modified to write its output to the current working directory,
-   and to output Objective-C source files (.m). Additionally, the lempar.c template
-   was modified to include <string.h> for the memset() prototype.
+     The Lemon tool was modified to write its output to the current working
+     directory, and to output Objective-C source files (.m). Additionally,
+     the lempar.c template was modified to include <string.h> for the
+     memset() prototype.
+
+ - makeheaders was downloaded from http://www.hwaci.com/sw/mkhdr/
+     The makeheaders tool was modified to support Objective-C source
+     files (.m)

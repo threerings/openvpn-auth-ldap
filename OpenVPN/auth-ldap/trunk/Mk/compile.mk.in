@@ -9,7 +9,8 @@
 	${CC} ${CFLAGS} -c $< -o $@ -I${srcdir} -I${top_srcdir} -I${top_builddir} -I.
 
 .lemon.m:
-	${top_builddir}/tools/lemon -q $<
+	${top_builddir}/tools/lemon -m -q $<
+	${top_builddir}/tools/makeheaders $@
 
 .re.m:
 	${RE2C} -o $@ $<
