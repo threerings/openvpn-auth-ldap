@@ -38,9 +38,19 @@
 #endif
 
 #include "TRConfigLexer.h"
+
+#include <stdio.h>
 }
 
 %name TRConfigParse
-%token_type {Token *}
+%token_type {TRConfigToken *}
+%token_prefix {TOKEN_}
 
-declaration ::= KEY(A) VALUE(B). { printf("Setting %s to %s\n", [A->string cString], [B->string cString]); }
+%parse_failure {
+	printf("Giving up. Parser is hopelessly lost...\n");
+}
+
+config_file ::= lines.
+lines ::= .
+lines ::= lines declaration.
+declaration ::= KEY(A) VALUE(B). { printf("Setting %s to %s\n", [A cString], [B cString]); }

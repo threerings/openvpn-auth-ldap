@@ -48,11 +48,11 @@ START_TEST (test_initWithBytes_ID) {
 	int tokenID;
 	TRConfigToken *token;
 
-	token = [[TRConfigToken alloc] initWithBytes: TEST_STRING numBytes: sizeof(TEST_STRING) tokenID: VALUE];
+	token = [[TRConfigToken alloc] initWithBytes: TEST_STRING numBytes: sizeof(TEST_STRING) tokenID: TOKEN_VALUE];
 	fail_if(token == NULL, "-[[TRConfigToken alloc] initWithBytes: numBytes: tokenID:] returned NULL");
 
 	tokenID = [token getTokenID];
-	fail_unless(tokenID == VALUE, "-[TRConfigToken getTokenID] returned incorrect value. (Expected %d, got %d)", tokenID, VALUE);
+	fail_unless(tokenID == TOKEN_VALUE, "-[TRConfigToken getTokenID] returned incorrect value. (Expected %d, got %d)", tokenID, TOKEN_VALUE);
 
 	[token dealloc];
 }

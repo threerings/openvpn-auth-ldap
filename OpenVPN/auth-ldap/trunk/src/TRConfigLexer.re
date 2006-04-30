@@ -142,7 +142,7 @@
 
 			/* Handle keys */
 			[A-Za-z_-]+ {
-				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: _cursor - _token tokenID: KEY];
+				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: _cursor - _token tokenID: TOKEN_KEY];
 				BEGIN(VALUE);
 				return token;
 			}
@@ -168,7 +168,7 @@
 			/* The value may contain anything except \n, and any leading or trailing
 			 * whitespace is skipped */
 			[^ \t].*[^ \t\n] {
-				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: _cursor - _token tokenID: VALUE];
+				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: _cursor - _token tokenID: TOKEN_VALUE];
 				BEGIN(INITIAL);
 				return token;
 			}
