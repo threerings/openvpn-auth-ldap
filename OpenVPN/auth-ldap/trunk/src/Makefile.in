@@ -12,11 +12,11 @@ PLUGIN_OBJS=	auth-ldap.o \
 		LFString.o \
 		LFLDAPConnection.o \
 		LFAuthLDAPConfig.o \
-		configparser.o TRConfigLexer.o \
+		TRConfigParser.o TRConfigLexer.o \
 		strlcpy.o
 
-GEN_SRCS=	configparser.m \
-		configparser.h \
+GEN_SRCS=	TRConfigParser.m \
+		TRConfigParser.h \
 		TRConfigLexer.m
 
 TEST_LIB=	libauth-ldap-testing.a
@@ -32,10 +32,10 @@ PLUGIN_INSTALL_DIR=	$(DESTDIR)$(libdir)
 all:: $(PLUGIN_FILE) $(TEST_LIB)
 
 # Work-around for gnumake bug.
-# It fails to check if 'configparser.h' has been created
+# It fails to check if 'TRConfigParser.h' has been created
 # after lemon has been called, and goes looking for a
 # rule to build it.
-configparser.h: configparser.m
+TRConfigParser.h: TRConfigParser.m
 
 $(PLUGIN_FILE): $(GEN_SRCS) $(PLUGIN_OBJS)
 	$(MAKE_PLUGIN)

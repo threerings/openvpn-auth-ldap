@@ -44,7 +44,7 @@
 
 #include "TRConfigLexer.h"
 
-#include "configparser.h"
+#include "TRConfigParser.h"
 
 /*
  * re2c Configuration

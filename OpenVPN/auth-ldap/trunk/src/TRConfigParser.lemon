@@ -40,7 +40,7 @@
 #include "TRConfigLexer.h"
 }
 
-%name ConfigParse
+%name TRConfigParse
 %token_type {Token *}
 
 declaration ::= KEY(A) VALUE(B). { printf("Setting %s to %s\n", [A->string cString], [B->string cString]); }
