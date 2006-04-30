@@ -1,6 +1,6 @@
 /*
- * TRConfigLexer.h
- * Configuration Lexer
+ * TRConfigToken.h
+ * Configuration Lexer Tokens
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -32,43 +32,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRCONFIGLEXER_H
-#define TRCONFIGLEXER_H
+#ifndef TRCONFIGTOKEN_H
+#define TRCONFIGTOKEN_H
 
-#include <objc/Object.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdbool.h>
 
-#include <ldap.h>
+#include <objc/Object.h>
+#include <stdlib.h>
 
-#include "LFAuthLDAPConfig.h"
+#include "strlcpy.h"
+
 #include "LFString.h"
-#include "TRConfigToken.h"
 
-typedef enum {
-	LEXER_SC_INITIAL,
-	LEXER_SC_VALUE
-} LexerStartCondition;
-
-@interface TRConfigLexer : Object {
-	/* Input buffer */
-	char *buffer;
-	size_t bufferLength;
-
-	/* re2c lexer state */
-	char *_cursor;
-	char *_limit;
-	char *_marker;
-	char *_token;
-	bool _eoi;
-	LexerStartCondition _condition;
+@interface TRConfigToken : Object {
+	/* Token type */
+	int _id;
+	/* String value */
+	LFString *_string;
 }
 
+- (id) init;
 - (void) dealloc;
-
-- (TRConfigLexer *) initWithFD: (int) fd;
-
-- (TRConfigToken *) scan;
 
 @end
 
-#endif /* TRCONFIGLEXER_H */
+#endif /* TRCONFIGTOKEN_H */

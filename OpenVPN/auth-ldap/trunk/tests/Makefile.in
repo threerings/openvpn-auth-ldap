@@ -7,7 +7,10 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 
 
-TEST_OBJS=	tests.o LFString.o LFAuthLDAPConfig.o
+TEST_OBJS=	tests.o \
+		LFString.o \
+		LFAuthLDAPConfig.o \
+		TRConfigToken.o
 
 CFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"

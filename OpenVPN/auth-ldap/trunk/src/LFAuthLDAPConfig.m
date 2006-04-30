@@ -41,6 +41,7 @@
 #include "LFAuthLDAPConfig.h"
 #include "LFString.h"
 #include "TRConfigLexer.h"
+#include "TRConfigToken.h"
 
 #include "auth-ldap.h"
 
@@ -93,7 +94,7 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 
 - (LFAuthLDAPConfig *) initWithConfigFile: (const char *) fileName {
 	TRConfigLexer *lexer = NULL;
-	Token token;
+	TRConfigToken *token;
 	int configFD;
 
 	/* Initialize */
@@ -116,8 +117,9 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 	}
 
 	/* Parse the configuration file */
-	while ([lexer scan: &token]) {
-		printf("Got a token: %d\n", token.id);
+	while ((token = [lexer scan]) != NULL) {
+		printf("Got a token: %p\n", token);
+		[token dealloc];
 	}
 
 	return self;

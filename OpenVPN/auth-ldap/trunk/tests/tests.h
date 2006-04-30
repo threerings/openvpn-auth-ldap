@@ -38,3 +38,4 @@
 
 Suite *LFString_suite(void);
 Suite *LFAuthLDAPConfig_suite(void);
+Suite *TRConfigToken_suite(void);

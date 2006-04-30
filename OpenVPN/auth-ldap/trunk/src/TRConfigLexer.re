@@ -68,7 +68,7 @@
 #define SC(cond)	LEXER_SC_ ## cond: LEXER_SC_ ## cond
 
 /* Check for end-of-input */
-#define CHECK_EOI()	if (_eoi) { return false; }
+#define CHECK_EOI()	if (_eoi) { return NULL; }
 
 /* Skip a token */
 #define SKIP(cond)	CHECK_EOI(); goto LEXER_SC_ ## cond
@@ -114,9 +114,8 @@
 	}
 }
 
-- (bool) scan: (Token *) token {
-	printf("scan called\n");
-
+- (TRConfigToken *) scan {
+	TRConfigToken *token;
 /*!re2c
 /* vim syntax fix */
 
@@ -143,16 +142,17 @@
 
 			/* Handle keys */
 			[A-Za-z_-]+ {
+				token = [[TRConfigToken alloc] init];
 				printf("Key: '%.*s'\n", _cursor - _token, _token);
-				token->id = KEY;
+				// token->_id = KEY;
 				BEGIN(VALUE);
-				return true;
+				return token;
 			}
 
 			/* Handle unknown characters */
 			any {
 				// TODO explode here
-				return false;
+				return NULL;
 			}
 			*/
 			break;
@@ -170,10 +170,11 @@
 			/* The value may contain anything except \n, and any leading or trailing
 			 * whitespace is skipped */
 			[^ \t].*[^ \t\n] {
+				token = [[TRConfigToken alloc] init];
 				printf("Value: '%.*s'\n", _cursor - _token, _token);
-				token->id = VALUE;
+				// token->id = VALUE;
 				BEGIN(INITIAL);
-				return true;
+				return token;
 			}
 
 			/* Handle EOI conditions */
