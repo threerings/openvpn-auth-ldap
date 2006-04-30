@@ -12,12 +12,12 @@ PLUGIN_OBJS=	auth-ldap.o \
 		LFString.o \
 		LFLDAPConnection.o \
 		LFAuthLDAPConfig.o \
-		configparser.o ConfigLexer.o \
+		configparser.o TRConfigLexer.o \
 		strlcpy.o
 
 GEN_SRCS=	configparser.m \
 		configparser.h \
-		ConfigLexer.m
+		TRConfigLexer.m
 
 TEST_LIB=	libauth-ldap-testing.a
 

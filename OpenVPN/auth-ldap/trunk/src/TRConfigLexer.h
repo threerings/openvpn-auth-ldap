@@ -1,5 +1,5 @@
 /*
- * configlexer.h
+ * TRConfigLexer.h
  * Configuration Lexer
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -32,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CONFIGLEXER_H
-#define CONFIGLEXER_H
+#ifndef TRCONFIGLEXER_H
+#define TRCONFIGLEXER_H
 
 #include <objc/Object.h>
 #include <stdbool.h>
@@ -55,7 +55,7 @@ typedef enum {
 	LEXER_SC_VALUE
 } LexerStartCondition;
 
-@interface ConfigLexer : Object {
+@interface TRConfigLexer : Object {
 	/* Input buffer */
 	char *buffer;
 	size_t bufferLength;
@@ -71,10 +71,10 @@ typedef enum {
 
 - (void) dealloc;
 
-- (ConfigLexer *) initWithFD: (int) fd;
+- (TRConfigLexer *) initWithFD: (int) fd;
 
 - (bool) scan: (Token *) token;
 
 @end
 
-#endif /* CONFIGLEXER_H */
+#endif /* TRCONFIGLEXER_H */

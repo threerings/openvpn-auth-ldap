@@ -37,7 +37,7 @@
 #include <config.h>
 #endif
 
-#include "ConfigLexer.h"
+#include "TRConfigLexer.h"
 }
 
 %name ConfigParse

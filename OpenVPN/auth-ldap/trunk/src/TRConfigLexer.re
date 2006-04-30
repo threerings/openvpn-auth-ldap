@@ -1,5 +1,5 @@
 /*
- * configlexer.re
+ * TRConfigLexer.re
  * Configuration Lexer
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -42,7 +42,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
-#include "ConfigLexer.h"
+#include "TRConfigLexer.h"
 
 #include "configparser.h"
 
@@ -73,7 +73,7 @@
 /* Skip a token */
 #define SKIP(cond)	CHECK_EOI(); goto LEXER_SC_ ## cond
 
-@implementation ConfigLexer
+@implementation TRConfigLexer
 
 - (void) dealloc {
 	if (buffer)
@@ -81,7 +81,7 @@
 	[super free];
 }
 
-- (ConfigLexer *) initWithFD: (int) fd {
+- (TRConfigLexer *) initWithFD: (int) fd {
 	struct stat statbuf;
 
 	/* Initialize */

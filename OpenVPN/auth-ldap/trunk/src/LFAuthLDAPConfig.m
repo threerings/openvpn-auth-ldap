@@ -40,7 +40,7 @@
 
 #include "LFAuthLDAPConfig.h"
 #include "LFString.h"
-#include "ConfigLexer.h"
+#include "TRConfigLexer.h"
 
 #include "auth-ldap.h"
 
@@ -92,7 +92,7 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 }
 
 - (LFAuthLDAPConfig *) initWithConfigFile: (const char *) fileName {
-	ConfigLexer *lexer = NULL;
+	TRConfigLexer *lexer = NULL;
 	Token token;
 	int configFD;
 
@@ -110,7 +110,7 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 	}
 
 	/* Initialize a lexer */
-	lexer = [[ConfigLexer alloc] initWithFD: configFD];
+	lexer = [[TRConfigLexer alloc] initWithFD: configFD];
 	if (lexer == NULL) {
 		goto error;
 	}
