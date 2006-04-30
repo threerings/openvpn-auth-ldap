@@ -11,7 +11,8 @@ include Mk/autoconf.mk
 
 all::
 
-docs::
+# The documentation depends on generated source code
+docs:: all
 	${DOXYGEN} doxyfile
 
 clean::
