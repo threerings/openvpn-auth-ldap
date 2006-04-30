@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>OpenVPN Auth-LDAP Plugin</title>
+		<meta http-equiv="Content-type" content="text/html;
+		charset=iso-8859-1"/>
+		<link rel="stylesheet" type="text/css" href="default.css"/>
+	</head>
+	<body>
+		<h1>OpenVPN Auth-LDAP Plugin</h1>
+		<ul id="nav">
+			<li><a href="#intro">Introduction</a></li>
+			<li><a href="#get">Download</a></li>
+			<li><a href="#build">Building</a></li>
+			<li><a href="#usage">Usage</a></li>
+			<li><a href="#cav">Caveats</a></li>
+		</ul>
+
+		<h2><a id="intro">Introduction</a></h2>
+		<p>
+			The OpenVPN Auth-LDAP Plugin implements username/password authentication
+			via LDAP for OpenVPN 2.x
+		</p>
+
+		<p>
+			You may send patches, bug reports, and complaints to: landonf@threerings.net
+		</p>
+
+		<h2><a id="get">Download</a></h2>
+		<p>
+			The source for auth-ldap 1.0.3 can be downloaded <a
+				href="auth-ldap-1.0.3.tar.gz">here</a>, and verified against this <a
+				href="auth-ldap-1.0.3.tar.gz.sig">GPG signature.</a>
+			My public key can be downloaded <a
+				href="http://www.opendarwin.org/~landonf/landonf-gpg.pubkey">here</a>
+		</p>
+		<h2><a id="build">Building</a></h2>
+		<h4>Requirements:</h4>
+		<p>
+			<ul>
+				<li>OpenLDAP Headers & Library</li>
+				<li>GNU Objective-C Compiler</li>
+				<li>OpenVPN Plugin Header (included with the OpenVPN sources)</li>
+			</ul>
+		</p>
+		<p>
+			To build, you will need to configure the sources
+			appropriately. Example:
+		</p>
+		<pre>./configure --prefix=/usr/local --with-openldap=/usr/local --with-openvpn=/usr/ports/security/openvpn/work/openvpn-2.0.2</pre>
+
+		<p>
+			The module will be build in src/openvpn-auth-ldap.so
+			and installed as ${prefix}/lib/openvpn-auth-ldap.so.
+		</p>
+
+		<h2><a id="usage">Usage</a></h2>
+		<p>
+			Add the following to your OpenVPN configuration file (adjusting the plugin path as required):
+		</p>
+
+		<pre>plugin /usr/local/lib/openvpn-auth-ldap.so "&lt;config&gt; &lt;dn template&gt; ..."</pre>
+
+		<p>
+			The config directive must point to an auth-ldap configuration file.
+			An example configuration file is provided with the distribution.
+		</p>
+
+		<p>
+			More than one DN template may be specified - the module will attempt to bind
+			with each template in order. %u is used to specify username substitution.
+		</p>
+		<h4>Example:</h4>
+		<pre>plugin openvpn-auth-ldap.so "auth-ldap.conf uid=%u,ou=People,dc=example,dc=org"</pre>
+		
+		<h2><a id="caveats">Caveats</a></h2>
+		<ul>
+			<li>This plugin only works with the OpenLDAP libraries.</li>
+			<li>It may not compile out of the box on your system.</li>
+			<li>It may not work for you at all, but if that's the case, please send me an e-mail.</li>
+		</ul>
+	</body>
+</html>	
