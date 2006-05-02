@@ -73,6 +73,9 @@
 /* Skip a token */
 #define SKIP(cond)	CHECK_EOI(); goto LEXER_SC_ ## cond
 
+/* Get the current token length */
+#define TOKEN_LENGTH()	((_eoi ? _eoi : _cursor) - _token)
+
 @implementation TRConfigLexer
 
 - (void) dealloc {
@@ -108,20 +111,24 @@
 	/* We just need to prevent re2c from walking off the end of our buffer */
 	assert(_limit - _cursor >= 0);
 	if (_cursor == _limit) {
-		/* Signal EOI */
+		/* Save the cursor and signal EOI */
+		_eoi = _cursor;
 		_cursor = "\n";
-		_eoi = true;
 	}
 }
 
 - (TRConfigToken *) scan {
 	TRConfigToken *token;
-/*!re2c
-/* vim syntax fix */
-
+/*!re2c /* vim syntax fix */
 	any = .;
-
+	key = [A-Za-z_-]+;
 */
+
+	/* Work around a re2c bug --
+	 * \n EOI termination isn't being handled correctly in the
+	 * INITIAL state if the '\n' is scanned in a different
+	 * state. */
+	CHECK_EOI();
 
 	switch (_condition) {
 		case SC(INITIAL):
@@ -130,19 +137,37 @@
 
 			/* Skip comments */
 			"#".* {
-				_token = _cursor;
 				SKIP(INITIAL);
 			}
 
 			/* Skip leading whitespace and blank lines */
 			[ \t\n]+ {
-				_token = _cursor;
 				SKIP(INITIAL);
 			}
 
+			/* Unnamed section declaration */
+			[^ \t]*"<"key">" {
+				/* Drop the starting and trailing '>' */
+				const char *clean = _token + 1;
+				size_t length = TOKEN_LENGTH() - 2;
+
+				token = [[TRConfigToken alloc] initWithBytes: clean numBytes: length tokenID: TOKEN_SECTION_START];
+				return token;
+			}
+
+			/* Section end */
+			[^ \t]*"</"key">" {
+				/* Drop the "</" '>' */
+				const char *clean = _token + 2;
+				size_t length = TOKEN_LENGTH() - 3;
+
+				token = [[TRConfigToken alloc] initWithBytes: clean numBytes: length tokenID: TOKEN_SECTION_END];
+				return token;
+			}
+
 			/* Handle keys */
-			[A-Za-z_-]+ {
-				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: _cursor - _token tokenID: TOKEN_KEY];
+			key {
+				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: TOKEN_LENGTH() tokenID: TOKEN_KEY];
 				BEGIN(VALUE);
 				return token;
 			}
@@ -150,6 +175,7 @@
 			/* Handle unknown characters */
 			any {
 				// TODO explode here
+				printf("Unknown character: %c\n", yych);
 				return NULL;
 			}
 			*/
@@ -167,8 +193,8 @@
 
 			/* The value may contain anything except \n, and any leading or trailing
 			 * whitespace is skipped */
-			[^ \t].*[^ \t\n] {
-				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: _cursor - _token tokenID: TOKEN_VALUE];
+			[^ \t].+ {
+				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: TOKEN_LENGTH() tokenID: TOKEN_VALUE];
 				BEGIN(INITIAL);
 				return token;
 			}

@@ -59,7 +59,7 @@ typedef enum {
 	char *_limit;
 	char *_marker;
 	char *_token;
-	bool _eoi;
+	char *_eoi;
 	LexerStartCondition _condition;
 }
 

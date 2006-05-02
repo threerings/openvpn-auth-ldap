@@ -53,4 +53,10 @@
 config_file ::= lines.
 lines ::= .
 lines ::= lines declaration.
-declaration ::= KEY(A) VALUE(B). { printf("Setting %s to %s\n", [A cString], [B cString]); }
+lines ::= lines section.
+
+declaration ::= KEY(A) VALUE(B). { printf("Setting '%s' to '%s'\n", [A cString], [B cString]); }
+
+section ::= declare_section lines SECTION_END. { printf("Defined a section\n"); }
+declare_section ::= SECTION_START(A) SECTION_NAME(B). { printf("Section %s named %s\n", [A cString], [B cString]); }
+declare_section ::= SECTION_START(A). { printf("Setting %s unnamed\n", [A cString]); }
