@@ -46,7 +46,9 @@
 
 typedef enum {
 	LEXER_SC_INITIAL,
-	LEXER_SC_VALUE
+	LEXER_SC_SECTION,
+	LEXER_SC_VALUE,
+	LEXER_SC_STRING_VALUE
 } LexerStartCondition;
 
 @interface TRConfigLexer : Object {

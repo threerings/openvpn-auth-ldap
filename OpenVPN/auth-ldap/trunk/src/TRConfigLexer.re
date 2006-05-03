@@ -119,93 +119,153 @@
 
 - (TRConfigToken *) scan {
 	TRConfigToken *token;
-/*!re2c /* vim syntax fix */
+	/*!re2c /* vim syntax fix */
 	any = .;
 	key = [A-Za-z_-]+;
-*/
-
-	/* Work around a re2c bug --
-	 * \n EOI termination isn't being handled correctly in the
-	 * INITIAL state if the '\n' is scanned in a different
-	 * state. */
-	CHECK_EOI();
+	*/
 
 	switch (_condition) {
 		case SC(INITIAL):
 			_token = _cursor;
 			/*!re2c /* vim syntax fix */
 
+			/* Skip white space */
+			[ \t]+ {
+				SKIP(INITIAL);
+			}
+
 			/* Skip comments */
 			"#".* {
 				SKIP(INITIAL);
 			}
 
-			/* Skip leading whitespace and blank lines */
-			[ \t\n]+ {
-				SKIP(INITIAL);
-			}
-
-			/* Unnamed section declaration */
-			[^ \t]*"<"key">" {
-				/* Drop the starting and trailing '>' */
-				const char *clean = _token + 1;
-				size_t length = TOKEN_LENGTH() - 2;
-
-				token = [[TRConfigToken alloc] initWithBytes: clean numBytes: length tokenID: TOKEN_SECTION_START];
-				return token;
-			}
-
-			/* Section end */
-			[^ \t]*"</"key">" {
-				/* Drop the "</" '>' */
-				const char *clean = _token + 2;
-				size_t length = TOKEN_LENGTH() - 3;
-
-				token = [[TRConfigToken alloc] initWithBytes: clean numBytes: length tokenID: TOKEN_SECTION_END];
-				return token;
-			}
-
-			/* Handle keys */
+			/* Keys */
 			key {
-				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: TOKEN_LENGTH() tokenID: TOKEN_KEY];
+				token = [[TRConfigToken alloc] initWithBytes: _token
+								    numBytes: TOKEN_LENGTH()
+								     tokenID: TOKEN_KEY];
 				BEGIN(VALUE);
 				return token;
+			}
+
+			/* Sections */
+			"<" {
+				SKIP(SECTION);
+			}
+
+			/* Skip blank lines */
+			"\n" {
+				SKIP(INITIAL);
 			}
 
 			/* Handle unknown characters */
 			any {
 				// TODO explode here
-				printf("Unknown character: %c\n", yych);
+				printf("Unknown character: '%c' (%d)\n", yych, yych);
 				return NULL;
 			}
+
 			*/
+
 			break;
 
-		/* Parse setting values */
-		case SC(VALUE):
+		/* Section Declarations */
+		case SC(SECTION):
 			_token = _cursor;
 			/*!re2c /* vim syntax fix */
 
-			/* Skip leading/trailing whitespace */
+			/* Unnamed section */
+			key">" {
+				/* Drop the trailing ">" */
+				token = [[TRConfigToken alloc] initWithBytes: _token
+								    numBytes: TOKEN_LENGTH() - 1
+								     tokenID: TOKEN_SECTION_START];
+				return token;
+			}
+
+			/* Named section */
+
+			/* Section end */
+			"/"key">" {
+				/* Drop the leading '/' and trailing ">" */
+				token = [[TRConfigToken alloc] initWithBytes: _token + 1
+								    numBytes: TOKEN_LENGTH() - 2
+								     tokenID: TOKEN_SECTION_END];
+				return token;
+			}
+
+			/* End of line returns to the initial state */
+			"\n" {
+				SKIP(INITIAL);
+			}
+
+			*/
+
+			break;
+
+		/* Values */
+		case SC(VALUE):
+			_token = _cursor;
+			/*!re2c /* vim syntax fix */
 			[ \t]+ {
 				SKIP(VALUE);
 			}
 
-			/* The value may contain anything except \n, and any leading or trailing
-			 * whitespace is skipped */
-			[^ \t].+ {
-				token = [[TRConfigToken alloc] initWithBytes: _token numBytes: TOKEN_LENGTH() tokenID: TOKEN_VALUE];
-				BEGIN(INITIAL);
+			/* Skip trailing comments */
+			"#".* {
+				SKIP(VALUE);
+			}
+
+			/* Value is a quoted string */
+			"\"" {
+				SKIP(STRING_VALUE);
+			}
+
+			/* Single word value, skip leading whitespace */
+			[^ \t\n"]+ { /* " vim syntax fix */
+				token = [[TRConfigToken alloc] initWithBytes: _token
+								    numBytes: TOKEN_LENGTH()
+								     tokenID: TOKEN_VALUE];
 				return token;
 			}
 
-			/* Handle EOI conditions */
+			/* End of line returns to the initial state */
 			"\n" {
-				CHECK_EOI();
+				SKIP(INITIAL);
 			}
 
 			*/
 			break;
+
+		/* Quoted string values */
+		case SC(STRING_VALUE):
+			_token = _cursor;
+
+			/*!re2c /* vim syntax fix */
+
+			/* Skip trailing comments */
+			"#".* {
+				SKIP(STRING_VALUE);
+			}
+
+			/* Quoted strings */
+			/* "\""[^\"]+"\"" { */
+			[^"]+"\"" {
+				/* Skip the trailing '"' */
+				token = [[TRConfigToken alloc] initWithBytes: _token
+								    numBytes: TOKEN_LENGTH() - 1
+								     tokenID: TOKEN_VALUE];
+				return token;
+			}
+
+			/* End of line returns to the initial state */
+			"\n" {
+				SKIP(INITIAL);
+			}
+
+			*/
+			break;
+
 		default:
 			/* Impossible */
 			assert(0);
