@@ -48,14 +48,19 @@
 
 #include "LFString.h"
 
-@interface TRConfigToken : LFString {
+@interface TRConfigToken : Object {
 	/* Parser's token identifier */
 	int _tokenID;
+
+	/* String value */
+	LFString *_string;
 }
 
 - (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length tokenID: (int) tokenID;
 
 - (int) getTokenID;
+
+- (const char *) cString;
 
 @end
 

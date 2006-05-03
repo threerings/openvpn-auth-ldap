@@ -41,15 +41,31 @@
 @implementation TRConfigToken
 
 - (void) dealloc {
-	[super dealloc];
+	if (_string)
+		[_string dealloc];
+	[super free];
 }
 
 - (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length tokenID: (int) tokenID {
-	self = [self initWithBytes: data numBytes: length];
+	self = [self init];
 	if (self != NULL) {
 		_tokenID = tokenID;
+		_string = [[LFString alloc] initWithBytes: data numBytes: length];
+		if (!_string) {
+			[self dealloc];
+			return NULL;
+		}
 	}
 	return (self);
+}
+
+/*!
+ * Return the token's C string value.
+ * @return NULL terminated C string. The result is only valid for the
+ * lifetime of the TRConfigToken object.
+ */
+- (const char *) cString {
+	return [_string cString];
 }
 
 - (int) getTokenID {
