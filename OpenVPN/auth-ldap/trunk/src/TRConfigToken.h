@@ -71,7 +71,7 @@ typedef enum {
 	} _internalRep;
 }
 
-- (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID;
+- (id) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID;
 
 - (int) tokenID;
 - (unsigned int) lineNumber;

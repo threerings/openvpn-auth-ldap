@@ -41,9 +41,7 @@
 #include "LFAuthLDAPConfig.h"
 #include "LFString.h"
 
-#include "TRConfigToken.h"
-#include "TRConfigLexer.h"
-#include "TRConfigParser.h"
+#include "TRConfig.h"
 
 #include "auth-ldap.h"
 
@@ -83,10 +81,8 @@ static struct {
 	[super dealloc];
 }
 
-- (LFAuthLDAPConfig *) initWithConfigFile: (const char *) fileName {
-	TRConfigLexer *lexer = NULL;
-	TRConfigToken *token;
-	void *parser;
+- (id) initWithConfigFile: (const char *) fileName {
+	TRConfig *config = NULL;
 	int configFD;
 
 	/* Initialize */
@@ -102,29 +98,22 @@ static struct {
 		goto error;
 	}
 
-	/* Initialize a lexer */
-	lexer = [[TRConfigLexer alloc] initWithFD: configFD];
-	if (lexer == NULL) {
+	/* Initialize the config parser */
+	config = [[TRConfig alloc] initWithFD: configFD];
+	if (config == NULL)
 		goto error;
-	}
 
 	/* Parse the configuration file */
-	parser = TRConfigParseAlloc(malloc);
-	TRConfigParseTrace(stdout, "trace: ");
-	while ((token = [lexer scan]) != NULL) {
-		TRConfigParse(parser, [token tokenID], token);
-		//[token dealloc];
-	}
-	TRConfigParse(parser, 0, NULL);
-	TRConfigParseFree(parser, free);
+	if (![config parseConfig])
+		goto error;
 
-	[lexer dealloc];
+	[config dealloc];
 
 	return self;
 
 error:
-	if (lexer)
-		[lexer dealloc];
+	if (config)
+		[config dealloc];
 	[self dealloc];
 	return (NULL);
 }

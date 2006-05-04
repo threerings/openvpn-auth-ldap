@@ -37,13 +37,40 @@
 #endif
 
 #include <check.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#include <src/TRConfig.h>
+
+/* Path Constants */
+#define DATA_PATH(relative)	TEST_DATA "/" relative
+#define TEST_CONF		DATA_PATH("TRConfig.conf")
+
+START_TEST (test_initWithFD) {
+	TRConfig *config;
+	int configFD;
+
+	/* Open our configuration file */
+	configFD = open(TEST_CONF, O_RDONLY);
+	fail_if(configFD == -1, "open() returned -1");
+
+	/* Initialize the configuration parser */
+	config = [[TRConfig alloc] initWithFD: configFD];
+	fail_if(config == NULL, "-[[TRConfig alloc] initWithFD:] returned NULL");
+
+	/* Parse the configuration file */
+	fail_unless([config parseConfig], "-[TRConfig parse] returned NULL");
+
+	close(configFD);
+}
+END_TEST
 
 Suite *TRConfig_suite(void) {
 	Suite *s = suite_create("TRConfig");
 
 	TCase *tc_lex = tcase_create("Parse Configuration");
 	suite_add_tcase(s, tc_lex);
-	// tcase_add_test(tc_lex, test_parse);
+	tcase_add_test(tc_lex, test_initWithFD);
 
 	return s;
 }

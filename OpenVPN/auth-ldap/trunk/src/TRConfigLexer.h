@@ -64,7 +64,7 @@ typedef enum {
 	LexerStartCondition _condition;
 }
 
-- (TRConfigLexer *) initWithFD: (int) fd;
+- (id) initWithFD: (int) fd;
 
 - (TRConfigToken *) scan;
 

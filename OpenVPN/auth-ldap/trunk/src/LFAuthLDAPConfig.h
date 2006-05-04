@@ -58,7 +58,7 @@ typedef enum {
 	char *tlsCipherSuite;
 }
 
-- (LFAuthLDAPConfig *) initWithConfigFile: (const char *) fileName;
+- (id) initWithConfigFile: (const char *) fileName;
 
 - (const char *) url;
 - (void) setURL: (const char *) newURL;

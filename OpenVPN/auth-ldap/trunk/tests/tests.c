@@ -60,6 +60,7 @@ int main(int argc, char *argv[]) {
 	srunner_add_suite(sr, LFAuthLDAPConfig_suite());
 	srunner_add_suite(sr, TRConfigToken_suite());
 	srunner_add_suite(sr, TRConfigLexer_suite());
+	srunner_add_suite(sr, TRConfig_suite());
 
 	/* Enable XML output */
 	if (argc == 2)

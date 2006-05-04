@@ -40,9 +40,16 @@
 #endif
 
 #include "TRObject.h"
+#include "TRConfigToken.h"
+#include "TRConfigLexer.h"
+#include "TRConfigParser.h"
 
 @interface TRConfig : TRObject {
+	int _fd;
 }
+
+- (id) initWithFD: (int) fd;
+- (bool) parseConfig;
 
 @end
 

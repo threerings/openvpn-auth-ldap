@@ -87,7 +87,7 @@
 	[super dealloc];
 }
 
-- (TRConfigLexer *) initWithFD: (int) fd {
+- (id) initWithFD: (int) fd {
 	struct stat statbuf;
 
 	/* Initialize */

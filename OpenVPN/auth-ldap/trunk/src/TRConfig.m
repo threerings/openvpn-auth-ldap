@@ -40,4 +40,44 @@
 
 @implementation TRConfig
 
+/*!
+ * Initialize and return a TRConfig parser.
+ * @param fd: A file descriptor open for reading. This file descriptor will be
+ * 		mmap()ed, and thus must reference a file.
+ */
+- (id) initWithFD: (int) fd {
+	self = [self init];
+
+	if (self)
+		_fd = fd;
+
+	return self;
+}
+
+- (bool) parseConfig {
+	TRConfigLexer *lexer = NULL;
+	TRConfigToken *token;
+	void *parser;
+
+	/* Initialize our lexer */
+	lexer = [[TRConfigLexer alloc] initWithFD: _fd];
+	if (lexer == NULL)
+		return false;
+
+	/* Initialize the parser */
+	parser = TRConfigParseAlloc(malloc);
+
+	/* Scan in tokens and hand them off to the parser */
+	while ((token = [lexer scan]) != NULL) {
+		TRConfigParse(parser, [token tokenID], token);
+		// [token dealloc]
+	}
+	/* Signal EOF and clean up */
+	TRConfigParse(parser, 0, NULL);
+	TRConfigParseFree(parser, free);
+	[lexer dealloc];
+
+	return true;
+}
+
 @end
