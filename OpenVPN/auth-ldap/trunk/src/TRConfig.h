@@ -32,20 +32,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRCONFIGTOKEN_H
-#define TRCONFIGTOKEN_H
+#ifndef TRCONFIG_H
+#define TRCONFIG_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include <objc/Object.h>
+#include "TRObject.h"
 
-@interface TRConfig : Object {
+@interface TRConfig : TRObject {
 }
-
-- (void) dealloc;
 
 @end
 
-#endif /* TRCONFIGTOKEN_H */
+#endif /* TRCONFIG_H */

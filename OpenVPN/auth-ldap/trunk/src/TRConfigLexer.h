@@ -35,11 +35,9 @@
 #ifndef TRCONFIGLEXER_H
 #define TRCONFIGLEXER_H
 
-#include <objc/Object.h>
-#include <stdbool.h>
-
 #include <ldap.h>
 
+#include "TRObject.h"
 #include "LFAuthLDAPConfig.h"
 #include "LFString.h"
 #include "TRConfigToken.h"
@@ -51,7 +49,7 @@ typedef enum {
 	LEXER_SC_STRING_VALUE
 } LexerStartCondition;
 
-@interface TRConfigLexer : Object {
+@interface TRConfigLexer : TRObject {
 	/* Input buffer */
 	char *buffer;
 	size_t bufferLength;
@@ -65,8 +63,6 @@ typedef enum {
 	unsigned int _lineNumber;
 	LexerStartCondition _condition;
 }
-
-- (void) dealloc;
 
 - (TRConfigLexer *) initWithFD: (int) fd;
 

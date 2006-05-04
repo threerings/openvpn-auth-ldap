@@ -50,7 +50,7 @@
 
 START_TEST (test_initWithConfigFile) {
 	LFAuthLDAPConfig *config;
-	const char *url;
+	// const char *url;
 
 	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
 	fail_if(config == NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");

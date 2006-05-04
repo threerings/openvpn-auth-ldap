@@ -43,7 +43,7 @@
 - (void) dealloc {
 	if (_string)
 		[_string dealloc];
-	[super free];
+	[super dealloc];
 }
 
 - (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID {

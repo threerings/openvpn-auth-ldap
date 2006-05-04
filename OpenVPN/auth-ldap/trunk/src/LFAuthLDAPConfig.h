@@ -33,7 +33,7 @@
 #ifndef LFAUTHLDAPCONFIG_H
 #define LFAUTHLDAPCONFIG_H
 
-#include <objc/Object.h>
+#include "TRObject.h"
 
 typedef enum {
 	LF_LDAP_URL,
@@ -47,7 +47,7 @@ typedef enum {
 	LF_LDAP_BADOPTION
 } AuthLDAPConfigOptions;
 
-@interface LFAuthLDAPConfig : Object {
+@interface LFAuthLDAPConfig : TRObject {
 	char *url;
 	int tlsEnabled;
 	int timeout;
@@ -58,7 +58,6 @@ typedef enum {
 	char *tlsCipherSuite;
 }
 
-- (void) dealloc;
 - (LFAuthLDAPConfig *) initWithConfigFile: (const char *) fileName;
 
 - (const char *) url;

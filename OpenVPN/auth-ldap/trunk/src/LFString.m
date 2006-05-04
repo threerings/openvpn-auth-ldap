@@ -34,8 +34,6 @@
 #include <config.h>
 #endif
 
-#include <objc/Object.h>
-
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
@@ -50,7 +48,7 @@
 
 - (void) dealloc {
 	free(bytes);
-	[super free];
+	[super dealloc];
 }
 
 - (id) initWithCString: (const char *) cString {

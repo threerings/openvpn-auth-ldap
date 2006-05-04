@@ -40,8 +40,4 @@
 
 @implementation TRConfig
 
-- (void) dealloc {
-	[super free];
-}
-
 @end

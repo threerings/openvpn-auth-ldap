@@ -1,8 +1,10 @@
 /*
- * LFString.h
- * Brain-dead Dynamic Strings
+ * TRObject.m
+ * Project Root Class
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Author: Landon Fuller <landonf@threerings.net>
+ *
+ * Copyright (c) 2006 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Landon Fuller nor the names of any contributors
+ * 3. Neither the name of the copyright holder nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -30,47 +32,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LFSTRING_H
-#define LFSTRING_H
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include <stdlib.h>
-
 #include "TRObject.h"
-#include "strlcpy.h"
-
-@interface LFString : TRObject {
-	char *bytes;
-	size_t numBytes;
-}
-
-- (id) initWithCString: (const char *) cString;
-- (id) initWithString: (LFString *) string;
-- (id) initWithBytes: (const char *) data numBytes: (size_t) length;
-
-- (const char *) cString;
-- (size_t) length;
-
-- (bool) intValue: (int *) value;
-
-- (size_t) indexToCString: (const char *) cString;
-- (size_t) indexToCharset: (const char *) cString;
-
-- (char) charAtIndex: (size_t) index;
-- (LFString *) substringToIndex: (size_t) index;
-- (LFString *) substringFromIndex: (size_t) index;
-- (LFString *) substringToCString: (const char *) cString;
-- (LFString *) substringFromCString: (const char *) cString;
-- (LFString *) substringToCharset: (const char *) cString;
-- (LFString *) substringFromCharset: (const char *) cString;
-
-- (void) appendChar: (char) c;
-- (void) appendCString: (const char *) cString;
-- (void) appendString: (LFString *) string;
-
+/*
+ * Apple's Obj-C compiler assumes that all objects
+ * inherit from NSObject, and must call [super dealloc]
+ * in their dealloc method. If you don't, the compiler
+ * complains.
+ *
+ * So, let's pretend to give Object a dealloc method,
+ * but never call it.
+ * Thanks Apple!
+ */ 
+@interface Object (AppleAddedAReallyStupidGCCWarning)
+- (void) dealloc;
 @end
 
-#endif /* LFSTRING_H */
+@implementation TRObject
+
+- (void) dealloc {
+	[super free];
+
+	/* Make Apple's objc compiler be quiet */
+	if (false)
+		[super dealloc];
+}
+
+@end

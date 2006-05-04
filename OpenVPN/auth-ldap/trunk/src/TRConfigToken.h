@@ -39,13 +39,11 @@
 #include <config.h>
 #endif
 
-#include <stdbool.h>
-
-#include <objc/Object.h>
 #include <stdlib.h>
 
 #include "strlcpy.h"
 
+#include "TRObject.h"
 #include "LFString.h"
 
 /* Object Data Types */
@@ -54,7 +52,7 @@ typedef enum {
 	TOKEN_DATATYPE_INT
 } TRConfigDataType;
 
-@interface TRConfigToken : Object {
+@interface TRConfigToken : TRObject {
 	/* Parser's token identifier */
 	int _tokenID;
 
@@ -72,8 +70,6 @@ typedef enum {
 		int _intValue;
 	} _internalRep;
 }
-
-- (void) dealloc;
 
 - (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID;
 

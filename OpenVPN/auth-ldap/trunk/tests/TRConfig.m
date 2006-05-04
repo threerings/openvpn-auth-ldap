@@ -1,8 +1,10 @@
 /*
- * LFString.h
- * Brain-dead Dynamic Strings
+ * TRConfig.m
+ * TRConfig Unit Tests
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Author: Landon Fuller <landonf@threerings.net>
+ *
+ * Copyright (c) 2006 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,47 +32,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LFSTRING_H
-#define LFSTRING_H
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include <stdlib.h>
+#include <check.h>
 
-#include "TRObject.h"
-#include "strlcpy.h"
+Suite *TRConfig_suite(void) {
+	Suite *s = suite_create("TRConfig");
 
-@interface LFString : TRObject {
-	char *bytes;
-	size_t numBytes;
+	TCase *tc_lex = tcase_create("Parse Configuration");
+	suite_add_tcase(s, tc_lex);
+	// tcase_add_test(tc_lex, test_parse);
+
+	return s;
 }
-
-- (id) initWithCString: (const char *) cString;
-- (id) initWithString: (LFString *) string;
-- (id) initWithBytes: (const char *) data numBytes: (size_t) length;
-
-- (const char *) cString;
-- (size_t) length;
-
-- (bool) intValue: (int *) value;
-
-- (size_t) indexToCString: (const char *) cString;
-- (size_t) indexToCharset: (const char *) cString;
-
-- (char) charAtIndex: (size_t) index;
-- (LFString *) substringToIndex: (size_t) index;
-- (LFString *) substringFromIndex: (size_t) index;
-- (LFString *) substringToCString: (const char *) cString;
-- (LFString *) substringFromCString: (const char *) cString;
-- (LFString *) substringToCharset: (const char *) cString;
-- (LFString *) substringFromCharset: (const char *) cString;
-
-- (void) appendChar: (char) c;
-- (void) appendCString: (const char *) cString;
-- (void) appendString: (LFString *) string;
-
-@end
-
-#endif /* LFSTRING_H */

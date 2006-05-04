@@ -84,7 +84,7 @@
 - (void) dealloc {
 	if (buffer)
 		munmap(buffer, bufferLength);
-	[super free];
+	[super dealloc];
 }
 
 - (TRConfigLexer *) initWithFD: (int) fd {

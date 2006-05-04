@@ -101,10 +101,6 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	return (ldap_set_tls_options(ldapConfig));
 }
 
-- (void) dealloc {
-	[super free];
-}
-
 - (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig {
 	struct timeval timeout;
 	int arg, err;

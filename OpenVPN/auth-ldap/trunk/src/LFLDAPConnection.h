@@ -33,21 +33,18 @@
 #ifndef LFLDAPCONNECTION_H
 #define LFLDAPCONNECTION_H
 
-#include <objc/Object.h>
-#include <stdbool.h>
-
 #include <ldap.h>
 
+#include "TRObject.h"
 #include "LFAuthLDAPConfig.h"
 
-@interface LFLDAPConnection : Object {
+@interface LFLDAPConnection : TRObject {
 	LDAP *ldapConn;
 	LFAuthLDAPConfig *config;
 }
 
 + (bool) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig;
 
-- (void) dealloc;
 - (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig;
 
 - (bool) bindWithDN: (const char *) bindDN password: (const char *) password;
