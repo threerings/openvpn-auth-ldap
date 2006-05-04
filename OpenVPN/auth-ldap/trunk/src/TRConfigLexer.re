@@ -61,6 +61,9 @@
  * Macros
  */
 
+/* Increment line count */
+#define INCR_LINE()	_lineNumber++
+
 /* Switch to a start condition */
 #define BEGIN(cond)	( _condition = LEXER_SC_ ## cond)
 
@@ -100,6 +103,7 @@
 	assert(buffer != MAP_FAILED);
 
 	/* Initialize lexer state */
+	_lineNumber = 1;
 	_condition = LEXER_SC_INITIAL;
 	_cursor = buffer;
 	_limit = _cursor + bufferLength - 1;
@@ -143,6 +147,7 @@
 			key {
 				token = [[TRConfigToken alloc] initWithBytes: _token
 								    numBytes: TOKEN_LENGTH()
+								  lineNumber: _lineNumber
 								     tokenID: TOKEN_KEY];
 				BEGIN(VALUE);
 				return token;
@@ -155,6 +160,7 @@
 
 			/* Skip blank lines */
 			"\n" {
+				INCR_LINE();
 				SKIP(INITIAL);
 			}
 
@@ -179,6 +185,7 @@
 				/* Drop the trailing ">" */
 				token = [[TRConfigToken alloc] initWithBytes: _token
 								    numBytes: TOKEN_LENGTH() - 1
+								  lineNumber: _lineNumber
 								     tokenID: TOKEN_SECTION_START];
 				return token;
 			}
@@ -190,12 +197,14 @@
 				/* Drop the leading '/' and trailing ">" */
 				token = [[TRConfigToken alloc] initWithBytes: _token + 1
 								    numBytes: TOKEN_LENGTH() - 2
+								  lineNumber: _lineNumber
 								     tokenID: TOKEN_SECTION_END];
 				return token;
 			}
 
 			/* End of line returns to the initial state */
 			"\n" {
+				INCR_LINE();
 				SKIP(INITIAL);
 			}
 
@@ -225,12 +234,14 @@
 			[^ \t\n"]+ { /* " vim syntax fix */
 				token = [[TRConfigToken alloc] initWithBytes: _token
 								    numBytes: TOKEN_LENGTH()
+								  lineNumber: _lineNumber
 								     tokenID: TOKEN_VALUE];
 				return token;
 			}
 
 			/* End of line returns to the initial state */
 			"\n" {
+				INCR_LINE();
 				SKIP(INITIAL);
 			}
 
@@ -254,12 +265,14 @@
 				/* Skip the trailing '"' */
 				token = [[TRConfigToken alloc] initWithBytes: _token
 								    numBytes: TOKEN_LENGTH() - 1
+								  lineNumber: _lineNumber
 								     tokenID: TOKEN_VALUE];
 				return token;
 			}
 
 			/* End of line returns to the initial state */
 			"\n" {
+				INCR_LINE();
 				SKIP(INITIAL);
 			}
 

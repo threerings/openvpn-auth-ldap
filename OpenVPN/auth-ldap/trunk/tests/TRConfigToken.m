@@ -43,16 +43,41 @@
 #include <string.h>
 
 #define TEST_STRING "The answer to life, the universe, and everything"
+#define TEST_LINE_NUMBER 42
 
-START_TEST (test_initWithBytes_ID) {
+START_TEST (test_initWithBytes) {
 	int tokenID;
+	unsigned int lineNumber;
 	TRConfigToken *token;
 
-	token = [[TRConfigToken alloc] initWithBytes: TEST_STRING numBytes: sizeof(TEST_STRING) tokenID: TOKEN_VALUE];
+	token = [[TRConfigToken alloc] initWithBytes: TEST_STRING
+					    numBytes: sizeof(TEST_STRING)
+					  lineNumber: TEST_LINE_NUMBER
+					     tokenID: TOKEN_VALUE];
 	fail_if(token == NULL, "-[[TRConfigToken alloc] initWithBytes: numBytes: tokenID:] returned NULL");
 
-	tokenID = [token getTokenID];
-	fail_unless(tokenID == TOKEN_VALUE, "-[TRConfigToken getTokenID] returned incorrect value. (Expected %d, got %d)", tokenID, TOKEN_VALUE);
+	tokenID = [token tokenID];
+	fail_unless(tokenID == TOKEN_VALUE, "-[TRConfigToken tokenID] returned incorrect value. (Expected %d, got %d)", tokenID, TOKEN_VALUE);
+
+	lineNumber = [token lineNumber];
+	fail_unless(lineNumber == TEST_LINE_NUMBER, "-[TRConfigToken lineNumber] returned incorrect value. (Expected %d, got %d)", TEST_LINE_NUMBER, lineNumber);
+
+	[token dealloc];
+}
+END_TEST
+
+START_TEST (test_intValue) {
+	TRConfigToken *token;
+	int value;
+
+	token = [[TRConfigToken alloc] initWithBytes: "24" 
+					    numBytes: sizeof(TEST_STRING)
+					  lineNumber: TEST_LINE_NUMBER
+					     tokenID: TOKEN_VALUE];
+	fail_if(token == NULL, "-[[TRConfigToken alloc] initWithBytes: numBytes: tokenID:] returned NULL");
+
+	fail_unless([token intValue: &value], "-[TRConfigToken value] returned NULL");
+	fail_unless(value == 24, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", 24, value);
 
 	[token dealloc];
 }
@@ -63,7 +88,8 @@ Suite *TRConfigToken_suite(void) {
 
 	TCase *tc_token = tcase_create("Token Operations");
 	suite_add_tcase(s, tc_token);
-	tcase_add_test(tc_token, test_initWithBytes_ID);
+	tcase_add_test(tc_token, test_initWithBytes);
+	tcase_add_test(tc_token, test_intValue);
 
 	return s;
 }

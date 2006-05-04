@@ -123,7 +123,7 @@ static AuthLDAPConfigOptions parse_opcode (const char *word, const char *filenam
 	parser = TRConfigParseAlloc(malloc);
 	TRConfigParseTrace(stdout, "trace: ");
 	while ((token = [lexer scan]) != NULL) {
-		TRConfigParse(parser, [token getTokenID], token);
+		TRConfigParse(parser, [token tokenID], token);
 		//[token dealloc];
 	}
 	TRConfigParse(parser, 0, NULL);

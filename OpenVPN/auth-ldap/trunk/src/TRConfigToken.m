@@ -46,10 +46,12 @@
 	[super free];
 }
 
-- (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length tokenID: (int) tokenID {
+- (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID {
 	self = [self init];
 	if (self != NULL) {
+		_dataType = TOKEN_DATATYPE_NONE;
 		_tokenID = tokenID;
+		_lineNumber = line;
 		_string = [[LFString alloc] initWithBytes: data numBytes: length];
 		if (!_string) {
 			[self dealloc];
@@ -57,6 +59,14 @@
 		}
 	}
 	return (self);
+}
+
+- (int) tokenID {
+	return _tokenID;
+}
+
+- (unsigned int) lineNumber {
+	return _lineNumber;
 }
 
 /*!
@@ -68,8 +78,39 @@
 	return [_string cString];
 }
 
-- (int) getTokenID {
-	return _tokenID;
+/*!
+ * Get the token's integer value.
+ * Returns true on success, false on failure.
+ * The integer value will be stored in the value argument.
+ *
+ * If the token is not a valid integer, value will be set to 0
+ * and the method will return false.
+ * If the token is larger than INT_MAX, value will be set to INT_MAX
+ * and the method will return false. If the token is smaller than INT_MIN,
+ * value will be set to INT_MIN and the method will also return false.
+ *
+ * @param value Pointer where the integer value will be stored
+ * @result true on success, false on failure.
+ */
+- (bool) intValue: (int *) value {
+	bool result;
+
+	/* Check if the integer conversion has been cached */
+	if (_dataType == TOKEN_DATATYPE_INT) {
+		*value = _internalRep._intValue;
+		return true;
+	}
+
+	/* Otherwise, do the conversion and return the result,
+	 * caching on success */
+	result = [_string intValue: value];
+	if (result) {
+		_dataType = TOKEN_DATATYPE_INT;
+		_internalRep._intValue = *value;
+	}
+
+	return result;
 }
+
 
 @end

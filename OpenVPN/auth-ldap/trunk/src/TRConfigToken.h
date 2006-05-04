@@ -48,19 +48,40 @@
 
 #include "LFString.h"
 
+/* Object Data Types */
+typedef enum {
+	TOKEN_DATATYPE_NONE,
+	TOKEN_DATATYPE_INT
+} TRConfigDataType;
+
 @interface TRConfigToken : Object {
 	/* Parser's token identifier */
 	int _tokenID;
 
+	/* Token's line origin */
+	unsigned int _lineNumber;
+
 	/* String value */
 	LFString *_string;
+
+	/* Current data type */
+	TRConfigDataType _dataType;
+
+	/* Union of internal representations */
+	union {
+		int _intValue;
+	} _internalRep;
 }
 
-- (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length tokenID: (int) tokenID;
+- (void) dealloc;
 
-- (int) getTokenID;
+- (TRConfigToken *) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID;
+
+- (int) tokenID;
+- (unsigned int) lineNumber;
 
 - (const char *) cString;
+- (bool) intValue: (int *) value;
 
 @end
 

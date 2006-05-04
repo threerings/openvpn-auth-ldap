@@ -62,6 +62,7 @@ typedef enum {
 	char *_marker;
 	char *_token;
 	char *_eoi;
+	unsigned int _lineNumber;
 	LexerStartCondition _condition;
 }
 
