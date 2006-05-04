@@ -11,7 +11,8 @@ TEST_OBJS=	tests.o \
 		LFString.o \
 		LFAuthLDAPConfig.o \
 		TRConfigToken.o \
-		TRConfigLexer.o
+		TRConfigLexer.o \
+		TRConfig.o
 
 CFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"

@@ -1,6 +1,6 @@
 /*
- * tests.h
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRConfig.m
+ * Generic Configuration Parser
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -15,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Landon Fuller nor the names of any contributors
+ * 3. Neither the name of the copyright holder nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,12 +32,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Unit Tests
- */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-Suite *LFString_suite(void);
-Suite *LFAuthLDAPConfig_suite(void);
-Suite *TRConfigToken_suite(void);
-Suite *TRConfigLexer_suite(void);
-Suite *TRConfig_suite(void);
+#include "TRConfig.h"
+
+@implementation TRConfig
+
+- (void) dealloc {
+	[super free];
+}
+
+@end
