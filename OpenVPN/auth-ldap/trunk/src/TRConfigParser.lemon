@@ -43,7 +43,7 @@
 }
 
 %name TRConfigParse
-%extra_argument { id *section }
+%extra_argument { id section }
 %token_type {TRConfigToken *}
 %token_prefix {TOKEN_}
 
