@@ -32,9 +32,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRCONFIGTOKEN_H
-#define TRCONFIGTOKEN_H
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -44,13 +41,11 @@
 #include "strlcpy.h"
 
 #include "TRObject.h"
+#include "TRConfig.h"
 #include "LFString.h"
 
-/* Object Data Types */
-typedef enum {
-	TOKEN_DATATYPE_NONE,
-	TOKEN_DATATYPE_INT
-} TRConfigDataType;
+#ifndef TRCONFIGTOKEN_H
+#define TRCONFIGTOKEN_H
 
 @interface TRConfigToken : TRObject {
 	/* Parser's token identifier */

@@ -97,9 +97,10 @@ static struct {
 		warn("Failed to open \"%s\" for reading: %s", fileName, strerror(errno));
 		goto error;
 	}
-
+#if 0
 	/* Initialize the config parser */
-	config = [[TRConfig alloc] initWithFD: configFD];
+	config = [[TRConfig alloc] initWithFD: configFD
+				 configSchema: NULL];
 	if (config == NULL)
 		goto error;
 
@@ -108,6 +109,7 @@ static struct {
 		goto error;
 
 	[config dealloc];
+#endif
 
 	return self;
 

@@ -46,6 +46,60 @@
 #define DATA_PATH(relative)	TEST_DATA "/" relative
 #define TEST_CONF		DATA_PATH("TRConfig.conf")
 
+/*
+ * LDAP Section Schema
+ */
+
+/* Key types */
+static TRConfigKeySchema TRKey_timeout = { "timeout", false, TOKEN_DATATYPE_INT };
+static TRConfigKeySchema TRKey_url = { "url", false, TOKEN_DATATYPE_NONE };
+
+static TRConfigKeySchema *TRKeys_LDAP [] = { &TRKey_timeout, &TRKey_url, NULL };
+
+/* Section */
+static TRConfigSectionSchema TRSection_LDAP = { "LDAP", TRKeys_LDAP, NULL };
+
+/* Root Section Schema */
+static TRConfigSectionSchema *TRSections_Root[] = {
+	&TRSection_LDAP,
+	NULL
+};
+
+static TRConfigSectionSchema TRSection_Root = {
+	NULL,
+	NULL,
+	TRSections_Root
+};
+
+void print_section(TRConfigSectionSchema *section) {
+	TRConfigKeySchema *key;
+	int i = 0;
+
+	if (section->keys) {
+		while ((key = section->keys[i]) != NULL) {
+			printf("Key: %s isMulti: %d Type: %d\n", key->label, key->multikey, key->type);
+			i++;
+		}
+	}
+}
+
+void testfoo(void) {
+	TRConfigSectionSchema *rootNode = &TRSection_Root;
+	TRConfigSectionSchema *node = rootNode;
+	int i;
+
+	i = 0;
+	while (node) {
+		printf("Section: %s\n", node->label);
+		print_section(node);
+		if (node->subsections) {
+			node = node->subsections[0];
+		} else {
+			node = NULL;
+		}
+	}
+}
+
 START_TEST (test_initWithFD) {
 	TRConfig *config;
 	int configFD;
@@ -55,7 +109,7 @@ START_TEST (test_initWithFD) {
 	fail_if(configFD == -1, "open() returned -1");
 
 	/* Initialize the configuration parser */
-	config = [[TRConfig alloc] initWithFD: configFD];
+	config = [[TRConfig alloc] initWithFD: configFD configSchema: &TRSection_Root];
 	fail_if(config == NULL, "-[[TRConfig alloc] initWithFD:] returned NULL");
 
 	/* Parse the configuration file */

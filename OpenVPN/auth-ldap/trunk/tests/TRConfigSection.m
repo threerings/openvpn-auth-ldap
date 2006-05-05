@@ -1,6 +1,6 @@
 /*
- * TRConfig.m
- * Generic Configuration Parser
+ * TRConfigSection.m
+ * TRConfigSection Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -15,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of any contributors
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -36,54 +36,14 @@
 #include <config.h>
 #endif
 
-#include "TRConfig.h"
+#include <TRConfigSection.h>
 
-@implementation TRConfig
+Suite *TRConfigSection_suite(void) {
+	Suite *s = suite_create("TRConfigSection");
 
-/*!
- * Initialize and return a TRConfig parser.
- * @param fd: A file descriptor open for reading. This file descriptor will be
- * 		mmap()ed, and thus must reference a file.
- */
-- (id) initWithFD: (int) fd configSchema: (TRConfigSectionSchema *) schema {
-	self = [self init];
+	TCase *tc_lex = tcase_create("Configuration Sections");
+	suite_add_tcase(s, tc_lex);
+//	tcase_add_test(tc_lex, test_initWithFD);
 
-	if (self) {
-		_fd = fd;
-		_configSchema = schema;
-	}
-
-	return self;
+	return s;
 }
-
-/*!
- * Parse the configuration file
- * @result true on success, false on failure.
- */
-- (bool) parseConfig {
-	TRConfigLexer *lexer = NULL;
-	TRConfigToken *token;
-	void *parser;
-
-	/* Initialize our lexer */
-	lexer = [[TRConfigLexer alloc] initWithFD: _fd];
-	if (lexer == NULL)
-		return false;
-
-	/* Initialize the parser */
-	parser = TRConfigParseAlloc(malloc);
-
-	/* Scan in tokens and hand them off to the parser */
-	while ((token = [lexer scan]) != NULL) {
-		TRConfigParse(parser, [token tokenID], token, self);
-		// [token dealloc]
-	}
-	/* Signal EOF and clean up */
-	TRConfigParse(parser, 0, NULL, self);
-	TRConfigParseFree(parser, free);
-	[lexer dealloc];
-
-	return true;
-}
-
-@end
