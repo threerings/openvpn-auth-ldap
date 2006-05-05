@@ -36,7 +36,9 @@
 #include <config.h>
 #endif
 
-#include <TRConfigSection.h>
+#include <check.h>
+
+#include <src/TRConfigSection.h>
 
 Suite *TRConfigSection_suite(void) {
 	Suite *s = suite_create("TRConfigSection");
