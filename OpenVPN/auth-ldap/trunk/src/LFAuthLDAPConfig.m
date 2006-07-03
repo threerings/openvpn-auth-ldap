@@ -43,22 +43,84 @@
 
 #include "auth-ldap.h"
 
-# if 0
+/* All Section Types */
+typedef enum {
+	LF_NO_SECTION,		/* Top-level */
+	LF_LDAP_SECTION,	/* LDAP Server Settings */
+	LF_GROUP_SECTION,	/* LDAP Group Settings */
+	LF_UNKNOWN_SECTION	/* An Unknown Section Type */
+} AuthLDAPConfigSections;
+
+static struct {
+	const char *name;
+	AuthLDAPConfigSections opcode;
+} AuthLDAPConfigSectionTypes[] = {
+	{ "LDAP",	LF_LDAP_SECTION },
+	{ "Group",	LF_GROUP_SECTION },
+	{ NULL, 0 }
+};
+
+/* All Variables */
+typedef enum {
+	/* Generic LDAP Search Variables */
+	LF_LDAP_BASEDN,			/* Base DN for Search */
+	LF_LDAP_SEARCH_FILTER,		/* Search Filter */
+
+	/* LDAP Section Variables */
+	LF_LDAP_URL,			/* LDAP Server URL */
+	LF_LDAP_TIMEOUT,		/* LDAP Server Timeout */
+	LF_LDAP_BINDDN,			/* Bind DN for LDAP Searches */
+	LF_LDAP_PASSWORD,		/* Associated Password */
+	LF_LDAP_TLS,			/* Enable TLS */
+	LF_LDAP_TLS_CA_CERTFILE,	/* TLS CA Certificate File */
+	LF_LDAP_TLS_CA_CERTDIR,		/* TLS CA Certificate Dir */
+	LF_LDAP_TLS_CERTFILE,		/* TLS Client Certificate File */
+	LF_LDAP_TLS_KEYFILE,		/* TLS Client Key File */
+	LF_LDAP_TLS_CIPHER_SUITE,	/* TLS Cipher Suite */
+
+	/* Group Section Variables */
+	LF_GROUP_MEMBER_ATTRIBUTE,	/* Group Membership Attribute */
+
+	/* Misc Shared */
+	LF_UNKNOWN_OPTION		/* Unknown Option */
+} AuthLDAPConfigOptions;
+
+/* Generic LDAP Search Variables */
 static struct {
 	const char *name;
 	AuthLDAPConfigOptions opcode;
-} keywords [] = {
-	{ "ldap_url",		LF_LDAP_URL },
-	{ "ldap_timeout",	LF_LDAP_TIMEOUT },
-	{ "tls_enable",		LF_LDAP_TLS },
-	{ "tls_ca_certfile",	LF_LDAP_TLS_CA_CERTFILE },
-	{ "tls_ca_certdir",	LF_LDAP_TLS_CA_CERTDIR },
-	{ "tls_certfile",	LF_LDAP_TLS_CERTFILE },
-	{ "tls_keyfile",	LF_LDAP_TLS_KEYFILE },
-	{ "tls_ciphersuite",	LF_LDAP_TLS_CIPHER_SUITE },
+} AuthLDAPGenericLDAPVariables[] = {
+	{ "BaseDN",		LF_LDAP_BASEDN},
+	{ "SearchFilter",	LF_LDAP_SEARCH_FILTER},
 	{ NULL, 0 }
 };
-#endif
+
+/* LDAP Section Variables */
+static struct {
+	const char *name;
+	AuthLDAPConfigOptions opcode;
+} AuthLDAPSectionVariables[] = {
+	{ "URL",		LF_LDAP_URL },
+	{ "Timeout",		LF_LDAP_TIMEOUT },
+	{ "BindDN",		LF_LDAP_BINDDN },
+	{ "Password",		LF_LDAP_PASSWORD },
+	{ "TLSEnable",		LF_LDAP_TLS },
+	{ "TLSCACertFile",	LF_LDAP_TLS_CA_CERTFILE },
+	{ "TLSCACertDir",	LF_LDAP_TLS_CA_CERTDIR },
+	{ "TLSCertFile",	LF_LDAP_TLS_CERTFILE },
+	{ "TLSKeyFile",		LF_LDAP_TLS_KEYFILE },
+	{ "TLSCipherSuite",	LF_LDAP_TLS_CIPHER_SUITE },
+	{ NULL, 0 }
+};
+
+/* Group Section Variables */
+static struct {
+	const char *name;
+	AuthLDAPConfigOptions opcode;
+} AuthLDAPGroupSectionVariables[] = {
+	{ "MemberAttribute",	LF_GROUP_MEMBER_ATTRIBUTE },
+	{ NULL, 0 }
+};
 
 @implementation LFAuthLDAPConfig
 
@@ -124,12 +186,12 @@ error:
 }
 
 - (bool) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name {
-	fprintf(stderr, "Starting section\n");
+	fprintf(stderr, "Starting section %s\n", [sectionType cString]);
 	return YES;
 }
 
 - (bool) endSection: (TRConfigToken *) sectionEnd {
-	fprintf(stderr, "Ending section\n");
+	fprintf(stderr, "Ending section %s\n", [sectionEnd cString]);
 	return YES;
 }
 

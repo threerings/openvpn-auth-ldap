@@ -36,18 +36,6 @@
 #include "TRObject.h"
 #include "TRConfig.h"
 
-typedef enum {
-	LF_LDAP_URL,
-	LF_LDAP_TIMEOUT,
-	LF_LDAP_TLS,
-	LF_LDAP_TLS_CA_CERTFILE,
-	LF_LDAP_TLS_CA_CERTDIR,
-	LF_LDAP_TLS_CERTFILE,
-	LF_LDAP_TLS_KEYFILE,
-	LF_LDAP_TLS_CIPHER_SUITE,
-	LF_LDAP_BADOPTION
-} AuthLDAPConfigOptions;
-
 @interface LFAuthLDAPConfig : TRObject <TRConfigDelegate> {
 	char *url;
 	int tlsEnabled;
