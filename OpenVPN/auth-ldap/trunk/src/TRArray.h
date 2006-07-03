@@ -1,6 +1,6 @@
 /*
  * TRArray.h
- * Simple linked list with a non-thread-safe iterator
+ * Simple linked list
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
