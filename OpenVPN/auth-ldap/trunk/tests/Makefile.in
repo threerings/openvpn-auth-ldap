@@ -11,6 +11,7 @@ TEST_OBJS=	tests.o \
 		LFString.o \
 		LFAuthLDAPConfig.o \
 		TRObject.o \
+		TRArray.o \
 		TRConfigToken.o \
 		TRConfigLexer.o \
 		TRConfig.o

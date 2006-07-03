@@ -1,6 +1,6 @@
 /*
- * tests.c
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRArray.h
+ * Simple linked list with a non-thread-safe iterator
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -15,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Landon Fuller nor the names of any contributors
+ * 3. Neither the name of the copyright holder nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,50 +32,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <check.h>
-#include <stdio.h>
+#ifndef TRARRAY_H
+#define TRARRAY_H
 
-#include <tests.h>
+#include "TRObject.h"
 
-void print_usage(const char *name) {
-	printf("Usage: %s [filename]\n", name);
-	printf(" [filename]\tWrite XML log to <filename>\n");
+@interface TRArray : TRObject {
+	struct _TRArrayStack *_stack;
 }
 
-int main(int argc, char *argv[]) {
-	Suite *s;
-	SRunner *sr;
-	int nf;
+- (void) addObject: (id) anObject;
+- (void) removeObject;
+- (id) lastObject;
 
-	if (argc > 2) {
-		print_usage(argv[0]);
-		exit(1);
-	}
+@end
 
-	/* Load all test suites */
-	s = LFString_suite();
-	sr = srunner_create(s);
-	srunner_add_suite(sr, LFAuthLDAPConfig_suite());
-	srunner_add_suite(sr, TRObject_suite());
-	srunner_add_suite(sr, TRArray_suite());
-	srunner_add_suite(sr, TRConfigToken_suite());
-	srunner_add_suite(sr, TRConfigLexer_suite());
-	srunner_add_suite(sr, TRConfig_suite());
-
-	/* Enable XML output */
-	if (argc == 2)
-		srunner_set_xml(sr, argv[1]);
-
-	/* Run tests */
-	srunner_run_all(sr, CK_NORMAL);
-
-	nf = srunner_ntests_failed(sr);
-	srunner_free(sr);
-
-	if (nf == 0)
-		exit(EXIT_SUCCESS);
-	else
-		exit(EXIT_FAILURE);
-}
+#endif /* TRARRAY_H */
