@@ -41,8 +41,6 @@
 #include "LFAuthLDAPConfig.h"
 #include "LFString.h"
 
-#include "TRConfig.h"
-
 #include "auth-ldap.h"
 
 # if 0
@@ -97,10 +95,10 @@ static struct {
 		warn("Failed to open \"%s\" for reading: %s", fileName, strerror(errno));
 		goto error;
 	}
-#if 0
+
 	/* Initialize the config parser */
 	config = [[TRConfig alloc] initWithFD: configFD
-				 configSchema: NULL];
+				 configDelegate: self];
 	if (config == NULL)
 		goto error;
 
@@ -109,15 +107,20 @@ static struct {
 		goto error;
 
 	[config release];
-#endif
 
 	return self;
 
 error:
 	if (config)
 		[config release];
+
 	[self release];
 	return (NULL);
+}
+
+- (bool) parseToken: (TRConfigToken *) token {
+	fprintf(stderr, "Parsing a token ...\n");
+	return YES;
 }
 
 - (int) tlsEnabled {

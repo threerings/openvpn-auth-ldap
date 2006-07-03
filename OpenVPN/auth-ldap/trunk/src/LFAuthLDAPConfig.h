@@ -34,6 +34,7 @@
 #define LFAUTHLDAPCONFIG_H
 
 #include "TRObject.h"
+#include "TRConfig.h"
 
 typedef enum {
 	LF_LDAP_URL,
@@ -47,7 +48,7 @@ typedef enum {
 	LF_LDAP_BADOPTION
 } AuthLDAPConfigOptions;
 
-@interface LFAuthLDAPConfig : TRObject {
+@interface LFAuthLDAPConfig : TRObject <TRConfigDelegate> {
 	char *url;
 	int tlsEnabled;
 	int timeout;
@@ -59,6 +60,7 @@ typedef enum {
 }
 
 - (id) initWithConfigFile: (const char *) fileName;
+- (bool) parseToken: (TRConfigToken *) token;
 
 - (const char *) url;
 - (void) setURL: (const char *) newURL;

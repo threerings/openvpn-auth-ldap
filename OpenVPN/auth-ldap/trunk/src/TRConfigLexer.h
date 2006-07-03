@@ -35,7 +35,6 @@
 #include <ldap.h>
 
 #include "TRObject.h"
-#include "LFAuthLDAPConfig.h"
 #include "LFString.h"
 
 #include "TRConfig.h"

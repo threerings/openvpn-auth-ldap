@@ -52,11 +52,16 @@ typedef enum {
 #include "TRConfigLexer.h"
 #include "TRConfigParser.h"
 
+@protocol TRConfigDelegate
+- (bool) parseToken: (TRConfigToken *) token;
+@end
+
 @interface TRConfig : TRObject {
 	int _fd;
+	id <TRConfigDelegate> _delegate;
 }
 
-- (id) initWithFD: (int) fd;
+- (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate;
 - (bool) parseConfig;
 
 @end

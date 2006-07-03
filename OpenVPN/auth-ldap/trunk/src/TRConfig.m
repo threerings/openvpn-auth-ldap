@@ -45,11 +45,12 @@
  * @param fd: A file descriptor open for reading. This file descriptor will be
  * 		mmap()ed, and thus must reference a file.
  */
-- (id) initWithFD: (int) fd {
+- (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate {
 	self = [self init];
 
 	if (self) {
 		_fd = fd;
+		_delegate = delegate;
 	}
 
 	return self;
