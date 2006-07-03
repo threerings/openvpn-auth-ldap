@@ -118,11 +118,6 @@ error:
 	return (NULL);
 }
 
-- (bool) parseToken: (TRConfigToken *) token {
-	fprintf(stderr, "Parsing a token ...\n");
-	return YES;
-}
-
 - (bool) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
 	fprintf(stderr, "Setting key\n");
 	return YES;
