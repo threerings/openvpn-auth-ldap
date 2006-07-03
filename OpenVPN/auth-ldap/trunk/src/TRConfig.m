@@ -75,11 +75,11 @@
 
 	/* Scan in tokens and hand them off to the parser */
 	while ((token = [lexer scan]) != NULL) {
-		TRConfigParse(parser, [token tokenID], token, self);
+		TRConfigParse(parser, [token tokenID], token);
 		// [token dealloc]
 	}
 	/* Signal EOF and clean up */
-	TRConfigParse(parser, 0, NULL, self);
+	TRConfigParse(parser, 0, NULL);
 	TRConfigParseFree(parser, free);
 	[lexer dealloc];
 
