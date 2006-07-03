@@ -147,9 +147,20 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 - (bool) bindWithDN: (const char *) bindDN password: (const char *) password {
 	int msgid, err;
 	LDAPMessage *res;
+	struct berval cred;
 	struct timeval timeout;
 
-	if ((msgid = ldap_simple_bind(ldapConn, bindDN, password)) == -1) {
+	/* Set up berval structure for our credentials */
+	cred.bv_val = (char *) password;
+	cred.bv_len = strlen(password);
+
+	if ((msgid = ldap_sasl_bind_s(ldapConn,
+					bindDN,
+					LDAP_SASL_SIMPLE,
+					&cred,
+					NULL,
+					NULL,
+					NULL)) == -1) {
 		err = ldap_get_errno(ldapConn);
 		warnx("ldap_bind failed immediately: %s", ldap_err2string(err));
 		return (false);
@@ -161,13 +172,13 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
-			ldap_abandon(ldapConn, msgid);
+			ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
 		warnx("ldap_bind failed: %s\n", ldap_err2string(err));
 		return (false);
 	}
 
 	/* TODO: Provide more diagnostics when a logging API is available */
-	err = ldap_result2error(ldapConn, res, 1);
+	ldap_parse_result(ldapConn, res, &err, NULL, NULL, NULL, NULL, 1);
 	if (err == LDAP_SUCCESS)
 		return (true);
 
@@ -176,7 +187,7 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 
 - (bool) unbind {
 	int err;
-	err = ldap_unbind_s(ldapConn);
+	err = ldap_unbind_ext_s(ldapConn, NULL, NULL);
 	if (err != LDAP_SUCCESS) {
 		warnx("Unable to unbind from LDAP server: %s", ldap_err2string(err));
 		return (false);
