@@ -65,11 +65,11 @@ START_TEST (test_parse) {
 		/* The configuration file was assembled so that all values match the,
 		 * current line number -- that is to say, for any given key/value pair,
 		 * the value is set to the current line number of that pair. */
-		if ([token tokenID] == TOKEN_VALUE) {
+		if ([token tokenID] == TOKEN_VALUE || [token tokenID] == TOKEN_SECTION_NAME || [token tokenID] == TOKEN_SECTION_START) {
 			int value;
 
 			/* Get the integer representation */
-			fail_unless([token intValue: &value], "-[TRConfigToken getIntValue:] returned false. (Value %d)", value);
+			fail_unless([token intValue: &value], "-[TRConfigToken getIntValue:] returned false. (String Value: %s)", [token cString]);
 
 			/* Verify that the line number is correct */
 			fail_unless(value == [token lineNumber], "-[TRConfigToken getLineNumber] out of sync. (Expected %d, got %d)", value, [token lineNumber]);

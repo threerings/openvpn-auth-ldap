@@ -53,6 +53,7 @@
 #define YYCURSOR     _cursor	/* L-expression of type *YYCTYPE that points to the current input symbol */
 #define YYLIMIT      _limit	/* Expression of type *YYCTYPE that marks the end of the buffer */
 #define YYMARKER     _marker	/* L-expression of type *YYCTYPE that is used for backtracking information */
+#define YYCTXMARKER  _ctxMarker /* L-expression of type *YYCTYPE that is used for trailing context back tracking information */
 #define YYFILL(n)    [self fill: n]	/* YYFILL(n) is called when the buffer needs (re)filling */
 
 #define YYDEBUG(state, current) printf("state: %d, current: '%c' (%d)\n", state, current, current);
@@ -125,7 +126,7 @@
 	TRConfigToken *token;
 	/*!re2c /* vim syntax fix */
 	any = .;
-	key = [A-Za-z_-]+;
+	key = [A-Za-z0-9_-]+;
 	*/
 
 	switch (_condition) {
@@ -191,6 +192,14 @@
 			}
 
 			/* Named section */
+			key/[ \t]+ {
+				token = [[TRConfigToken alloc] initWithBytes: _token
+								    numBytes: TOKEN_LENGTH()
+								  lineNumber: _lineNumber
+								     tokenID: TOKEN_SECTION_START];
+				BEGIN(SECTION_NAME);
+				return token;
+			}
 
 			/* Section end */
 			"/"key">" {
@@ -211,6 +220,33 @@
 			*/
 
 			break;
+
+		case SC(SECTION_NAME):
+			_token = _cursor;
+			/*!re2c /* vim syntax fix */
+			/* Skip white space */
+			[ \t]+ {
+				SKIP(SECTION_NAME);
+			}
+
+			/* Section name */
+			key">" {
+				/* Drop the trailing ">" */
+				token = [[TRConfigToken alloc] initWithBytes: _token
+								    numBytes: TOKEN_LENGTH() - 1
+								  lineNumber: _lineNumber
+								     tokenID: TOKEN_SECTION_NAME];
+				BEGIN(INITIAL);
+				return token;
+			}
+
+			/* End of line returns to the initial state */
+			"\n" {
+				INCR_LINE();
+				SKIP(INITIAL);
+			}
+
+			*/
 
 		/* Values */
 		case SC(VALUE):

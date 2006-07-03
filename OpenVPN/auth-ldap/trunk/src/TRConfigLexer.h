@@ -45,6 +45,7 @@
 typedef enum {
 	LEXER_SC_INITIAL,
 	LEXER_SC_SECTION,
+	LEXER_SC_SECTION_NAME,
 	LEXER_SC_VALUE,
 	LEXER_SC_STRING_VALUE
 } LexerStartCondition;
@@ -58,6 +59,7 @@ typedef enum {
 	char *_cursor;
 	char *_limit;
 	char *_marker;
+	char *_ctxMarker;
 	char *_token;
 	char *_eoi;
 	unsigned int _lineNumber;
