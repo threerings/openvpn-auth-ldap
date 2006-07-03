@@ -283,6 +283,9 @@
 			/* Impossible */
 			assert(0);
 	}
+
+	/* Never reached */
+	return nil;
 }
 
 @end
