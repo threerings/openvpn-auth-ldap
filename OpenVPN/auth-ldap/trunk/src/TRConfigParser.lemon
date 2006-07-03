@@ -45,6 +45,7 @@
 %name TRConfigParse
 %token_type {TRConfigToken *}
 %token_prefix {TOKEN_}
+%extra_argument {id <TRConfigDelegate> configDelegate}
 
 %parse_failure {
 	printf("Giving up. Parser is hopelessly lost...\n");

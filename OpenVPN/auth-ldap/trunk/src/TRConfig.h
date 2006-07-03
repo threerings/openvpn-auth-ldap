@@ -41,20 +41,23 @@
 
 #include "TRObject.h"
 
+/* A complex set of TRConfig* header dependencies dictates the following order
+ * of declarations and includes */
+
 /* Object Data Types */
 typedef enum {
 	TOKEN_DATATYPE_NONE,
 	TOKEN_DATATYPE_INT
 } TRConfigDataType;
 
-/* Relies on the above declarations */
 #include "TRConfigToken.h"
 #include "TRConfigLexer.h"
-#include "TRConfigParser.h"
 
 @protocol TRConfigDelegate
 - (bool) parseToken: (TRConfigToken *) token;
 @end
+
+#include "TRConfigParser.h"
 
 @interface TRConfig : TRObject {
 	int _fd;
