@@ -17,7 +17,6 @@ PLUGIN_OBJS=	auth-ldap.o \
 		TRConfigToken.o \
 		TRConfigParser.o \
 		TRConfigLexer.o \
-		TRConfigSection.o \
 		strlcpy.o
 
 GEN_SRCS=	TRConfigParser.m \

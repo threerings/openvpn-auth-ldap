@@ -47,30 +47,16 @@ typedef enum {
 	TOKEN_DATATYPE_INT
 } TRConfigDataType;
 
-typedef struct {
-	const char *label;
-	bool multikey;
-	TRConfigDataType type;
-} TRConfigKeySchema;
-
-typedef struct TRConfigSectionSchema {
-	const char *label;
-	TRConfigKeySchema **keys;
-	struct TRConfigSectionSchema **subsections;
-} TRConfigSectionSchema;
-
 /* Relies on the above declarations */
 #include "TRConfigToken.h"
 #include "TRConfigLexer.h"
 #include "TRConfigParser.h"
-#include "TRConfigSection.h"
 
 @interface TRConfig : TRObject {
 	int _fd;
-	TRConfigSectionSchema *_configSchema;
 }
 
-- (id) initWithFD: (int) fd configSchema: (TRConfigSectionSchema *) schema;
+- (id) initWithFD: (int) fd;
 - (bool) parseConfig;
 
 @end

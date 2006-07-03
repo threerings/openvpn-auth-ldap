@@ -58,6 +58,6 @@ lines ::= lines section.
 
 declaration ::= KEY(A) VALUE(B). { printf("Setting '%s' to '%s'\n", [A cString], [B cString]); }
 
-section ::= declare_section lines SECTION_END. { printf("Defined a section\n"); }
-declare_section ::= SECTION_START(A) SECTION_NAME(B). { printf("Section %s named %s\n", [A cString], [B cString]); }
-declare_section ::= SECTION_START(A). { printf("Setting %s unnamed\n", [A cString]); }
+section ::= declare_section lines SECTION_END. { printf("Section terminated\n"); }
+declare_section ::= SECTION_START(type) SECTION_NAME(name). { printf("Section %s named %s\n", [type cString], [name cString]); }
+declare_section ::= SECTION_START(type). { printf("Section %s unnamed\n", [type cString]); }

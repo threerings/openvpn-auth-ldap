@@ -13,8 +13,7 @@ TEST_OBJS=	tests.o \
 		TRObject.o \
 		TRConfigToken.o \
 		TRConfigLexer.o \
-		TRConfig.o \
-		TRConfigSection.o
+		TRConfig.o
 
 CFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"

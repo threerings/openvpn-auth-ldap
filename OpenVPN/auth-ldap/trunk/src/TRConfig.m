@@ -45,12 +45,11 @@
  * @param fd: A file descriptor open for reading. This file descriptor will be
  * 		mmap()ed, and thus must reference a file.
  */
-- (id) initWithFD: (int) fd configSchema: (TRConfigSectionSchema *) schema {
+- (id) initWithFD: (int) fd {
 	self = [self init];
 
 	if (self) {
 		_fd = fd;
-		_configSchema = schema;
 	}
 
 	return self;
