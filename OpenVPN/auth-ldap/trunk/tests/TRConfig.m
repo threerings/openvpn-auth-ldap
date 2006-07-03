@@ -55,7 +55,7 @@ START_TEST (test_initWithFD) {
 	fail_if(configFD == -1, "open() returned -1");
 
 	/* Initialize the configuration parser */
-	config = [[TRConfig alloc] initWithFD: configFD];
+	config = [[TRConfig alloc] initWithFD: configFD configDelegate: nil];
 	fail_if(config == NULL, "-[[TRConfig alloc] initWithFD:] returned NULL");
 
 	/* Parse the configuration file */
