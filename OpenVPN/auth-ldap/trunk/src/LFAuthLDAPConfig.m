@@ -108,15 +108,15 @@ static struct {
 	if (![config parseConfig])
 		goto error;
 
-	[config dealloc];
+	[config release];
 #endif
 
 	return self;
 
 error:
 	if (config)
-		[config dealloc];
-	[self dealloc];
+		[config release];
+	[self release];
 	return (NULL);
 }
 

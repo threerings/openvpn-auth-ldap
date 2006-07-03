@@ -36,7 +36,10 @@
 #include <config.h>
 #endif
 
+#include <assert.h>
+
 #include "TRObject.h"
+
 /*
  * Apple's Obj-C compiler assumes that all objects
  * inherit from NSObject, and must call [super dealloc]
@@ -46,6 +49,9 @@
  * So, let's pretend to give Object a dealloc method,
  * but never call it.
  * Thanks Apple!
+ *
+ * Additionally, we implement brain-dead, non-thread-safe
+ * reference counting.
  */ 
 @interface Object (AppleAddedAReallyStupidGCCWarning)
 - (void) dealloc;
@@ -53,12 +59,40 @@
 
 @implementation TRObject
 
+- (id) init {
+	self = [super init];
+	if (!self)
+		return self;
+
+	_refCount = 1;
+	return self;
+}
+
 - (void) dealloc {
 	[super free];
 
 	/* Make Apple's objc compiler be quiet */
 	if (false)
 		[super dealloc];
+}
+
+- (unsigned int) refCount {
+	return _refCount;
+}
+
+- (id) retain {
+	_refCount++;
+	return self;
+}
+
+- (void) release {
+	/* This must never occur */
+	assert(_refCount >= 1);
+
+	/* Decrement refcount, if zero, dealloc */
+	_refCount--;
+	if (!_refCount)
+		[self dealloc];
 }
 
 @end

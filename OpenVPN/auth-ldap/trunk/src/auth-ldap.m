@@ -134,7 +134,7 @@ static LFString *rfc2253_quote(const char *name)
 		index = [unquotedName indexToCharset: specialChars];
 		temp = [unquotedName substringFromIndex: index];
 		c = [temp charAtIndex: 0];
-		[temp dealloc];
+		[temp release];
 
 		/* Append it, too! */
 		[result appendChar: c];
@@ -142,14 +142,14 @@ static LFString *rfc2253_quote(const char *name)
 		/* Move unquotedName past the special character */
 		temp = [unquotedName substringFromCharset: specialChars];
 
-		[unquotedName dealloc];
+		[unquotedName release];
 		unquotedName = temp;
 	}
 
 	/* Append the remainder, if any */
 	if (unquotedName) {
 		[result appendString: unquotedName];
-		[unquotedName dealloc];
+		[unquotedName release];
 	}
 
 	return (result);
@@ -181,16 +181,16 @@ static LFString *mapUserToDN(const char *template, const char *username) {
 
 		/* Move templateString past the %u */
 		temp = [templateString substringFromCString: userFormat];
-		[templateString dealloc];
+		[templateString release];
 		templateString = temp;
 	}
 
-	[quotedName dealloc];
+	[quotedName release];
 
 	/* Append the remainder, if any */
 	if (templateString) {
 		[result appendString: templateString];
-		[templateString dealloc];
+		[templateString release];
 	}
 
 	return (result);
@@ -254,7 +254,7 @@ openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 
 	free(ctx->dnTemplates);
 
-	[ctx->config dealloc];
+	[ctx->config release];
 	free (handle);
 }
 
@@ -279,18 +279,18 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 		dn = mapUserToDN(ctx->dnTemplates[i], username);
 		if (!dn) {
 			fprintf(stderr, "Invalid DN template: %s\n", ctx->dnTemplates[i]);
-			[dn dealloc];
+			[dn release];
 			continue;
 		}
 		if ([ldap bindWithDN: [dn cString] password: password]) {
-			[dn dealloc];
+			[dn release];
 			[ldap unbind];
-			[ldap dealloc];
+			[ldap release];
 			return (OPENVPN_PLUGIN_FUNC_SUCCESS);
 		}
-		[dn dealloc];
+		[dn release];
 	}
 
-	[ldap dealloc];
+	[ldap release];
 	return (OPENVPN_PLUGIN_FUNC_ERROR);
 }

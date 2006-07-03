@@ -42,7 +42,7 @@
 
 - (void) dealloc {
 	if (_string)
-		[_string dealloc];
+		[_string release];
 	[super dealloc];
 }
 
@@ -54,7 +54,7 @@
 		_lineNumber = line;
 		_string = [[LFString alloc] initWithBytes: data numBytes: length];
 		if (!_string) {
-			[self dealloc];
+			[self release];
 			return NULL;
 		}
 	}

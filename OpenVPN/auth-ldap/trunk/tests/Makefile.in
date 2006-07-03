@@ -10,6 +10,7 @@ include ${top_builddir}/Mk/compile.mk
 TEST_OBJS=	tests.o \
 		LFString.o \
 		LFAuthLDAPConfig.o \
+		TRObject.o \
 		TRConfigToken.o \
 		TRConfigLexer.o \
 		TRConfig.o \

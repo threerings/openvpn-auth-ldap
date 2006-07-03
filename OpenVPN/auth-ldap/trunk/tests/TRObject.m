@@ -1,6 +1,6 @@
 /*
- * TRConfig.m
- * Generic Configuration Parser
+ * TRObject.m
+ * TRObject Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -15,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of any contributors
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -36,54 +36,36 @@
 #include <config.h>
 #endif
 
-#include "TRConfig.h"
+#include <check.h>
 
-@implementation TRConfig
+#include <src/TRObject.h>
 
-/*!
- * Initialize and return a TRConfig parser.
- * @param fd: A file descriptor open for reading. This file descriptor will be
- * 		mmap()ed, and thus must reference a file.
- */
-- (id) initWithFD: (int) fd configSchema: (TRConfigSectionSchema *) schema {
-	self = [self init];
+START_TEST (test_retainRelease) {
+	TRObject *obj;
 
-	if (self) {
-		_fd = fd;
-		_configSchema = schema;
-	}
+	/* Initialize the object */
+	obj = [[TRObject alloc] init];
+	fail_unless([obj refCount] == 1, "Newly initialized TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
 
-	return self;
+	/* Increment the refcount */
+	[obj retain];
+	fail_unless([obj refCount] == 2, "Retained TRObject has unexpected reference count (Expected 2, got %d)", [obj refCount]);
+
+	/* Decrement the refcount */
+	[obj release];
+	fail_unless([obj refCount] == 1, "Released TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
+
+	/* Deallocate the object */
+	[obj release];
 }
+END_TEST
 
-/*!
- * Parse the configuration file
- * @result true on success, false on failure.
- */
-- (bool) parseConfig {
-	TRConfigLexer *lexer = NULL;
-	TRConfigToken *token;
-	void *parser;
+Suite *TRObject_suite(void) {
+	Suite *s = suite_create("TRObject");
 
-	/* Initialize our lexer */
-	lexer = [[TRConfigLexer alloc] initWithFD: _fd];
-	if (lexer == NULL)
-		return false;
+	TCase *tc_refcount = tcase_create("Reference Counting");
+	suite_add_tcase(s, tc_refcount);
+	tcase_add_test(tc_refcount, test_retainRelease);
 
-	/* Initialize the parser */
-	parser = TRConfigParseAlloc(malloc);
-
-	/* Scan in tokens and hand them off to the parser */
-	while ((token = [lexer scan]) != NULL) {
-		TRConfigParse(parser, [token tokenID], token);
-		// [token release]
-	}
-	/* Signal EOF and clean up */
-	TRConfigParse(parser, 0, NULL);
-	TRConfigParseFree(parser, free);
-	[lexer release];
-
-	return true;
+	return s;
 }
-
-@end

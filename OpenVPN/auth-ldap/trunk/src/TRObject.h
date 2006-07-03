@@ -43,7 +43,13 @@
 #include <objc/Object.h>
 
 @interface TRObject : Object {
+	unsigned int _refCount;
 }
+
+- (id) init;
+- (unsigned int) refCount;
+- (id) retain;
+- (void) release;
 
 - (void) dealloc;
 

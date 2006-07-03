@@ -115,7 +115,7 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 
 	if (!ldapConn) {
 		warnx("Unable to initialize LDAP server %s", [config url]);
-		[self dealloc];
+		[self release];
 		return (NULL);
 	}
 
@@ -128,7 +128,7 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	arg = LDAP_VERSION3;
 	if (ldap_set_option(ldapConn, LDAP_OPT_PROTOCOL_VERSION, &arg) != LDAP_OPT_SUCCESS) {
 		warnx("Unable to enable LDAPv3.");
-		[self dealloc];
+		[self release];
 		return (NULL);
 	}
 
@@ -136,7 +136,7 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 		err = ldap_start_tls_s(ldapConn, NULL, NULL);
 		if (err != LDAP_SUCCESS) {
 			warnx("Unable to enable STARTTLS: %s", ldap_err2string(err));
-			[self dealloc];
+			[self release];
 			return (NULL);
 		}
 	}
