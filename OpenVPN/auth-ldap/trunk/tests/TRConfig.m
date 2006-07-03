@@ -46,8 +46,24 @@
 #define DATA_PATH(relative)	TEST_DATA "/" relative
 #define TEST_CONF		DATA_PATH("TRConfig.conf")
 
+
+/*
+ * Mock configuration delegate
+ */
+@interface MockConfigDelegate : TRObject <TRConfigDelegate>
+- (bool) parseToken: (TRConfigToken *) token;
+@end
+
+@implementation MockConfigDelegate
+- (bool) parseToken: (TRConfigToken *) token {
+	/* Do nothing */
+	return YES;
+}
+@end
+
 START_TEST (test_initWithFD) {
 	TRConfig *config;
+	MockConfigDelegate *delegate;
 	int configFD;
 
 	/* Open our configuration file */
@@ -55,12 +71,15 @@ START_TEST (test_initWithFD) {
 	fail_if(configFD == -1, "open() returned -1");
 
 	/* Initialize the configuration parser */
-	config = [[TRConfig alloc] initWithFD: configFD configDelegate: nil];
+	delegate = [[MockConfigDelegate alloc] init];
+	config = [[TRConfig alloc] initWithFD: configFD configDelegate: delegate];
 	fail_if(config == NULL, "-[[TRConfig alloc] initWithFD:] returned NULL");
 
 	/* Parse the configuration file */
 	fail_unless([config parseConfig], "-[TRConfig parse] returned NULL");
 
+	/* Clean up */
+	[delegate release];
 	close(configFD);
 }
 END_TEST
