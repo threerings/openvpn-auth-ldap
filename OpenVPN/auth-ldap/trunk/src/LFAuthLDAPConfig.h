@@ -60,7 +60,9 @@ typedef enum {
 }
 
 - (id) initWithConfigFile: (const char *) fileName;
-- (bool) parseToken: (TRConfigToken *) token;
+- (bool) setKey: (TRConfigToken *) key value: (TRConfigToken *) value;
+- (bool) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
+- (bool) endSection: (TRConfigToken *) sectionEnd;
 
 - (const char *) url;
 - (void) setURL: (const char *) newURL;

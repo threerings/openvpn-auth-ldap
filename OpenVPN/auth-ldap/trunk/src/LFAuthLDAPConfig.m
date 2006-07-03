@@ -123,6 +123,21 @@ error:
 	return YES;
 }
 
+- (bool) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
+	fprintf(stderr, "Setting key\n");
+	return YES;
+}
+
+- (bool) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name {
+	fprintf(stderr, "Starting section\n");
+	return YES;
+}
+
+- (bool) endSection: (TRConfigToken *) sectionEnd {
+	fprintf(stderr, "Ending section\n");
+	return YES;
+}
+
 - (int) tlsEnabled {
 	return (tlsEnabled);
 }

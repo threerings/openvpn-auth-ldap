@@ -54,7 +54,9 @@ typedef enum {
 #include "TRConfigLexer.h"
 
 @protocol TRConfigDelegate
-- (bool) parseToken: (TRConfigToken *) token;
+- (bool) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
+- (bool) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
+- (bool) endSection: (TRConfigToken *) sectionEnd;
 @end
 
 #include "TRConfigParser.h"

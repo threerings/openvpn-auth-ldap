@@ -46,6 +46,7 @@
 %token_type {TRConfigToken *}
 %token_prefix {TOKEN_}
 %extra_argument {id <TRConfigDelegate> configDelegate}
+%default_destructor {[$$ release];}
 
 %parse_failure {
 	printf("Giving up. Parser is hopelessly lost...\n");
@@ -57,8 +58,8 @@ lines ::= .
 lines ::= lines declaration.
 lines ::= lines section.
 
-declaration ::= KEY(A) VALUE(B). { printf("Setting '%s' to '%s'\n", [A cString], [B cString]); }
+declaration ::= KEY(key) VALUE(keyValue). { [configDelegate setKey: key value: keyValue]; }
 
-section ::= declare_section lines SECTION_END. { printf("Section terminated\n"); }
-declare_section ::= SECTION_START(type) SECTION_NAME(name). { printf("Section %s named %s\n", [type cString], [name cString]); }
-declare_section ::= SECTION_START(type). { printf("Section %s unnamed\n", [type cString]); }
+section ::= declare_section lines SECTION_END(end). { [configDelegate endSection: end]; }
+declare_section ::= SECTION_START(type) SECTION_NAME(name). { [configDelegate startSection: type sectionName: name]; }
+declare_section ::= SECTION_START(type). { [configDelegate startSection: type sectionName: nil]; }
