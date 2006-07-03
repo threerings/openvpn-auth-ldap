@@ -32,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRCONFIGOBJECT_H
-#define TRCONFIGOBJECT_H
+#ifndef TROBJECT_H
+#define TROBJECT_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -55,4 +55,4 @@
 
 @end
 
-#endif /* TRCONFIGOBJECT_H */
+#endif /* TROBJECT_H */
