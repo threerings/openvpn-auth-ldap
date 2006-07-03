@@ -43,25 +43,13 @@
 
 #include "auth-ldap.h"
 
-/* All Section Types */
+/* All Variables and Section Types */
 typedef enum {
-	LF_NO_SECTION,		/* Top-level */
-	LF_LDAP_SECTION,	/* LDAP Server Settings */
-	LF_GROUP_SECTION,	/* LDAP Group Settings */
-	LF_UNKNOWN_SECTION	/* An Unknown Section Type */
-} AuthLDAPConfigSections;
+	/* All Section Types */
+	LF_NO_SECTION,			/* Top-level */
+	LF_LDAP_SECTION,		/* LDAP Server Settings */
+	LF_GROUP_SECTION,		/* LDAP Group Settings */
 
-static struct {
-	const char *name;
-	AuthLDAPConfigSections opcode;
-} AuthLDAPConfigSectionTypes[] = {
-	{ "LDAP",	LF_LDAP_SECTION },
-	{ "Group",	LF_GROUP_SECTION },
-	{ NULL, 0 }
-};
-
-/* All Variables */
-typedef enum {
 	/* Generic LDAP Search Variables */
 	LF_LDAP_BASEDN,			/* Base DN for Search */
 	LF_LDAP_SEARCH_FILTER,		/* Search Filter */
@@ -82,24 +70,31 @@ typedef enum {
 	LF_GROUP_MEMBER_ATTRIBUTE,	/* Group Membership Attribute */
 
 	/* Misc Shared */
-	LF_UNKNOWN_OPTION		/* Unknown Option */
-} AuthLDAPConfigOptions;
+	LF_UNKNOWN_OPCODE,		/* Unknown Opcode */
+} ConfigOpcode;
+
+
+typedef struct OpcodeTable {
+	const char *name;
+	ConfigOpcode opcode;
+} OpcodeTable;
+
+/* Section Types */
+static OpcodeTable SectionTypes[] = {
+	{ "LDAP",	LF_LDAP_SECTION },
+	{ "Group",	LF_GROUP_SECTION },
+	{ NULL, 0 }
+};
 
 /* Generic LDAP Search Variables */
-static struct {
-	const char *name;
-	AuthLDAPConfigOptions opcode;
-} AuthLDAPGenericLDAPVariables[] = {
+static OpcodeTable GenericLDAPVariables[] = {
 	{ "BaseDN",		LF_LDAP_BASEDN},
 	{ "SearchFilter",	LF_LDAP_SEARCH_FILTER},
 	{ NULL, 0 }
 };
 
 /* LDAP Section Variables */
-static struct {
-	const char *name;
-	AuthLDAPConfigOptions opcode;
-} AuthLDAPSectionVariables[] = {
+static OpcodeTable LDAPSectionVariables[] = {
 	{ "URL",		LF_LDAP_URL },
 	{ "Timeout",		LF_LDAP_TIMEOUT },
 	{ "BindDN",		LF_LDAP_BINDDN },
@@ -114,13 +109,21 @@ static struct {
 };
 
 /* Group Section Variables */
-static struct {
-	const char *name;
-	AuthLDAPConfigOptions opcode;
-} AuthLDAPGroupSectionVariables[] = {
+static OpcodeTable GroupSectionVariables[] = {
 	{ "MemberAttribute",	LF_GROUP_MEMBER_ATTRIBUTE },
 	{ NULL, 0 }
 };
+
+/* Parse a string, returning the associated opcode from the supplied table */
+static ConfigOpcode parse_opcode (const char *cp, OpcodeTable table[]) {
+	unsigned int i;
+	for (i = 0; table[i].name; i++)
+		if (strcasecmp(cp, table[i].name) == 0)
+			return (table[i].opcode);
+
+	/* Unknown opcode */
+	return (LF_UNKNOWN_OPCODE);
+}
 
 @implementation LFAuthLDAPConfig
 
@@ -181,12 +184,15 @@ error:
 }
 
 - (bool) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
-	fprintf(stderr, "Setting key\n");
+	parse_opcode([key cString], LDAPSectionVariables);
+	parse_opcode([key cString], GenericLDAPVariables);
+	parse_opcode([key cString], GroupSectionVariables);
+	fprintf(stderr, "Setting key %s (%d): %s\n", [key cString], parse_opcode([key cString], LDAPSectionVariables), [value cString]);
 	return YES;
 }
 
 - (bool) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name {
-	fprintf(stderr, "Starting section %s\n", [sectionType cString]);
+	fprintf(stderr, "Starting section %s : %d\n", [sectionType cString], parse_opcode([sectionType cString], SectionTypes));
 	return YES;
 }
 
