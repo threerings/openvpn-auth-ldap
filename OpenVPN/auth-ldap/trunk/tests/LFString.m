@@ -52,7 +52,7 @@ START_TEST (test_initWithCString) {
 	fail_if(str == NULL, "-[[LFString alloc] initWithCString:] returned NULL");
 	cString = [str cString];
 	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
-	[str dealloc];
+	[str release];
 }
 END_TEST
 
@@ -66,8 +66,8 @@ START_TEST (test_initWithString) {
 	cString = [str cString];
 	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
-	[srcString dealloc];
-	[str dealloc];
+	[srcString release];
+	[str release];
 }
 END_TEST
 
@@ -82,7 +82,7 @@ START_TEST (test_initWithBytes) {
 	cString = [str cString];
 	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
-	[str dealloc];
+	[str release];
 
 	/* Test with NULL terminated data */
 	str = [[LFString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING)];
@@ -90,7 +90,7 @@ START_TEST (test_initWithBytes) {
 	cString = [str cString];
 	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
-	[str dealloc];
+	[str release];
 }
 END_TEST
 
@@ -99,7 +99,7 @@ START_TEST (test_length) {
 	size_t length = [str length];
 
 	fail_unless(length == sizeof(TEST_STRING), "-[LFString length] returned incorrect value. (Expected %u, got %u)", sizeof(TEST_STRING), length);
-	[str dealloc];
+	[str release];
 }
 END_TEST
 
@@ -113,21 +113,21 @@ START_TEST (test_intValue) {
 	success = [str intValue: &i];
 	fail_unless(success, "-[LFString intValue:] returned false");
 	fail_unless(i == 20, "-[LFString intValue:] returned incorrect value. (Expected %d, got %d)", 20, i);
-	[str dealloc];
+	[str release];
 
 	/* Test with INT_MAX */
 	str = [[LFString alloc] initWithCString: "2147483647"];
 	success = [str intValue: &i];
 	fail_if(success, "-[LFstring intValue:] returned true for INT_MAX.");
 	fail_unless(i == INT_MAX, "-[LFString intValue: returned incorrect value for INT_MAX. (Expected %d, got %d)", INT_MAX, i);
-	[str dealloc];
+	[str release];
 
 	/* Test with INT_MIN */
 	str = [[LFString alloc] initWithCString: "-2147483648"];
 	success = [str intValue: &i];
 	fail_if(success, "-[LFstring intValue:] returned true for INT_MIN.");
 	fail_unless(i == INT_MIN, "-[LFString intValue: returned incorrect value for INT_MIN. (Expected %d, got %d)", INT_MIN, i);
-	[str dealloc];
+	[str release];
 }
 END_TEST
 

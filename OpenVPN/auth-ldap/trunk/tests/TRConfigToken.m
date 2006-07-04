@@ -62,7 +62,7 @@ START_TEST (test_initWithBytes) {
 	lineNumber = [token lineNumber];
 	fail_unless(lineNumber == TEST_LINE_NUMBER, "-[TRConfigToken lineNumber] returned incorrect value. (Expected %d, got %d)", TEST_LINE_NUMBER, lineNumber);
 
-	[token dealloc];
+	[token release];
 }
 END_TEST
 
@@ -79,7 +79,7 @@ START_TEST (test_intValue) {
 	fail_unless([token intValue: &value], "-[TRConfigToken value] returned NULL");
 	fail_unless(value == 24, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", 24, value);
 
-	[token dealloc];
+	[token release];
 }
 END_TEST
 

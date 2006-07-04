@@ -63,7 +63,7 @@ START_TEST (test_initWithConfigFile) {
 	fail_unless(strcmp(url, LDAP_URL) == 0, "-[LFAuthLDAPConfig url] returned incorrect value. (Expected %s, Got %s)", LDAP_URL, url);
 #endif
 
-	[config dealloc];
+	[config release];
 }
 END_TEST
 
@@ -73,7 +73,7 @@ START_TEST (test_initWithIncorrectlyNamedSection) {
 	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_NAMED];
 	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted a named LDAP section.");
 
-	[config dealloc];
+	[config release];
 }
 END_TEST
 
