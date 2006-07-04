@@ -46,7 +46,7 @@
 %token_type {TRConfigToken *}
 %token_prefix {TOKEN_}
 %extra_argument {id <TRConfigDelegate> configDelegate}
-%default_destructor {[$$ release];}
+%token_destructor {[$$ release];}
 
 %syntax_error {
 	[configDelegate parseError: TOKEN];
@@ -57,8 +57,22 @@ lines ::= .
 lines ::= lines declaration.
 lines ::= lines section.
 
-declaration ::= KEY(key) VALUE(keyValue). { [configDelegate setKey: key value: keyValue]; }
+declaration ::= KEY(key) VALUE(keyValue). {
+	    [configDelegate setKey: key value: keyValue];
+	    [key release];
+	    [keyValue release];
+}
 
-section ::= declare_section lines SECTION_END(end). { [configDelegate endSection: end]; }
-declare_section ::= SECTION_START(type) SECTION_NAME(name). { [configDelegate startSection: type sectionName: name]; }
-declare_section ::= SECTION_START(type). { [configDelegate startSection: type sectionName: nil]; }
+section ::= declare_section lines SECTION_END(end). {
+	[configDelegate endSection: end];
+	[end release];
+}
+declare_section ::= SECTION_START(type) SECTION_NAME(name). {
+		[configDelegate startSection: type sectionName: name];
+		[type release];
+		[name release];
+}
+declare_section ::= SECTION_START(type). {
+		[configDelegate startSection: type sectionName: nil];
+		[type release];
+}
