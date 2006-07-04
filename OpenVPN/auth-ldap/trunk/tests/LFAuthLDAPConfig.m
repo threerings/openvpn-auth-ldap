@@ -47,6 +47,7 @@
 /* Path Constants */
 #define DATA_PATH(relative)	TEST_DATA "/" relative
 #define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
+#define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
 
 START_TEST (test_initWithConfigFile) {
 	LFAuthLDAPConfig *config;
@@ -66,13 +67,26 @@ START_TEST (test_initWithConfigFile) {
 }
 END_TEST
 
+START_TEST (test_initWithIncorrectlyNamedSection) {
+	LFAuthLDAPConfig *config;
+
+	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_NAMED];
+	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted a named LDAP section.");
+
+	[config dealloc];
+}
+END_TEST
+
+
+
 
 Suite *LFAuthLDAPConfig_suite(void) {
 	Suite *s = suite_create("LFAuthLDAPConfig");
 
-	TCase *tc_string = tcase_create("Parse Configuration");
-	suite_add_tcase(s, tc_string);
-	tcase_add_test(tc_string, test_initWithConfigFile);
+	TCase *tc_parse = tcase_create("Parse Configuration");
+	suite_add_tcase(s, tc_parse);
+	tcase_add_test(tc_parse, test_initWithConfigFile);
+	tcase_add_test(tc_parse, test_initWithIncorrectlyNamedSection);
 
 	return s;
 }

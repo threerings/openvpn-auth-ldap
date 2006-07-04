@@ -34,9 +34,11 @@
 #define LFAUTHLDAPCONFIG_H
 
 #include "TRObject.h"
+#include "TRArray.h"
 #include "TRConfig.h"
 
 @interface LFAuthLDAPConfig : TRObject <TRConfigDelegate> {
+	/* LDAP Settings */
 	char *url;
 	int tlsEnabled;
 	int timeout;
@@ -45,6 +47,9 @@
 	char *tlsCertFile;
 	char *tlsKeyFile;
 	char *tlsCipherSuite;
+
+	/* Parser State */
+	TRArray *_sectionStack;
 }
 
 - (id) initWithConfigFile: (const char *) fileName;
