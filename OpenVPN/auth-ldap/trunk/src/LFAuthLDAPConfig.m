@@ -45,7 +45,7 @@
 
 /* Useful Macros */
 #define ERROR_NAMED(section, name) { \
-	warn("Auth-LDAP Configuration Error: %s section types must be unnamed (Line: %u)\n", [section cString], [name lineNumber]); \
+	warn("Auth-LDAP Configuration Error: %s section types must be unnamed (Line: %u)", [section cString], [name lineNumber]); \
 	[_configDriver errorStop]; \
 }
 
@@ -264,6 +264,15 @@ error:
 - (void) endSection: (TRConfigToken *) sectionEnd {
 	return;
 }
+
+- (void) parseError: (TRConfigToken *) badToken {
+	if (badToken)
+		warn("A parse error occured while attempting to comprehend %s, on line %u", [badToken cString], [badToken lineNumber]);
+	else
+		warn("A parse error occured while attempting to read your configuration file");
+}
+
+/* Accessors */
 
 - (int) tlsEnabled {
 	return (tlsEnabled);

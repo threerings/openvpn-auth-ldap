@@ -54,10 +54,14 @@
 }
 
 - (id) initWithConfigFile: (const char *) fileName;
+
+/* TRConfigDelegate */
 - (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value;
 - (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
 - (void) endSection: (TRConfigToken *) sectionEnd;
+- (void) parseError: (TRConfigToken *) badToken;
 
+/* Accessors */
 - (const char *) url;
 - (void) setURL: (const char *) newURL;
 

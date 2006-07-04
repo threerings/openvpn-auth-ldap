@@ -1,5 +1,5 @@
 /*
- * configparser.lemon
+ * TRConfigParser.lemon
  * Configuration Parser
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -48,9 +48,8 @@
 %extra_argument {id <TRConfigDelegate> configDelegate}
 %default_destructor {[$$ release];}
 
-%parse_failure {
-	printf("Giving up. Parser is hopelessly lost...\n");
-	exit(1);
+%syntax_error {
+	[configDelegate parseError: TOKEN];
 }
 
 config_file ::= lines.

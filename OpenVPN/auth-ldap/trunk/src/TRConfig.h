@@ -57,6 +57,7 @@ typedef enum {
 - (void) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
 - (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
 - (void) endSection: (TRConfigToken *) sectionEnd;
+- (void) parseError: (TRConfigToken *) badToken;
 @end
 
 #include "TRConfigParser.h"
