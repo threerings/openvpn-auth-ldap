@@ -44,7 +44,10 @@
 #include "auth-ldap.h"
 
 /* Useful Macros */
-#define ERROR_NAMED(section, name) { warn("Auth-LDAP Configuration Error: %s section types must be unnamed (Line: %u)\n", [section cString], [name lineNumber]); }
+#define ERROR_NAMED(section, name) { \
+	warn("Auth-LDAP Configuration Error: %s section types must be unnamed (Line: %u)\n", [section cString], [name lineNumber]); \
+	[_configDriver errorStop]; \
+}
 
 /* All Variables and Section Types */
 typedef enum {
@@ -143,18 +146,16 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 @implementation SectionState
 - (id) init {
 	self = [super init];
-	if (!self)
-		return self;
+	if (self)
+		opcode = LF_UNKNOWN_OPCODE;
 
-	opcode = LF_UNKNOWN_OPCODE;
 	return self;
 }
 
 - (id) initWithOpcode: (ConfigOpcode) anOpcode {
-	if (![self init])
-		return self;
+	if ([self init])
+		opcode = anOpcode;
 
-	opcode = anOpcode;
 	return self;
 }
 @end
@@ -182,7 +183,6 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 }
 
 - (id) initWithConfigFile: (const char *) fileName {
-	TRConfig *config = NULL;
 	int configFD;
 
 	/* Initialize */
@@ -203,35 +203,34 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 	}
 
 	/* Initialize the config parser */
-	config = [[TRConfig alloc] initWithFD: configFD
+	_configDriver = [[TRConfig alloc] initWithFD: configFD
 				 configDelegate: self];
-	if (config == NULL)
+	if (_configDriver == NULL)
 		goto error;
 
 	/* Parse the configuration file */
-	if (![config parseConfig])
+	if (![_configDriver parseConfig])
 		goto error;
 
-	[config release];
+	[_configDriver release];
 
 	return self;
 
 error:
-	if (config)
-		[config release];
+	if (_configDriver)
+		[_configDriver release];
 
 	[self release];
 	return (NULL);
 }
 
-- (bool) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
+- (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
 	parse_opcode(key, LDAPSectionVariables);
 	parse_opcode(key, GenericLDAPVariables);
 	parse_opcode(key, GroupSectionVariables);
-	return YES;
 }
 
-- (bool) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name {
+- (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name {
 	ConfigOpcode opcode;
 
 	/* Enter handler for the current state */
@@ -244,14 +243,14 @@ error:
 			opcode = parse_opcode(sectionType, SectionTypes);
 			switch (opcode) {
 				case LF_LDAP_SECTION:
+					printf("\nLDAP Section\n");
 					if (name) {
 						ERROR_NAMED(sectionType, name);
-						return NO;
+						return;
 					}
-					printf("\nLDAP Section\n");
 					break;
 				default:
-					printf("\nUnknown Section\n");
+					printf("\nUnknown Section %s %s\n", [sectionType cString], [name cString]);
 					break;
 			}
 			break;
@@ -259,11 +258,11 @@ error:
 			break;
 	}
 
-	return YES;
+	return;
 }
 
-- (bool) endSection: (TRConfigToken *) sectionEnd {
-	return YES;
+- (void) endSection: (TRConfigToken *) sectionEnd {
+	return;
 }
 
 - (int) tlsEnabled {

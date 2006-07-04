@@ -49,13 +49,14 @@
 	char *tlsCipherSuite;
 
 	/* Parser State */
+	TRConfig *_configDriver;
 	TRArray *_sectionStack;
 }
 
 - (id) initWithConfigFile: (const char *) fileName;
-- (bool) setKey: (TRConfigToken *) key value: (TRConfigToken *) value;
-- (bool) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
-- (bool) endSection: (TRConfigToken *) sectionEnd;
+- (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value;
+- (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
+- (void) endSection: (TRConfigToken *) sectionEnd;
 
 - (const char *) url;
 - (void) setURL: (const char *) newURL;

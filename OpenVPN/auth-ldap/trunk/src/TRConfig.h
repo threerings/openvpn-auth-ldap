@@ -54,20 +54,23 @@ typedef enum {
 #include "TRConfigLexer.h"
 
 @protocol TRConfigDelegate
-- (bool) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
-- (bool) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
-- (bool) endSection: (TRConfigToken *) sectionEnd;
+- (void) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
+- (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
+- (void) endSection: (TRConfigToken *) sectionEnd;
 @end
 
 #include "TRConfigParser.h"
 
 @interface TRConfig : TRObject {
 	int _fd;
+	bool _error;
 	id <TRConfigDelegate> _delegate;
 }
 
 - (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate;
 - (bool) parseConfig;
+/* Callback used to stop the running parser */
+- (void) errorStop;
 
 @end
 

@@ -51,6 +51,7 @@
 	if (self) {
 		_fd = fd;
 		_delegate = delegate;
+		_error = NO;
 	}
 
 	return self;
@@ -76,14 +77,26 @@
 	/* Scan in tokens and hand them off to the parser */
 	while ((token = [lexer scan]) != NULL) {
 		TRConfigParse(parser, [token tokenID], token, _delegate);
-		// [token release]
+		/* If we've been asked to stop, do so */
+		if (_error)
+			break;
 	}
 	/* Signal EOF and clean up */
 	TRConfigParse(parser, 0, NULL, _delegate);
 	TRConfigParseFree(parser, free);
 	[lexer release];
 
+	/* Did an error occur? */
+	if (_error)
+		return false;
+
 	return true;
+}
+
+/* Re-entrant callback used to signal an error by the parser delegate, called
+ * from within the bowels of TRConfigParse() */
+- (void) errorStop {
+	_error = YES;
 }
 
 @end
