@@ -47,6 +47,7 @@
 #define ERROR_NAMED(section, name) { \
 	warnx("Auth-LDAP Configuration Error: %s section types must be unnamed (%s:%u).", [section cString], _configFileName, [name lineNumber]); \
 	[_configDriver errorStop]; \
+	return; \
 }
 
 /* All Variables and Section Types */
@@ -243,11 +244,8 @@ error:
 			opcode = parse_opcode(sectionType, SectionTypes);
 			switch (opcode) {
 				case LF_LDAP_SECTION:
-					printf("\nLDAP Section\n");
-					if (name) {
+					if (name)
 						ERROR_NAMED(sectionType, name);
-						return;
-					}
 					break;
 				default:
 					printf("\nUnknown Section %s %s\n", [sectionType cString], [name cString]);
