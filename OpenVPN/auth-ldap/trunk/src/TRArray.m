@@ -61,9 +61,10 @@ typedef struct _TRArrayStack {
 	TRArrayStack *node;
 
 	/* Clean up our stack */
-	for (node = _stack; node->next; node = node->next) {
+	for (node = _stack; _stack; node = _stack) {
 		/* Release the associated object */
 		[node->object release];
+		_stack = node->next;
 		free(node);
 	}
 	[super dealloc];
