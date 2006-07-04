@@ -49,6 +49,7 @@
 	char *tlsCipherSuite;
 
 	/* Parser State */
+	const char *_configFileName;
 	TRConfig *_configDriver;
 	TRArray *_sectionStack;
 }

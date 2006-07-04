@@ -45,7 +45,7 @@
 
 /* Useful Macros */
 #define ERROR_NAMED(section, name) { \
-	warn("Auth-LDAP Configuration Error: %s section types must be unnamed (Line: %u)", [section cString], [name lineNumber]); \
+	warnx("Auth-LDAP Configuration Error: %s section types must be unnamed (%s:%u).", [section cString], _configFileName, [name lineNumber]); \
 	[_configDriver errorStop]; \
 }
 
@@ -176,9 +176,6 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 	if (tlsCipherSuite)
 		free(tlsCipherSuite);
 
-	if (_sectionStack)
-		[_sectionStack release];
-
 	[super dealloc];
 }
 
@@ -196,9 +193,10 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 	[_sectionStack addObject: [[SectionState alloc] initWithOpcode: LF_NO_SECTION]];
 
 	/* Open our configuration file */
-	configFD = open(fileName, O_RDONLY);
+	_configFileName = fileName;
+	configFD = open(_configFileName, O_RDONLY);
 	if (configFD == -1) {
-		warn("Failed to open \"%s\" for reading: %s", fileName, strerror(errno));
+		warn("Failed to open \"%s\" for reading", _configFileName);
 		goto error;
 	}
 
@@ -213,6 +211,8 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 		goto error;
 
 	[_configDriver release];
+	[_sectionStack release];
+	_configFileName = NULL;
 
 	return self;
 
@@ -267,9 +267,9 @@ error:
 
 - (void) parseError: (TRConfigToken *) badToken {
 	if (badToken)
-		warn("A parse error occured while attempting to comprehend %s, on line %u", [badToken cString], [badToken lineNumber]);
+		warnx("A parse error occured while attempting to comprehend %s, on line %u.", [badToken cString], [badToken lineNumber]);
 	else
-		warn("A parse error occured while attempting to read your configuration file");
+		warnx("A parse error occured while attempting to read your configuration file.");
 }
 
 /* Accessors */
