@@ -51,25 +51,31 @@
  * Mock configuration delegate
  */
 @interface MockConfigDelegate : TRObject <TRConfigDelegate>
-- (bool) setKey: (TRConfigToken *) key value: (TRConfigToken *) value;
-- (bool) startSection: (TRConfigToken *) type sectionName: (TRConfigToken *) name;
-- (bool) endSection: (TRConfigToken *) sectionEnd;
+- (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value;
+- (void) startSection: (TRConfigToken *) type sectionName: (TRConfigToken *) name;
+- (void) endSection: (TRConfigToken *) sectionEnd;
+- (void) parseError: (TRConfigToken *) badToken;
 @end
 
 @implementation MockConfigDelegate
-- (bool) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
+- (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
 	/* Do nothing */
-	return YES;
+	return;
 }
 
-- (bool) startSection: (TRConfigToken *) type sectionName: (TRConfigToken *) name {
+- (void) startSection: (TRConfigToken *) type sectionName: (TRConfigToken *) name {
 	/* Do nothing */
-	return YES;
+	return;
 }
 
-- (bool) endSection: (TRConfigToken *) sectionEnd {
+- (void) endSection: (TRConfigToken *) sectionEnd {
 	/* Do nothing */
-	return YES;
+	return;
+}
+
+- (void) parseError: (TRConfigToken *) badToken {
+	/* Do nothing */
+	return;
 }
 @end
 
