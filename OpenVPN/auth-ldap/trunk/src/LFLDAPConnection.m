@@ -46,7 +46,7 @@ static int ldap_get_errno(LDAP *ld) {
 	return err;
 }
 
-static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
+static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	int err;
 	int arg;
 
@@ -97,7 +97,7 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 
 @implementation LFLDAPConnection
 
-+ (bool) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig {
++ (BOOL) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig {
 	return (ldap_set_tls_options(ldapConfig));
 }
 
@@ -144,7 +144,7 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	return (self);
 }
 
-- (bool) bindWithDN: (const char *) bindDN password: (const char *) password {
+- (BOOL) bindWithDN: (const char *) bindDN password: (const char *) password {
 	int msgid, err;
 	LDAPMessage *res;
 	struct berval cred;
@@ -185,7 +185,7 @@ static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	return (false);
 }
 
-- (bool) unbind {
+- (BOOL) unbind {
 	int err;
 	err = ldap_unbind_ext_s(ldapConn, NULL, NULL);
 	if (err != LDAP_SUCCESS) {

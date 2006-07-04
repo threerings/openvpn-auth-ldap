@@ -92,8 +92,8 @@
  * @param value Pointer where the integer value will be stored
  * @result true on success, false on failure.
  */
-- (bool) intValue: (int *) value {
-	bool result;
+- (BOOL) intValue: (int *) value {
+	BOOL result;
 
 	/* Check if the integer conversion has been cached */
 	if (_dataType == TOKEN_DATATYPE_INT) {

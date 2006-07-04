@@ -60,12 +60,31 @@ START_TEST (test_retainRelease) {
 }
 END_TEST
 
+START_TEST (test_isEqual) {
+	TRObject *obj;
+
+	/* Initialize the object */
+	obj = [[TRObject alloc] init];
+
+	fail_unless([obj isEqual: obj]);
+
+	/* Deallocate the object */
+	[obj release];
+}
+END_TEST
+
+
 Suite *TRObject_suite(void) {
 	Suite *s = suite_create("TRObject");
+
+	TCase *tc_general = tcase_create("General");
+	suite_add_tcase(s, tc_general);
+	tcase_add_test(tc_general, test_isEqual);
 
 	TCase *tc_refcount = tcase_create("Reference Counting");
 	suite_add_tcase(s, tc_refcount);
 	tcase_add_test(tc_refcount, test_retainRelease);
+
 
 	return s;
 }

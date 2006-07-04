@@ -43,12 +43,12 @@
 	LFAuthLDAPConfig *config;
 }
 
-+ (bool) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig;
++ (BOOL) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig;
 
 - (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig;
 
-- (bool) bindWithDN: (const char *) bindDN password: (const char *) password;
-- (bool) unbind;
+- (BOOL) bindWithDN: (const char *) bindDN password: (const char *) password;
+- (BOOL) unbind;
 
 @end
 

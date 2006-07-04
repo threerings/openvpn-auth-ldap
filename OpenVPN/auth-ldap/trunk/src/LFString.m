@@ -96,7 +96,7 @@
 	return (numBytes);
 }
 
-- (bool) intValue: (int *) value {
+- (BOOL) intValue: (int *) value {
 	long i;
 	char *endptr;
 	i = strtol(bytes, &endptr, 10);

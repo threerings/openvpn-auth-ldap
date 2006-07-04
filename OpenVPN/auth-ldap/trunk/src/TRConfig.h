@@ -64,12 +64,12 @@ typedef enum {
 
 @interface TRConfig : TRObject {
 	int _fd;
-	bool _error;
+	BOOL _error;
 	id <TRConfigDelegate> _delegate;
 }
 
 - (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate;
-- (bool) parseConfig;
+- (BOOL) parseConfig;
 /* Callback used to stop the running parser */
 - (void) errorStop;
 

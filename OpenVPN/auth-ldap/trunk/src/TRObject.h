@@ -42,7 +42,17 @@
 #include <stdbool.h>
 #include <objc/Object.h>
 
-@interface TRObject : Object {
+@protocol TRObject
+/* Reference counting */
+- (id) retain;
+- (void) release;
+
+/* Equality */
+- (BOOL) isEqual: (id) anObject;
+@end
+
+
+@interface TRObject : Object <TRObject> {
 	unsigned int _refCount;
 }
 
@@ -50,6 +60,7 @@
 - (unsigned int) refCount;
 - (id) retain;
 - (void) release;
+- (BOOL) isEqual: (id) anObject;
 
 - (void) dealloc;
 

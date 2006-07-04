@@ -97,6 +97,25 @@ START_TEST (test_removeObject) {
 }
 END_TEST
 
+START_TEST (test_containsObject) {
+	TRArray *array = [[TRArray alloc] init];
+	LFString *string1 = [[LFString alloc] initWithCString: "String 1"];
+
+	/* Fill our array */
+	[array addObject: string1];
+
+	/* Look for our object */
+	fail_unless([array containsObject: string1]);
+
+	/* And a known bad one ... */
+	fail_if([array containsObject: array]);
+
+	[array release];
+	[string1 release];
+}
+END_TEST
+
+
 Suite *TRArray_suite(void) {
 	Suite *s = suite_create("TRArray");
 
@@ -104,6 +123,7 @@ Suite *TRArray_suite(void) {
 	suite_add_tcase(s, tc_array);
 	tcase_add_test(tc_array, test_addObject);
 	tcase_add_test(tc_array, test_removeObject);
+	tcase_add_test(tc_array, test_containsObject);
 
 	return s;
 }

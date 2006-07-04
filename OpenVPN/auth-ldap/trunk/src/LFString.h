@@ -54,7 +54,7 @@
 - (const char *) cString;
 - (size_t) length;
 
-- (bool) intValue: (int *) value;
+- (BOOL) intValue: (int *) value;
 
 - (size_t) indexToCString: (const char *) cString;
 - (size_t) indexToCharset: (const char *) cString;

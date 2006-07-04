@@ -44,6 +44,7 @@
 - (void) addObject: (id) anObject;
 - (void) removeObject;
 - (id) lastObject;
+- (BOOL) containsObject: (id) anObject;
 
 @end
 

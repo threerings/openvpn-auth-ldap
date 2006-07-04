@@ -61,7 +61,7 @@
  * Parse the configuration file
  * @result true on success, false on failure.
  */
-- (bool) parseConfig {
+- (BOOL) parseConfig {
 	TRConfigLexer *lexer = NULL;
 	TRConfigToken *token;
 	void *parser;

@@ -72,7 +72,7 @@
 - (unsigned int) lineNumber;
 
 - (const char *) cString;
-- (bool) intValue: (int *) value;
+- (BOOL) intValue: (int *) value;
 
 @end
 

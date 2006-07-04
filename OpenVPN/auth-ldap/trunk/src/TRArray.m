@@ -98,4 +98,16 @@ typedef struct _TRArrayStack {
 	return _stack->object;
 }
 
+- (BOOL) containsObject: (id) anObject {
+	TRArrayStack *node;
+
+	/* Anything claim to be equal with anObject? */
+	for (node = _stack; node; node = node->next) {
+		if ([node->object isEqual: anObject])
+			return YES;
+	}
+
+	return NO;
+}
+
 @end

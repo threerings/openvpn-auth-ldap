@@ -85,6 +85,13 @@
 	return self;
 }
 
+- (BOOL) isEqual: (id) anObject {
+	if (self == anObject)
+		return YES;
+	else
+		return NO;
+}
+
 - (void) release {
 	/* This must never occur */
 	assert(_refCount >= 1);
