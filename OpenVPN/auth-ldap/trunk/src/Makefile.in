@@ -25,6 +25,7 @@ GEN_SRCS=	TRConfigParser.m \
 		TRConfigLexer.m
 
 TEST_LIB=	libauth-ldap-testing.a
+TEST_OBJS=	test.o
 
 CFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
 OBJCFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
@@ -34,7 +35,7 @@ LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS)
 INSTALL_LIB=		$(INSTALL) -m 755
 PLUGIN_INSTALL_DIR=	$(DESTDIR)$(libdir)
 
-all:: $(PLUGIN_FILE) $(TEST_LIB)
+all:: $(PLUGIN_FILE) $(TEST_LIB) test
 
 # Work-around for gnumake bug.
 # It fails to check if 'TRConfigParser.h' has been created
@@ -48,7 +49,8 @@ $(PLUGIN_FILE): $(GEN_SRCS) $(PLUGIN_OBJS)
 $(TEST_LIB): $(GEN_SRCS) $(PLUGIN_OBJS)
 	$(AR) -r $@ $(PLUGIN_OBJS)
 
-test:: $(TEST_LIB_NAME)
+test:: $(TEST_OBJS) $(TEST_LIB_NAME)
+	$(CC) -o $@ ${TEST_OBJS} ${LDFLAGS} ${LIBS} -L. -lauth-ldap-testing
 	
 install:: $(PLUGIN_FILE)
 	$(INSTALL_PLUGIN)
