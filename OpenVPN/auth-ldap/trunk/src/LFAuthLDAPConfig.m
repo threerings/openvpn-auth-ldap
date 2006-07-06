@@ -2,7 +2,8 @@
  * LFAuthLDAPConfig.m
  * Simple Configuration
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2005 - 2006 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2006 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
