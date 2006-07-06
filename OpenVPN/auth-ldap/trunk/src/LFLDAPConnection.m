@@ -111,10 +111,10 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 
 	config = ldapConfig;
 
-	ldap_initialize(&ldapConn, [config url]);
+	ldap_initialize(&ldapConn, [[config url] cString]);
 
 	if (!ldapConn) {
-		warnx("Unable to initialize LDAP server %s", [config url]);
+		warnx("Unable to initialize LDAP server %s", [[config url] cString]);
 		[self release];
 		return (NULL);
 	}

@@ -70,6 +70,13 @@
 }
 
 /*!
+ * Return the token's string value.
+ */
+- (LFString *) string {
+	return _string;
+}
+
+/*!
  * Return the token's C string value.
  * @return NULL terminated C string. The result is only valid for the
  * lifetime of the TRConfigToken object.
@@ -110,6 +117,45 @@
 	}
 
 	return result;
+}
+
+/*!
+ * Get the token's boolean value.
+ * Returns true on success, false on failure.
+ * The boolean value will be stored in the value argument.
+ *
+ * If the token is not a valid boolean ("yes", "no", "true", "false", "1", or "0",
+ * value will be set to false and the method will return false.
+ *
+ * @param value Pointer where the boolean value will be stored
+ * @result true on success, false on failure.
+ */
+- (BOOL) boolValue: (BOOL *) value {
+	const char *cString;
+
+	/* Check if the integer conversion has been cached */
+	if (_dataType == TOKEN_DATATYPE_BOOL) {
+		*value = _internalRep._boolValue;
+		return (YES);
+	}
+
+	/* Otherwise, do the conversion and return the result,
+	 * caching on success */
+	cString = [_string cString];
+
+	if (strcasecmp(cString, "yes") == 0 || strcasecmp(cString, "true") == 0 || strcasecmp(cString, "1") == 0) {
+		_dataType = TOKEN_DATATYPE_BOOL;
+		_internalRep._boolValue = YES;
+		*value = YES;
+		return (YES);
+	} else if (strcasecmp(cString, "no") == 0 || strcasecmp(cString, "false") == 0 || strcasecmp(cString, "0") == 0) {
+		_dataType = TOKEN_DATATYPE_BOOL;
+		_internalRep._boolValue = NO;
+		*value = NO;
+		return (YES);
+	}
+	*value = NO;
+	return (NO);
 }
 
 

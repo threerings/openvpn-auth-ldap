@@ -47,7 +47,8 @@
 /* Object Data Types */
 typedef enum {
 	TOKEN_DATATYPE_NONE,
-	TOKEN_DATATYPE_INT
+	TOKEN_DATATYPE_INT,
+	TOKEN_DATATYPE_BOOL
 } TRConfigDataType;
 
 #include "TRConfigToken.h"

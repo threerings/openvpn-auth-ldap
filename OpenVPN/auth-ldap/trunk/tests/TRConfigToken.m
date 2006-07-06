@@ -71,17 +71,44 @@ START_TEST (test_intValue) {
 	int value;
 
 	token = [[TRConfigToken alloc] initWithBytes: "24" 
-					    numBytes: sizeof(TEST_STRING)
+					    numBytes: sizeof("24")
 					  lineNumber: TEST_LINE_NUMBER
 					     tokenID: TOKEN_VALUE];
 	fail_if(token == NULL, "-[[TRConfigToken alloc] initWithBytes: numBytes: tokenID:] returned NULL");
 
-	fail_unless([token intValue: &value], "-[TRConfigToken value] returned NULL");
+	fail_unless([token intValue: &value], "-[TRConfigToken intValue:] returned NO");
 	fail_unless(value == 24, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", 24, value);
 
 	[token release];
 }
 END_TEST
+
+START_TEST (test_boolValue) {
+	TRConfigToken *token;
+	BOOL value;
+
+	token = [[TRConfigToken alloc] initWithBytes: "yes" 
+					    numBytes: sizeof("yes")
+					  lineNumber: TEST_LINE_NUMBER
+					     tokenID: TOKEN_VALUE];
+
+	fail_unless([token boolValue: &value], "-[TRConfigToken boolValue:] returned NO");
+
+	fail_unless(value == YES, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", YES, value);
+
+	token = [[TRConfigToken alloc] initWithBytes: "no" 
+					    numBytes: sizeof("no")
+					  lineNumber: TEST_LINE_NUMBER
+					     tokenID: TOKEN_VALUE];
+
+	fail_unless([token boolValue: &value], "-[TRConfigToken boolValue:] returned NO");
+
+	fail_unless(value == NO, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", NO, value);
+
+	[token release];
+}
+END_TEST
+
 
 Suite *TRConfigToken_suite(void) {
 	Suite *s = suite_create("TRConfigToken");
@@ -90,6 +117,7 @@ Suite *TRConfigToken_suite(void) {
 	suite_add_tcase(s, tc_token);
 	tcase_add_test(tc_token, test_initWithBytes);
 	tcase_add_test(tc_token, test_intValue);
+	tcase_add_test(tc_token, test_boolValue);
 
 	return s;
 }

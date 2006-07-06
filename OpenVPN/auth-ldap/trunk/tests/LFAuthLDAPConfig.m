@@ -42,7 +42,8 @@
 #include <string.h>
 
 /* Data Constants */
-#define LDAP_URL	"ldap://ldap1.example.org"
+#define TEST_LDAP_URL	"ldap://ldap1.example.org"
+#define TEST_LDAP_TIMEOUT	15
 
 /* Path Constants */
 #define DATA_PATH(relative)	TEST_DATA "/" relative
@@ -51,17 +52,19 @@
 
 START_TEST (test_initWithConfigFile) {
 	LFAuthLDAPConfig *config;
-	// const char *url;
+	LFString *string;
 
 	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
 	fail_if(config == NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
 
-#if 0
-	url = [config url];
+	/* Validate the parsed settings */
+	string = [config url];
+	fail_if(!string, "-[LFAuthLDAPConfig url] returned NULL");
+	fail_unless(strcmp([string cString], TEST_LDAP_URL) == 0, "-[LFAuthLDAPConfig url] returned incorrect value. (Expected %s, Got %s)", TEST_LDAP_URL, [string cString]);
 
-	fail_if(!url, "-[LFAuthLDAPConfig url] returned NULL");
-	fail_unless(strcmp(url, LDAP_URL) == 0, "-[LFAuthLDAPConfig url] returned incorrect value. (Expected %s, Got %s)", LDAP_URL, url);
-#endif
+	fail_unless([config timeout] == TEST_LDAP_TIMEOUT);
+
+	fail_unless([config tlsEnabled]);
 
 	[config release];
 }

@@ -43,13 +43,6 @@
 
 #include "auth-ldap.h"
 
-/* Useful Macros */
-#define ERROR_NAMED(section, name) { \
-	warnx("Auth-LDAP Configuration Error: %s section types must be unnamed (%s:%u).", [section cString], _configFileName, [name lineNumber]); \
-	[_configDriver errorStop]; \
-	return; \
-}
-
 /* All Variables and Section Types */
 typedef enum {
 	/* All Section Types */
@@ -138,7 +131,6 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
  * Simple object that maintains section parsing state
  */
 @interface SectionState : TRObject {
-@public
 	ConfigOpcode opcode;
 }
 
@@ -159,28 +151,33 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 
 	return self;
 }
+
+- (ConfigOpcode) opcode {
+	return opcode;
+}
 @end
 
 @implementation LFAuthLDAPConfig
 
 - (void) dealloc {
-	if (url)
-		free(url);
-	if (tlsCACertFile)
-		free(tlsCACertFile);
-	if (tlsCACertDir)
-		free(tlsCACertDir);
-	if (tlsCertFile)
-		free(tlsCertFile);
-	if (tlsKeyFile)
-		free(tlsKeyFile);
-	if (tlsCipherSuite)
-		free(tlsCipherSuite);
+	if (_url)
+		[_url release];
+	if (_tlsCACertFile)
+		[_tlsCACertFile release];
+	if (_tlsCACertDir)
+		[_tlsCACertDir release];
+	if (_tlsCertFile)
+		[_tlsCertFile release];
+	if (_tlsKeyFile)
+		[_tlsKeyFile release];
+	if (_tlsCipherSuite)
+		[_tlsCipherSuite release];
 
 	[super dealloc];
 }
 
 - (id) initWithConfigFile: (const char *) fileName {
+	SectionState *section;
 	int configFD;
 
 	/* Initialize */
@@ -191,11 +188,13 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 
 	/* Initialize the section stack */
 	_sectionStack = [[TRArray alloc] init];
-	[_sectionStack addObject: [[SectionState alloc] initWithOpcode: LF_NO_SECTION]];
+	section = [[SectionState alloc] initWithOpcode: LF_NO_SECTION];
+	[_sectionStack addObject: section];
+	[section release];
 
 	/* Open our configuration file */
-	_configFileName = fileName;
-	configFD = open(_configFileName, O_RDONLY);
+	_configFileName = [[LFString alloc] initWithCString: fileName];
+	configFD = open(fileName, O_RDONLY);
 	if (configFD == -1) {
 		warn("Failed to open \"%s\" for reading", _configFileName);
 		goto error;
@@ -213,7 +212,7 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 
 	[_configDriver release];
 	[_sectionStack release];
-	_configFileName = NULL;
+	[_configFileName release];
 
 	return self;
 
@@ -225,7 +224,134 @@ error:
 	return (NULL);
 }
 
+/*!
+ * Return the current section opcode from the top
+ * of the section stack
+ */
+- (ConfigOpcode) currentSection {
+	return [[_sectionStack lastObject] opcode];
+}
+
+/*!
+ * Allocate a SectionState object and push it onto the
+ * section stack
+ */
+- (void) pushSection: (ConfigOpcode) opcode {
+	SectionState *section;
+
+	section = [[SectionState alloc] initWithOpcode: opcode];
+	[_sectionStack addObject: section];
+	[section release];
+}
+
+/*!
+ * Report a named section that should not be named to the user.
+ */
+- (void) errorNamedSection: (TRConfigToken *) section withName: (TRConfigToken *) name {
+	warnx("Auth-LDAP Configuration Error: %s section types must be unnamed (%s:%u).", [section cString], [_configFileName cString], [name lineNumber]); \
+	[_configDriver errorStop];
+}
+
+/*!
+ * Report an unknown key to the user.
+ */
+- (void) errorUnknownKey: (TRConfigToken *) key {
+	warnx("Auth-LDAP Configuration Error: %s key is unknown (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]); \
+	[_configDriver errorStop];
+}
+
+/*!
+ * Report an invalid integer value to the user.
+ */
+- (void) errorIntValue: (TRConfigToken *) value {
+	warnx("Auth-LDAP Configuration Error: %s value is not an integer (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]); \
+	[_configDriver errorStop];
+}
+
+/*!
+ * Report an invalid boolean value to the user.
+ */
+- (void) errorBoolValue: (TRConfigToken *) value {
+	warnx("Auth-LDAP Configuration Error: %s value is not a boolean value -- use either 'True' or 'False' (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]); \
+	[_configDriver errorStop];
+}
+
+/*!
+ * Called by the lemon-generated parser when a key value pair is found.
+ */
 - (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
+	/* Handle key value pairs */
+	ConfigOpcode opcode;
+
+	switch ([self currentSection]) {
+		case LF_LDAP_SECTION:
+			/* Opcode must be one of LDAPSectionVariables or GenericLDAPVariables */
+			opcode = parse_opcode(key, LDAPSectionVariables);
+			if (opcode == LF_UNKNOWN_OPCODE)
+				opcode = parse_opcode(key, GenericLDAPVariables);
+
+			switch (opcode) {
+				int timeout;
+				BOOL enableTLS;
+
+				/* LDAP URL */
+				case LF_LDAP_URL:
+					[self setURL: [value string]];
+					break;
+
+				/* LDAP Connection Timeout */
+				case LF_LDAP_TIMEOUT:
+					if (![value intValue: &timeout]) {
+						[self errorIntValue: value];
+						return;
+					}
+					[self setTimeout: timeout];
+					break;
+
+				/* LDAP TLS Enabled */
+				case LF_LDAP_TLS:
+					if (![value boolValue: &enableTLS]) {
+						[self errorBoolValue: value];
+						return;
+					}
+					[self setTLSEnabled: enableTLS];
+					break;
+
+				/* LDAP CA Certificate */
+				case LF_LDAP_TLS_CA_CERTFILE:
+					[self setTLSCACertFile: [value string]];
+					break;
+
+				/* LDAP CA Certificate Directory */
+				case LF_LDAP_TLS_CA_CERTDIR:
+					[self setTLSCACertDir: [value string]];
+					break;
+
+				/* LDAP Certificate File */
+				case LF_LDAP_TLS_CERTFILE:
+					[self setTLSCertFile: [value string]];
+					break;
+
+				/* LDAP Key File */
+				case LF_LDAP_TLS_KEYFILE:
+					[self setTLSKeyFile: [value string]];
+					break;
+
+				/* LDAP Key File */
+				case LF_LDAP_TLS_CIPHER_SUITE:
+					[self setTLSCipherSuite: [value string]];
+					break;
+
+				/* Unknown Setting */
+				default:
+					[self errorUnknownKey: key];
+					return;
+			}
+		default:
+			/* (Must be!) unreachable */
+			//assert([self currentSection] != 0);
+			break;
+	}
 	parse_opcode(key, LDAPSectionVariables);
 	parse_opcode(key, GenericLDAPVariables);
 	parse_opcode(key, GroupSectionVariables);
@@ -235,7 +361,7 @@ error:
 	ConfigOpcode opcode;
 
 	/* Enter handler for the current state */
-	switch(((SectionState *) [_sectionStack lastObject])->opcode) {
+	switch([self currentSection]) {
 		/* Top-level sections supported:
 		 * 	- LDAP (unnamed)
 		 * 	- Group (named)
@@ -244,8 +370,11 @@ error:
 			opcode = parse_opcode(sectionType, SectionTypes);
 			switch (opcode) {
 				case LF_LDAP_SECTION:
-					if (name)
-						ERROR_NAMED(sectionType, name);
+					if (name) {
+						[self errorNamedSection: sectionType withName: name];
+						return;
+					}
+					[self pushSection: opcode];
 					break;
 				default:
 					printf("\nUnknown Section %s %s\n", [sectionType cString], [name cString]);
@@ -273,77 +402,79 @@ error:
 /* Accessors */
 
 - (int) tlsEnabled {
-	return (tlsEnabled);
+	return (_tlsEnabled);
 }
 
 - (void) setTLSEnabled: (int) newTLSSetting {
-	tlsEnabled = newTLSSetting;
+	_tlsEnabled = newTLSSetting;
 }
 
-- (const char *) url {
-	return (url);
+- (LFString *) url {
+	return (_url);
 }
 
-- (void) setURL: (const char *) newURL {
-	url = xstrdup(newURL);
+- (void) setURL: (LFString *) newURL {
+	if (_url)
+		[_url release];
+	_url = [newURL retain];
 }
 
 - (int) timeout {
-	return (timeout);
+	return (_timeout);
 }
 
 - (void) setTimeout: (int) newTimeout {
-	timeout = newTimeout;
+	_timeout = newTimeout;
 }
 
-- (const char *) tlsCACertFile {
-	return (tlsCACertFile);
+- (LFString *) tlsCACertFile {
+	return (_tlsCACertFile);
 }
 
-- (void) setTLSCACertFile: (const char *) fileName {
-	if (tlsCACertFile)
-		free(tlsCACertFile);
-	tlsCACertFile = xstrdup(fileName);
+- (void) setTLSCACertFile: (LFString *) fileName {
+	if (_tlsCACertFile)
+		[_tlsCACertFile release];
+	_tlsCACertFile = [fileName retain];
 }
 
-- (const char *) tlsCACertDir {
-	return (tlsCACertDir);
+- (LFString *) tlsCACertDir {
+	return (_tlsCACertDir);
 }
 
-- (void) setTLSCACertDir: (const char *) directoryName {
-	if (tlsCACertDir)
-		free(tlsCACertDir);
-	tlsCACertDir = xstrdup(directoryName);
+- (void) setTLSCACertDir: (LFString *) directoryName {
+	if (_tlsCACertDir)
+		[_tlsCACertDir release];
+	_tlsCACertDir = [directoryName retain];
 }
 
-- (const char *) tlsCertFile {
-	return (tlsCertFile);
+- (LFString *) tlsCertFile {
+	return (_tlsCertFile);
 }
 
-- (void) setTLSCertFile: (const char *) fileName {
-	if (tlsCertFile)
-		free(tlsCertFile);
-	tlsCertFile = xstrdup(fileName);
+- (void) setTLSCertFile: (LFString *) fileName {
+	if (_tlsCertFile)
+		[_tlsCertFile release];
+	_tlsCertFile = [fileName retain];
 }
 
-- (const char *) tlsKeyFile {
-	return (tlsKeyFile);
+- (LFString *) tlsKeyFile {
+	return (_tlsKeyFile);
 }
 
-- (void) setTLSKeyFile: (const char *) fileName {
-	if (tlsKeyFile)
-		free(tlsKeyFile);
-	tlsKeyFile = xstrdup(fileName);
+- (void) setTLSKeyFile: (LFString *) fileName {
+	if (_tlsKeyFile)
+		[_tlsKeyFile release];
+	_tlsKeyFile = [fileName retain];
 }
 
-- (const char *) tlsCipherSuite {
-	return (tlsCipherSuite);
+- (LFString *) tlsCipherSuite {
+	return (_tlsCipherSuite);
 }
 
-- (void) setTLSCipherSuite: (const char *) cipherSuite {
-	if (tlsCipherSuite)
-		free(tlsCipherSuite);
-	tlsCipherSuite = xstrdup(cipherSuite);
+- (void) setTLSCipherSuite: (LFString *) cipherSuite {
+	if (_tlsCipherSuite)
+		[_tlsCipherSuite release];
+	_tlsCipherSuite = [cipherSuite retain];
 }
 
 @end

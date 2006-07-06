@@ -39,17 +39,17 @@
 
 @interface LFAuthLDAPConfig : TRObject <TRConfigDelegate> {
 	/* LDAP Settings */
-	char *url;
-	int tlsEnabled;
-	int timeout;
-	char *tlsCACertFile;
-	char *tlsCACertDir;
-	char *tlsCertFile;
-	char *tlsKeyFile;
-	char *tlsCipherSuite;
+	LFString *_url;
+	int _tlsEnabled;
+	int _timeout;
+	LFString *_tlsCACertFile;
+	LFString *_tlsCACertDir;
+	LFString *_tlsCertFile;
+	LFString *_tlsKeyFile;
+	LFString *_tlsCipherSuite;
 
 	/* Parser State */
-	const char *_configFileName;
+	LFString *_configFileName;
 	TRConfig *_configDriver;
 	TRArray *_sectionStack;
 }
@@ -63,8 +63,8 @@
 - (void) parseError: (TRConfigToken *) badToken;
 
 /* Accessors */
-- (const char *) url;
-- (void) setURL: (const char *) newURL;
+- (LFString *) url;
+- (void) setURL: (LFString *) newURL;
 
 - (int) timeout;
 - (void) setTimeout: (int) newTimeout;
@@ -72,20 +72,20 @@
 - (int) tlsEnabled;
 - (void) setTLSEnabled: (int) newTLSSetting;
 
-- (const char *) tlsCACertFile;
-- (void) setTLSCACertFile: (const char *) fileName;
+- (LFString *) tlsCACertFile;
+- (void) setTLSCACertFile: (LFString *) fileName;
 
-- (const char *) tlsCACertDir;
-- (void) setTLSCACertDir: (const char *) directoryName;
+- (LFString *) tlsCACertDir;
+- (void) setTLSCACertDir: (LFString *) directoryName;
 
-- (const char *) tlsCertFile;
-- (void) setTLSCertFile: (const char *) newFilename;
+- (LFString *) tlsCertFile;
+- (void) setTLSCertFile: (LFString *) newFilename;
 
-- (const char *) tlsKeyFile;
-- (void) setTLSKeyFile: (const char *) fileName;
+- (LFString *) tlsKeyFile;
+- (void) setTLSKeyFile: (LFString *) fileName;
 
-- (const char *) tlsCipherSuite;
-- (void) setTLSCipherSuite: (const char *) cipherSuite;
+- (LFString *) tlsCipherSuite;
+- (void) setTLSCipherSuite: (LFString *) cipherSuite;
 
 @end
 

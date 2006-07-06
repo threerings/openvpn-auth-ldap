@@ -63,6 +63,7 @@
 	/* Union of internal representations */
 	union {
 		int _intValue;
+		BOOL _boolValue;
 	} _internalRep;
 }
 
@@ -71,8 +72,10 @@
 - (int) tokenID;
 - (unsigned int) lineNumber;
 
+- (LFString *) string;
 - (const char *) cString;
 - (BOOL) intValue: (int *) value;
+- (BOOL) boolValue: (BOOL *) value;
 
 @end
 
