@@ -317,7 +317,7 @@ error:
  * Report mismatched section closure to the user.
  */
 - (void) errorMismatchedSection: (TRConfigToken *) section {
-	warnx("Auth-LDAP Configuration Error: %s is a mismatched section closure. Expected \"</%s>\" (%s:%u).", [section cString], string_for_opcode([self currentSectionOpcode], SectionTypes), [_configFileName cString], [section lineNumber]); \
+	warnx("Auth-LDAP Configuration Error: '</%s>' is a mismatched section closure. Expected \"</%s>\" (%s:%u).", [section cString], string_for_opcode([self currentSectionOpcode], SectionTypes), [_configFileName cString], [section lineNumber]); \
 	[_configDriver errorStop];
 }
 
