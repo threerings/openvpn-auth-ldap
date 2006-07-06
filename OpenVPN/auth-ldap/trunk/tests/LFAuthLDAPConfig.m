@@ -49,6 +49,7 @@
 #define DATA_PATH(relative)	TEST_DATA "/" relative
 #define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
 #define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
+#define AUTH_LDAP_CONF_MISMATCHED DATA_PATH("auth-ldap-mismatched.conf")
 
 START_TEST (test_initWithConfigFile) {
 	LFAuthLDAPConfig *config;
@@ -80,7 +81,15 @@ START_TEST (test_initWithIncorrectlyNamedSection) {
 }
 END_TEST
 
+START_TEST (test_initWithMismatchedSection) {
+	LFAuthLDAPConfig *config;
 
+	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MISMATCHED];
+	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted a mismatched section closure.");
+
+	[config release];
+}
+END_TEST
 
 
 Suite *LFAuthLDAPConfig_suite(void) {
@@ -90,6 +99,7 @@ Suite *LFAuthLDAPConfig_suite(void) {
 	suite_add_tcase(s, tc_parse);
 	tcase_add_test(tc_parse, test_initWithConfigFile);
 	tcase_add_test(tc_parse, test_initWithIncorrectlyNamedSection);
+	tcase_add_test(tc_parse, test_initWithMismatchedSection);
 
 	return s;
 }

@@ -40,6 +40,8 @@
 @interface LFAuthLDAPConfig : TRObject <TRConfigDelegate> {
 	/* LDAP Settings */
 	LFString *_url;
+	LFString *_baseDN;
+	LFString *_searchFilter;
 	int _tlsEnabled;
 	int _timeout;
 	LFString *_tlsCACertFile;
@@ -65,6 +67,12 @@
 /* Accessors */
 - (LFString *) url;
 - (void) setURL: (LFString *) newURL;
+
+- (LFString *) baseDN;
+- (void) setBaseDN: (LFString *) baseDN;
+
+- (LFString *) searchFilter;
+- (void) setSearchFilter: (LFString *) searchFilter;
 
 - (int) timeout;
 - (void) setTimeout: (int) newTimeout;

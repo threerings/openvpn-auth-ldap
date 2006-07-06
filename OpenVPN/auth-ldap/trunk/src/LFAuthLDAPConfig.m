@@ -127,6 +127,20 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 	return (LF_UNKNOWN_OPCODE);
 }
 
+/* Parse a string, returning the associated opcode from the supplied table */
+static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
+	unsigned int i;
+
+	for (i = 0; table[i].name; i++)
+		if (table[i].opcode == opcode)
+			return (table[i].name);
+
+	/* Unknown opcode */
+	return (NULL);
+}
+
+
+
 /*
  * Simple object that maintains section parsing state
  */
@@ -162,6 +176,10 @@ static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 - (void) dealloc {
 	if (_url)
 		[_url release];
+	if (_baseDN)
+		[_baseDN release];
+	if (_searchFilter)
+		[_searchFilter release];
 	if (_tlsCACertFile)
 		[_tlsCACertFile release];
 	if (_tlsCACertDir)
@@ -226,15 +244,15 @@ error:
 
 /*!
  * Return the current section opcode from the top
- * of the section stack
+ * of the section stack.
  */
-- (ConfigOpcode) currentSection {
+- (ConfigOpcode) currentSectionOpcode {
 	return [[_sectionStack lastObject] opcode];
 }
 
 /*!
  * Allocate a SectionState object and push it onto the
- * section stack
+ * section stack.
  */
 - (void) pushSection: (ConfigOpcode) opcode {
 	SectionState *section;
@@ -277,13 +295,30 @@ error:
 }
 
 /*!
+ * Report an unknown section type to the user.
+ */
+- (void) errorUnknownSection: (TRConfigToken *) section {
+	warnx("Auth-LDAP Configuration Error: %s is not a known section type within this context (%s:%u).", [section cString], [_configFileName cString], [section lineNumber]); \
+	[_configDriver errorStop];
+}
+
+/*!
+ * Report mismatched section closure to the user.
+ */
+- (void) errorMismatchedSection: (TRConfigToken *) section {
+	warnx("Auth-LDAP Configuration Error: %s is a mismatched section closure. Expected \"</%s>\" (%s:%u).", [section cString], string_for_opcode([self currentSectionOpcode], SectionTypes), [_configFileName cString], [section lineNumber]); \
+	[_configDriver errorStop];
+}
+
+
+/*!
  * Called by the lemon-generated parser when a key value pair is found.
  */
 - (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
 	/* Handle key value pairs */
 	ConfigOpcode opcode;
 
-	switch ([self currentSection]) {
+	switch ([self currentSectionOpcode]) {
 		case LF_LDAP_SECTION:
 			/* Opcode must be one of LDAPSectionVariables or GenericLDAPVariables */
 			opcode = parse_opcode(key, LDAPSectionVariables);
@@ -342,6 +377,14 @@ error:
 					[self setTLSCipherSuite: [value string]];
 					break;
 
+				case LF_LDAP_BASEDN:
+					[self setBaseDN: [value string]];
+					break;
+
+				case LF_LDAP_SEARCH_FILTER:
+					[self setSearchFilter: [value string]];
+					break;
+
 				/* Unknown Setting */
 				default:
 					[self errorUnknownKey: key];
@@ -352,8 +395,6 @@ error:
 			//assert([self currentSection] != 0);
 			break;
 	}
-	parse_opcode(key, LDAPSectionVariables);
-	parse_opcode(key, GenericLDAPVariables);
 	parse_opcode(key, GroupSectionVariables);
 }
 
@@ -361,7 +402,7 @@ error:
 	ConfigOpcode opcode;
 
 	/* Enter handler for the current state */
-	switch([self currentSection]) {
+	switch([self currentSectionOpcode]) {
 		/* Top-level sections supported:
 		 * 	- LDAP (unnamed)
 		 * 	- Group (named)
@@ -377,8 +418,8 @@ error:
 					[self pushSection: opcode];
 					break;
 				default:
-					printf("\nUnknown Section %s %s\n", [sectionType cString], [name cString]);
-					break;
+					[self errorUnknownSection: sectionType];
+					return;
 			}
 			break;
 		default:
@@ -388,8 +429,21 @@ error:
 	return;
 }
 
+/*!
+ * Verify that the now closed section isn't mismatched, and then pop it off
+ * the section stack.
+ */
 - (void) endSection: (TRConfigToken *) sectionEnd {
-	return;
+	ConfigOpcode opcode;
+	opcode = parse_opcode(sectionEnd, SectionTypes);
+
+	/* Mismatched section? */
+	if (opcode != [self currentSectionOpcode]) {
+		[self errorMismatchedSection: sectionEnd];
+	}
+
+	[_sectionStack removeObject];
+
 }
 
 - (void) parseError: (TRConfigToken *) badToken {
@@ -417,6 +471,26 @@ error:
 	if (_url)
 		[_url release];
 	_url = [newURL retain];
+}
+
+- (LFString *) baseDN {
+	return (_baseDN);
+}
+
+- (void) setBaseDN: (LFString *) baseDN {
+	if (_baseDN)
+		[_baseDN release];
+	_baseDN = [baseDN retain];
+}
+
+- (LFString *) searchFilter {
+	return (_searchFilter);
+}
+
+- (void) setSearchFilter: (LFString *) searchFilter {
+	if (_searchFilter)
+		[_searchFilter release];
+	_searchFilter = [searchFilter retain];
 }
 
 - (int) timeout {
