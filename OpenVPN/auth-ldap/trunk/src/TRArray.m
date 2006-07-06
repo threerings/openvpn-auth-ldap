@@ -70,6 +70,10 @@ typedef struct _TRArrayStack {
 	[super dealloc];
 }
 
+/*!
+ * Add anObject to the array.
+ * @param anObject: Object to add;
+ */
 - (void) addObject: (id) anObject {
 	TRArrayStack *node;
 
@@ -81,6 +85,9 @@ typedef struct _TRArrayStack {
 	_stack = node;
 }
 
+/*!
+ * Remove top-most object from the array (LIFO).
+ */
 - (void) removeObject {
 	TRArrayStack *node;
 
@@ -93,11 +100,21 @@ typedef struct _TRArrayStack {
 	free(node);
 }
 
+/*!
+ * Return the last object added to the array.
+ * @return Last object added to the array.
+ */
 - (id) lastObject {
 	/* Return the last object on the stack */
 	return _stack->object;
 }
 
+/*!
+ * Test if the array contains anObject.
+ * Implemented by calling isEqual on all objects in the array.
+ * @param anObject: Object to test for equality.
+ * @return YES if the array contains anObject, NO otherwise.
+ */
 - (BOOL) containsObject: (id) anObject {
 	TRArrayStack *node;
 
