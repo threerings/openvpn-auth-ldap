@@ -40,15 +40,18 @@
 @interface LFAuthLDAPConfig : TRObject <TRConfigDelegate> {
 	/* LDAP Settings */
 	LFString *_url;
-	LFString *_baseDN;
-	LFString *_searchFilter;
-	int _tlsEnabled;
+	BOOL _tlsEnabled;
 	int _timeout;
 	LFString *_tlsCACertFile;
 	LFString *_tlsCACertDir;
 	LFString *_tlsCertFile;
 	LFString *_tlsKeyFile;
 	LFString *_tlsCipherSuite;
+
+	/* Authentication / Authorization Settings */
+	LFString *_baseDN;
+	LFString *_searchFilter;
+	BOOL _requireGroup;
 
 	/* Parser State */
 	LFString *_configFileName;
@@ -68,17 +71,11 @@
 - (LFString *) url;
 - (void) setURL: (LFString *) newURL;
 
-- (LFString *) baseDN;
-- (void) setBaseDN: (LFString *) baseDN;
-
-- (LFString *) searchFilter;
-- (void) setSearchFilter: (LFString *) searchFilter;
-
 - (int) timeout;
 - (void) setTimeout: (int) newTimeout;
 
-- (int) tlsEnabled;
-- (void) setTLSEnabled: (int) newTLSSetting;
+- (BOOL) tlsEnabled;
+- (void) setTLSEnabled: (BOOL) newTLSSetting;
 
 - (LFString *) tlsCACertFile;
 - (void) setTLSCACertFile: (LFString *) fileName;
@@ -94,6 +91,15 @@
 
 - (LFString *) tlsCipherSuite;
 - (void) setTLSCipherSuite: (LFString *) cipherSuite;
+
+- (LFString *) baseDN;
+- (void) setBaseDN: (LFString *) baseDN;
+
+- (LFString *) searchFilter;
+- (void) setSearchFilter: (LFString *) searchFilter;
+
+- (BOOL) requireGroup;
+- (void) setRequireGroup: (BOOL) requireGroup;
 
 @end
 

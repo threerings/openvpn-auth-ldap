@@ -48,6 +48,7 @@ typedef enum {
 	/* All Section Types */
 	LF_NO_SECTION,			/* Top-level */
 	LF_LDAP_SECTION,		/* LDAP Server Settings */
+	LF_AUTH_SECTION,		/* LDAP Authorization Settings */
 	LF_GROUP_SECTION,		/* LDAP Group Settings */
 
 	/* Generic LDAP Search Variables */
@@ -66,6 +67,9 @@ typedef enum {
 	LF_LDAP_TLS_KEYFILE,		/* TLS Client Key File */
 	LF_LDAP_TLS_CIPHER_SUITE,	/* TLS Cipher Suite */
 
+	/* Authorization Section Variables */
+	LF_AUTH_REQUIRE_GROUP,		/* Require Group Membership */
+
 	/* Group Section Variables */
 	LF_GROUP_MEMBER_ATTRIBUTE,	/* Group Membership Attribute */
 
@@ -81,8 +85,9 @@ typedef struct OpcodeTable {
 
 /* Section Types */
 static OpcodeTable SectionTypes[] = {
-	{ "LDAP",	LF_LDAP_SECTION },
-	{ "Group",	LF_GROUP_SECTION },
+	{ "LDAP",		LF_LDAP_SECTION },
+	{ "Authorization",	LF_AUTH_SECTION },
+	{ "Group",		LF_GROUP_SECTION },
 	{ NULL, 0 }
 };
 
@@ -106,6 +111,12 @@ static OpcodeTable LDAPSectionVariables[] = {
 	{ "TLSKeyFile",		LF_LDAP_TLS_KEYFILE },
 	{ "TLSCipherSuite",	LF_LDAP_TLS_CIPHER_SUITE },
 	{ NULL, 0 }
+};
+
+/* Authorization Section Variables */
+static OpcodeTable AuthSectionVariables[] = {
+	{ "RequireGroup",	LF_AUTH_REQUIRE_GROUP },
+	{ NULL, 0}
 };
 
 /* Group Section Variables */
@@ -176,10 +187,6 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
 - (void) dealloc {
 	if (_url)
 		[_url release];
-	if (_baseDN)
-		[_baseDN release];
-	if (_searchFilter)
-		[_searchFilter release];
 	if (_tlsCACertFile)
 		[_tlsCACertFile release];
 	if (_tlsCACertDir)
@@ -190,6 +197,10 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
 		[_tlsKeyFile release];
 	if (_tlsCipherSuite)
 		[_tlsCipherSuite release];
+	if (_baseDN)
+		[_baseDN release];
+	if (_searchFilter)
+		[_searchFilter release];
 
 	[super dealloc];
 }
@@ -319,13 +330,13 @@ error:
 	ConfigOpcode opcode;
 
 	switch ([self currentSectionOpcode]) {
-		case LF_LDAP_SECTION:
-			/* Opcode must be one of LDAPSectionVariables or GenericLDAPVariables */
-			opcode = parse_opcode(key, LDAPSectionVariables);
-			if (opcode == LF_UNKNOWN_OPCODE)
-				opcode = parse_opcode(key, GenericLDAPVariables);
+		case LF_NO_SECTION:
+			/* No keys are permitted in the top-level */
+			[self errorUnknownKey: key];
+			return;
 
-			switch (opcode) {
+		case LF_LDAP_SECTION:
+			switch (parse_opcode(key, LDAPSectionVariables)) {
 				int timeout;
 				BOOL enableTLS;
 
@@ -377,6 +388,30 @@ error:
 					[self setTLSCipherSuite: [value string]];
 					break;
 
+				/* Unknown Setting */
+				default:
+					[self errorUnknownKey: key];
+					return;
+			}
+			break;
+
+		case LF_AUTH_SECTION:
+			/* Opcode must be one of AuthSectionVariables or GenericLDAPVariables */
+			opcode = parse_opcode(key, AuthSectionVariables);
+			if (opcode == LF_UNKNOWN_OPCODE)
+				opcode = parse_opcode(key, GenericLDAPVariables);
+
+			switch(opcode) {
+				BOOL requireGroup;
+
+				case LF_AUTH_REQUIRE_GROUP:
+					if (![value boolValue: &requireGroup]) {
+						[self errorBoolValue: value];
+						return;
+					}
+					[self setRequireGroup: requireGroup];
+					break;
+
 				case LF_LDAP_BASEDN:
 					[self setBaseDN: [value string]];
 					break;
@@ -390,9 +425,10 @@ error:
 					[self errorUnknownKey: key];
 					return;
 			}
+			break;
 		default:
 			/* (Must be!) unreachable */
-			//assert([self currentSection] != 0);
+			abort();
 			break;
 	}
 	parse_opcode(key, GroupSectionVariables);
@@ -417,13 +453,21 @@ error:
 					}
 					[self pushSection: opcode];
 					break;
+				case LF_AUTH_SECTION:
+					if (name) {
+						[self errorNamedSection: sectionType withName: name];
+						return;
+					}
+					[self pushSection: opcode];
+					break;
 				default:
 					[self errorUnknownSection: sectionType];
 					return;
 			}
 			break;
 		default:
-			break;
+			[self errorUnknownSection: sectionType];
+			return;
 	}
 
 	return;
@@ -442,6 +486,8 @@ error:
 		[self errorMismatchedSection: sectionEnd];
 	}
 
+	/* TODO: Handle missing required settings */
+
 	[_sectionStack removeObject];
 
 }
@@ -455,11 +501,11 @@ error:
 
 /* Accessors */
 
-- (int) tlsEnabled {
+- (BOOL) tlsEnabled {
 	return (_tlsEnabled);
 }
 
-- (void) setTLSEnabled: (int) newTLSSetting {
+- (void) setTLSEnabled: (BOOL) newTLSSetting {
 	_tlsEnabled = newTLSSetting;
 }
 
@@ -485,6 +531,14 @@ error:
 
 - (LFString *) searchFilter {
 	return (_searchFilter);
+}
+
+- (BOOL) requireGroup {
+	return (_requireGroup);
+}
+
+- (void) setRequireGroup: (BOOL) requireGroup {
+	_requireGroup = requireGroup;
 }
 
 - (void) setSearchFilter: (LFString *) searchFilter {
