@@ -88,8 +88,8 @@ static OpcodeTable SectionTypes[] = {
 
 /* Generic LDAP Search Variables */
 static OpcodeTable GenericLDAPVariables[] = {
-	{ "BaseDN",		LF_LDAP_BASEDN},
-	{ "SearchFilter",	LF_LDAP_SEARCH_FILTER},
+	{ "BaseDN",		LF_LDAP_BASEDN },
+	{ "SearchFilter",	LF_LDAP_SEARCH_FILTER },
 	{ NULL, 0 }
 };
 
