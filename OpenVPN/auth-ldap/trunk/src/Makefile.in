@@ -35,7 +35,7 @@ LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS)
 INSTALL_LIB=		$(INSTALL) -m 755
 PLUGIN_INSTALL_DIR=	$(DESTDIR)$(libdir)
 
-all:: $(PLUGIN_FILE) $(TEST_LIB) test
+all:: $(PLUGIN_FILE) $(TEST_LIB)
 
 # Work-around for gnumake bug.
 # It fails to check if 'TRConfigParser.h' has been created
