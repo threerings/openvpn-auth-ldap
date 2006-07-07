@@ -51,36 +51,36 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	int arg;
 
 	if ([config tlsCACertFile]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, [config tlsCACertFile])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCACertFile to %s: %d: %s", [config tlsCACertFile], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, [[config tlsCACertFile] cString])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsCACertFile to %s: %d: %s", [[config tlsCACertFile] cString], err, ldap_err2string(err));
 			return (false);
 		}
         }
 
 	if ([config tlsCACertDir]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, [config tlsCACertDir])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCACertDir to %s: %d: %s", [config tlsCACertDir], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, [[config tlsCACertDir] cString])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsCACertDir to %s: %d: %s", [[config tlsCACertDir] cString], err, ldap_err2string(err));
 			return (false);
 		}
         }
 
 	if ([config tlsCertFile]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CERTFILE, [config tlsCertFile])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCertFile to %s: %d: %s", [config tlsCertFile], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CERTFILE, [[config tlsCertFile] cString])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsCertFile to %s: %d: %s", [[config tlsCertFile] cString], err, ldap_err2string(err));
 			return (false);
 		}
         }
 
 	if ([config tlsKeyFile]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_KEYFILE, [config tlsKeyFile])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsKeyFile to %s: %d: %s", [config tlsKeyFile], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_KEYFILE, [[config tlsKeyFile] cString])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsKeyFile to %s: %d: %s", [[config tlsKeyFile] cString], err, ldap_err2string(err));
 			return (false);
 		}
         }
 
 	if ([config tlsCipherSuite]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CIPHER_SUITE, [config tlsCipherSuite])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCipherSuite to %s: %d: %s", [config tlsCipherSuite], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CIPHER_SUITE, [[config tlsCipherSuite] cString])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsCipherSuite to %s: %d: %s", [[config tlsCipherSuite] cString], err, ldap_err2string(err));
 			return (false);
 		}
         }
