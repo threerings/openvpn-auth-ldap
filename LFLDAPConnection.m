@@ -46,41 +46,41 @@ static int ldap_get_errno(LDAP *ld) {
 	return err;
 }
 
-static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
+static bool ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	int err;
 	int arg;
 
 	if ([config tlsCACertFile]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, [[config tlsCACertFile] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCACertFile to %s: %d: %s", [[config tlsCACertFile] cString], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, [config tlsCACertFile])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsCACertFile to %s: %d: %s", [config tlsCACertFile], err, ldap_err2string(err));
 			return (false);
 		}
         }
 
 	if ([config tlsCACertDir]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, [[config tlsCACertDir] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCACertDir to %s: %d: %s", [[config tlsCACertDir] cString], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, [config tlsCACertDir])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsCACertDir to %s: %d: %s", [config tlsCACertDir], err, ldap_err2string(err));
 			return (false);
 		}
         }
 
 	if ([config tlsCertFile]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CERTFILE, [[config tlsCertFile] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCertFile to %s: %d: %s", [[config tlsCertFile] cString], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CERTFILE, [config tlsCertFile])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsCertFile to %s: %d: %s", [config tlsCertFile], err, ldap_err2string(err));
 			return (false);
 		}
         }
 
 	if ([config tlsKeyFile]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_KEYFILE, [[config tlsKeyFile] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsKeyFile to %s: %d: %s", [[config tlsKeyFile] cString], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_KEYFILE, [config tlsKeyFile])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsKeyFile to %s: %d: %s", [config tlsKeyFile], err, ldap_err2string(err));
 			return (false);
 		}
         }
 
 	if ([config tlsCipherSuite]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CIPHER_SUITE, [[config tlsCipherSuite] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCipherSuite to %s: %d: %s", [[config tlsCipherSuite] cString], err, ldap_err2string(err));
+		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CIPHER_SUITE, [config tlsCipherSuite])) != LDAP_SUCCESS) {
+			warnx("Unable to set tlsCipherSuite to %s: %d: %s", [config tlsCipherSuite], err, ldap_err2string(err));
 			return (false);
 		}
         }
@@ -97,8 +97,12 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 
 @implementation LFLDAPConnection
 
-+ (BOOL) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig {
++ (bool) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig {
 	return (ldap_set_tls_options(ldapConfig));
+}
+
+- (void) dealloc {
+	[super free];
 }
 
 - (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig {
@@ -111,11 +115,11 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 
 	config = ldapConfig;
 
-	ldap_initialize(&ldapConn, [[config url] cString]);
+	ldap_initialize(&ldapConn, [config url]);
 
 	if (!ldapConn) {
-		warnx("Unable to initialize LDAP server %s", [[config url] cString]);
-		[self release];
+		warnx("Unable to initialize LDAP server %s", [config url]);
+		[self dealloc];
 		return (NULL);
 	}
 
@@ -128,7 +132,7 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	arg = LDAP_VERSION3;
 	if (ldap_set_option(ldapConn, LDAP_OPT_PROTOCOL_VERSION, &arg) != LDAP_OPT_SUCCESS) {
 		warnx("Unable to enable LDAPv3.");
-		[self release];
+		[self dealloc];
 		return (NULL);
 	}
 
@@ -136,7 +140,7 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 		err = ldap_start_tls_s(ldapConn, NULL, NULL);
 		if (err != LDAP_SUCCESS) {
 			warnx("Unable to enable STARTTLS: %s", ldap_err2string(err));
-			[self release];
+			[self dealloc];
 			return (NULL);
 		}
 	}
@@ -144,23 +148,12 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	return (self);
 }
 
-- (BOOL) bindWithDN: (const char *) bindDN password: (const char *) password {
+- (bool) bindWithDN: (const char *) bindDN password: (const char *) password {
 	int msgid, err;
 	LDAPMessage *res;
-	struct berval cred;
 	struct timeval timeout;
 
-	/* Set up berval structure for our credentials */
-	cred.bv_val = (char *) password;
-	cred.bv_len = strlen(password);
-
-	if ((msgid = ldap_sasl_bind_s(ldapConn,
-					bindDN,
-					LDAP_SASL_SIMPLE,
-					&cred,
-					NULL,
-					NULL,
-					NULL)) == -1) {
+	if ((msgid = ldap_simple_bind(ldapConn, bindDN, password)) == -1) {
 		err = ldap_get_errno(ldapConn);
 		warnx("ldap_bind failed immediately: %s", ldap_err2string(err));
 		return (false);
@@ -172,22 +165,22 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 	if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
-			ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
+			ldap_abandon(ldapConn, msgid);
 		warnx("ldap_bind failed: %s\n", ldap_err2string(err));
 		return (false);
 	}
 
 	/* TODO: Provide more diagnostics when a logging API is available */
-	ldap_parse_result(ldapConn, res, &err, NULL, NULL, NULL, NULL, 1);
+	err = ldap_result2error(ldapConn, res, 1);
 	if (err == LDAP_SUCCESS)
 		return (true);
 
 	return (false);
 }
 
-- (BOOL) unbind {
+- (bool) unbind {
 	int err;
-	err = ldap_unbind_ext_s(ldapConn, NULL, NULL);
+	err = ldap_unbind_s(ldapConn);
 	if (err != LDAP_SUCCESS) {
 		warnx("Unable to unbind from LDAP server: %s", ldap_err2string(err));
 		return (false);

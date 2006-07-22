@@ -1,10 +1,8 @@
 /*
- * TRObject.h
- * Project Root Class
+ * LFAuthLDAPConfig.h
+ * Simple Configuration
  *
- * Author: Landon Fuller <landonf@threerings.net>
- *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +13,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of any contributors
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,38 +30,61 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TROBJECT_H
-#define TROBJECT_H
+#ifndef LFAUTHLDAPCONFIG_H
+#define LFAUTHLDAPCONFIG_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <stdbool.h>
 #include <objc/Object.h>
 
-@protocol TRObject
-/* Reference counting */
-- (id) retain;
-- (void) release;
+typedef enum {
+	LF_LDAP_URL,
+	LF_LDAP_TIMEOUT,
+	LF_LDAP_TLS,
+	LF_LDAP_TLS_CA_CERTFILE,
+	LF_LDAP_TLS_CA_CERTDIR,
+	LF_LDAP_TLS_CERTFILE,
+	LF_LDAP_TLS_KEYFILE,
+	LF_LDAP_TLS_CIPHER_SUITE,
+	LF_LDAP_BADOPTION
+} AuthLDAPConfigOptions;
 
-/* Equality */
-- (BOOL) isEqual: (id) anObject;
-@end
-
-
-@interface TRObject : Object <TRObject> {
-	unsigned int _refCount;
+@interface LFAuthLDAPConfig : Object {
+	char *url;
+	int tlsEnabled;
+	int timeout;
+	char *tlsCACertFile;
+	char *tlsCACertDir;
+	char *tlsCertFile;
+	char *tlsKeyFile;
+	char *tlsCipherSuite;
 }
 
-- (id) init;
-- (unsigned int) refCount;
-- (id) retain;
-- (void) release;
-- (BOOL) isEqual: (id) anObject;
-
 - (void) dealloc;
+- (LFAuthLDAPConfig *) initWithConfigFile: (const char *) fileName;
+
+- (const char *) url;
+- (void) setURL: (const char *) newURL;
+
+- (int) timeout;
+- (void) setTimeout: (int) newTimeout;
+
+- (int) tlsEnabled;
+- (void) setTLSEnabled: (int) newTLSSetting;
+
+- (const char *) tlsCACertFile;
+- (void) setTLSCACertFile: (const char *) fileName;
+
+- (const char *) tlsCACertDir;
+- (void) setTLSCACertDir: (const char *) directoryName;
+
+- (const char *) tlsCertFile;
+- (void) setTLSCertFile: (const char *) newFilename;
+
+- (const char *) tlsKeyFile;
+- (void) setTLSKeyFile: (const char *) fileName;
+
+- (const char *) tlsCipherSuite;
+- (void) setTLSCipherSuite: (const char *) cipherSuite;
 
 @end
 
-#endif /* TROBJECT_H */
+#endif /* LFAUTHLDAPCONFIG_H */
