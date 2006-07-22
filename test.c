@@ -1,10 +1,8 @@
 /*
- * TRConfig.h
- * Generic Configuration Parser
+ * test.c
+ * OpenVPN LDAP Authentication Plugin Test Harness
  *
- * Author: Landon Fuller <landonf@threerings.net>
- *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +13,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of any contributors
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,48 +30,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRCONFIG_H
-#define TRCONFIG_H
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <openvpn-plugin.h>
 
-#include "TRObject.h"
+int main(int argc, const char *argv[]) {
+	openvpn_plugin_handle_t handle;
+	unsigned int type;
+	int err;
 
-/* A complex set of TRConfig* header dependencies dictates the following order
- * of declarations and includes */
+	const char *envp[] = {
+		"username=user@example.org",
+		"password=804b0037457abae05f646463faf53fa0",
+		NULL
+	};
+	const char *argp[] = {
+		"plugin.so",
+		"auth-ldap.conf",
+		"uid=%u,ou=People,dc=example,dc=org",
+		"uid=%u,ou=Service Accounts,dc=example,dc=org",
+		NULL
+	};
 
-/* Object Data Types */
-typedef enum {
-	TOKEN_DATATYPE_NONE,
-	TOKEN_DATATYPE_INT,
-	TOKEN_DATATYPE_BOOL
-} TRConfigDataType;
+	handle = openvpn_plugin_open_v1(&type, argp, envp);
 
-#include "TRConfigToken.h"
-#include "TRConfigLexer.h"
+	if (!handle)
+		errx(1, "Initialization Failed!\n");
 
-@protocol TRConfigDelegate
-- (void) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
-- (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
-- (void) endSection: (TRConfigToken *) sectionEnd;
-- (void) parseError: (TRConfigToken *) badToken;
-@end
+	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY, argp, envp);
+	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
+		printf("Authorization Failed!\n");
+	} else {
+		printf("Authorization Succeed!\n");
+	}
 
-#include "TRConfigParser.h"
+	openvpn_plugin_close_v1(handle);
 
-@interface TRConfig : TRObject {
-	int _fd;
-	BOOL _error;
-	id <TRConfigDelegate> _delegate;
+	exit (0);
 }
-
-- (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate;
-- (BOOL) parseConfig;
-/* Callback used to stop the running parser */
-- (void) errorStop;
-
-@end
-
-#endif /* TRCONFIG_H */

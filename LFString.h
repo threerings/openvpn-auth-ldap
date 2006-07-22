@@ -33,28 +33,22 @@
 #ifndef LFSTRING_H
 #define LFSTRING_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <stdbool.h>
 
-#include <stdlib.h>
+#include <objc/Object.h>
 
-#include "TRObject.h"
-#include "strlcpy.h"
-
-@interface LFString : TRObject {
+@interface LFString : Object {
 	char *bytes;
 	size_t numBytes;
 }
 
 - (id) initWithCString: (const char *) cString;
 - (id) initWithString: (LFString *) string;
-- (id) initWithBytes: (const char *) data numBytes: (size_t) length;
 
 - (const char *) cString;
 - (size_t) length;
 
-- (BOOL) intValue: (int *) value;
+- (bool) intValue: (int *) value;
 
 - (size_t) indexToCString: (const char *) cString;
 - (size_t) indexToCharset: (const char *) cString;
@@ -70,6 +64,8 @@
 - (void) appendChar: (char) c;
 - (void) appendCString: (const char *) cString;
 - (void) appendString: (LFString *) string;
+
+- (void) dealloc;
 
 @end
 

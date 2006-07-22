@@ -1,10 +1,8 @@
 /*
- * TRObject.m
- * Project Root Class
+ * LFLDAPConnection.h
+ * Simple LDAP Wrapper
  *
- * Author: Landon Fuller <landonf@threerings.net>
- *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +13,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of any contributors
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,74 +30,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#ifndef LFLDAPCONNECTION_H
+#define LFLDAPCONNECTION_H
 
-#include <assert.h>
+#include <objc/Object.h>
+#include <stdbool.h>
 
-#include "TRObject.h"
+#include <ldap.h>
 
-/*
- * Apple's Obj-C compiler assumes that all objects
- * inherit from NSObject, and must call [super dealloc]
- * in their dealloc method. If you don't, the compiler
- * complains.
- *
- * So, let's pretend to give Object a dealloc method,
- * but never call it.
- * Thanks Apple!
- *
- * Additionally, we implement brain-dead, non-thread-safe
- * reference counting.
- */ 
-@interface Object (AppleAddedAReallyStupidGCCWarning)
+#include "LFAuthLDAPConfig.h"
+
+@interface LFLDAPConnection : Object {
+	LDAP *ldapConn;
+	LFAuthLDAPConfig *config;
+}
+
++ (bool) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig;
+
 - (void) dealloc;
-@end
+- (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig;
 
-@implementation TRObject
-
-- (id) init {
-	self = [super init];
-	if (!self)
-		return self;
-
-	_refCount = 1;
-	return self;
-}
-
-- (void) dealloc {
-	[super free];
-
-	/* Make Apple's objc compiler be quiet */
-	if (false)
-		[super dealloc];
-}
-
-- (unsigned int) refCount {
-	return _refCount;
-}
-
-- (id) retain {
-	_refCount++;
-	return self;
-}
-
-- (BOOL) isEqual: (id) anObject {
-	if (self == anObject)
-		return YES;
-	else
-		return NO;
-}
-
-- (void) release {
-	/* This must never occur */
-	assert(_refCount >= 1);
-
-	/* Decrement refcount, if zero, dealloc */
-	_refCount--;
-	if (!_refCount)
-		[self dealloc];
-}
+- (bool) bindWithDN: (const char *) bindDN password: (const char *) password;
+- (bool) unbind;
 
 @end
+
+#endif /* LFLDAPCONNECTION_H */
