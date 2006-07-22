@@ -33,73 +33,57 @@
 #ifndef LFAUTHLDAPCONFIG_H
 #define LFAUTHLDAPCONFIG_H
 
-#include "TRObject.h"
-#include "TRArray.h"
-#include "TRConfig.h"
+#include <objc/Object.h>
 
-@interface LFAuthLDAPConfig : TRObject <TRConfigDelegate> {
-	/* LDAP Settings */
-	LFString *_url;
-	BOOL _tlsEnabled;
-	int _timeout;
-	LFString *_tlsCACertFile;
-	LFString *_tlsCACertDir;
-	LFString *_tlsCertFile;
-	LFString *_tlsKeyFile;
-	LFString *_tlsCipherSuite;
+typedef enum {
+	LF_LDAP_URL,
+	LF_LDAP_TIMEOUT,
+	LF_LDAP_TLS,
+	LF_LDAP_TLS_CA_CERTFILE,
+	LF_LDAP_TLS_CA_CERTDIR,
+	LF_LDAP_TLS_CERTFILE,
+	LF_LDAP_TLS_KEYFILE,
+	LF_LDAP_TLS_CIPHER_SUITE,
+	LF_LDAP_BADOPTION
+} AuthLDAPConfigOptions;
 
-	/* Authentication / Authorization Settings */
-	LFString *_baseDN;
-	LFString *_searchFilter;
-	BOOL _requireGroup;
-
-	/* Parser State */
-	LFString *_configFileName;
-	TRConfig *_configDriver;
-	TRArray *_sectionStack;
+@interface LFAuthLDAPConfig : Object {
+	char *url;
+	int tlsEnabled;
+	int timeout;
+	char *tlsCACertFile;
+	char *tlsCACertDir;
+	char *tlsCertFile;
+	char *tlsKeyFile;
+	char *tlsCipherSuite;
 }
 
-- (id) initWithConfigFile: (const char *) fileName;
+- (void) dealloc;
+- (LFAuthLDAPConfig *) initWithConfigFile: (const char *) fileName;
 
-/* TRConfigDelegate */
-- (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value;
-- (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
-- (void) endSection: (TRConfigToken *) sectionEnd;
-- (void) parseError: (TRConfigToken *) badToken;
-
-/* Accessors */
-- (LFString *) url;
-- (void) setURL: (LFString *) newURL;
+- (const char *) url;
+- (void) setURL: (const char *) newURL;
 
 - (int) timeout;
 - (void) setTimeout: (int) newTimeout;
 
-- (BOOL) tlsEnabled;
-- (void) setTLSEnabled: (BOOL) newTLSSetting;
+- (int) tlsEnabled;
+- (void) setTLSEnabled: (int) newTLSSetting;
 
-- (LFString *) tlsCACertFile;
-- (void) setTLSCACertFile: (LFString *) fileName;
+- (const char *) tlsCACertFile;
+- (void) setTLSCACertFile: (const char *) fileName;
 
-- (LFString *) tlsCACertDir;
-- (void) setTLSCACertDir: (LFString *) directoryName;
+- (const char *) tlsCACertDir;
+- (void) setTLSCACertDir: (const char *) directoryName;
 
-- (LFString *) tlsCertFile;
-- (void) setTLSCertFile: (LFString *) newFilename;
+- (const char *) tlsCertFile;
+- (void) setTLSCertFile: (const char *) newFilename;
 
-- (LFString *) tlsKeyFile;
-- (void) setTLSKeyFile: (LFString *) fileName;
+- (const char *) tlsKeyFile;
+- (void) setTLSKeyFile: (const char *) fileName;
 
-- (LFString *) tlsCipherSuite;
-- (void) setTLSCipherSuite: (LFString *) cipherSuite;
-
-- (LFString *) baseDN;
-- (void) setBaseDN: (LFString *) baseDN;
-
-- (LFString *) searchFilter;
-- (void) setSearchFilter: (LFString *) searchFilter;
-
-- (BOOL) requireGroup;
-- (void) setRequireGroup: (BOOL) requireGroup;
+- (const char *) tlsCipherSuite;
+- (void) setTLSCipherSuite: (const char *) cipherSuite;
 
 @end
 

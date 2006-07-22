@@ -27,7 +27,7 @@ install::
 		done \
 	fi
 
-test:: all
+test::
 	@if test x"$(SUBDIR)" != "x"; then \
 		for subdir in $(SUBDIR); do\
 			echo ===\> making $@ in ${DIRPRFX}$$subdir; \

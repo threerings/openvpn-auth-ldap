@@ -37,24 +37,24 @@
 #include <config.h>
 #endif
 
-#include <stdlib.h>
+#include <stdbool.h>
 
-#include "TRObject.h"
+#include <objc/Object.h>
+
 #include "strlcpy.h"
 
-@interface LFString : TRObject {
+@interface LFString : Object {
 	char *bytes;
 	size_t numBytes;
 }
 
 - (id) initWithCString: (const char *) cString;
 - (id) initWithString: (LFString *) string;
-- (id) initWithBytes: (const char *) data numBytes: (size_t) length;
 
 - (const char *) cString;
 - (size_t) length;
 
-- (BOOL) intValue: (int *) value;
+- (bool) intValue: (int *) value;
 
 - (size_t) indexToCString: (const char *) cString;
 - (size_t) indexToCharset: (const char *) cString;
@@ -70,6 +70,8 @@
 - (void) appendChar: (char) c;
 - (void) appendCString: (const char *) cString;
 - (void) appendString: (LFString *) string;
+
+- (void) dealloc;
 
 @end
 
