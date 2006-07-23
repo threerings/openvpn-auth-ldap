@@ -427,9 +427,12 @@ error:
 					return;
 			}
 			break;
+		case LF_GROUP_SECTION:
+			/* TODO: Actually do something with groups */
+			break;
 		default:
-			/* (Must be!) unreachable */
-			abort();
+			/* Must be unreachable! */
+			errx(1, "Unhandled section type in setKey!\n");
 			break;
 	}
 	parse_opcode(key, GroupSectionVariables);
@@ -438,6 +441,9 @@ error:
 - (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name {
 	ConfigOpcode opcode;
 
+	/* Parse the section opcode */
+	opcode = parse_opcode(sectionType, SectionTypes);
+
 	/* Enter handler for the current state */
 	switch([self currentSectionOpcode]) {
 		/* Top-level sections supported:
@@ -445,7 +451,6 @@ error:
 		 * 	- Group (named)
 		 */
 		case LF_NO_SECTION:
-			opcode = parse_opcode(sectionType, SectionTypes);
 			switch (opcode) {
 				case LF_LDAP_SECTION:
 					if (name) {
@@ -459,6 +464,23 @@ error:
 						[self errorNamedSection: sectionType withName: name];
 						return;
 					}
+					[self pushSection: opcode];
+					break;
+				default:
+					[self errorUnknownSection: sectionType];
+					return;
+			}
+			break;
+		case LF_AUTH_SECTION:
+			/* Currently, no named sections are supported */
+			if (name) {
+				[self errorNamedSection: sectionType withName: name];
+				return;
+			}
+
+			/* Validate the section type */
+			switch (opcode) {
+				case LF_GROUP_SECTION:
 					[self pushSection: opcode];
 					break;
 				default:
