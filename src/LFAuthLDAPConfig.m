@@ -428,7 +428,27 @@ error:
 			}
 			break;
 		case LF_GROUP_SECTION:
-			/* TODO: Actually do something with groups */
+			/* Opcode must be one of GroupSectionVariables or GenericLDAPVariables */
+			opcode = parse_opcode(key, GroupSectionVariables);
+			if (opcode == LF_UNKNOWN_OPCODE)
+				opcode = parse_opcode(key, GenericLDAPVariables);
+
+			switch(opcode) {
+				case LF_GROUP_MEMBER_ATTRIBUTE:
+					break;
+
+				case LF_LDAP_BASEDN:
+					// [self setBaseDN: [value string]];
+					break;
+
+				case LF_LDAP_SEARCH_FILTER:
+					// [self setSearchFilter: [value string]];
+					break;
+
+				/* Unknown Setting */
+				default:
+					[self errorUnknownKey: key];
+			}
 			break;
 		default:
 			/* Must be unreachable! */
