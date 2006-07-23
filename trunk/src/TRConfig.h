@@ -44,7 +44,14 @@
 /* A complex set of TRConfig* header dependencies dictates the following order
  * of declarations and includes */
 
-/* Object Data Types */
+/*!
+ * Object Data Types.
+ * Tokens are always strings (TOKEN_DATATYPE_STRING),
+ * but sometimes they can also be integers and booleans.
+ * In other words, the integer and boolean datatypes should
+ * be considered to provide a superset of functionality to the
+ * string data type.
+ */
 typedef enum {
 	TOKEN_DATATYPE_STRING,
 	TOKEN_DATATYPE_INT,
