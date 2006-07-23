@@ -1,6 +1,6 @@
 /*
- * tests.c
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRLDAPGroupConfig.m
+ * TRLDAPGroundConfig Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -32,51 +32,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <unistd.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <src/TRLDAPGroupConfig.h>
+
 #include <check.h>
-#include <stdio.h>
 
-#include <tests.h>
+/* Data Constants */
+#define TEST_LDAP_BASEDN	"ou=People,dc=example,dc=com"
+#define TEST_LDAP_ATTRIBUTE	"uniqueMember"
+#define TEST_LDAP_FILTER	"(|(cn=artists)(cn=engineers))"
 
-void print_usage(const char *name) {
-	printf("Usage: %s [filename]\n", name);
-	printf(" [filename]\tWrite XML log to <filename>\n");
-}
+Suite *TRLDAPGroupConfig_suite(void) {
+	Suite *s = suite_create("TRLDAPGroupConfig");
 
-int main(int argc, char *argv[]) {
-	Suite *s;
-	SRunner *sr;
-	int nf;
+	TCase *tc_main = tcase_create("Main");
+	suite_add_tcase(s, tc_main);
 
-	if (argc > 2) {
-		print_usage(argv[0]);
-		exit(1);
-	}
-
-	/* Load all test suites */
-	s = LFString_suite();
-	sr = srunner_create(s);
-	srunner_add_suite(sr, LFAuthLDAPConfig_suite());
-	srunner_add_suite(sr, TRObject_suite());
-	srunner_add_suite(sr, TRArray_suite());
-	srunner_add_suite(sr, TRConfigToken_suite());
-	srunner_add_suite(sr, TRConfigLexer_suite());
-	srunner_add_suite(sr, TRConfig_suite());
-	srunner_add_suite(sr, TRLDAPGroupConfig_suite());
-
-	/* Enable XML output */
-	if (argc == 2)
-		srunner_set_xml(sr, argv[1]);
-
-	/* Run tests */
-	srunner_run_all(sr, CK_NORMAL);
-
-	nf = srunner_ntests_failed(sr);
-	srunner_free(sr);
-
-	if (nf == 0)
-		exit(EXIT_SUCCESS);
-	else
-		exit(EXIT_FAILURE);
+	return s;
 }
