@@ -49,7 +49,7 @@
 - (id) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID {
 	self = [self init];
 	if (self != NULL) {
-		_dataType = TOKEN_DATATYPE_NONE;
+		_dataType = TOKEN_DATATYPE_STRING;
 		_tokenID = tokenID;
 		_lineNumber = line;
 		_string = [[LFString alloc] initWithBytes: data numBytes: length];
