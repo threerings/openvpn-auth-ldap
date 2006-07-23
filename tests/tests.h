@@ -43,3 +43,4 @@ Suite *TRArray_suite(void);
 Suite *TRConfigToken_suite(void);
 Suite *TRConfigLexer_suite(void);
 Suite *TRConfig_suite(void);
+Suite *TRLDAPGroupConfig_suite(void);
