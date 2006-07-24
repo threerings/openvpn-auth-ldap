@@ -96,6 +96,8 @@ START_TEST (test_boolValue) {
 
 	fail_unless(value == YES, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", YES, value);
 
+	[token release];
+
 	token = [[TRConfigToken alloc] initWithBytes: "no" 
 					    numBytes: sizeof("no")
 					  lineNumber: TEST_LINE_NUMBER

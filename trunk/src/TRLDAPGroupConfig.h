@@ -44,8 +44,12 @@
 	LFString *_memberAttribute;
 }
 
-- (id) initWithBaseDN: (LFString *) baseDN searchFilter: (LFString *) filter;
-- (id) initWithBaseDN: (LFString *) baseDN searchFilter: (LFString *) filter memberAttribute: (LFString *) attribute;
+- (LFString *) baseDN;
+- (void) setBaseDN: (LFString *) baseDN;
+- (LFString *) searchFilter;
+- (void) setSearchFilter: (LFString *) searchFilter;
+- (LFString *) memberAttribute;
+- (void) setMemberAttribute: (LFString *) memberAttribute;
 
 @end
 

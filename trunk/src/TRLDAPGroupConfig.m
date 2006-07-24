@@ -37,10 +37,36 @@
 #include "TRLDAPGroupConfig.h"
 
 @implementation TRLDAPGroupConfig
-- (id) initWithBaseDN: (LFString *) baseDN searchFilter: (LFString *) filter {
-	return nil;
+- (LFString *) baseDN {
+	return (_baseDN);
 }
-- (id) initWithBaseDN: (LFString *) baseDN searchFilter: (LFString *) filter memberAttribute: (LFString *) attribute {
-	return nil;
+
+- (void) setBaseDN: (LFString *) baseDN {
+	if (_baseDN)
+		[_baseDN release];
+	_baseDN = [baseDN retain];
 }
+
+- (LFString *) searchFilter {
+	return (_searchFilter);
+}
+
+- (void) setSearchFilter: (LFString *) searchFilter {
+	if (_searchFilter)
+		[_searchFilter release];
+	_searchFilter = [searchFilter retain];
+}
+
+- (LFString *) memberAttribute {
+	return (_memberAttribute);
+}
+
+- (void) setMemberAttribute: (LFString *) memberAttribute {
+	if (_memberAttribute)
+		[_memberAttribute release];
+	_memberAttribute = [memberAttribute retain];
+}
+
+
+
 @end
