@@ -1,6 +1,6 @@
 /*
- * test.c
- * OpenVPN LDAP Authentication Plugin Test Harness
+ * testplugin.c
+ * OpenVPN LDAP Authentication Plugin Test Driver
  *
  * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
