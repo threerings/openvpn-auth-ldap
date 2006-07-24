@@ -37,6 +37,17 @@
 #include "TRLDAPGroupConfig.h"
 
 @implementation TRLDAPGroupConfig
+- (void) dealloc {
+	if (_baseDN)
+		[_baseDN release];
+	if (_searchFilter)
+		[_searchFilter release];
+	if (_memberAttribute)
+		[_memberAttribute release];
+	[super dealloc];
+}
+
+
 - (LFString *) baseDN {
 	return (_baseDN);
 }
