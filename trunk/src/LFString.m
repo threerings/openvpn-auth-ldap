@@ -96,6 +96,32 @@
 	return (numBytes);
 }
 
+/*!
+ * Return a hash value for the receiver.
+ * Hash algorithm borrowed from kazlib.
+ */
+- (unsigned long) hash {
+	unsigned long randbox[] = {
+		0x49848f1bU, 0xe6255dbaU, 0x36da5bdcU, 0x47bf94e9U,
+		0x8cbcce22U, 0x559fc06aU, 0xd268f536U, 0xe10af79aU,
+		0xc1af4d69U, 0x1d2917b5U, 0xec4c304dU, 0x9ee5016cU,
+		0x69232f74U, 0xfead7bb3U, 0xe9089ab6U, 0xf012f6aeU,
+	};
+	const char *p;
+	unsigned int hash = 0;
+
+	for (p = bytes; *p != '\0'; p++) {
+		hash ^= randbox[(*p + hash) & 0xf];
+		hash = (hash << 1) | (hash >> 31);
+		hash &= 0xffffffffU;
+		hash ^= randbox[((*p >> 4) + hash) & 0xf];
+		hash = (hash << 2) | (hash >> 30);
+		hash &= 0xffffffffU;
+	}
+
+	return hash;
+}
+
 - (BOOL) intValue: (int *) value {
 	long i;
 	char *endptr;

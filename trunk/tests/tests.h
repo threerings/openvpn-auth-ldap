@@ -40,6 +40,7 @@ Suite *LFString_suite(void);
 Suite *LFAuthLDAPConfig_suite(void);
 Suite *TRObject_suite(void);
 Suite *TRArray_suite(void);
+Suite *TRHash_suite(void);
 Suite *TRConfigToken_suite(void);
 Suite *TRConfigLexer_suite(void);
 Suite *TRConfig_suite(void);

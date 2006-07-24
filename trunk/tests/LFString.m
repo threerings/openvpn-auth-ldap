@@ -131,6 +131,16 @@ START_TEST (test_intValue) {
 }
 END_TEST
 
+START_TEST (test_hash) {
+	LFString *str = [[LFString alloc] initWithCString: TEST_STRING];
+	int hash = [str hash];
+
+	fail_if(hash == 0);
+	[str release];
+}
+END_TEST
+
+
 Suite *LFString_suite(void) {
 	Suite *s = suite_create("LFString");
 
@@ -141,6 +151,7 @@ Suite *LFString_suite(void) {
 	tcase_add_test(tc_string, test_initWithBytes);
 	tcase_add_test(tc_string, test_length);
 	tcase_add_test(tc_string, test_intValue);
+	tcase_add_test(tc_string, test_hash);
 
 	return s;
 }
