@@ -38,6 +38,7 @@
 #include "TRObject.h"
 
 @interface TRArray : TRObject {
+	unsigned int _count;
 	struct _TRArrayStack *_stack;
 }
 
@@ -45,6 +46,7 @@
 - (void) removeObject;
 - (id) lastObject;
 - (BOOL) containsObject: (id) anObject;
+- (unsigned int) count;
 
 @end
 

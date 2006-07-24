@@ -36,6 +36,7 @@
 #include <ldap.h>
 
 #include "TRObject.h"
+#include "TRArray.h"
 #include "LFString.h"
 
 @interface LFLDAPConnection : TRObject {
@@ -48,6 +49,11 @@
 
 - (BOOL) bindWithDN: (const char *) bindDN password: (const char *) password;
 - (BOOL) unbind;
+
+- (TRArray *) searchWithFilter: (LFString *) filter
+			 scope: (int) scope
+			baseDN: (LFString *) base
+		    attributes: (TRArray *) attributes;
 
 - (BOOL) setTLSCACertFile: (LFString *) fileName;
 - (BOOL) setTLSCACertDir: (LFString *) directory;

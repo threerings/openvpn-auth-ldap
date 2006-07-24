@@ -148,6 +148,13 @@ static int ldap_get_errno(LDAP *ld) {
 	return (true);
 }
 
+- (TRArray *) searchWithFilter: (LFString *) filter
+			 scope: (int) scope
+			baseDN: (LFString *) base
+		    attributes: (TRArray *) attributes {
+	return nil;
+}
+
 - (BOOL) _setLDAPOption: (int) opt value: (const void *) value connection: (LDAP *) ldapConn {
 	int err;
 	if ((err = ldap_set_option(NULL, opt, value)) != LDAP_SUCCESS) {
