@@ -1,6 +1,6 @@
 /*
- * TRHash.h
- * Hash table
+ * TREnumerator.m
+ * Abstract enumerator class
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -32,24 +32,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRHASH_H
-#define TRHASH_H
-
-#include "TRObject.h"
 #include "TREnumerator.h"
-#include "LFString.h"
-#include "hash.h"
 
-@interface TRHash : TRObject {
-	hash_t *_hash;
+@implementation TREnumerator
+
+- (id) nextObject {
+	return nil;
 }
 
-- (id) initWithCapacity: (unsigned int) numItems;
-- (id) valueForKey: (LFString *) key;
-- (void) setObject: (id) anObject forKey: (LFString *) key;
-- (void) removeObjectForKey: (LFString *) key;
-- (TREnumerator *) keyEnumerator;
-
 @end
-
-#endif /* TRHASH_H */

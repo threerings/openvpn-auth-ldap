@@ -35,6 +35,19 @@
 #include "TRHash.h"
 #include <string.h>
 
+/*!
+ * Hash key enumerator.
+ */
+@interface TRHashKeyEnumerator : TREnumerator <TREnumerator> {
+	TRHash *_hash;
+	hscan_t _scan;
+	hash_t *_hashContext;
+}
+
+- (id) initWithHash: (TRHash *) hash;
+
+@end
+
 @implementation TRHash
 
 /*
@@ -79,7 +92,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 }
 
 /*!
- * Initialize a new TRHash with an initial capacity of
+ * Initialize a new TRHash with an maximum capacity of
  * numItems.
  */
 - (id) initWithCapacity: (unsigned int) numItems {
@@ -155,4 +168,51 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 	hash_insert(_hash, node, key);
 }
 
-@end
+- (hash_t *) _privateHashContext {
+	return _hash;
+}
+
+/*!
+ * Return a key enumerator.
+ * Due to our lack of an autorelease pool,
+ * it is the caller's responsibility to release
+ * the returned value.
+ */
+- (TREnumerator *) keyEnumerator {
+	return [[TRHashKeyEnumerator alloc] initWithHash: self];
+}
+
+@end /* TRHash */
+
+@implementation TRHashKeyEnumerator
+
+- (void) dealloc {
+	[_hash release];
+	[super dealloc];
+}
+
+- (id) initWithHash: (TRHash *) hash {
+	self = [super init];
+	if (!self)
+		return self;
+
+	_hash = [hash retain];
+	_hashContext = [hash _privateHashContext];
+	hash_scan_begin(&_scan, _hashContext);
+
+	return self;
+}
+
+- (id) nextObject {
+	hnode_t *node;
+
+	node = hash_scan_next(&_scan);
+	if (!node)
+		return nil;
+
+	return (id) hnode_getkey(node);
+}
+
+@end /* TRHashKeyEnumerator */
+
+

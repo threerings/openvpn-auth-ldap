@@ -11,6 +11,7 @@ PLUGIN_NAME=	openvpn-auth-ldap
 PLUGIN_OBJS=	auth-ldap.o \
 		hash.o \
 		TRArray.o \
+		TREnumerator.o \
 		TRHash.o \
 		TRObject.o \
 		LFString.o \
