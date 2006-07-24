@@ -42,6 +42,17 @@ typedef struct _TRArrayStack {
 	struct _TRArrayStack *next;
 } TRArrayStack;
 
+/*!
+ * Linked list enumerator
+ */
+@interface TRArrayObjectEnumerator : TREnumerator {
+	TRArray *_array;
+	TRArrayStack *_stack;
+}
+- (id) initWithArray: (TRArray *) array;
+@end
+
+
 @implementation TRArray
 
 - (id) init {
@@ -135,4 +146,52 @@ typedef struct _TRArrayStack {
 	return NO;
 }
 
-@end
+- (TRArrayStack *) _privateArrayContext {
+        return _stack;
+}
+
+/*!
+ * Return a object enumerator.
+ * Due to our lack of an autorelease pool,
+ * it is the caller's responsibility to release
+ * the returned value.
+ */
+- (TREnumerator *) objectEnumerator {
+        return [[TRArrayObjectEnumerator alloc] initWithArray: self];
+}
+
+@end /* TRArray */
+
+@implementation TRArrayObjectEnumerator
+
+- (void) dealloc {
+        [_array release];
+        [super dealloc];
+}
+
+- (id) initWithArray: (TRArray *) array {
+        self = [super init];
+        if (!self)
+                return self;
+
+        _array = [array retain];
+        _stack = [array _privateArrayContext];
+
+        return self;
+}
+
+- (id) nextObject {
+	TRArrayStack *next;
+
+	if (!_stack)
+		return nil;
+
+	/* Pop the next node from the stack */
+	next = _stack;
+	_stack = _stack->next;
+
+	/* Return the next node */
+	return (next->object);
+}
+
+@end /* TRArrayObjectEnumerator */

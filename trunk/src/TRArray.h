@@ -36,6 +36,7 @@
 #define TRARRAY_H
 
 #include "TRObject.h"
+#include "TREnumerator.h"
 
 @interface TRArray : TRObject {
 	unsigned int _count;
@@ -46,6 +47,7 @@
 - (void) removeObject;
 - (id) lastObject;
 - (BOOL) containsObject: (id) anObject;
+- (TREnumerator *) objectEnumerator;
 - (unsigned int) count;
 
 @end
