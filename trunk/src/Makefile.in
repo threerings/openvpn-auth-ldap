@@ -53,7 +53,7 @@ $(PLUGIN_FILE): $(GEN_SRCS) $(PLUGIN_OBJS)
 $(TEST_LIB): $(GEN_SRCS) $(PLUGIN_OBJS)
 	$(AR) -r $@ $(PLUGIN_OBJS)
 
-testplugin:: $(TEST_OBJS) $(TEST_LIB_NAME)
+testplugin:: $(TEST_OBJS) $(TEST_LIB)
 	$(CC) -o $@ ${TEST_OBJS} ${LDFLAGS} ${LIBS} -L. -lauth-ldap-testing
 	
 install:: $(PLUGIN_FILE)
