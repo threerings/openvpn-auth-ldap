@@ -34,6 +34,7 @@
 
 #include "TRHash.h"
 #include <string.h>
+#include <assert.h>
 
 /*!
  * Hash key enumerator.
@@ -158,6 +159,9 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 
 	/* Remove the key, if it exists */
 	[self removeObjectForKey: key];
+
+	/* Are we at capacity? Programmer error! */
+	assert(hash_isfull(_hash) == 0);
 
 	/* Retain our key and value */
 	[anObject retain];
