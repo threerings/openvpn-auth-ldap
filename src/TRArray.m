@@ -49,6 +49,8 @@ typedef struct _TRArrayStack {
 	if (!self)
 		return self;
 
+	_count = 0;
+
 	/* Initialize our linked list */
 	_stack = xmalloc(sizeof(TRArrayStack));
 	_stack->object= nil;
@@ -70,6 +72,10 @@ typedef struct _TRArrayStack {
 	[super dealloc];
 }
 
+- (unsigned int) count {
+	return _count;
+}
+
 /*!
  * Add anObject to the array.
  * @param anObject: Object to add;
@@ -83,6 +89,7 @@ typedef struct _TRArrayStack {
 	node->next = _stack;
 
 	_stack = node;
+	_count++;
 }
 
 /*!
@@ -98,6 +105,7 @@ typedef struct _TRArrayStack {
 	/* Dealloc the removed node */
 	[node->object release];
 	free(node);
+	_count--;
 }
 
 /*!

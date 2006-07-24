@@ -115,6 +115,22 @@ START_TEST (test_containsObject) {
 }
 END_TEST
 
+START_TEST(test_count) {
+	TRArray *array = [[TRArray alloc] init];
+	LFString *string1 = [[LFString alloc] initWithCString: "String 1"];
+
+	/* Fill our array */
+	[array addObject: string1];
+
+	/* Check the count */
+	fail_unless([array count] == 1);
+
+	[array release];
+	[string1 release];
+
+}
+END_TEST
+
 
 Suite *TRArray_suite(void) {
 	Suite *s = suite_create("TRArray");
@@ -124,6 +140,7 @@ Suite *TRArray_suite(void) {
 	tcase_add_test(tc_array, test_addObject);
 	tcase_add_test(tc_array, test_removeObject);
 	tcase_add_test(tc_array, test_containsObject);
+	tcase_add_test(tc_array, test_count);
 
 	return s;
 }
