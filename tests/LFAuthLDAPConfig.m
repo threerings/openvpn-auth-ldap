@@ -50,6 +50,7 @@
 #define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
 #define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
 #define AUTH_LDAP_CONF_MISMATCHED DATA_PATH("auth-ldap-mismatched.conf")
+#define AUTH_LDAP_CONF_MULTIKEY DATA_PATH("auth-ldap-multikey.conf")
 
 START_TEST (test_initWithConfigFile) {
 	LFAuthLDAPConfig *config;
@@ -66,6 +67,9 @@ START_TEST (test_initWithConfigFile) {
 	fail_unless([config timeout] == TEST_LDAP_TIMEOUT);
 
 	fail_unless([config tlsEnabled]);
+
+	fail_if([config ldapGroups] == nil);
+	fail_if([[config ldapGroups] lastObject] == nil);
 
 	[config release];
 }
@@ -91,6 +95,16 @@ START_TEST (test_initWithMismatchedSection) {
 }
 END_TEST
 
+START_TEST (test_initWithDuplicateKeys) {
+	LFAuthLDAPConfig *config;
+
+	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MULTIKEY];
+	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted duplicate keys.");
+
+	[config release];
+}
+END_TEST
+
 
 Suite *LFAuthLDAPConfig_suite(void) {
 	Suite *s = suite_create("LFAuthLDAPConfig");
@@ -100,6 +114,7 @@ Suite *LFAuthLDAPConfig_suite(void) {
 	tcase_add_test(tc_parse, test_initWithConfigFile);
 	tcase_add_test(tc_parse, test_initWithIncorrectlyNamedSection);
 	tcase_add_test(tc_parse, test_initWithMismatchedSection);
+	tcase_add_test(tc_parse, test_initWithDuplicateKeys);
 
 	return s;
 }

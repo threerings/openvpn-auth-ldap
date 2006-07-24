@@ -40,7 +40,9 @@
 #include <assert.h>
 
 #include "LFAuthLDAPConfig.h"
+#include "TRLDAPGroupConfig.h"
 #include "LFString.h"
+#include "TRHash.h"
 
 #include "auth-ldap.h"
 
@@ -82,61 +84,62 @@ typedef enum {
 typedef struct OpcodeTable {
 	const char *name;
 	ConfigOpcode opcode;
+	BOOL multi;
 } OpcodeTable;
 
 /* Section Types */
 static OpcodeTable SectionTypes[] = {
-	{ "LDAP",		LF_LDAP_SECTION },
-	{ "Authorization",	LF_AUTH_SECTION },
-	{ "Group",		LF_GROUP_SECTION },
+	{ "LDAP",		LF_LDAP_SECTION, NO },
+	{ "Authorization",	LF_AUTH_SECTION, NO },
+	{ "Group",		LF_GROUP_SECTION, YES },
 	{ NULL, 0 }
 };
 
 /* Generic LDAP Search Variables */
 static OpcodeTable GenericLDAPVariables[] = {
-	{ "BaseDN",		LF_LDAP_BASEDN },
-	{ "SearchFilter",	LF_LDAP_SEARCH_FILTER },
+	{ "BaseDN",		LF_LDAP_BASEDN, NO },
+	{ "SearchFilter",	LF_LDAP_SEARCH_FILTER, NO },
 	{ NULL, 0 }
 };
 
 /* LDAP Section Variables */
 static OpcodeTable LDAPSectionVariables[] = {
-	{ "URL",		LF_LDAP_URL },
-	{ "Timeout",		LF_LDAP_TIMEOUT },
-	{ "BindDN",		LF_LDAP_BINDDN },
-	{ "Password",		LF_LDAP_PASSWORD },
-	{ "TLSEnable",		LF_LDAP_TLS },
-	{ "TLSCACertFile",	LF_LDAP_TLS_CA_CERTFILE },
-	{ "TLSCACertDir",	LF_LDAP_TLS_CA_CERTDIR },
-	{ "TLSCertFile",	LF_LDAP_TLS_CERTFILE },
-	{ "TLSKeyFile",		LF_LDAP_TLS_KEYFILE },
-	{ "TLSCipherSuite",	LF_LDAP_TLS_CIPHER_SUITE },
+	{ "URL",		LF_LDAP_URL, NO },
+	{ "Timeout",		LF_LDAP_TIMEOUT, NO },
+	{ "BindDN",		LF_LDAP_BINDDN, NO },
+	{ "Password",		LF_LDAP_PASSWORD, NO },
+	{ "TLSEnable",		LF_LDAP_TLS, NO },
+	{ "TLSCACertFile",	LF_LDAP_TLS_CA_CERTFILE, NO },
+	{ "TLSCACertDir",	LF_LDAP_TLS_CA_CERTDIR, NO },
+	{ "TLSCertFile",	LF_LDAP_TLS_CERTFILE, NO },
+	{ "TLSKeyFile",		LF_LDAP_TLS_KEYFILE, NO },
+	{ "TLSCipherSuite",	LF_LDAP_TLS_CIPHER_SUITE, NO },
 	{ NULL, 0 }
 };
 
 /* Authorization Section Variables */
 static OpcodeTable AuthSectionVariables[] = {
-	{ "RequireGroup",	LF_AUTH_REQUIRE_GROUP },
+	{ "RequireGroup",	LF_AUTH_REQUIRE_GROUP, NO },
 	{ NULL, 0}
 };
 
 /* Group Section Variables */
 static OpcodeTable GroupSectionVariables[] = {
-	{ "MemberAttribute",	LF_GROUP_MEMBER_ATTRIBUTE },
+	{ "MemberAttribute",	LF_GROUP_MEMBER_ATTRIBUTE, NO },
 	{ NULL, 0 }
 };
 
-/* Parse a string, returning the associated opcode from the supplied table */
-static ConfigOpcode parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
+/* Parse a string, returning the associated entry from the supplied table */
+static OpcodeTable *parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
 	unsigned int i;
 	const char *cp = [token cString];
 
 	for (i = 0; table[i].name; i++)
 		if (strcasecmp(cp, table[i].name) == 0)
-			return (table[i].opcode);
+			return (&table[i]);
 
 	/* Unknown opcode */
-	return (LF_UNKNOWN_OPCODE);
+	return (NULL);
 }
 
 /* Parse a string, returning the associated opcode from the supplied table */
@@ -157,30 +160,58 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
  * Simple object that maintains section parsing state
  */
 @interface SectionState : TRObject {
-	ConfigOpcode opcode;
+	ConfigOpcode _opcode;
+	TRHash *_hash;
+	id _context;
 }
 
 @end
 
 @implementation SectionState
+- (void) dealloc {
+	[_hash release];
+	if (_context)
+		[_context release];
+	[super dealloc];
+}
+
 - (id) init {
 	self = [super init];
-	if (self)
-		opcode = LF_UNKNOWN_OPCODE;
+	if (!self)
+		return self;
+
+	_opcode = LF_UNKNOWN_OPCODE;
+	/* Totally arbitrary number. More keys than this will cause assert() to trigger */
+	_hash = [[TRHash alloc] initWithCapacity: 65536];
 
 	return self;
 }
 
 - (id) initWithOpcode: (ConfigOpcode) anOpcode {
 	if ([self init])
-		opcode = anOpcode;
+		_opcode = anOpcode;
 
 	return self;
 }
 
 - (ConfigOpcode) opcode {
-	return opcode;
+	return _opcode;
 }
+
+- (TRHash *) hashTable {
+	return _hash;
+}
+
+- (void) setContext: (id) context {
+	if (_context)
+		[_context release];
+	_context = context;
+}
+
+- (id) context {
+	return _context;
+}
+
 @end
 
 @implementation LFAuthLDAPConfig
@@ -202,6 +233,8 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
 		[_baseDN release];
 	if (_searchFilter)
 		[_searchFilter release];
+	if (_ldapGroups)
+		[_ldapGroups release];
 
 	[super dealloc];
 }
@@ -226,7 +259,7 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
 	_configFileName = [[LFString alloc] initWithCString: fileName];
 	configFD = open(fileName, O_RDONLY);
 	if (configFD == -1) {
-		warn("Failed to open \"%s\" for reading", _configFileName);
+		warn("Failed to open \"%s\" for reading", [_configFileName cString]);
 		goto error;
 	}
 
@@ -263,6 +296,27 @@ error:
 }
 
 /*!
+ * Return the current section's hash table.
+ */
+- (TRHash *) currentSectionHashTable {
+	return [[_sectionStack lastObject] hashTable];
+}
+
+/*!
+ * Return the current section's context.
+ */
+- (id) currentSectionContext {
+	return [[_sectionStack lastObject] context];
+}
+
+/*!
+ * Set the current section's context.
+ */
+- (void) setCurrentSectionContext: (id) context {
+	[[_sectionStack lastObject] setContext: context];
+}
+
+/*!
  * Allocate a SectionState object and push it onto the
  * section stack.
  */
@@ -287,6 +341,14 @@ error:
  */
 - (void) errorUnknownKey: (TRConfigToken *) key {
 	warnx("Auth-LDAP Configuration Error: %s key is unknown (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]); \
+	[_configDriver errorStop];
+}
+
+/*!
+ * Report a duplicate key to the user.
+ */
+- (void) errorMultiKey: (TRConfigToken *) key {
+	warnx("Auth-LDAP Configuration Error: multiple occurances of key %s (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]); \
 	[_configDriver errorStop];
 }
 
@@ -322,13 +384,80 @@ error:
 	[_configDriver errorStop];
 }
 
+/*!
+ * Called by the lemon generated parser when a new section is found.
+ */
+- (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name {
+	OpcodeTable *opcodeEntry;
+
+	/* Parse the section opcode */
+	opcodeEntry = parse_opcode(sectionType, SectionTypes);
+
+	/* Enter handler for the current state */
+	switch([self currentSectionOpcode]) {
+		/* Top-level sections supported:
+		 * 	- LDAP (unnamed)
+		 * 	- Group (named)
+		 */
+		case LF_NO_SECTION:
+			switch (opcodeEntry->opcode) {
+				case LF_LDAP_SECTION:
+					if (name) {
+						[self errorNamedSection: sectionType withName: name];
+						return;
+					}
+					[self pushSection: opcodeEntry->opcode];
+					break;
+				case LF_AUTH_SECTION:
+					if (name) {
+						[self errorNamedSection: sectionType withName: name];
+						return;
+					}
+					[self pushSection: opcodeEntry->opcode];
+					break;
+				default:
+					[self errorUnknownSection: sectionType];
+					return;
+			}
+			break;
+		case LF_AUTH_SECTION:
+			/* Currently, no named sections are supported */
+			if (name) {
+				[self errorNamedSection: sectionType withName: name];
+				return;
+			}
+
+			/* Validate the section type */
+			switch (opcodeEntry->opcode) {
+				TRLDAPGroupConfig *groupConfig;
+				case LF_GROUP_SECTION:
+					groupConfig = [[TRLDAPGroupConfig alloc] init];
+					[self pushSection: opcodeEntry->opcode];
+					[self setCurrentSectionContext: groupConfig];
+					if (!_ldapGroups) {
+						_ldapGroups = [[TRArray alloc] init];
+					}
+					break;
+				default:
+					[self errorUnknownSection: sectionType];
+					return;
+			}
+			break;
+		default:
+			[self errorUnknownSection: sectionType];
+			return;
+	}
+
+	return;
+}
 
 /*!
  * Called by the lemon-generated parser when a key value pair is found.
  */
 - (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
 	/* Handle key value pairs */
-	ConfigOpcode opcode;
+	OpcodeTable *opcodeEntry;
+	TRHash *hashTable = [self currentSectionHashTable];
 
 	switch ([self currentSectionOpcode]) {
 		case LF_NO_SECTION:
@@ -337,7 +466,12 @@ error:
 			return;
 
 		case LF_LDAP_SECTION:
-			switch (parse_opcode(key, LDAPSectionVariables)) {
+			opcodeEntry = parse_opcode(key, LDAPSectionVariables);
+			if (!opcodeEntry) {
+				[self errorUnknownKey: key];
+				return;
+			}
+			switch (opcodeEntry->opcode) {
 				int timeout;
 				BOOL enableTLS;
 
@@ -398,11 +532,16 @@ error:
 
 		case LF_AUTH_SECTION:
 			/* Opcode must be one of AuthSectionVariables or GenericLDAPVariables */
-			opcode = parse_opcode(key, AuthSectionVariables);
-			if (opcode == LF_UNKNOWN_OPCODE)
-				opcode = parse_opcode(key, GenericLDAPVariables);
+			opcodeEntry = parse_opcode(key, AuthSectionVariables);
+			if (!opcodeEntry) {
+				opcodeEntry = parse_opcode(key, GenericLDAPVariables);
+				if (!opcodeEntry) {
+					[self errorUnknownKey: key];
+					return;
+				}
+			}
 
-			switch(opcode) {
+			switch(opcodeEntry->opcode) {
 				BOOL requireGroup;
 
 				case LF_AUTH_REQUIRE_GROUP:
@@ -429,20 +568,32 @@ error:
 			break;
 		case LF_GROUP_SECTION:
 			/* Opcode must be one of GroupSectionVariables or GenericLDAPVariables */
-			opcode = parse_opcode(key, GroupSectionVariables);
-			if (opcode == LF_UNKNOWN_OPCODE)
-				opcode = parse_opcode(key, GenericLDAPVariables);
+			opcodeEntry = parse_opcode(key, GroupSectionVariables);
+			if (!opcodeEntry) {
+				opcodeEntry = parse_opcode(key, GenericLDAPVariables);
+				if (!opcodeEntry) {
+					[self errorUnknownKey: key];
+					return;
+				}
+			}
 
-			switch(opcode) {
+
+			switch(opcodeEntry->opcode) {
+				TRLDAPGroupConfig *config;
+
 				case LF_GROUP_MEMBER_ATTRIBUTE:
+					config = [self currentSectionContext];
+					[config setMemberAttribute: [value string]];
 					break;
 
 				case LF_LDAP_BASEDN:
-					// [self setBaseDN: [value string]];
+					config = [self currentSectionContext];
+					[config setBaseDN: [value string]];
 					break;
 
 				case LF_LDAP_SEARCH_FILTER:
-					// [self setSearchFilter: [value string]];
+					config = [self currentSectionContext];
+					[config setSearchFilter: [value string]];
 					break;
 
 				/* Unknown Setting */
@@ -455,65 +606,15 @@ error:
 			errx(1, "Unhandled section type in setKey!\n");
 			break;
 	}
-	parse_opcode(key, GroupSectionVariables);
-}
 
-- (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name {
-	ConfigOpcode opcode;
-
-	/* Parse the section opcode */
-	opcode = parse_opcode(sectionType, SectionTypes);
-
-	/* Enter handler for the current state */
-	switch([self currentSectionOpcode]) {
-		/* Top-level sections supported:
-		 * 	- LDAP (unnamed)
-		 * 	- Group (named)
-		 */
-		case LF_NO_SECTION:
-			switch (opcode) {
-				case LF_LDAP_SECTION:
-					if (name) {
-						[self errorNamedSection: sectionType withName: name];
-						return;
-					}
-					[self pushSection: opcode];
-					break;
-				case LF_AUTH_SECTION:
-					if (name) {
-						[self errorNamedSection: sectionType withName: name];
-						return;
-					}
-					[self pushSection: opcode];
-					break;
-				default:
-					[self errorUnknownSection: sectionType];
-					return;
-			}
-			break;
-		case LF_AUTH_SECTION:
-			/* Currently, no named sections are supported */
-			if (name) {
-				[self errorNamedSection: sectionType withName: name];
-				return;
-			}
-
-			/* Validate the section type */
-			switch (opcode) {
-				case LF_GROUP_SECTION:
-					[self pushSection: opcode];
-					break;
-				default:
-					[self errorUnknownSection: sectionType];
-					return;
-			}
-			break;
-		default:
-			[self errorUnknownSection: sectionType];
+	/* Lastly, prevent multiple occurances of a single-use key */
+	if (!opcodeEntry->multi) {
+		if ([hashTable valueForKey: [key string]]) {
+			[self errorMultiKey: key];
 			return;
+		}
+		[hashTable setObject: value forKey: [key string]];
 	}
-
-	return;
 }
 
 /*!
@@ -521,15 +622,31 @@ error:
  * the section stack.
  */
 - (void) endSection: (TRConfigToken *) sectionEnd {
-	ConfigOpcode opcode;
-	opcode = parse_opcode(sectionEnd, SectionTypes);
+	OpcodeTable *opcodeEntry;
+	opcodeEntry = parse_opcode(sectionEnd, SectionTypes);
 
 	/* Mismatched section? */
-	if (opcode != [self currentSectionOpcode]) {
+	if (!opcodeEntry || opcodeEntry->opcode != [self currentSectionOpcode]) {
 		[self errorMismatchedSection: sectionEnd];
+		return;
 	}
 
 	/* TODO: Handle missing required settings */
+	switch (opcodeEntry->opcode) {
+		case LF_LDAP_SECTION:
+			break;
+		case LF_AUTH_SECTION:
+			break;
+		case LF_GROUP_SECTION:
+			/* Add the group config to the array */
+			[_ldapGroups addObject: [self currentSectionContext]];
+			break;
+		default:
+			/* Must be unreachable! */
+			errx(1, "Unhandled section type in endSection!\n");
+			return;
+
+	}
 
 	[_sectionStack removeObject];
 
@@ -646,6 +763,10 @@ error:
 	if (_tlsCipherSuite)
 		[_tlsCipherSuite release];
 	_tlsCipherSuite = [cipherSuite retain];
+}
+
+- (TRArray *) ldapGroups {
+	return _ldapGroups;
 }
 
 @end

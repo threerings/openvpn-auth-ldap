@@ -52,6 +52,7 @@
 	LFString *_baseDN;
 	LFString *_searchFilter;
 	BOOL _requireGroup;
+	TRArray *_ldapGroups;
 
 	/* Parser State */
 	LFString *_configFileName;
@@ -100,6 +101,8 @@
 
 - (BOOL) requireGroup;
 - (void) setRequireGroup: (BOOL) requireGroup;
+
+- (TRArray *) ldapGroups;
 
 @end
 
