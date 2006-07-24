@@ -131,6 +131,33 @@ START_TEST(test_count) {
 }
 END_TEST
 
+START_TEST(test_objectEnumerator) {
+	TRArray *array = [[TRArray alloc] init];
+	LFString *string1 = [[LFString alloc] initWithCString: "String 1"];
+	LFString *string2 = [[LFString alloc] initWithCString: "String 2"];
+	TREnumerator *iter;
+	id obj;
+
+	/* Insert */
+	[array addObject: string1];
+	[array addObject: string2];
+
+	/* Grab an enumerator */
+	iter = [array objectEnumerator];
+	obj = [iter nextObject];
+	fail_unless(obj == string2);
+	obj = [iter nextObject];
+	fail_unless(obj == string1);
+	[iter release];
+
+	/* Clean up */
+	[array release];
+	[string1 release];
+	[string2 release];
+}
+END_TEST
+
+
 
 Suite *TRArray_suite(void) {
 	Suite *s = suite_create("TRArray");
@@ -140,6 +167,7 @@ Suite *TRArray_suite(void) {
 	tcase_add_test(tc_array, test_addObject);
 	tcase_add_test(tc_array, test_removeObject);
 	tcase_add_test(tc_array, test_containsObject);
+	tcase_add_test(tc_array, test_objectEnumerator);
 	tcase_add_test(tc_array, test_count);
 
 	return s;
