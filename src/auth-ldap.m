@@ -207,11 +207,6 @@ openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[
 		return (NULL);
 	}
 
-	/* Set global LDAP Options */
-	if (![LFLDAPConnection initGlobalOptionsWithConfig: ctx->config]) {
-		return (NULL);
-	}
-
 	*type = OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY);
 
 	/*
@@ -263,8 +258,9 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	const char *username = get_env("username", envp);
 	const char *password = get_env("password", envp);
 	ldap_ctx *ctx = handle;
-	LFString *dn;
+	LFString *dn, *value;
 	LFLDAPConnection *ldap;
+	BOOL ldapSuccess = YES;
 	int i;
 
 	if (type != OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY)
@@ -273,7 +269,38 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	if (!username || !password)
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
 
-	ldap = [[LFLDAPConnection alloc] initWithConfig: ctx->config];
+	/* Initialize our LDAP Connection */
+	ldap = [[LFLDAPConnection alloc] initWithURL: [ctx->config url] timeout: [ctx->config timeout]];
+        /* Certificate file */
+	if ((value = [ctx->config tlsCACertFile])) 
+		if (![ldap setTLSCACertFile: value])
+			ldapSuccess = NO;
+
+	/* Certificate directory */
+	if ((value = [ctx->config tlsCACertDir])) 
+		if (![ldap setTLSCACertDir: value])
+			ldapSuccess = NO;
+
+	/* Client Certificate Pair */
+	if ([ctx->config tlsCertFile] && [ctx->config tlsKeyFile])
+		if(![ldap setTLSClientCert: [ctx->config tlsCertFile] keyFile: [ctx->config tlsKeyFile]])
+			ldapSuccess = NO;
+
+	/* Cipher suite */
+	if ((value = [ctx->config tlsCipherSuite]))
+		if(![ldap setTLSCipherSuite: value])
+			ldapSuccess = NO;
+
+	/* Start TLS */
+	if ([ctx->config tlsEnabled])
+		if (![ldap startTLS])
+			ldapSuccess = NO;
+
+	/* Did an error occur configuring the LDAP connection? */
+	if (!ldapSuccess) {
+		[ldap release];
+		return (OPENVPN_PLUGIN_FUNC_ERROR);
+	}
 
 	for (i = 0; ctx->dnTemplates[i]; i++) {
 		dn = mapUserToDN(ctx->dnTemplates[i], username);
