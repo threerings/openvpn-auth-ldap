@@ -282,6 +282,10 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
 error:
 	if (_configDriver)
 		[_configDriver release];
+	if (_sectionStack)
+		[_sectionStack release];
+	if (_configFileName)
+		[_configFileName release];
 
 	[self release];
 	return (NULL);
