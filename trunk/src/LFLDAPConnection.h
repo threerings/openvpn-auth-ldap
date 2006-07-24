@@ -36,6 +36,7 @@
 #include <ldap.h>
 
 #include "TRObject.h"
+#include "LFString.h"
 
 @interface LFLDAPConnection : TRObject {
 	LDAP *ldapConn;
