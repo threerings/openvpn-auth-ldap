@@ -58,6 +58,7 @@ int main(int argc, char *argv[]) {
 	s = LFString_suite();
 	sr = srunner_create(s);
 	srunner_add_suite(sr, LFAuthLDAPConfig_suite());
+	srunner_add_suite(sr, LFLDAPConnection_suite());
 	srunner_add_suite(sr, TRObject_suite());
 	srunner_add_suite(sr, TRArray_suite());
 	srunner_add_suite(sr, TRHash_suite());
