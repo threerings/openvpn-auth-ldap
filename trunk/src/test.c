@@ -33,6 +33,7 @@
 #include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <openvpn-plugin.h>
 
@@ -40,6 +41,9 @@ int main(int argc, const char *argv[]) {
 	openvpn_plugin_handle_t handle;
 	const char *config;
 	unsigned int type;
+	const char *envp[3]; /* username, password, NULL */
+	char username[30];
+	char *password;
 	int err;
 
 	if (argc != 2) {
@@ -48,18 +52,19 @@ int main(int argc, const char *argv[]) {
 		config = argv[1];
 	}
 
-	const char *envp[] = {
-		"username=user@example.org",
-		"password=804b0037457abae05f646463faf53fa0",
-		NULL
-	};
 	const char *argp[] = {
 		"plugin.so",
 		config,
-		"uid=%u,ou=People,dc=example,dc=org",
-		"uid=%u,ou=Service Accounts,dc=example,dc=org",
 		NULL
 	};
+
+	/* Grab username and password */
+	printf("Username: ");
+	fgets(username, sizeof(username), stdin);
+	password = getpass("Password: ");
+	asprintf((char **) &envp[0], "username=%s", username);
+	asprintf((char **) &envp[1], "password=%s", password);
+	envp[2] = NULL;
 
 	handle = openvpn_plugin_open_v1(&type, argp, envp);
 
