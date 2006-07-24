@@ -1,6 +1,6 @@
 /*
- * LFAuthLDAPConfig.m
- * LFAuthLDAPConfig Unit Tests
+ * LFLDAPConnection.m
+ * LFLDAPConnection Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -37,6 +37,7 @@
 #endif
 
 #include <src/LFAuthLDAPConfig.h>
+#include <src/LFLDAPConnection.h>
 
 #include <check.h>
 #include <string.h>
@@ -47,69 +48,42 @@
 #define TEST_LDAP_URL	"ldap://ldap1.example.org"
 #define TEST_LDAP_TIMEOUT	15
 
-START_TEST (test_initWithConfigFile) {
+START_TEST(test_init) {
 	LFAuthLDAPConfig *config;
-	LFString *string;
+	LFLDAPConnection *conn;
+	LFString *value;
 
 	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
 	fail_if(config == NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
 
-	/* Validate the parsed settings */
-	string = [config url];
-	fail_if(!string, "-[LFAuthLDAPConfig url] returned NULL");
-	fail_unless(strcmp([string cString], TEST_LDAP_URL) == 0, "-[LFAuthLDAPConfig url] returned incorrect value. (Expected %s, Got %s)", TEST_LDAP_URL, [string cString]);
+	conn = [[LFLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
 
-	fail_unless([config timeout] == TEST_LDAP_TIMEOUT);
+	/* Certificate file */
+	if ((value = [config tlsCACertFile]))
+		fail_unless([conn setTLSCACertFile: value]);
 
-	fail_unless([config tlsEnabled]);
+	/* Certificate directory */
+	if ((value = [config tlsCACertDir]))
+		fail_unless([conn setTLSCACertDir: value]);
 
-	fail_if([config ldapGroups] == nil);
-	fail_if([[config ldapGroups] lastObject] == nil);
+	/* Client Certificate Pair */
+	if ([config tlsCertFile] && [config tlsKeyFile])
+		fail_unless([conn setTLSClientCert: [config tlsCertFile] keyFile: [config tlsKeyFile]]);
 
-	[config release];
-}
-END_TEST
-
-START_TEST (test_initWithIncorrectlyNamedSection) {
-	LFAuthLDAPConfig *config;
-
-	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_NAMED];
-	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted a named LDAP section.");
+	/* Cipher suite */
+	if ((value = [config tlsCipherSuite]))
+		fail_unless([conn setTLSCipherSuite: value]);
 
 	[config release];
 }
 END_TEST
 
-START_TEST (test_initWithMismatchedSection) {
-	LFAuthLDAPConfig *config;
+Suite *LFLDAPConnection_suite(void) {
+	Suite *s = suite_create("LFLDAPConnection");
 
-	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MISMATCHED];
-	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted a mismatched section closure.");
-
-	[config release];
-}
-END_TEST
-
-START_TEST (test_initWithDuplicateKeys) {
-	LFAuthLDAPConfig *config;
-
-	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MULTIKEY];
-	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted duplicate keys.");
-
-	[config release];
-}
-END_TEST
-
-
-Suite *LFAuthLDAPConfig_suite(void) {
-	Suite *s = suite_create("LFAuthLDAPConfig");
-
-	TCase *tc_parse = tcase_create("Parse Configuration");
-	suite_add_tcase(s, tc_parse);
-	tcase_add_test(tc_parse, test_initWithConfigFile);
-	tcase_add_test(tc_parse, test_initWithIncorrectlyNamedSection);
-	tcase_add_test(tc_parse, test_initWithMismatchedSection);
-	tcase_add_test(tc_parse, test_initWithDuplicateKeys);
+	TCase *tc_ldap = tcase_create("LDAP");
+	suite_add_tcase(s, tc_ldap);
+	tcase_add_test(tc_ldap, test_init);
 
 	return s;
 }

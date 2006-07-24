@@ -46,83 +46,31 @@ static int ldap_get_errno(LDAP *ld) {
 	return err;
 }
 
-static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
-	int err;
-	int arg;
-
-	if ([config tlsCACertFile]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTFILE, [[config tlsCACertFile] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCACertFile to %s: %d: %s", [[config tlsCACertFile] cString], err, ldap_err2string(err));
-			return (false);
-		}
-        }
-
-	if ([config tlsCACertDir]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CACERTDIR, [[config tlsCACertDir] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCACertDir to %s: %d: %s", [[config tlsCACertDir] cString], err, ldap_err2string(err));
-			return (false);
-		}
-        }
-
-	if ([config tlsCertFile]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CERTFILE, [[config tlsCertFile] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCertFile to %s: %d: %s", [[config tlsCertFile] cString], err, ldap_err2string(err));
-			return (false);
-		}
-        }
-
-	if ([config tlsKeyFile]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_KEYFILE, [[config tlsKeyFile] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsKeyFile to %s: %d: %s", [[config tlsKeyFile] cString], err, ldap_err2string(err));
-			return (false);
-		}
-        }
-
-	if ([config tlsCipherSuite]) {
-		if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_CIPHER_SUITE, [[config tlsCipherSuite] cString])) != LDAP_SUCCESS) {
-			warnx("Unable to set tlsCipherSuite to %s: %d: %s", [[config tlsCipherSuite] cString], err, ldap_err2string(err));
-			return (false);
-		}
-        }
-
-	/* Always require a valid certificate */	
-	arg = LDAP_OPT_X_TLS_HARD;
-	if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &arg)) != LDAP_SUCCESS) {
-		warnx("Unable to set LDAP_OPT_X_TLS_HARD to %d: %d: %s", arg, err, ldap_err2string(err));
-		return (false);
-	}
-	
-	return (true);
-}
-
 @implementation LFLDAPConnection
 
-+ (BOOL) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig {
-	return (ldap_set_tls_options(ldapConfig));
-}
-
-- (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig {
-	struct timeval timeout;
-	int arg, err;
+- (id) initWithURL: (LFString *) url timeout: (int) timeout {
+	struct timeval ldapTimeout;
+	int arg;
+	// int err;
 
 	self = [self init];
 	if (!self)
 		return NULL;
 
-	config = ldapConfig;
-
-	ldap_initialize(&ldapConn, [[config url] cString]);
+	ldap_initialize(&ldapConn, [url cString]);
 
 	if (!ldapConn) {
-		warnx("Unable to initialize LDAP server %s", [[config url] cString]);
+		warnx("Unable to initialize LDAP server %s", [url cString]);
 		[self release];
 		return (NULL);
 	}
 
-	timeout.tv_sec = [config timeout];
-	timeout.tv_usec = 0;
+	_timeout = timeout;
 
-	if (ldap_set_option(ldapConn, LDAP_OPT_NETWORK_TIMEOUT, &timeout) != LDAP_OPT_SUCCESS)
+	ldapTimeout.tv_sec = _timeout;
+	ldapTimeout.tv_usec = 0;
+
+	if (ldap_set_option(ldapConn, LDAP_OPT_NETWORK_TIMEOUT, &ldapTimeout) != LDAP_OPT_SUCCESS)
 		warnx("Unable to set LDAP network timeout.");
 
 	arg = LDAP_VERSION3;
@@ -132,16 +80,21 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 		return (NULL);
 	}
 
-	if ([config tlsEnabled]) {
-		err = ldap_start_tls_s(ldapConn, NULL, NULL);
-		if (err != LDAP_SUCCESS) {
-			warnx("Unable to enable STARTTLS: %s", ldap_err2string(err));
-			[self release];
-			return (NULL);
-		}
+	return (self);
+}
+
+/*!
+ * Start TLS on the LDAP connection.
+ */
+- (BOOL) startTLS {
+	int err;
+	err = ldap_start_tls_s(ldapConn, NULL, NULL);
+	if (err != LDAP_SUCCESS) {
+		warnx("Unable to enable STARTTLS: %s", ldap_err2string(err));
+		return (NO);
 	}
 
-	return (self);
+	return (YES);
 }
 
 - (BOOL) bindWithDN: (const char *) bindDN password: (const char *) password {
@@ -166,7 +119,7 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 		return (false);
 	}
 
-	timeout.tv_sec = [config timeout];
+	timeout.tv_sec = _timeout;
 	timeout.tv_usec = 0;
 
 	if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
@@ -193,6 +146,52 @@ static BOOL ldap_set_tls_options(LFAuthLDAPConfig *config) {
 		return (false);
 	}
 	return (true);
+}
+
+- (BOOL) _setLDAPOption: (int) opt value: (const void *) value connection: (LDAP *) ldapConn {
+	int err;
+	if ((err = ldap_set_option(NULL, opt, value)) != LDAP_SUCCESS) {
+		warnx("Unable to set ldap option %d to %s: %d: %s", opt, value, err, ldap_err2string(err));
+		return (false);
+	}
+	return true;
+}
+
+/* Always require a valid certificate */	
+- (BOOL) _setTLSRequireCert {
+	int err;
+	int arg;
+	arg = LDAP_OPT_X_TLS_HARD;
+	if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &arg)) != LDAP_SUCCESS) {
+		warnx("Unable to set LDAP_OPT_X_TLS_HARD to %d: %d: %s", arg, err, ldap_err2string(err));
+		return (false);
+	}
+	return (true);
+}
+
+- (BOOL) setTLSCACertFile: (LFString *) fileName {
+	if ([self _setLDAPOption: LDAP_OPT_X_TLS_CACERTFILE value: [fileName cString] connection: ldapConn])
+		if ([self _setTLSRequireCert])
+			return true;
+	return false;
+}
+
+- (BOOL) setTLSCACertDir: (LFString *) directory {
+	if ([self _setLDAPOption: LDAP_OPT_X_TLS_CACERTDIR value: [directory cString] connection: ldapConn])
+		if ([self _setTLSRequireCert])
+			return true;
+	return false;
+}
+
+- (BOOL) setTLSClientCert: (LFString *) certFile keyFile: (LFString *) keyFile {
+	if ([self _setLDAPOption: LDAP_OPT_X_TLS_CERTFILE value: [certFile cString] connection: ldapConn])
+		if ([self _setLDAPOption: LDAP_OPT_X_TLS_KEYFILE value: [keyFile cString] connection: ldapConn])
+			return true;
+	return false;
+}
+
+- (BOOL) setTLSCipherSuite: (LFString *) cipherSuite {
+	return [self _setLDAPOption: LDAP_OPT_X_TLS_CIPHER_SUITE value: [cipherSuite cString] connection: ldapConn];
 }
 
 @end

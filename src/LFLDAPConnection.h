@@ -36,19 +36,22 @@
 #include <ldap.h>
 
 #include "TRObject.h"
-#include "LFAuthLDAPConfig.h"
 
 @interface LFLDAPConnection : TRObject {
 	LDAP *ldapConn;
-	LFAuthLDAPConfig *config;
+	int _timeout;
 }
 
-+ (BOOL) initGlobalOptionsWithConfig: (LFAuthLDAPConfig *) ldapConfig;
-
-- (id) initWithConfig: (LFAuthLDAPConfig *) ldapConfig;
+- (id) initWithURL: (LFString *) url timeout: (int) timeout;
+- (BOOL) startTLS;
 
 - (BOOL) bindWithDN: (const char *) bindDN password: (const char *) password;
 - (BOOL) unbind;
+
+- (BOOL) setTLSCACertFile: (LFString *) fileName;
+- (BOOL) setTLSCACertDir: (LFString *) directory;
+- (BOOL) setTLSClientCert: (LFString *) certFile keyFile: (LFString *) keyFile;
+- (BOOL) setTLSCipherSuite: (LFString *) cipherSuite;
 
 @end
 

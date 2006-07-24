@@ -33,11 +33,21 @@
  */
 
 /*
+ * Useful Paths
+ */
+#define DATA_PATH(relative)	TEST_DATA "/" relative
+#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
+#define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
+#define AUTH_LDAP_CONF_MISMATCHED	DATA_PATH("auth-ldap-mismatched.conf")
+#define AUTH_LDAP_CONF_MULTIKEY	DATA_PATH("auth-ldap-multikey.conf")
+
+/*
  * Unit Tests
  */
 
 Suite *LFString_suite(void);
 Suite *LFAuthLDAPConfig_suite(void);
+Suite *LFLDAPConnection_suite(void);
 Suite *TRObject_suite(void);
 Suite *TRArray_suite(void);
 Suite *TRHash_suite(void);
