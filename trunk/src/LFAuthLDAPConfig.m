@@ -205,7 +205,7 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
 - (void) setContext: (id) context {
 	if (_context)
 		[_context release];
-	_context = context;
+	_context = [context retain];
 }
 
 - (id) context {
@@ -437,6 +437,8 @@ error:
 					if (!_ldapGroups) {
 						_ldapGroups = [[TRArray alloc] init];
 					}
+					/* Let the SectionContext own groupConfig */
+					[groupConfig release];
 					break;
 				default:
 					[self errorUnknownSection: sectionType];
