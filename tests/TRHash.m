@@ -140,6 +140,31 @@ START_TEST(test_valueForKey) {
 }
 END_TEST
 
+START_TEST(test_keyEnumerator) {
+	TRHash *hash = [[TRHash alloc] initWithCapacity: HASHCOUNT_T_MAX];
+	LFString *key = [[LFString alloc] initWithCString: "Key"];
+	LFString *value = [[LFString alloc] initWithCString: "Value"];
+	TREnumerator *iter;
+	id obj;
+
+	/* Insert */
+	[hash setObject: value forKey: key];
+	[hash setObject: key forKey: value];
+
+	/* Grab an enumerator */
+	iter = [hash keyEnumerator];
+	obj = [iter nextObject];
+	fail_unless(obj == value || obj == key);
+	obj = [iter nextObject];
+	fail_unless(obj == value || obj == key);
+	[iter release];
+
+	/* Clean up */
+	[hash release];
+	[key release];
+	[value release];
+}
+END_TEST
 
 
 Suite *TRHash_suite(void) {
@@ -152,6 +177,7 @@ Suite *TRHash_suite(void) {
 	tcase_add_test(tc_hash, test_setObjectForKey_replacement);
 	tcase_add_test(tc_hash, test_removeObjectForKey);
 	tcase_add_test(tc_hash, test_valueForKey);
+	tcase_add_test(tc_hash, test_keyEnumerator);
 
 	return s;
 }
