@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <openvpn-plugin.h>
 
@@ -61,7 +62,11 @@ int main(int argc, const char *argv[]) {
 	/* Grab username and password */
 	printf("Username: ");
 	fgets(username, sizeof(username), stdin);
+	/* Strip off the trailing \n */
+	username[strlen(username) - 1] = '\0';
+
 	password = getpass("Password: ");
+
 	asprintf((char **) &envp[0], "username=%s", username);
 	asprintf((char **) &envp[1], "password=%s", password);
 	envp[2] = NULL;

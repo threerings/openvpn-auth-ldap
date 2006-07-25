@@ -44,7 +44,6 @@
 /* Plugin Context */
 struct ldap_ctx {
 	LFAuthLDAPConfig *config;
-	char **dnTemplates;
 } typedef ldap_ctx;
 
 
@@ -100,26 +99,20 @@ static const char *get_env(const char *key, const char *env[]) {
 	return (NULL);
 }
 
-
-static LFString *rfc2253_quote(const char *name)
+static LFString *quoteForSearch(const char *string)
 {
-	const char specialChars[] = " \t\"#+,;<>\\";
+	const char specialChars[] = "*()\\"; /* RFC 2254. We don't care about NULL */
 	LFString *result = [[LFString alloc] init];
-	LFString *unquotedName, *part;
+	LFString *unquotedString, *part;
 
-	/* Convert to a LFString */
-	unquotedName = [[LFString alloc] initWithCString: name];
+	/* Make a copy of the string */
+	unquotedString = [[LFString alloc] initWithCString: string];
 
 	/* Initialize the result */
 	result = [[LFString alloc] init];
 
-	/*
-	 * RFC 2253 only requires that we quote leading or trailing
-	 * white space, and leading '#' characters. For simplicity's 
-	 * sake, we quote all occurrences of the special characters.
-	 */
-	
-	while ((part = [unquotedName substringToCharset: specialChars]) != NULL) {
+	/* Quote all occurrences of the special characters */
+	while ((part = [unquotedString substringToCharset: specialChars]) != NULL) {
 		LFString *temp;
 		int index;
 		char c;
@@ -131,44 +124,44 @@ static LFString *rfc2253_quote(const char *name)
 		[result appendCString: "\\"];
 
 		/* Get the special character */
-		index = [unquotedName indexToCharset: specialChars];
-		temp = [unquotedName substringFromIndex: index];
+		index = [unquotedString indexToCharset: specialChars];
+		temp = [unquotedString substringFromIndex: index];
 		c = [temp charAtIndex: 0];
 		[temp release];
 
 		/* Append it, too! */
 		[result appendChar: c];
 
-		/* Move unquotedName past the special character */
-		temp = [unquotedName substringFromCharset: specialChars];
+		/* Move unquotedString past the special character */
+		temp = [unquotedString substringFromCharset: specialChars];
 
-		[unquotedName release];
-		unquotedName = temp;
+		[unquotedString release];
+		unquotedString = temp;
 	}
 
 	/* Append the remainder, if any */
-	if (unquotedName) {
-		[result appendString: unquotedName];
-		[unquotedName release];
+	if (unquotedString) {
+		[result appendString: unquotedString];
+		[unquotedString release];
 	}
 
 	return (result);
 }
 
-static LFString *mapUserToDN(const char *template, const char *username) {
+static LFString *createSearchFilter(LFString *template, const char *username) {
 	LFString *templateString;
 	LFString *result, *part;
 	LFString *quotedName;
 	const char userFormat[] = "%u";
 
-	/* Convert to a LFString */
-	templateString = [[LFString alloc] initWithCString: template];
+	/* Copy the template */
+	templateString = [[LFString alloc] initWithString: template];
 
 	/* Initialize the result */
 	result = [[LFString alloc] init];
 
 	/* Quote the username */
-	quotedName = rfc2253_quote(username);
+	quotedName = quoteForSearch(username);
 
 	while ((part = [templateString substringToCString: userFormat]) != NULL) {
 		LFString *temp;
@@ -199,7 +192,6 @@ static LFString *mapUserToDN(const char *template, const char *username) {
 OPENVPN_EXPORT openvpn_plugin_handle_t
 openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[]) {
 	ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
-	int i;
 
 
 	ctx->config = [[LFAuthLDAPConfig alloc] initWithConfigFile: argv[1]];
@@ -209,32 +201,6 @@ openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[
 
 	*type = OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY);
 
-	/*
-	 * XXX WORKAROUND:
-	 * Copy out DN templates from argv[0]
-	 * With $OpenVPN rc17, argc == NULL when openvpn_plugin_func_v1 is called
-	 */
-
-	/* Get array size, minus first two arguments */
-	for (i = 0; argv[i]; i++);
-	if (i == 0) {
-		warnx("DN template(s) not specified");
-		return (NULL);
-	}
-
-	/* Space for NULL terminator */
-	i++;
-
-	/* Allocate dnTemplates array */
-	ctx->dnTemplates = xmalloc(sizeof(char *) * i);
-
-	/* DN templates start at argv[2] */
-	for (i = 2; argv[i]; i++) {
-		ctx->dnTemplates[i - 2] = strdup(argv[i]);
-	}
-
-	ctx->dnTemplates[i - 2] = NULL; /* Offset - 2 for i = 2 above */
-
 	return (ctx);
 }
 
@@ -242,15 +208,40 @@ OPENVPN_EXPORT void
 openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 {
 	ldap_ctx *ctx = handle;
-	int i;
-
-	for (i = 0; ctx->dnTemplates[i]; i++)
-		free(ctx->dnTemplates[i]);
-
-	free(ctx->dnTemplates);
-
 	[ctx->config release];
 	free (handle);
+}
+
+static int authLdap(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char *username, const char *password) {
+	LFString *searchFilter;
+	int ret = OPENVPN_PLUGIN_FUNC_ERROR;
+	TRArray *ldapEntries;
+	TRHash *entry;
+	TREnumerator *attrIter, *valueIter, *entryIter;
+	LFString *attr, *value;
+
+	/* Assemble our search filter */
+	searchFilter = createSearchFilter([config searchFilter], username);
+
+	/* Search! */
+	ldapEntries = [ldap searchWithFilter: searchFilter
+		scope: LDAP_SCOPE_SUBTREE
+		baseDN: [config baseDN]
+		attributes: NULL];
+
+	printf("%s\n", [[ldapEntries lastObject] cString]);
+#if 0
+	if ([ldap bindWithDN: [dn cString] password: password]) {
+		[dn release];
+		[ldap unbind];
+		[ldap release];
+		return (OPENVPN_PLUGIN_FUNC_SUCCESS);
+	}
+
+	[dn release];
+#endif
+	[searchFilter release];
+	return ret;
 }
 
 OPENVPN_EXPORT int
@@ -258,10 +249,10 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	const char *username = get_env("username", envp);
 	const char *password = get_env("password", envp);
 	ldap_ctx *ctx = handle;
-	LFString *dn, *value;
 	LFLDAPConnection *ldap;
 	BOOL ldapSuccess = YES;
-	int i;
+	LFString *value;
+	int ret;
 
 	if (type != OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY)
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
@@ -302,22 +293,8 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
 	}
 
-	for (i = 0; ctx->dnTemplates[i]; i++) {
-		dn = mapUserToDN(ctx->dnTemplates[i], username);
-		if (!dn) {
-			fprintf(stderr, "Invalid DN template: %s\n", ctx->dnTemplates[i]);
-			[dn release];
-			continue;
-		}
-		if ([ldap bindWithDN: [dn cString] password: password]) {
-			[dn release];
-			[ldap unbind];
-			[ldap release];
-			return (OPENVPN_PLUGIN_FUNC_SUCCESS);
-		}
-		[dn release];
-	}
-
+	ret = authLdap(ldap, ctx->config, username, password);
 	[ldap release];
-	return (OPENVPN_PLUGIN_FUNC_ERROR);
+
+	return (ret);
 }
