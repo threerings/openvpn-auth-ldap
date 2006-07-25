@@ -1,6 +1,6 @@
 /*
- * tests.h
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRLDAPEntry.m
+ * TRLDAPEntry Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -32,27 +32,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Useful Paths
- */
-#define DATA_PATH(relative)	TEST_DATA "/" relative
-#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
-#define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
-#define AUTH_LDAP_CONF_MISMATCHED	DATA_PATH("auth-ldap-mismatched.conf")
-#define AUTH_LDAP_CONF_MULTIKEY	DATA_PATH("auth-ldap-multikey.conf")
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-/*
- * Unit Tests
- */
+#include <check.h>
 
-Suite *LFString_suite(void);
-Suite *LFAuthLDAPConfig_suite(void);
-Suite *LFLDAPConnection_suite(void);
-Suite *TRLDAPEntry_suite(void);
-Suite *TRObject_suite(void);
-Suite *TRArray_suite(void);
-Suite *TRHash_suite(void);
-Suite *TRConfigToken_suite(void);
-Suite *TRConfigLexer_suite(void);
-Suite *TRConfig_suite(void);
-Suite *TRLDAPGroupConfig_suite(void);
+#include <src/TRLDAPEntry.h>
+
+START_TEST(test_initWithDN) {
+	TRLDAPEntry *entry;
+	LFString *dn;
+	TRHash *attributes;
+
+	dn = [[LFString alloc] initWithCString: "dc=foobar"];
+	/* Make something up for the attributes */
+	attributes = [[TRHash alloc] initWithCapacity: 1];
+	[attributes setObject: dn forKey: dn];
+
+	entry = [[TRLDAPEntry alloc] initWithDN: dn attributes: attributes];
+
+	fail_unless([entry attributes] == attributes);
+	fail_unless([entry dn] == dn);
+
+	[entry release];
+	[dn release];
+	[attributes release];
+}
+END_TEST
+
+Suite *TRLDAPEntry_suite(void) {
+	Suite *s = suite_create("TRLDAPEntry");
+
+	TCase *tc_entry = tcase_create("LDAP Entry");
+	suite_add_tcase(s, tc_entry);
+	tcase_add_test(tc_entry, test_initWithDN);
+
+	return s;
+}
