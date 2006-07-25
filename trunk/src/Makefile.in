@@ -13,6 +13,7 @@ PLUGIN_OBJS=	auth-ldap.o \
 		TRArray.o \
 		TREnumerator.o \
 		TRHash.o \
+		TRLDAPEntry.o \
 		TRObject.o \
 		LFString.o \
 		LFLDAPConnection.o \
