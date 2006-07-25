@@ -37,6 +37,7 @@
 
 #include "TRObject.h"
 #include "TRArray.h"
+#include "TRHash.h"
 #include "LFString.h"
 
 @interface LFLDAPConnection : TRObject {

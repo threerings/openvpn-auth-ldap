@@ -148,11 +148,122 @@ static int ldap_get_errno(LDAP *ld) {
 	return (true);
 }
 
-- (TRArray *) searchWithFilter: (LFString *) filter
-			 scope: (int) scope
-			baseDN: (LFString *) base
-		    attributes: (TRArray *) attributes {
-	return nil;
+- (TRArray *)
+	searchWithFilter: (LFString *) filter
+	scope: (int) scope
+	baseDN: (LFString *) base
+	attributes: (TRArray *) attributes
+{
+	TREnumerator *iter;
+	LDAPMessage *res;
+	LDAPMessage *entry;
+	char *attr, **vals;
+
+	TRArray *entries;
+
+	struct timeval timeout;
+
+	char **attrArray;
+	LFString *attrString;
+
+	int count;
+	int numEntries;
+	int err;
+
+
+	count = 0;
+	entries = nil;
+
+	/* Build the attrArray */
+	if (attributes) {
+		attrArray = xmalloc(sizeof(char *) * [attributes count]);
+		iter = [attributes objectEnumerator];
+		while ((attrString = [iter nextObject]) != nil) {
+			attrArray[count] = (char *) [attrString cString];
+			count++;
+		}
+	} else {
+		/* Return all attributes */
+		attrArray = NULL;
+	}
+
+	/* Set up the timeout */
+	timeout.tv_sec = _timeout;
+	timeout.tv_usec = 0;
+
+	/* MISSING:
+	 * Support for user-specified 'attrOnly' mode.
+	 * Non-hardcoded size limit.
+	 */
+	if ((err = ldap_search_ext_s(ldapConn, [base cString], scope, [filter cString], attrArray, 0, NULL, NULL, &timeout, 1024, &res)) != LDAP_SUCCESS) {
+		warnx("LDAP search failed: %d: %s", err, ldap_err2string(err));
+		goto finish;
+	}
+
+	/* Get the number of returned entries */
+	if ((numEntries = ldap_count_entries(ldapConn, res)) == -1) {
+		warnx("ldap_count_entries failed: %d: %s", numEntries, ldap_err2string(numEntries));
+		goto finish;
+	}
+
+	/* If 0, return nil */
+	if (numEntries == 0)
+		goto finish;
+
+	/* Allocate an array to hold entries */
+	entries = [[TRArray alloc] init];
+	/* Grab attributes and values for each entry */
+	for (entry = ldap_first_entry(ldapConn, res); entry != NULL; entry = ldap_next_entry(ldapConn, entry)) {
+		TRHash *ldapEntry;
+		BerElement *ptr;
+		int maxCapacity = 2048;
+
+		ldapEntry = [[TRHash alloc] initWithCapacity: maxCapacity];
+
+		/* Load all attributes and associated values */
+		for (attr = ldap_first_attribute(ldapConn, entry, &ptr); attr != NULL; attr = ldap_next_attribute(ldapConn, entry, ptr)) {
+			LFString *attrName;
+			LFString *valueString;
+			TRArray *attrValues;
+			int i;
+
+			/* Don't exceed the maximum capacity of the hash table */
+			if(--maxCapacity == 0)
+				break;
+
+			attrName = [[LFString alloc] initWithCString: attr];
+			attrValues = [[TRArray alloc] init];
+
+			vals = ldap_get_values(ldapConn, entry, attr);
+			if (vals) {
+				for (i = 0; vals[i] != NULL; i++) {
+					valueString = [[LFString alloc] initWithCString: vals[i]];
+					/* Pass our value string to the attrValues array */
+					[attrValues addObject: valueString];
+					[valueString release];
+				}
+				ldap_value_free(vals);
+			}
+
+			/* Pass our attribute string and array of values to the
+			 * entryAttributes hash table */
+			[ldapEntry setObject: attrValues forKey: attrName];
+			[attrName release];
+			[attrValues release];
+			ldap_memfree(attr);
+		}
+
+		/* Pass our entry off to the entries array */
+		[entries addObject: ldapEntry];
+	}
+
+	/* free memory allocated for search results */
+	ldap_msgfree(res);
+
+finish:
+	if (attrArray)
+		free(attrArray);
+	return entries;
 }
 
 - (BOOL) _setLDAPOption: (int) opt value: (const void *) value connection: (LDAP *) ldapConn {
