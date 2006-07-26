@@ -587,7 +587,7 @@ hnode_t *hash_lookup(hash_t *hash, const void *key)
  * 6. Indicate that the node is no longer in a hash table.
  */
 
-hnode_t *hash_delete(hash_t *hash, hnode_t *node)
+hnode_t *tr_hash_delete(hash_t *hash, hnode_t *node)
 {
     hash_val_t chain;
     hnode_t *hptr;
@@ -634,7 +634,7 @@ int hash_alloc_insert(hash_t *hash, const void *key, void *data)
 
 void hash_delete_free(hash_t *hash, hnode_t *node)
 {
-    hash_delete(hash, node);
+    tr_hash_delete(hash, node);
     hash->freenode(node, hash->context);
 }
 
