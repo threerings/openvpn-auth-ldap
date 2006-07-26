@@ -50,7 +50,6 @@
 - (BOOL) startTLS;
 
 - (BOOL) bindWithDN: (LFString *) bindDN password: (LFString *) password;
-- (BOOL) unbind;
 
 - (TRArray *) searchWithFilter: (LFString *) filter
 			 scope: (int) scope

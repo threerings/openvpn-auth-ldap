@@ -83,6 +83,15 @@ static int ldap_get_errno(LDAP *ld) {
 	return (self);
 }
 
+- (void) dealloc {
+	int err;
+	err = ldap_unbind_ext_s(ldapConn, NULL, NULL);
+	if (err != LDAP_SUCCESS) {
+		warnx("Unable to unbind from LDAP server: %s", ldap_err2string(err));
+	}
+	[super dealloc];
+}
+
 /*!
  * Start TLS on the LDAP connection.
  */
@@ -154,16 +163,6 @@ static int ldap_get_errno(LDAP *ld) {
 	return (false);
 }
 
-- (BOOL) unbind {
-	int err;
-	err = ldap_unbind_ext_s(ldapConn, NULL, NULL);
-	if (err != LDAP_SUCCESS) {
-		warnx("Unable to unbind from LDAP server: %s", ldap_err2string(err));
-		return (false);
-	}
-	return (true);
-}
-
 /*!
  * Run an LDAP search.
  * @param filter: LDAP search filter.
@@ -232,8 +231,10 @@ static int ldap_get_errno(LDAP *ld) {
 	}
 
 	/* If 0, return nil */
-	if (numEntries == 0)
+	if (numEntries == 0) {
+		ldap_msgfree(res);
 		goto finish;
+	}
 
 	/* Allocate an array to hold entries */
 	entries = [[TRArray alloc] init];

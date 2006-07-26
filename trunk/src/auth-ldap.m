@@ -169,6 +169,7 @@ static LFString *createSearchFilter(LFString *template, const char *username) {
 
 		/* Append everything until the first %u */
 		[result appendString: part];
+		[part release];
 
 		/* Append the username */
 		[result appendString: quotedName];
@@ -210,13 +211,13 @@ openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 {
 	ldap_ctx *ctx = handle;
 	[ctx->config release];
-	free (handle);
+	free(ctx);
 }
 
 static int authLdap(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char *username, const char *password) {
 	LFString *searchFilter;
 	int ret = OPENVPN_PLUGIN_FUNC_ERROR;
-	TRArray *ldapEntries;
+	TRArray *ldapEntries = nil;
 	TRLDAPEntry *entry;
 	TREnumerator *entryIter;
 	// TREnumerator *attrIter, *valueIter,
@@ -240,14 +241,17 @@ static int authLdap(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char
 		LFString *passwordString = [[LFString alloc] initWithCString: password];
 		printf("Binding: %s\n", [[entry dn] cString]);
 		if ([ldap bindWithDN: [entry dn] password: passwordString]) {
+			[passwordString release];
 			printf("Successfully authenticated\n");
-			[ldap unbind];
 			ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
 			goto cleanup;
 		}
+		[passwordString release];
 	}
 
 cleanup:
+	if (ldapEntries)
+		[ldapEntries release];
 	[entryIter release];
 	return ret;
 }
@@ -297,12 +301,14 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 
 	/* Did an error occur configuring the LDAP connection? */
 	if (!ldapSuccess) {
-		[ldap release];
-		return (OPENVPN_PLUGIN_FUNC_ERROR);
+		ret = OPENVPN_PLUGIN_FUNC_ERROR;
+		goto cleanup;
 	}
 
 	ret = authLdap(ldap, ctx->config, username, password);
-	[ldap release];
 
+cleanup:
+
+	[ldap release];
 	return (ret);
 }
