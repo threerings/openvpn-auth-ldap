@@ -39,6 +39,7 @@
 
 #include <LFString.h>
 #include <LFAuthLDAPConfig.h>
+#include <TRLDAPEntry.h>
 #include <LFLDAPConnection.h>
 
 /* Plugin Context */
@@ -216,9 +217,10 @@ static int authLdap(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char
 	LFString *searchFilter;
 	int ret = OPENVPN_PLUGIN_FUNC_ERROR;
 	TRArray *ldapEntries;
-	TRHash *entry;
-	TREnumerator *attrIter, *valueIter, *entryIter;
-	LFString *attr, *value;
+	TRLDAPEntry *entry;
+	TREnumerator *entryIter;
+	// TREnumerator *attrIter, *valueIter,
+	// LFString *attr, *value;
 
 	/* Assemble our search filter */
 	searchFilter = createSearchFilter([config searchFilter], username);
@@ -228,19 +230,25 @@ static int authLdap(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char
 		scope: LDAP_SCOPE_SUBTREE
 		baseDN: [config baseDN]
 		attributes: NULL];
+	[searchFilter release];
 
-	printf("%s\n", [[ldapEntries lastObject] cString]);
-#if 0
-	if ([ldap bindWithDN: [dn cString] password: password]) {
-		[dn release];
-		[ldap unbind];
-		[ldap release];
-		return (OPENVPN_PLUGIN_FUNC_SUCCESS);
+	/* The specified search string may return more than one entry.
+	 * We'll acquiesce to the operator's potentially disastrous demands,
+	 * and try to bind with all of them. */
+	entryIter = [ldapEntries objectEnumerator];
+	while ((entry = [entryIter nextObject]) != nil) {
+		LFString *passwordString = [[LFString alloc] initWithCString: password];
+		printf("Binding: %s\n", [[entry dn] cString]);
+		if ([ldap bindWithDN: [entry dn] password: passwordString]) {
+			printf("Successfully authenticated\n");
+			[ldap unbind];
+			ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
+			goto cleanup;
+		}
 	}
 
-	[dn release];
-#endif
-	[searchFilter release];
+cleanup:
+	[entryIter release];
 	return ret;
 }
 

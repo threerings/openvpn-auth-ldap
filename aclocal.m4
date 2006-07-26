@@ -235,7 +235,7 @@ AC_DEFUN([OD_OPENLDAP],[
 	OLD_LIBS="${LIBS}"
 	OLD_CFLAGS="${CFLAGS}"
 
-	LDAP_LIBS="-lldap"
+	LDAP_LIBS="-lldap -llber"
 	LDAP_CFLAGS=""
 
 	if test x"${with_openldap}" != x; then

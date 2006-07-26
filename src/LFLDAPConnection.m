@@ -97,24 +97,24 @@ static int ldap_get_errno(LDAP *ld) {
 	return (YES);
 }
 
-- (BOOL) bindWithDN: (const char *) bindDN password: (const char *) password {
+- (BOOL) bindWithDN: (LFString *) bindDN password: (LFString *) password {
 	int msgid, err;
 	LDAPMessage *res;
 	struct berval cred;
+	struct berval *servercred;
 	struct timeval timeout;
 
 	/* Set up berval structure for our credentials */
-	cred.bv_val = (char *) password;
-	cred.bv_len = strlen(password);
+	cred.bv_val = (char *) [password cString];
+	cred.bv_len = [password length] - 1; /* Length includes NULL terminator */
 
-	if ((msgid = ldap_sasl_bind_s(ldapConn,
-					bindDN,
+	if ((err = ldap_sasl_bind(ldapConn,
+					[bindDN cString],
 					LDAP_SASL_SIMPLE,
 					&cred,
 					NULL,
 					NULL,
-					NULL)) == -1) {
-		err = ldap_get_errno(ldapConn);
+					&msgid)) != LDAP_SUCCESS) {
 		warnx("ldap_bind failed immediately: %s", ldap_err2string(err));
 		return (false);
 	}
@@ -130,10 +130,23 @@ static int ldap_get_errno(LDAP *ld) {
 		return (false);
 	}
 
-	/* TODO: Provide more diagnostics when a logging API is available */
-	ldap_parse_result(ldapConn, res, &err, NULL, NULL, NULL, NULL, 1);
-	if (err == LDAP_SUCCESS)
+	/* Fish out the bind result */
+	err = ldap_parse_sasl_bind_result(ldapConn, res, &servercred, 0);
+	ber_bvfree(servercred); /* We're only doing simple auth */
+	/* Did the parse (not the bind!) succeed? */
+	if (err != LDAP_SUCCESS) {
+		return (false);
+	}
+
+	/* How about the actual bind? */
+	err = ldap_result2error(ldapConn, res, 1);
+	if (err == LDAP_SUCCESS) {
+		/* Bind succeeded */
 		return (true);
+	} else {
+		warnx("LDAP Authentication failed: %s\n", ldap_err2string(err));
+		return (false);
+	}
 
 	return (false);
 }
@@ -148,6 +161,14 @@ static int ldap_get_errno(LDAP *ld) {
 	return (true);
 }
 
+/*!
+ * Run an LDAP search.
+ * @param filter: LDAP search filter.
+ * @param scope: LDAP scope (LDAP_SCOPE_BASE, LDAP_SCOPE_ONE, or LDAP_SCOPE_SUBTREE)
+ * @param base: LDAP search base DN.
+ * @param attributes: Attributes to return. If nil, returns all attributes.
+ * @return: An array of TRLDAPEntry instances.
+ */
 - (TRArray *)
 	searchWithFilter: (LFString *) filter
 	scope: (int) scope
@@ -214,12 +235,20 @@ static int ldap_get_errno(LDAP *ld) {
 	entries = [[TRArray alloc] init];
 	/* Grab attributes and values for each entry */
 	for (entry = ldap_first_entry(ldapConn, res); entry != NULL; entry = ldap_next_entry(ldapConn, entry)) {
-		TRHash *ldapEntry;
+		TRLDAPEntry *ldapEntry;
+		TRHash *ldapAttributes;
 		BerElement *ptr;
 		int maxCapacity = 2048;
+		LFString *dn;
+		char *dnCString;
 
-		ldapEntry = [[TRHash alloc] initWithCapacity: maxCapacity];
+		ldapAttributes = [[TRHash alloc] initWithCapacity: maxCapacity];
 
+		/* Grab our entry's DN */
+		dnCString = ldap_get_dn(ldapConn, entry);
+		dn = [[LFString alloc] initWithCString: dnCString];
+		ldap_memfree(dnCString);
+		
 		/* Load all attributes and associated values */
 		for (attr = ldap_first_attribute(ldapConn, entry, &ptr); attr != NULL; attr = ldap_next_attribute(ldapConn, entry, ptr)) {
 			LFString *attrName;
@@ -247,14 +276,23 @@ static int ldap_get_errno(LDAP *ld) {
 
 			/* Pass our attribute string and array of values to the
 			 * entryAttributes hash table */
-			[ldapEntry setObject: attrValues forKey: attrName];
+			[ldapAttributes setObject: attrValues forKey: attrName];
 			[attrName release];
 			[attrValues release];
 			ldap_memfree(attr);
 		}
 
+		/* Free ber ptr */
+		ber_free(ptr, 0);
+
+		/* Instantiate our entry */
+		ldapEntry = [[TRLDAPEntry alloc] initWithDN: dn attributes: ldapAttributes];
+		[dn release];
+		[ldapAttributes release];
+
 		/* Pass our entry off to the entries array */
 		[entries addObject: ldapEntry];
+		[ldapEntry release];
 	}
 
 	/* free memory allocated for search results */

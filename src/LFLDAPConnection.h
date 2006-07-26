@@ -38,6 +38,7 @@
 #include "TRObject.h"
 #include "TRArray.h"
 #include "TRHash.h"
+#include "TRLDAPEntry.h"
 #include "LFString.h"
 
 @interface LFLDAPConnection : TRObject {
@@ -48,7 +49,7 @@
 - (id) initWithURL: (LFString *) url timeout: (int) timeout;
 - (BOOL) startTLS;
 
-- (BOOL) bindWithDN: (const char *) bindDN password: (const char *) password;
+- (BOOL) bindWithDN: (LFString *) bindDN password: (LFString *) password;
 - (BOOL) unbind;
 
 - (TRArray *) searchWithFilter: (LFString *) filter
