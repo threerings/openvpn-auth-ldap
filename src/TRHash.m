@@ -120,7 +120,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 		return;
 
 	/* Remove the node */
-	hash_delete(_hash, node);
+	tr_hash_delete(_hash, node);
 
 	/* Drop the old value */
 	obj = (id) hnode_get(node);
