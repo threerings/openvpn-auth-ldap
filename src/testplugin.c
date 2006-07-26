@@ -84,6 +84,8 @@ int main(int argc, const char *argv[]) {
 	}
 
 	openvpn_plugin_close_v1(handle);
+	free((char *) envp[0]);
+	free((char *) envp[1]);
 
 	exit (0);
 }
