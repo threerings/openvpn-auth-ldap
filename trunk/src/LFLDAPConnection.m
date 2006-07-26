@@ -139,7 +139,10 @@ static int ldap_get_errno(LDAP *ld) {
 	}
 
 	/* How about the actual bind? */
-	err = ldap_result2error(ldapConn, res, 1);
+	if (ldap_parse_result(ldapConn, res, &err, NULL, NULL, NULL, NULL, 1) != LDAP_SUCCESS) {
+		/* Parsing failed */
+		return (false);
+	}
 	if (err == LDAP_SUCCESS) {
 		/* Bind succeeded */
 		return (true);
@@ -178,7 +181,8 @@ static int ldap_get_errno(LDAP *ld) {
 	TREnumerator *iter;
 	LDAPMessage *res;
 	LDAPMessage *entry;
-	char *attr, **vals;
+	char *attr;
+	struct berval **vals;
 
 	TRArray *entries;
 
@@ -263,15 +267,19 @@ static int ldap_get_errno(LDAP *ld) {
 			attrName = [[LFString alloc] initWithCString: attr];
 			attrValues = [[TRArray alloc] init];
 
-			vals = ldap_get_values(ldapConn, entry, attr);
+			vals = ldap_get_values_len(ldapConn, entry, attr);
 			if (vals) {
 				for (i = 0; vals[i] != NULL; i++) {
-					valueString = [[LFString alloc] initWithCString: vals[i]];
+					/* XXX: This could be binary. This is not the end of the world, but a braindead
+					 * client of this API could do something dumb. There doesn't seem to be any sane
+					 * way to determine whether data is binary or non-binary. At the very least, we
+					 * enforce NULL termination by turning the data into a string. */
+					valueString = [[LFString alloc] initWithBytes: vals[i]->bv_val numBytes: vals[i]->bv_len];
 					/* Pass our value string to the attrValues array */
 					[attrValues addObject: valueString];
 					[valueString release];
 				}
-				ldap_value_free(vals);
+				ldap_value_free_len(vals);
 			}
 
 			/* Pass our attribute string and array of values to the
@@ -304,9 +312,9 @@ finish:
 	return entries;
 }
 
-- (BOOL) _setLDAPOption: (int) opt value: (const void *) value connection: (LDAP *) ldapConn {
+- (BOOL) _setLDAPOption: (int) opt value: (const char *) value connection: (LDAP *) ldapConn {
 	int err;
-	if ((err = ldap_set_option(NULL, opt, value)) != LDAP_SUCCESS) {
+	if ((err = ldap_set_option(NULL, opt, (const void *) value)) != LDAP_SUCCESS) {
 		warnx("Unable to set ldap option %d to %s: %d: %s", opt, value, err, ldap_err2string(err));
 		return (false);
 	}
