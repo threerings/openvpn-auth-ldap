@@ -239,10 +239,8 @@ static int authLdap(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char
 	entryIter = [ldapEntries objectEnumerator];
 	while ((entry = [entryIter nextObject]) != nil) {
 		LFString *passwordString = [[LFString alloc] initWithCString: password];
-		printf("Binding: %s\n", [[entry dn] cString]);
 		if ([ldap bindWithDN: [entry dn] password: passwordString]) {
 			[passwordString release];
-			printf("Successfully authenticated\n");
 			ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
 			goto cleanup;
 		}
