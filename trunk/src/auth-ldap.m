@@ -40,12 +40,13 @@
 #include <LFString.h>
 #include <LFAuthLDAPConfig.h>
 #include <TRLDAPEntry.h>
+#include <TRLDAPGroupConfig.h>
 #include <LFLDAPConnection.h>
 
 /* Plugin Context */
-struct ldap_ctx {
+typedef struct ldap_ctx {
 	LFAuthLDAPConfig *config;
-} typedef ldap_ctx;
+} ldap_ctx;
 
 
 /* Safe Malloc */
@@ -214,14 +215,54 @@ openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 	free(ctx);
 }
 
-static int authLdap(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char *username, const char *password) {
-	LFString *searchFilter;
-	int ret = OPENVPN_PLUGIN_FUNC_ERROR;
-	TRArray *ldapEntries = nil;
-	TRLDAPEntry *entry;
-	TREnumerator *entryIter;
-	// TREnumerator *attrIter, *valueIter,
-	// LFString *attr, *value;
+LFLDAPConnection *connect_ldap(LFAuthLDAPConfig *config) {
+	LFLDAPConnection *ldap;
+	LFString *value;
+
+	/* Initialize our LDAP Connection */
+	ldap = [[LFLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
+	if (!ldap)
+		return nil;
+
+        /* Certificate file */
+	if ((value = [config tlsCACertFile])) 
+		if (![ldap setTLSCACertFile: value])
+			goto error;
+
+	/* Certificate directory */
+	if ((value = [config tlsCACertDir])) 
+		if (![ldap setTLSCACertDir: value])
+			goto error;
+
+	/* Client Certificate Pair */
+	if ([config tlsCertFile] && [config tlsKeyFile])
+		if(![ldap setTLSClientCert: [config tlsCertFile] keyFile: [config tlsKeyFile]])
+			goto error;
+
+	/* Cipher suite */
+	if ((value = [config tlsCipherSuite]))
+		if(![ldap setTLSCipherSuite: value])
+			goto error;
+
+	/* Start TLS */
+	if ([config tlsEnabled])
+		if (![ldap startTLS])
+			goto error;
+
+	return ldap;
+
+error:
+	[ldap release];
+	return nil;
+}
+
+static TRLDAPEntry *auth_ldap_user(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char *username, const char *password) {
+	LFLDAPConnection	*authConn;
+	TREnumerator		*entryIter;
+	TRArray			*ldapEntries;
+	TRLDAPEntry		*result = nil;
+	LFString		*searchFilter;
+	TRLDAPEntry		*entry;
 
 	/* Assemble our search filter */
 	searchFilter = createSearchFilter([config searchFilter], username);
@@ -232,26 +273,83 @@ static int authLdap(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char
 		baseDN: [config baseDN]
 		attributes: NULL];
 	[searchFilter release];
+	if (!ldapEntries)
+		return nil;
+		
+	/* Create a second connection for binding */
+	authConn = connect_ldap(config);
+	if (!authConn) {
+		[ldapEntries release];
+		return nil;
+	}
 
 	/* The specified search string may return more than one entry.
 	 * We'll acquiesce to the operator's potentially disastrous demands,
 	 * and try to bind with all of them. */
 	entryIter = [ldapEntries objectEnumerator];
 	while ((entry = [entryIter nextObject]) != nil) {
-		LFString *passwordString = [[LFString alloc] initWithCString: password];
-		if ([ldap bindWithDN: [entry dn] password: passwordString]) {
+		LFString *passwordString;
+
+		/* Allocate the string to pass to bindWithDN */
+		passwordString = [[LFString alloc] initWithCString: password];
+
+		if ([authConn bindWithDN: [entry dn] password: passwordString]) {
 			[passwordString release];
-			ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
-			goto cleanup;
+			result = [entry retain];
+			break;
 		}
 		[passwordString release];
 	}
 
-cleanup:
-	if (ldapEntries)
-		[ldapEntries release];
+	[authConn release];
+	[ldapEntries release];
 	[entryIter release];
-	return ret;
+
+	return result;
+}
+
+static TRLDAPGroupConfig *validate_ldap_groups(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser) {
+	TREnumerator *groupIter;
+	TRLDAPGroupConfig *groupConfig;
+	TRArray *ldapEntries;
+	TREnumerator *entryIter;
+	TRLDAPEntry *entry;
+	TRLDAPGroupConfig *result = nil;
+
+
+	/*
+	 * Groups are loaded into the array in the order that they are listed
+	 * in the configuration file, and we are expected to perform
+	 * "first match". Thusly, we'll walk the stack from the bottom up.
+	 */
+	groupIter = [[config ldapGroups] objectReverseEnumerator];
+	while ((groupConfig = [groupIter nextObject]) != nil) {
+		/* Search for the group */
+		ldapEntries = [ldap searchWithFilter: [groupConfig searchFilter]
+			scope: LDAP_SCOPE_SUBTREE
+			baseDN: [groupConfig baseDN]
+			attributes: NULL];
+
+		/* Error occured, all stop */
+		if (!ldapEntries)
+			break;
+
+		/* Iterate over the returned entries */
+		entryIter = [ldapEntries objectEnumerator];
+		while ((entry = [entryIter nextObject]) != nil) {
+			if ([ldap compareDN: [entry dn] withAttribute: [groupConfig memberAttribute] value: [ldapUser dn]]) {
+				/* Group match! */
+				result = groupConfig;
+			}
+		}
+		[entryIter release];
+		[ldapEntries release];
+		if (result)
+			break;
+	}
+
+	[groupIter release];
+	return result;
 }
 
 OPENVPN_EXPORT int
@@ -260,9 +358,9 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	const char *password = get_env("password", envp);
 	ldap_ctx *ctx = handle;
 	LFLDAPConnection *ldap;
-	BOOL ldapSuccess = YES;
-	LFString *value;
-	int ret;
+	TRLDAPEntry *ldapUser;
+	TRLDAPGroupConfig *groupConfig;
+	int ret = OPENVPN_PLUGIN_FUNC_ERROR;
 
 	if (type != OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY)
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
@@ -270,43 +368,36 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	if (!username || !password)
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
 
-	/* Initialize our LDAP Connection */
-	ldap = [[LFLDAPConnection alloc] initWithURL: [ctx->config url] timeout: [ctx->config timeout]];
-        /* Certificate file */
-	if ((value = [ctx->config tlsCACertFile])) 
-		if (![ldap setTLSCACertFile: value])
-			ldapSuccess = NO;
 
-	/* Certificate directory */
-	if ((value = [ctx->config tlsCACertDir])) 
-		if (![ldap setTLSCACertDir: value])
-			ldapSuccess = NO;
-
-	/* Client Certificate Pair */
-	if ([ctx->config tlsCertFile] && [ctx->config tlsKeyFile])
-		if(![ldap setTLSClientCert: [ctx->config tlsCertFile] keyFile: [ctx->config tlsKeyFile]])
-			ldapSuccess = NO;
-
-	/* Cipher suite */
-	if ((value = [ctx->config tlsCipherSuite]))
-		if(![ldap setTLSCipherSuite: value])
-			ldapSuccess = NO;
-
-	/* Start TLS */
-	if ([ctx->config tlsEnabled])
-		if (![ldap startTLS])
-			ldapSuccess = NO;
-
-	/* Did an error occur configuring the LDAP connection? */
-	if (!ldapSuccess) {
-		ret = OPENVPN_PLUGIN_FUNC_ERROR;
-		goto cleanup;
+	/* Create an LDAP connection */
+	if (!(ldap = connect_ldap(ctx->config))) {
+		return (OPENVPN_PLUGIN_FUNC_ERROR);
 	}
 
-	ret = authLdap(ldap, ctx->config, username, password);
+	/* Search and bind */
+	ldapUser = auth_ldap_user(ldap, ctx->config, username, password);
+	if (!ldapUser) {
+		/* No such user or authentication failure */
+		ret = OPENVPN_PLUGIN_FUNC_ERROR;
+	} else {
+		/* User authenticated */
+		/* Match up groups, if any */
+		if ([ctx->config ldapGroups]) {
+			groupConfig = validate_ldap_groups(ldap, ctx->config, ldapUser);
+			if (!groupConfig && [ctx->config requireGroup]) {
+				/* No group match, and group membership is required */
+				ret = OPENVPN_PLUGIN_FUNC_ERROR;
+			} else {
+				/* Group match! */
+				ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
+			}
+		} else {
+			// No groups, user OK
+			ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
+		}
+	}
 
-cleanup:
-
+	[ldapUser release];
 	[ldap release];
 	return (ret);
 }

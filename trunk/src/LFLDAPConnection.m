@@ -313,6 +313,45 @@ finish:
 	return entries;
 }
 
+- (BOOL) compareDN: (LFString *) dn withAttribute: (LFString *) attribute value: (LFString *) value {
+	struct timeval	timeout;
+	LDAPMessage	*res;
+	struct berval	bval;
+	int		err;
+	int		msgid;
+
+	/* Set up the ber structure for our value */
+	bval.bv_val = (char *) [value cString];
+	bval.bv_len = [value length] - 1; /* Length includes NULL terminator */
+
+	/* Set up the timeout */
+	timeout.tv_sec = _timeout;
+	timeout.tv_usec = 0;
+
+	/* Perform the compare */
+	if ((err = ldap_compare_ext(ldapConn, [dn cString], [attribute cString], &bval, NULL, NULL, &msgid)) != LDAP_SUCCESS) {
+		warnx("LDAP compare failed: %d: %s", err, ldap_err2string(err));
+		return NO;
+	}
+
+	/* Wait for the result */
+	if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
+		err = ldap_get_errno(ldapConn);
+		if (err == LDAP_TIMEOUT)
+			ldap_abandon(ldapConn, msgid);
+		warnx("ldap_compare_ext failed: %s\n", ldap_err2string(err));
+		return NO;
+	}
+
+	/* Check the result */
+	err = ldap_result2error(ldapConn, res, 1);
+	if (err == LDAP_COMPARE_TRUE)
+		return YES;
+
+	return NO;
+}
+
+
 - (BOOL) _setLDAPOption: (int) opt value: (const char *) value connection: (LDAP *) ldapConn {
 	int err;
 	if ((err = ldap_set_option(NULL, opt, (const void *) value)) != LDAP_SUCCESS) {
