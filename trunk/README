@@ -11,6 +11,7 @@ REQUIREMENTS
 * OpenLDAP Headers & Library
 * GNU Objective-C Compiler
 * OpenVPN Plugin Header (included with the OpenVPN sources)
+* re2c (http://www.re2c.org)
 
 BUILD
 
