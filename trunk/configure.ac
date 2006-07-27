@@ -42,6 +42,7 @@ AC_CACHE_SAVE
 
 # Platform
 OD_CONFIG_PLUGIN
+TR_PF_IOCTL
 AC_CACHE_SAVE
 
 # Functions

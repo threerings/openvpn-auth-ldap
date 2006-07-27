@@ -345,3 +345,55 @@ AC_DEFUN([OD_OPENVPN_HEADER],[
 
 	AC_SUBST([OPENVPN_CFLAGS])
 ])
+
+#------------------------------------------------------------------------
+# TR_PF_IOCTL --
+#
+#	Locate the pf(4) headers
+#
+# Arguments:
+#	None.
+#
+# Requires:
+#	none
+#
+# Depends:
+#	none
+#
+# Results:
+#
+#	Defines the following preprocessor macros:
+#		OPENVPN_CFLAGS
+#------------------------------------------------------------------------
+AC_DEFUN([TR_PF_IOCTL],[
+	AC_REQUIRE([AC_PROG_CC])
+
+	AC_MSG_CHECKING([for BSD pf(4) support])
+	AC_CACHE_VAL(tr_cv_pf_ioctl, [
+		AC_LINK_IFELSE([
+				AC_LANG_PROGRAM([
+						#include <sys/types.h>
+						#include <sys/ioctl.h>
+						#include <sys/socket.h>
+						#include <net/if.h>
+						#include <net/pfvar.h>
+					], [
+						unsigned long req = DIOCRCLRTABLES;
+					])
+				], [
+					# Failed
+					tr_cv_pf_ioctl="yes"
+				], [
+					# Success
+					tr_cv_pf_ioctl="no"
+				]
+		)
+	])
+	AC_MSG_RESULT(${tr_cv_pf_ioctl})
+
+	if test x"${tr_cv_pf_ioctl}" = x"no"; then
+			AC_MSG_WARN([pf(4) table support will not be included.])
+	else
+		AC_DEFINE([HAVE_PF], [1], [Define to enable pf(4) table support.])
+	fi
+])
