@@ -55,6 +55,7 @@
 			 scope: (int) scope
 			baseDN: (LFString *) base
 		    attributes: (TRArray *) attributes;
+- (BOOL) compareDN: (LFString *) dn withAttribute: (LFString *) attribute value: (LFString *) value;
 
 - (BOOL) setTLSCACertFile: (LFString *) fileName;
 - (BOOL) setTLSCACertDir: (LFString *) directory;
