@@ -144,6 +144,7 @@ static int ldap_get_errno(LDAP *ld) {
 	ber_bvfree(servercred); /* We're only doing simple auth */
 	/* Did the parse (not the bind!) succeed? */
 	if (err != LDAP_SUCCESS) {
+		ldap_msgfree(res);
 		return (false);
 	}
 
