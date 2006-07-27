@@ -338,15 +338,20 @@ finish:
 	if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
-			ldap_abandon(ldapConn, msgid);
+			ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
 		warnx("ldap_compare_ext failed: %s\n", ldap_err2string(err));
 		return NO;
 	}
 
 	/* Check the result */
-	err = ldap_result2error(ldapConn, res, 1);
+	if (ldap_parse_result(ldapConn, res, &err, NULL, NULL, NULL, NULL, 1) != LDAP_SUCCESS) {
+		/* Parsing failed */
+		return NO;
+	}
 	if (err == LDAP_COMPARE_TRUE)
 		return YES;
+	else
+		return NO;
 
 	return NO;
 }
