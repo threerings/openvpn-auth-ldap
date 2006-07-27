@@ -39,17 +39,20 @@
 
 typedef struct _TRArrayStack {
 	id object;
+	struct _TRArrayStack *prev;
 	struct _TRArrayStack *next;
 } TRArrayStack;
 
 /*!
- * Linked list enumerator
+ * Linked list enumerator.
  */
 @interface TRArrayObjectEnumerator : TREnumerator {
 	TRArray *_array;
 	TRArrayStack *_stack;
 }
 - (id) initWithArray: (TRArray *) array;
+@end
+@interface TRArrayReverseObjectEnumerator : TRArrayObjectEnumerator
 @end
 
 
@@ -66,6 +69,8 @@ typedef struct _TRArrayStack {
 	_stack = xmalloc(sizeof(TRArrayStack));
 	_stack->object= nil;
 	_stack->next = NULL;
+	_stack->prev= NULL;
+	_stackBottom = _stack;
 
 	return self;
 }
@@ -97,7 +102,9 @@ typedef struct _TRArrayStack {
 	/* Allocate, initialize, and push the new node on to the stack */
 	node = xmalloc(sizeof(TRArrayStack));
 	node->object = [anObject retain];
+	node->prev = NULL;
 	node->next = _stack;
+	_stack->prev = node;
 
 	_stack = node;
 	_count++;
@@ -112,6 +119,7 @@ typedef struct _TRArrayStack {
 	/* Pop the stack */
 	node = _stack;
 	_stack = _stack->next;
+	_stack->prev = NULL;
 
 	/* Dealloc the removed node */
 	[node->object release];
@@ -146,12 +154,18 @@ typedef struct _TRArrayStack {
 	return NO;
 }
 
-- (TRArrayStack *) _privateArrayContext {
-        return _stack;
+- (TRArrayStack *) _privateArrayContext: (BOOL) top {
+	if (top)
+		return _stack;
+	else
+		return _stackBottom;
 }
 
 /*!
  * Return a object enumerator.
+ * This enumerater walks the stack,
+ * implementing a LIFO interface.
+ *
  * Due to our lack of an autorelease pool,
  * it is the caller's responsibility to release
  * the returned value.
@@ -159,6 +173,21 @@ typedef struct _TRArrayStack {
 - (TREnumerator *) objectEnumerator {
         return [[TRArrayObjectEnumerator alloc] initWithArray: self];
 }
+
+/*!
+ * Return a object enumerator.
+ * This enumerater walks the stack in reverse,
+ * implementing a FIFO interface.
+ *
+ * Due to our lack of an autorelease pool,
+ * it is the caller's responsibility to release
+ * the returned value.
+ */
+- (TREnumerator *) objectReverseEnumerator {
+        return [[TRArrayReverseObjectEnumerator alloc] initWithArray: self];
+}
+
+
 
 @end /* TRArray */
 
@@ -175,7 +204,7 @@ typedef struct _TRArrayStack {
                 return self;
 
         _array = [array retain];
-        _stack = [array _privateArrayContext];
+        _stack = [array _privateArrayContext: YES];
 
         return self;
 }
@@ -192,6 +221,36 @@ typedef struct _TRArrayStack {
 
 	/* Return the next node */
 	return (next->object);
+}
+
+@end /* TRArrayObjectEnumerator */
+
+@implementation TRArrayReverseObjectEnumerator
+
+- (id) initWithArray: (TRArray *) array {
+        self = [super init];
+        if (!self)
+                return self;
+
+	/* We want the bottom-most element of the stack,
+	 * skipping the NULL terminator */
+        _stack = [array _privateArrayContext: NO]->prev;
+
+        return self;
+}
+
+- (id) nextObject {
+	TRArrayStack *prev;
+
+	if (!_stack)
+		return nil;
+
+	/* Walk the stack in reverse */
+	prev = _stack;
+	_stack = _stack->prev;
+
+	/* Return the previous node */
+	return (prev->object);
 }
 
 @end /* TRArrayObjectEnumerator */

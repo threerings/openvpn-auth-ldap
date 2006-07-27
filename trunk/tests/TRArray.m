@@ -150,6 +150,15 @@ START_TEST(test_objectEnumerator) {
 	fail_unless(obj == string1);
 	[iter release];
 
+	/* Grab a reverse enumerator */
+	iter = [array objectReverseEnumerator];
+	obj = [iter nextObject];
+	fail_unless(obj == string1);
+	obj = [iter nextObject];
+	fail_unless(obj == string2);
+	[iter release];
+
+
 	/* Clean up */
 	[array release];
 	[string1 release];
