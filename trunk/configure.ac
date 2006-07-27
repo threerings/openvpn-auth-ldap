@@ -1,5 +1,5 @@
 AC_PREREQ(2.57)
-AC_INIT(auth-ldap, [1.0.3], landonf@opendarwin.org)
+AC_INIT(auth-ldap, [2.0], landonf@opendarwin.org)
 AC_CONFIG_SRCDIR(${srcdir}/src/LFString.m)
 AC_CONFIG_HEADERS(config.h)
 
