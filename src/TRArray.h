@@ -41,6 +41,7 @@
 @interface TRArray : TRObject {
 	unsigned int _count;
 	struct _TRArrayStack *_stack;
+	struct _TRArrayStack *_stackBottom;
 }
 
 - (void) addObject: (id) anObject;
@@ -48,6 +49,7 @@
 - (id) lastObject;
 - (BOOL) containsObject: (id) anObject;
 - (TREnumerator *) objectEnumerator;
+- (TREnumerator *) objectReverseEnumerator;
 - (unsigned int) count;
 
 @end
