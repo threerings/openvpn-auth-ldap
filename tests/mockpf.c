@@ -42,12 +42,21 @@
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
+
+#include <sys/types.h>
 #include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <net/if.h>
+#include <net/pfvar.h>
 
 /*
  * This code serves as a shim to allow the unit testing of /dev/pf
  * ioctl commands without providing root access or modifying the state
- * of the running system.
+ * of the running system. Our functions tend towards assert() rather
+ * than returning an error -- the point is to implode exactly where
+ * an error is detected, allowing a client implementator to quickly find
+ * the bug in their code.
  *
  * open() is hooked, and its path argument is matched against "/dev/pf".
  * If the path matches, /dev/null is instead opened, and the resultant
@@ -70,6 +79,21 @@ static unsigned int pfRefCount = 0;
 static int (*_real_open)(const char *, int, ...) = NULL;
 static int (*_real_close)(int) = NULL;
 static int (*_real_ioctl)(int, unsigned long, ...) = NULL;
+
+/* Static data initializers */
+static struct pfr_table artist_table = {
+	{ '\0' },
+	"ips_artist",
+	0,
+	0
+};
+
+static struct pfr_table dev_table = {
+	{ '\0' },
+	"ips_developer",
+	0,
+	0
+};
 
 int open(const char *path, int flags, ...) {
 	mode_t mode;
@@ -138,8 +162,40 @@ int ioctl(int d, unsigned long request, ...) {
 	if (!_real_ioctl)
 		_real_ioctl = dlsym(RTLD_NEXT, "ioctl");
 
+	/* Fish out the argument */
+	va_start(ap, request);
+	argp = va_arg(ap, caddr_t);
+	va_end(ap);
+
 	if (d == pffd) {
 		switch (request) {
+			struct pfioc_table *iot;
+
+			case DIOCRGETTABLES:
+				iot = (struct pfioc_table *) argp;
+
+				/* Verify structure initialization */
+				assert(iot->pfrio_esize == sizeof(struct pfr_table));
+
+				/* Let's force our caller to allocate a bigger buffer.
+				 * This *assumes* that the current table default of our caller is
+				 * less than 57. That may not actually be the case, in which case the
+				 * following assert will trigger. Unless they allocated 57, in which
+				 * place we'll fail to exercise all code paths and not throw an error.
+				 * Not much we can do about that. */
+				if (iot->pfrio_size < sizeof(struct pfr_table) * 57) {
+					iot->pfrio_size = sizeof(struct pfr_table) * 57;
+					return 0;
+				}
+
+				/* Assert that caller grew buffer as requested. */
+				assert (iot->pfrio_size == sizeof(struct pfr_table) * 57);
+
+				/* Return our two tables. So we lied. */
+				iot->pfrio_size = sizeof(struct pfr_table) * 2;
+				memcpy(iot->pfrio_buffer, &artist_table, sizeof(artist_table));
+				memcpy(iot->pfrio_buffer + sizeof(artist_table), &dev_table, sizeof(dev_table));
+				return 0;
 			default:
 				errno = EINVAL;
 				return -1;
@@ -147,10 +203,6 @@ int ioctl(int d, unsigned long request, ...) {
 	}
 
 	/* Call the real ioctl */
-	va_start(ap, request);
-	argp = va_arg(ap, caddr_t);
-	va_end(ap);
-
 	return (_real_ioctl(d, request, argp));
 }
 

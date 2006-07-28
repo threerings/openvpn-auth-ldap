@@ -33,11 +33,20 @@
  */
 
 #include "TRPacketFilter.h"
+#include "LFString.h"
 
 #ifdef HAVE_PF
 
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <net/if.h>
+#include <net/pfvar.h>
+
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 #include <err.h>
 
 @implementation TRPacketFilter
@@ -61,6 +70,61 @@
 - (void) dealloc {
 	close(_fd);
 	[super dealloc];
+}
+
+- (void) _logIOFailure: (const char *) request {
+	warn("pf ioctl request %s failed: ", request);
+}
+
+/* !Return an array of table names */
+- (TRArray *) tables {
+	TRArray *result = nil;
+	struct pfioc_table io;
+	struct pfr_table *table;
+	int size, i;
+
+	/* Initialize the io structure */
+	memset(&io, 0, sizeof(io));
+	io.pfrio_esize = sizeof(struct pfr_table);
+
+	/* First attempt with a reasonable buffer size - 32 tables */
+	size = sizeof(struct pfr_table) * 32;
+	io.pfrio_buffer = xmalloc(size);
+
+	/* Loop until success. */
+	while (1) {
+		io.pfrio_size = size;
+		if (ioctl(_fd, DIOCRGETTABLES, &io) == -1) {
+			[self _logIOFailure: "DIOCRGETTABLES"];
+			free(io.pfrio_buffer);
+			return nil;
+		}
+
+		/* Do we need a larger buffer? */
+		if (io.pfrio_size > size) {
+			/* Allocate the suggested space */
+			size = io.pfrio_size;
+			io.pfrio_buffer = xrealloc(io.pfrio_buffer, size);
+		} else {
+			/* Success! Exit the loop */
+			break;
+		}
+	}
+
+	/* Iterate over the returned tables, building our array */
+	result = [[TRArray alloc] init];
+
+	size = io.pfrio_size / sizeof(struct pfr_table);
+	table = (struct pfr_table *) io.pfrio_buffer;
+	for (i = 0; i < size; i++) {
+		LFString *name = [[LFString alloc] initWithCString: table->pfrt_name];
+		[result addObject: name];
+		[name release];
+		table++;
+	}
+
+	free(io.pfrio_buffer);
+	return result;
 }
 
 @end
