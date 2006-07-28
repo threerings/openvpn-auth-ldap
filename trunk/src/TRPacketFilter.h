@@ -36,11 +36,14 @@
 #define TRPACKETFILTER_H
 
 #include "TRObject.h"
+#include "TRArray.h"
 
 @interface TRPacketFilter : TRObject {
 	/*! Cached reference to /dev/pf */
 	int _fd;
 }
+
+- (TRArray *) tables;
 
 @end
 

@@ -41,11 +41,39 @@
 #include <check.h>
 
 #include <src/TRPacketFilter.h>
+#include <src/LFString.h>
+
+static TRPacketFilter *pf = nil;
+
+void setUp(void) {
+	pf = [[TRPacketFilter alloc] init];
+}
+
+void tearDown(void) {
+	[pf release];
+	pf = nil;
+}
 
 START_TEST(test_init) {
-	TRPacketFilter *pf = [[TRPacketFilter alloc] init];
 	fail_if(pf == nil);
-	[pf release];
+}
+END_TEST
+
+START_TEST(test_tables) {
+	TRArray *tables;
+	TREnumerator *tableIter;
+
+	tables = [pf tables];
+	fail_if(tables == nil);
+
+	/* Assume a few things about our mock pf implementation */
+	tableIter = [tables objectEnumerator];
+
+	fail_unless(strcmp([[tableIter nextObject] cString], "ips_developer") == 0);
+	fail_unless(strcmp([[tableIter nextObject] cString], "ips_artist") == 0);
+
+	[tableIter release];
+	[tables release];
 }
 END_TEST
 
@@ -53,8 +81,10 @@ Suite *TRPacketFilter_suite(void) {
 	Suite *s = suite_create("TRPacketFilter");
 
 	TCase *tc_pf = tcase_create("PF Ioctl");
+	tcase_add_checked_fixture(tc_pf, setUp, tearDown);
 	suite_add_tcase(s, tc_pf);
 	tcase_add_test(tc_pf, test_init);
+	tcase_add_test(tc_pf, test_tables);
 
 	return s;
 }
