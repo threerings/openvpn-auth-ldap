@@ -16,6 +16,7 @@ TEST_OBJS=	tests.o \
 		TRArray.o \
 		TRHash.o \
 		TRObject.o \
+		TRPacketFilter.o \
 		TRConfigToken.o \
 		TRConfigLexer.o \
 		TRConfig.o \

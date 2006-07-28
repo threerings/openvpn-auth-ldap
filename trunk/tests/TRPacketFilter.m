@@ -1,6 +1,6 @@
 /*
- * tests.h
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRPacketFilter.m
+ * TRPacketFilter Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -32,28 +32,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Useful Paths
- */
-#define DATA_PATH(relative)	TEST_DATA "/" relative
-#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
-#define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
-#define AUTH_LDAP_CONF_MISMATCHED	DATA_PATH("auth-ldap-mismatched.conf")
-#define AUTH_LDAP_CONF_MULTIKEY	DATA_PATH("auth-ldap-multikey.conf")
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-/*
- * Unit Tests
- */
+#ifdef HAVE_PF
 
-Suite *LFString_suite(void);
-Suite *LFAuthLDAPConfig_suite(void);
-Suite *LFLDAPConnection_suite(void);
-Suite *TRLDAPEntry_suite(void);
-Suite *TRObject_suite(void);
-Suite *TRArray_suite(void);
-Suite *TRHash_suite(void);
-Suite *TRConfigToken_suite(void);
-Suite *TRConfigLexer_suite(void);
-Suite *TRConfig_suite(void);
-Suite *TRLDAPGroupConfig_suite(void);
-Suite *TRPacketFilter_suite(void);
+#include <check.h>
+
+#include <src/TRPacketFilter.h>
+
+START_TEST(test_init) {
+	TRPacketFilter *pf = [[TRPacketFilter alloc] init];
+	fail_if(pf == nil);
+	[pf release];
+}
+END_TEST
+
+Suite *TRPacketFilter_suite(void) {
+	Suite *s = suite_create("TRPacketFilter");
+
+	TCase *tc_pf = tcase_create("PF Ioctl");
+	suite_add_tcase(s, tc_pf);
+	tcase_add_test(tc_pf, test_init);
+
+	return s;
+}
+
+#endif /* HAVE_PF */
