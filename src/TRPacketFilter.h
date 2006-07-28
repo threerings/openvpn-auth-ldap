@@ -1,6 +1,6 @@
 /*
- * tests.h
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRPacketFilter.h
+ * Interface to OpenBSD pf
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -15,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Landon Fuller nor the names of any contributors
+ * 3. Neither the name of the copyright holder nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,28 +32,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Useful Paths
- */
-#define DATA_PATH(relative)	TEST_DATA "/" relative
-#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
-#define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
-#define AUTH_LDAP_CONF_MISMATCHED	DATA_PATH("auth-ldap-mismatched.conf")
-#define AUTH_LDAP_CONF_MULTIKEY	DATA_PATH("auth-ldap-multikey.conf")
+#ifndef TRPACKETFILTER_H
+#define TRPACKETFILTER_H
 
-/*
- * Unit Tests
- */
+#include "TRObject.h"
 
-Suite *LFString_suite(void);
-Suite *LFAuthLDAPConfig_suite(void);
-Suite *LFLDAPConnection_suite(void);
-Suite *TRLDAPEntry_suite(void);
-Suite *TRObject_suite(void);
-Suite *TRArray_suite(void);
-Suite *TRHash_suite(void);
-Suite *TRConfigToken_suite(void);
-Suite *TRConfigLexer_suite(void);
-Suite *TRConfig_suite(void);
-Suite *TRLDAPGroupConfig_suite(void);
-Suite *TRPacketFilter_suite(void);
+@interface TRPacketFilter : TRObject {
+	/*! Cached reference to /dev/pf */
+	int _fd;
+}
+
+@end
+
+#endif /* TRPACKETFILTER_H */

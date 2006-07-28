@@ -32,6 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <config.h>
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <check.h>
@@ -67,6 +69,9 @@ int main(int argc, char *argv[]) {
 	srunner_add_suite(sr, TRConfigLexer_suite());
 	srunner_add_suite(sr, TRConfig_suite());
 	srunner_add_suite(sr, TRLDAPGroupConfig_suite());
+#ifdef HAVE_PF
+	srunner_add_suite(sr, TRPacketFilter_suite());
+#endif
 
 	/* Enable XML output */
 	if (argc == 2)
