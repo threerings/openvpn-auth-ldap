@@ -61,9 +61,6 @@
  * a mock pf ioctl() interface.
  */
 
-/* Path Constants */
-static const char devpf[] = "/dev/pf";
-
 /* Retain a single (reference counted) file descriptor that will be used for
  * all pf(4) ioctls */
 static int pffd = -1;
@@ -83,7 +80,7 @@ int open(const char *path, int flags, ...) {
 		_real_open = dlsym(RTLD_NEXT, "open");
 
 	/* Are we opening /dev/pf ? */
-	if(strcmp(path, devpf) == 0) {
+	if(strcmp(path, PF_DEV_PATH) == 0) {
 		/* Does a 'pf' reference already exist? */
 		if (pffd != -1) {
 			pfRefCount++;
@@ -117,7 +114,7 @@ int close(int d) {
 
 	if (d == pffd) {
 		if (pfRefCount == 1) {
-			ret = close(pffd);
+			ret = _real_close(pffd);
 			/* Failure here is highly unlikely, but
 			 * we account for it anyway */
 			if (ret == -1) {
@@ -142,9 +139,11 @@ int ioctl(int d, unsigned long request, ...) {
 		_real_ioctl = dlsym(RTLD_NEXT, "ioctl");
 
 	if (d == pffd) {
-		/* TODO: Interpret ioctl command here */
-		errno = EINVAL;
-		return -1;
+		switch (request) {
+			default:
+				errno = EINVAL;
+				return -1;
+		}
 	}
 
 	/* Call the real ioctl */

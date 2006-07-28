@@ -395,5 +395,6 @@ AC_DEFUN([TR_PF_IOCTL],[
 			AC_MSG_WARN([pf(4) table support will not be included.])
 	else
 		AC_DEFINE([HAVE_PF], [1], [Define to enable pf(4) table support.])
+		AC_DEFINE([PF_DEV_PATH], ["/dev/pf"], [Path to the pf(4) device.])
 	fi
 ])
