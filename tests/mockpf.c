@@ -217,6 +217,8 @@ void mockpf_teardown(void) {
 
 		remove_pfnode(pf_tables, pf_tables->firstNode);
 	}
+
+	free(pf_tables);
 }
 
 int open(const char *path, int flags, ...) {
