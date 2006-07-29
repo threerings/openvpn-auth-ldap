@@ -127,6 +127,26 @@
 	return result;
 }
 
+/*! Clear all addreses from the given table. */
+- (BOOL) clearAddressesFromTable: (LFString *) tableName {
+	struct pfioc_table io;
+
+	/* Initialize the io structure */
+	memset(&io, 0, sizeof(io));
+	io.pfrio_esize = sizeof(struct pfr_table);
+
+	/* Copy in the table name */
+	strcpy(io.pfrio_table.pfrt_name, [tableName cString]);
+
+	/* Issue the ioctl */
+	if (ioctl(_fd, DIOCRCLRADDRS, &io) == -1) {
+		[self _logIOFailure: "DIOCRCLRADDRS"];
+		return false;
+	}
+
+	return true;
+}
+
 @end
 
 #endif /* HAVE_PF */

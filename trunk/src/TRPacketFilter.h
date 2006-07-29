@@ -36,6 +36,7 @@
 #define TRPACKETFILTER_H
 
 #include "TRObject.h"
+#include "LFString.h"
 #include "TRArray.h"
 
 @interface TRPacketFilter : TRObject {
@@ -44,6 +45,7 @@
 }
 
 - (TRArray *) tables;
+- (BOOL) clearAddressesFromTable: (LFString *) tableName;
 
 @end
 
