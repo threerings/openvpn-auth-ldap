@@ -188,6 +188,7 @@ static void remove_pfnode(PFList *list, PFNode *node) {
 void mockpf_setup(void) {
 	PFTableNode *tableNode;
 	pf_tables = malloc(sizeof(PFList));
+	pf_tables->nodeCount = 0;
 	init_pflist(pf_tables);
 
 	/* Add our artist table */
