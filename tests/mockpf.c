@@ -1,6 +1,7 @@
 /*
  * mockpf.c
- * Evil, evil shim that captures pf ioctls.
+ * Evil testing shim that captures pf ioctls and emulates
+ * the /dev/pf interface.
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -42,6 +43,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <assert.h>
 
 #include <sys/types.h>
@@ -80,7 +82,7 @@ static int (*_real_open)(const char *, int, ...) = NULL;
 static int (*_real_close)(int) = NULL;
 static int (*_real_ioctl)(int, unsigned long, ...) = NULL;
 
-/* Static data initializers */
+/* Static example tables */
 static struct pfr_table artist_table = {
 	{ '\0' },
 	"ips_artist",
@@ -94,6 +96,125 @@ static struct pfr_table dev_table = {
 	0,
 	0
 };
+
+/*! Generic structure definition for either list type. */
+typedef struct PFNode {
+	struct PFNode *prev;
+	struct PFNode *next;
+} PFNode;
+
+/*! Generic list structure. */
+typedef struct PFList {
+	unsigned int nodeCount;
+	PFNode *firstNode;
+} PFList;
+
+/*! Double linked list of addresses. */
+typedef struct PFAddressNode {
+	struct PFAddressNode *prev;
+	struct PFAddressNode *next;
+	struct pfr_addr addr;
+} PFAddressNode;
+
+/*! Double linked list of tables. */
+typedef struct PFTableNode {
+	struct PFTableNode *prev;
+	struct PFTableNode *next;
+	struct pfr_table table;
+	PFList addrs;
+} PFTableNode;
+
+static PFList *pf_tables;
+
+/*! Initialize a new list. */
+static void init_pflist(PFList *list) {
+	list->firstNode = NULL;
+}
+
+/*! Initialize a new node. */
+static void init_pfnode(PFNode *node) {
+	node->prev = NULL;
+	node->next = NULL;
+}
+
+/* Insert a node into the list */
+static void insert_pfnode(PFList *list, PFNode *new, PFNode *position) {
+	list->nodeCount++;
+
+	/* Empty list */
+	if (!list->firstNode) {
+		list->firstNode = new;
+		return;
+	}
+
+	/* Top of list? */
+	if (!position)
+		position = list->firstNode;
+
+	new->prev = position->prev;
+	new->next = position;
+
+	if (position->prev)
+		position->prev->next = new;
+	else
+		list->firstNode = new;
+
+	position->prev = new;
+}
+
+/* Remove a node from a list */
+static void remove_pfnode(PFList *list, PFNode *node) {
+	list->nodeCount--;
+
+	/* Last remaining node */
+	if (!node->prev && !node->next) {
+		free(node);
+		list->firstNode = NULL;
+		return;
+	}
+
+	if (node->prev)
+		node->prev->next = node->next;
+	else
+		list->firstNode = node->next;
+
+	if (node->next)
+		node->next->prev = node->prev;
+
+	free(node);
+}
+
+/* Set up pf ioctl emulator */
+void mockpf_setup(void) {
+	PFTableNode *tableNode;
+	pf_tables = malloc(sizeof(PFList));
+	init_pflist(pf_tables);
+
+	/* Add our artist table */
+	tableNode = malloc(sizeof(PFTableNode));
+	init_pfnode((PFNode *) tableNode);
+	tableNode->table = artist_table;
+	insert_pfnode(pf_tables, (PFNode *) tableNode, NULL);
+
+	/* Add our dev table */
+	tableNode = malloc(sizeof(PFTableNode));
+	init_pfnode((PFNode *) tableNode);
+	tableNode->table = dev_table;
+	insert_pfnode(pf_tables, (PFNode *) tableNode, NULL);
+}
+
+/* Tear down ioctl emulator */
+void mockpf_teardown(void) {
+	while (pf_tables->firstNode) {
+		PFTableNode *tableNode = (PFTableNode *) pf_tables->firstNode;
+
+		/* Clear out the address list */
+		while (tableNode->addrs.firstNode)
+			remove_pfnode(&tableNode->addrs, tableNode->addrs.firstNode);
+
+		remove_pfnode(pf_tables, pf_tables->firstNode);
+	}
+}
 
 int open(const char *path, int flags, ...) {
 	mode_t mode;
@@ -170,6 +291,9 @@ int ioctl(int d, unsigned long request, ...) {
 	if (d == pffd) {
 		switch (request) {
 			struct pfioc_table *iot;
+			struct pfr_table *table;
+			PFTableNode *tableNode;
+			int size;
 
 			case DIOCRGETTABLES:
 				iot = (struct pfioc_table *) argp;
@@ -177,25 +301,47 @@ int ioctl(int d, unsigned long request, ...) {
 				/* Verify structure initialization */
 				assert(iot->pfrio_esize == sizeof(struct pfr_table));
 
-				/* Let's force our caller to allocate a bigger buffer.
-				 * This *assumes* that the current table default of our caller is
-				 * less than 57. That may not actually be the case, in which case the
-				 * following assert will trigger. Unless they allocated 57, in which
-				 * place we'll fail to exercise all code paths and not throw an error.
-				 * Not much we can do about that. */
-				if (iot->pfrio_size < sizeof(struct pfr_table) * 57) {
-					iot->pfrio_size = sizeof(struct pfr_table) * 57;
+				/* Check our caller's buffer size */
+				size = sizeof(struct pfr_table) * pf_tables->nodeCount;
+				if (iot->pfrio_size < size) {
+					iot->pfrio_size = size;
 					return 0;
+				} else {
+					iot->pfrio_size = size;
 				}
 
-				/* Assert that caller grew buffer as requested. */
-				assert (iot->pfrio_size == sizeof(struct pfr_table) * 57);
-
-				/* Return our two tables. So we lied. */
-				iot->pfrio_size = sizeof(struct pfr_table) * 2;
-				memcpy(iot->pfrio_buffer, &artist_table, sizeof(artist_table));
-				memcpy(iot->pfrio_buffer + sizeof(artist_table), &dev_table, sizeof(dev_table));
+				table = iot->pfrio_buffer;
+				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+					memcpy(table, &tableNode->table, sizeof(struct pfr_table));
+					table++;
+				}
 				return 0;
+
+			case DIOCRCLRADDRS:
+				iot = (struct pfioc_table *) argp;
+
+				/* Verify structure initialization */
+				assert(iot->pfrio_esize == sizeof(struct pfr_table));
+
+				/* Find the table */
+				size = 0; /* Number of addresses cleared */
+				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+					/* Check the name */
+					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
+						/* Matched. Clear out the address list */
+						while (tableNode->addrs.firstNode) {
+							remove_pfnode(&tableNode->addrs, tableNode->addrs.firstNode);
+							size++;
+						}
+						iot->pfrio_ndel = size;
+						return 0;
+					}
+				}
+
+				/* If we fall through the table wasn't found */
+				errno = ESRCH;
+				return -1;
+
 			default:
 				errno = EINVAL;
 				return -1;
