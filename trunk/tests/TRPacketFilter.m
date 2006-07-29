@@ -84,6 +84,7 @@ END_TEST
 START_TEST(test_clearAddressesFromTable) {
 	LFString *name = [[LFString alloc] initWithCString: "ips_artist"];
 	fail_unless([pf clearAddressesFromTable: name]);
+	[name release];
 }
 END_TEST
 
