@@ -193,6 +193,7 @@ void mockpf_setup(void) {
 	/* Add our artist table */
 	tableNode = malloc(sizeof(PFTableNode));
 	init_pfnode((PFNode *) tableNode);
+	init_pflist(&tableNode->addrs);
 	tableNode->table = artist_table;
 	insert_pfnode(pf_tables, (PFNode *) tableNode, NULL);
 
@@ -200,6 +201,7 @@ void mockpf_setup(void) {
 	tableNode = malloc(sizeof(PFTableNode));
 	init_pfnode((PFNode *) tableNode);
 	tableNode->table = dev_table;
+	init_pflist(&tableNode->addrs);
 	insert_pfnode(pf_tables, (PFNode *) tableNode, NULL);
 }
 
