@@ -75,6 +75,7 @@ START_TEST(test_init) {
 		fail_unless([conn setTLSCipherSuite: value]);
 
 	[config release];
+	[conn release];
 }
 END_TEST
 
