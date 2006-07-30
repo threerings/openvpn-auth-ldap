@@ -32,11 +32,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 /*
  * Useful Paths
  */
 #define DATA_PATH(relative)	TEST_DATA "/" relative
+
+#ifndef HAVE_PF
 #define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
+#else
+#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap-pf.conf")
+#endif /* HAVE_PF */
+
 #define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
 #define AUTH_LDAP_CONF_MISMATCHED	DATA_PATH("auth-ldap-mismatched.conf")
 #define AUTH_LDAP_CONF_MULTIKEY	DATA_PATH("auth-ldap-multikey.conf")

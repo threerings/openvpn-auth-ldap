@@ -58,6 +58,9 @@ typedef enum {
 	LF_LDAP_BASEDN,			/* Base DN for Search */
 	LF_LDAP_SEARCH_FILTER,		/* Search Filter */
 
+	/* Generic PF Variables */
+	LF_AUTH_PFTABLE,		/* PF Table Name */
+
 	/* LDAP Section Variables */
 	LF_LDAP_URL,			/* LDAP Server URL */
 	LF_LDAP_TIMEOUT,		/* LDAP Server Timeout */
@@ -99,6 +102,14 @@ static OpcodeTable SectionTypes[] = {
 static OpcodeTable GenericLDAPVariables[] = {
 	{ "BaseDN",		LF_LDAP_BASEDN, NO },
 	{ "SearchFilter",	LF_LDAP_SEARCH_FILTER, NO },
+	{ NULL, 0 }
+};
+
+/* Generic LDAP Search Variables */
+static OpcodeTable GenericPFVariables[] = {
+#ifdef HAVE_PF
+	{ "PFTable",		LF_AUTH_PFTABLE, NO },
+#endif
 	{ NULL, 0 }
 };
 
@@ -235,6 +246,8 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
 		[_searchFilter release];
 	if (_ldapGroups)
 		[_ldapGroups release];
+	if (_pfTable)
+		[_pfTable release];
 
 	[super dealloc];
 }
@@ -537,13 +550,16 @@ error:
 			break;
 
 		case LF_AUTH_SECTION:
-			/* Opcode must be one of AuthSectionVariables or GenericLDAPVariables */
+			/* Opcode must be one of AuthSectionVariables, GenericLDAPVariables, or GenericPFVariables */
 			opcodeEntry = parse_opcode(key, AuthSectionVariables);
 			if (!opcodeEntry) {
 				opcodeEntry = parse_opcode(key, GenericLDAPVariables);
 				if (!opcodeEntry) {
-					[self errorUnknownKey: key];
-					return;
+					opcodeEntry = parse_opcode(key, GenericPFVariables);
+					if (!opcodeEntry) {
+						[self errorUnknownKey: key];
+						return;
+					}
 				}
 			}
 
@@ -566,6 +582,10 @@ error:
 					[self setSearchFilter: [value string]];
 					break;
 
+				case LF_AUTH_PFTABLE:
+					[self setPFTable: [value string]];
+					break;
+
 				/* Unknown Setting */
 				default:
 					[self errorUnknownKey: key];
@@ -573,15 +593,19 @@ error:
 			}
 			break;
 		case LF_GROUP_SECTION:
-			/* Opcode must be one of GroupSectionVariables or GenericLDAPVariables */
+			/* Opcode must be one of GroupSectionVariables, GenericLDAPVariables, or GenericPFVariables */
 			opcodeEntry = parse_opcode(key, GroupSectionVariables);
 			if (!opcodeEntry) {
 				opcodeEntry = parse_opcode(key, GenericLDAPVariables);
 				if (!opcodeEntry) {
-					[self errorUnknownKey: key];
-					return;
+					opcodeEntry = parse_opcode(key, GenericPFVariables);
+					if (!opcodeEntry) {
+						[self errorUnknownKey: key];
+						return;
+					}
 				}
 			}
+
 
 
 			switch(opcodeEntry->opcode) {
@@ -600,6 +624,12 @@ error:
 				case LF_LDAP_SEARCH_FILTER:
 					config = [self currentSectionContext];
 					[config setSearchFilter: [value string]];
+					break;
+
+				case LF_AUTH_PFTABLE:
+					config = [self currentSectionContext];
+					[config setSearchFilter: [value string]];
+					[config setPFTable: [value string]];
 					break;
 
 				/* Unknown Setting */
@@ -663,6 +693,7 @@ error:
 		warnx("A parse error occured while attempting to comprehend %s, on line %u.", [badToken cString], [badToken lineNumber]);
 	else
 		warnx("A parse error occured while attempting to read your configuration file.");
+	[_configDriver errorStop];
 }
 
 /* Accessors */
@@ -769,6 +800,16 @@ error:
 	if (_tlsCipherSuite)
 		[_tlsCipherSuite release];
 	_tlsCipherSuite = [cipherSuite retain];
+}
+
+- (void) setPFTable: (LFString *) tableName {
+	if (_pfTable)
+		[_pfTable release];
+	_pfTable = [tableName retain];
+}
+
+- (LFString *) pfTable {
+	return (_pfTable);
 }
 
 - (TRArray *) ldapGroups {
