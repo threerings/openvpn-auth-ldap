@@ -164,6 +164,33 @@
 	return true;
 }
 
+/*! Delete an address from the specified table. */
+- (BOOL) deleteAddress: (TRPFAddress *) address fromTable: (LFString *) tableName {
+	struct pfioc_table io;
+
+	/* Initialize the io structure */
+	memset(&io, 0, sizeof(io));
+	io.pfrio_esize = sizeof(struct pfr_addr);
+
+	/* Build the request */
+	strcpy(io.pfrio_table.pfrt_name, [tableName cString]);
+	io.pfrio_buffer = (void *) [address pfrAddr];
+	io.pfrio_size = sizeof(struct pfr_addr);
+
+	/* Issue the ioctl */
+	if (ioctl(_fd, DIOCRDELADDRS, &io) == -1) {
+		return false;
+	}
+
+	if (io.pfrio_ndel != 1) {
+		return false;
+	}
+
+	return true;
+}
+
+
+
 /*! Return an array of all addresses from the specified table. */
 - (TRArray *) addressesFromTable: (LFString *) tableName {
 	TRArray *result = nil;
