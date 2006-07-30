@@ -33,7 +33,10 @@
 #ifndef AUTH_LDAP_H
 #define AUTH_LDAP_H
 
+#include <stdlib.h>
+
 void *xmalloc(size_t size);
 void *xrealloc(void *ptr, size_t size);
 char *xstrdup(const char *str);
+
 #endif /* AUTH_LDAP_H */
