@@ -407,6 +407,7 @@ int ioctl(int d, unsigned long request, ...) {
 									addrMatch = 1;
 									remove_pfnode(&tableNode->addrs, (PFNode *) addressNode);
 									size++;
+									break;
 								}
 
 							}
