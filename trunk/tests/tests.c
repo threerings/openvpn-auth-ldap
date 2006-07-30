@@ -71,6 +71,7 @@ int main(int argc, char *argv[]) {
 	srunner_add_suite(sr, TRLDAPGroupConfig_suite());
 #ifdef HAVE_PF
 	srunner_add_suite(sr, TRPacketFilter_suite());
+	srunner_add_suite(sr, TRPFAddress_suite());
 #endif
 
 	/* Enable XML output */

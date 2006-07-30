@@ -297,7 +297,9 @@ int ioctl(int d, unsigned long request, ...) {
 		switch (request) {
 			struct pfioc_table *iot;
 			struct pfr_table *table;
+			struct pfr_addr *address;
 			PFTableNode *tableNode;
+			PFAddressNode *addressNode;
 			int size;
 
 			case DIOCRGETTABLES:
@@ -339,6 +341,41 @@ int ioctl(int d, unsigned long request, ...) {
 							size++;
 						}
 						iot->pfrio_ndel = size;
+						return 0;
+					}
+				}
+
+				/* If we fall through the table wasn't found */
+				errno = ESRCH;
+				return -1;
+
+			case DIOCRADDADDRS:
+				iot = (struct pfioc_table *) argp;
+
+				/* Verify structure initialization */
+				assert(iot->pfrio_esize == sizeof(struct pfr_table));
+
+				/* Find the table */
+				size = 0; /* Number of addresses added */
+				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+					int i, max;
+					/* Check the name */
+					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
+						/* Matched. Add the addresses */
+						address = iot->pfrio_buffer;
+						max = iot->pfrio_size / sizeof(struct pfr_addr);
+						for (i = 0; i < max; i++) {
+							addressNode = malloc(sizeof(PFAddressNode));
+							init_pfnode((PFNode *) addressNode);
+							memcpy(&addressNode->addr, address, sizeof(addressNode->addr));
+							insert_pfnode(&tableNode->addrs, (PFNode *) addressNode, NULL);
+
+							address++;
+							size++;
+						}
+
+						/* Number of addresses added */
+						iot->pfrio_nadd = size;
 						return 0;
 					}
 				}
