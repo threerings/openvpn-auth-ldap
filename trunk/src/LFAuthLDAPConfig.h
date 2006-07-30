@@ -52,6 +52,7 @@
 	LFString *_baseDN;
 	LFString *_searchFilter;
 	BOOL _requireGroup;
+	LFString *_pfTable;
 	TRArray *_ldapGroups;
 
 	/* Parser State */
@@ -101,6 +102,9 @@
 
 - (BOOL) requireGroup;
 - (void) setRequireGroup: (BOOL) requireGroup;
+
+- (LFString *) pfTable;
+- (void) setPFTable: (LFString *) tableName;
 
 - (TRArray *) ldapGroups;
 

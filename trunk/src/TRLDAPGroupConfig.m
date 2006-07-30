@@ -44,6 +44,9 @@
 		[_searchFilter release];
 	if (_memberAttribute)
 		[_memberAttribute release];
+	if (_pfTable)
+		[_pfTable release];
+
 	[super dealloc];
 }
 
@@ -78,6 +81,14 @@
 	_memberAttribute = [memberAttribute retain];
 }
 
+- (void) setPFTable: (LFString *) tableName {
+	if (_pfTable)
+		[_pfTable release];
+	_pfTable = [tableName retain];
+}
 
+- (LFString *) pfTable {
+	return (_pfTable);
+}
 
 @end

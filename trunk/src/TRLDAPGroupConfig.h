@@ -42,14 +42,20 @@
 	LFString *_baseDN;
 	LFString *_searchFilter;
 	LFString *_memberAttribute;
+	LFString *_pfTable;
 }
 
 - (LFString *) baseDN;
 - (void) setBaseDN: (LFString *) baseDN;
+
 - (LFString *) searchFilter;
 - (void) setSearchFilter: (LFString *) searchFilter;
+
 - (LFString *) memberAttribute;
 - (void) setMemberAttribute: (LFString *) memberAttribute;
+
+- (LFString *) pfTable;
+- (void) setPFTable: (LFString *) tableName;
 
 @end
 
