@@ -129,6 +129,7 @@ static PFList *pf_tables;
 /*! Initialize a new list. */
 static void init_pflist(PFList *list) {
 	list->firstNode = NULL;
+	list->nodeCount = 0;
 }
 
 /*! Initialize a new node. */
@@ -188,7 +189,6 @@ static void remove_pfnode(PFList *list, PFNode *node) {
 void mockpf_setup(void) {
 	PFTableNode *tableNode;
 	pf_tables = malloc(sizeof(PFList));
-	pf_tables->nodeCount = 0;
 	init_pflist(pf_tables);
 
 	/* Add our artist table */
@@ -353,7 +353,7 @@ int ioctl(int d, unsigned long request, ...) {
 				iot = (struct pfioc_table *) argp;
 
 				/* Verify structure initialization */
-				assert(iot->pfrio_esize == sizeof(struct pfr_table));
+				assert(iot->pfrio_esize == sizeof(struct pfr_addr));
 
 				/* Find the table */
 				size = 0; /* Number of addresses added */
@@ -376,6 +376,78 @@ int ioctl(int d, unsigned long request, ...) {
 
 						/* Number of addresses added */
 						iot->pfrio_nadd = size;
+						return 0;
+					}
+				}
+
+				/* If we fall through the table wasn't found */
+				errno = ESRCH;
+				return -1;
+
+			case DIOCRDELADDRS:
+				iot = (struct pfioc_table *) argp;
+
+				/* Verify structure initialization */
+				assert(iot->pfrio_esize == sizeof(struct pfr_addr));
+
+				/* Find the table */
+				size = 0; /* Number of addresses deleted */
+				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+					int i, max;
+					/* Check the name */
+					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
+						/* Matched the table. Delete the addresses */
+						address = iot->pfrio_buffer;
+						max = iot->pfrio_size / sizeof(struct pfr_addr);
+						for (i = 0; i < max; i++) {
+							int addrMatch = 0;
+							for (addressNode = (PFAddressNode *) tableNode->addrs.firstNode; addressNode != NULL; addressNode = addressNode->next) {
+								if (memcmp(&addressNode->addr, address, sizeof(addressNode->addr)) == 0) {
+									/* Matched the address */
+									addrMatch = 1;
+									remove_pfnode(&tableNode->addrs, (PFNode *) addressNode);
+									size++;
+								}
+
+							}
+							address++;
+						}
+
+						/* Number of addresses deleted */
+						iot->pfrio_ndel = size;
+						return 0;
+					}
+				}
+
+				/* If we fall through the table wasn't found */
+				errno = ESRCH;
+				return -1;
+
+
+			case DIOCRGETADDRS:
+				iot = (struct pfioc_table *) argp;
+
+				/* Verify structure initialization */
+				assert(iot->pfrio_esize == sizeof(struct pfr_addr));
+
+				/* Find the table */
+				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+					/* Check the name */
+					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
+						/* Matched. Check our caller's buffer size */
+						size = sizeof(struct pfr_addr) * tableNode->addrs.nodeCount;
+						if (iot->pfrio_size < size) {
+							iot->pfrio_size = size;
+							return 0;
+						} else {
+							iot->pfrio_size = size;
+						}
+
+						address = iot->pfrio_buffer;
+						for (addressNode = (PFAddressNode *) tableNode->addrs.firstNode; addressNode != NULL; addressNode = addressNode->next) {
+							memcpy(address, &addressNode->addr, sizeof(struct pfr_addr));
+							address++;
+						}
 						return 0;
 					}
 				}
