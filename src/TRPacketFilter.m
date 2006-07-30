@@ -33,20 +33,16 @@
  */
 
 #include "TRPacketFilter.h"
+#include "TRPFAddress.h"
 #include "LFString.h"
 
 #ifdef HAVE_PF
-
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <net/if.h>
-#include <net/pfvar.h>
 
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include <err.h>
 
 @implementation TRPacketFilter
@@ -72,10 +68,6 @@
 	[super dealloc];
 }
 
-- (void) _logIOFailure: (const char *) request {
-	warn("pf ioctl request %s failed: ", request);
-}
-
 /* !Return an array of table names */
 - (TRArray *) tables {
 	TRArray *result = nil;
@@ -95,8 +87,9 @@
 	while (1) {
 		io.pfrio_size = size;
 		if (ioctl(_fd, DIOCRGETTABLES, &io) == -1) {
-			[self _logIOFailure: "DIOCRGETTABLES"];
+			int saved_errno = errno;
 			free(io.pfrio_buffer);
+			errno = saved_errno;
 			return nil;
 		}
 
@@ -127,7 +120,7 @@
 	return result;
 }
 
-/*! Clear all addreses from the given table. */
+/*! Clear all addreses from the specified table. */
 - (BOOL) clearAddressesFromTable: (LFString *) tableName {
 	struct pfioc_table io;
 
@@ -140,7 +133,31 @@
 
 	/* Issue the ioctl */
 	if (ioctl(_fd, DIOCRCLRADDRS, &io) == -1) {
-		[self _logIOFailure: "DIOCRCLRADDRS"];
+		return false;
+	}
+
+	return true;
+}
+
+/*! Add an address to the specified table. */
+- (BOOL) addAddress: (TRPFAddress *) address toTable: (LFString *) tableName {
+	struct pfioc_table io;
+
+	/* Initialize the io structure */
+	memset(&io, 0, sizeof(io));
+	io.pfrio_esize = sizeof(struct pfr_table);
+
+	/* Build the request */
+	strcpy(io.pfrio_table.pfrt_name, [tableName cString]);
+	io.pfrio_buffer = (void *) [address pfrAddr];
+	io.pfrio_size = sizeof(struct pfr_addr);
+
+	/* Issue the ioctl */
+	if (ioctl(_fd, DIOCRADDADDRS, &io) == -1) {
+		return false;
+	}
+
+	if (io.pfrio_nadd != 1) {
 		return false;
 	}
 

@@ -1,6 +1,6 @@
 /*
- * TRPacketFilter.h
- * Interface to OpenBSD pf
+ * TRPFAddress.m
+ * OpenBSD PF Address
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,33 +36,52 @@
 #include <config.h>
 #endif
 
-#if !defined(TRPACKETFILTER_H) && defined HAVE_PF
-#define TRPACKETFILTER_H
+#ifdef HAVE_PF
 
-/* pf includes */
 #include <sys/types.h>
-#include <sys/ioctl.h>
 #include <sys/socket.h>
-#include <net/if.h>
-#include <net/pfvar.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
-#include "TRObject.h"
-#include "LFString.h"
-#include "TRArray.h"
 #include "TRPFAddress.h"
+#include "LFString.h"
 
-/* Forward Declarations */
-@class TRPFAddress;
+@implementation TRPFAddress
 
-@interface TRPacketFilter : TRObject {
-	/*! Cached reference to /dev/pf. */
-	int _fd;
+- (id) init {
+	self = [super init];
+	if (!self)
+		return self;
+
+	/* Initialize the pfr_addr structure */
+	memset(&_addr, 0, sizeof(_addr));
+
+	return self;
 }
 
-- (TRArray *) tables;
-- (BOOL) clearAddressesFromTable: (LFString *) tableName;
-- (BOOL) addAddress: (TRPFAddress *) address toTable: (LFString *) tableName;
+
+- (id) initWithPresentationAddress: (LFString *) address {
+	if (![self init])
+		return nil;
+
+	/* Try IPv4, then IPv6 */
+	if (inet_pton(AF_INET, [address cString], &_addr.pfra_ip4addr)) {
+		_addr.pfra_af = AF_INET;
+		return self;
+	} else if(inet_pton(AF_INET6, [address cString], &_addr.pfra_ip6addr)) {
+		_addr.pfra_af = AF_INET6;
+		return self;
+	}
+
+	/* Fall through */
+	[self release];
+	return nil;
+}
+
+- (struct pfr_addr *) pfrAddr {
+	return &_addr;
+}
 
 @end
 
-#endif /* TRPACKETFILTER_H && HAVE_PF */
+#endif /* HAVE_PF */

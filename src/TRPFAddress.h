@@ -1,6 +1,6 @@
 /*
- * TRPacketFilter.h
- * Interface to OpenBSD pf
+ * TRPFAddress.h
+ * OpenBSD PF Address
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,33 +36,20 @@
 #include <config.h>
 #endif
 
-#if !defined(TRPACKETFILTER_H) && defined HAVE_PF
-#define TRPACKETFILTER_H
+#if !defined(TRPFADDRESS_H) && defined(HAVE_PF)
+#define TRPFADDRESS_H
 
-/* pf includes */
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <net/if.h>
-#include <net/pfvar.h>
-
-#include "TRObject.h"
+#include "TRPacketFilter.h"
 #include "LFString.h"
-#include "TRArray.h"
-#include "TRPFAddress.h"
+#include "TRObject.h"
 
-/* Forward Declarations */
-@class TRPFAddress;
-
-@interface TRPacketFilter : TRObject {
-	/*! Cached reference to /dev/pf. */
-	int _fd;
+@interface TRPFAddress : TRObject {
+	struct pfr_addr _addr;
 }
 
-- (TRArray *) tables;
-- (BOOL) clearAddressesFromTable: (LFString *) tableName;
-- (BOOL) addAddress: (TRPFAddress *) address toTable: (LFString *) tableName;
+- (id) initWithPresentationAddress: (LFString *) address;
+- (struct pfr_addr *) pfrAddr;
 
 @end
 
-#endif /* TRPACKETFILTER_H && HAVE_PF */
+#endif /* TRPFADDRESS_H && HAVE_PF */

@@ -1,6 +1,6 @@
 /*
- * TRPacketFilter.m
- * TRPacketFilter Unit Tests
+ * TRPPFAddress.m
+ * TRPFAddress Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -40,92 +40,58 @@
 
 #include <check.h>
 
-#include <src/TRPacketFilter.h>
-#include <src/LFString.h>
+#include <src/TRPFAddress.h>
 
-#include "mockpf.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
-static TRPacketFilter *pf = nil;
-
-void setUp(void) {
-	mockpf_setup();
-	pf = [[TRPacketFilter alloc] init];
-}
-
-void tearDown(void) {
-	mockpf_teardown();
-	[pf release];
-	pf = nil;
-}
-
-START_TEST(test_init) {
-	fail_if(pf == nil);
-}
-END_TEST
-
-START_TEST(test_tables) {
-	TRArray *tables;
-	TREnumerator *tableIter;
-
-	tables = [pf tables];
-	fail_if(tables == nil);
-
-	/* Assume a few things about our mock pf implementation */
-	tableIter = [tables objectEnumerator];
-
-	fail_unless(strcmp([[tableIter nextObject] cString], "ips_artist") == 0);
-	fail_unless(strcmp([[tableIter nextObject] cString], "ips_developer") == 0);
-
-	[tableIter release];
-	[tables release];
-}
-END_TEST
-
-START_TEST(test_clearAddressesFromTable) {
-	LFString *name = [[LFString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf clearAddressesFromTable: name]);
-	[name release];
-}
-END_TEST
-
-START_TEST(test_addAddressToTable) {
+START_TEST(test_initWithPresentationAddress) {
 	LFString *addrString;
-	TRPFAddress *pfAddress;
-	LFString *name;
-
-       	name = [[LFString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf clearAddressesFromTable: name]);
+	TRPFAddress *pfAddr;
+	/* Independent verification */
+	struct pfr_addr *result;
+	struct in_addr addr4;
+	struct in6_addr addr6;
 
 	/* Test with IPv4 */
 	addrString = [[LFString alloc] initWithCString: "127.0.0.1"];
-	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
-	fail_unless([pf addAddress: pfAddress toTable: name]);
+	fail_unless(inet_pton(AF_INET, "127.0.0.1", &addr4));
+
+	pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 	[addrString release];
-	[pfAddress release];
+
+	/* Verify conversion */
+	fail_if(pfAddr == nil);
+	result = [pfAddr pfrAddr];
+	fail_unless(memcmp(&result->pfra_ip4addr, &addr4, sizeof(addr4)) == 0);
+
+	[pfAddr release];
 
 	/* Test with IPv6 */
 	addrString = [[LFString alloc] initWithCString: "::1"];
-	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
-	fail_unless([pf addAddress: pfAddress toTable: name]);
-	[addrString release];
-	[pfAddress release];
+	fail_unless(inet_pton(AF_INET6, "::1", &addr6));
 
-	[name release];
+	pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
+	[addrString release];
+
+	/* Verify conversion */
+	fail_if(pfAddr == nil);
+	result = [pfAddr pfrAddr];
+	fail_unless(memcmp(&result->pfra_ip6addr, &addr6, sizeof(addr6)) == 0);
+
+	[pfAddr release];
 }
 END_TEST
 
 
+Suite *TRPFAddress_suite(void) {
+	Suite *s = suite_create("TRPFAddress");
 
-Suite *TRPacketFilter_suite(void) {
-	Suite *s = suite_create("TRPacketFilter");
-
-	TCase *tc_pf = tcase_create("PF Ioctl");
-	tcase_add_checked_fixture(tc_pf, setUp, tearDown);
-	suite_add_tcase(s, tc_pf);
-	tcase_add_test(tc_pf, test_init);
-	tcase_add_test(tc_pf, test_tables);
-	tcase_add_test(tc_pf, test_clearAddressesFromTable);
-	tcase_add_test(tc_pf, test_addAddressToTable);
+	TCase *tc_addr = tcase_create("Address");
+	suite_add_tcase(s, tc_addr);
+	tcase_add_test(tc_addr, test_initWithPresentationAddress);
 
 	return s;
 }

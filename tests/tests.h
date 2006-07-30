@@ -57,3 +57,4 @@ Suite *TRConfigLexer_suite(void);
 Suite *TRConfig_suite(void);
 Suite *TRLDAPGroupConfig_suite(void);
 Suite *TRPacketFilter_suite(void);
+Suite *TRPFAddress_suite(void);
