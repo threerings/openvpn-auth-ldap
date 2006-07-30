@@ -62,6 +62,7 @@
 - (TRArray *) tables;
 - (BOOL) clearAddressesFromTable: (LFString *) tableName;
 - (BOOL) addAddress: (TRPFAddress *) address toTable: (LFString *) tableName;
+- (TRArray *) addressesFromTable: (LFString *) tableName;
 
 @end
 

@@ -38,6 +38,7 @@
 
 #ifdef HAVE_PF
 
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -76,6 +77,16 @@
 	/* Fall through */
 	[self release];
 	return nil;
+}
+
+- (id) initWithPFRAddr: (struct pfr_addr *) pfrAddr {
+	if (![self init])
+		return nil;
+
+	/* Copy the supplied pfr_addr structure */
+	memcpy(&_addr, pfrAddr, sizeof(_addr));
+
+	return self;
 }
 
 - (struct pfr_addr *) pfrAddr {

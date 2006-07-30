@@ -48,6 +48,7 @@
 }
 
 - (id) initWithPresentationAddress: (LFString *) address;
+- (id) initWithPFRAddr: (struct pfr_addr *) pfrAddr;
 - (struct pfr_addr *) pfrAddr;
 
 @end
