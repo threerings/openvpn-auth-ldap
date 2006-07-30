@@ -145,7 +145,7 @@
 
 	/* Initialize the io structure */
 	memset(&io, 0, sizeof(io));
-	io.pfrio_esize = sizeof(struct pfr_table);
+	io.pfrio_esize = sizeof(struct pfr_addr);
 
 	/* Build the request */
 	strcpy(io.pfrio_table.pfrt_name, [tableName cString]);
@@ -162,6 +162,62 @@
 	}
 
 	return true;
+}
+
+/*! Return an array of all addresses from the specified table. */
+- (TRArray *) addressesFromTable: (LFString *) tableName {
+	TRArray *result = nil;
+	struct pfioc_table io;
+	struct pfr_addr *pfrAddr;
+	int size, i;
+
+	/* Initialize the io structure */
+	memset(&io, 0, sizeof(io));
+	io.pfrio_esize = sizeof(struct pfr_addr);
+
+	/* Copy in the table name */
+	strcpy(io.pfrio_table.pfrt_name, [tableName cString]);
+
+	/* First attempt with a reasonable buffer size - 32 addresses */
+	size = sizeof(struct pfr_addr) * 32;
+	io.pfrio_buffer = xmalloc(size);
+
+	/* Loop until success. */
+	while (1) {
+		io.pfrio_size = size;
+		if (ioctl(_fd, DIOCRGETADDRS, &io) == -1) {
+			int saved_errno = errno;
+			free(io.pfrio_buffer);
+			errno = saved_errno;
+			return nil;
+		}
+
+		/* Do we need a larger buffer? */
+		if (io.pfrio_size > size) {
+			/* Allocate the suggested space */
+			size = io.pfrio_size;
+			io.pfrio_buffer = xrealloc(io.pfrio_buffer, size);
+		} else {
+			/* Success! Exit the loop */
+			break;
+		}
+	}
+
+	/* Iterate over the returned addresses, building our array */
+	result = [[TRArray alloc] init];
+
+	size = io.pfrio_size / sizeof(struct pfr_addr);
+	pfrAddr = (struct pfr_addr *) io.pfrio_buffer;
+	for (i = 0; i < size; i++) {
+		TRPFAddress *address = [[TRPFAddress alloc] initWithPFRAddr: pfrAddr];
+		[result addObject: address];
+		[address release];
+		pfrAddr++;
+	}
+
+	free(io.pfrio_buffer);
+	return result;
+
 }
 
 @end
