@@ -229,9 +229,12 @@ openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[
 			groupIter = [[ctx->config ldapGroups] objectEnumerator];
 			while ((groupConfig = [groupIter nextObject]) != nil) {
 				if ((tableName = [groupConfig pfTable]))
-					if (![ctx->pf clearAddressesFromTable: tableName])
+					if (![ctx->pf clearAddressesFromTable: tableName]) {
+						[groupIter release];
 						goto error;
+					}
 			}
+			[groupIter release];
 		}
 	}
 
