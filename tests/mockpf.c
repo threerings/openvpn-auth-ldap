@@ -5,31 +5,35 @@
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
+ * Portions of the validation code were taken from the pf kernel
+ * implementation.
+ *
+ * Copyright (c) 2002 Cedric Berger
  * Copyright (c) 2006 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Landon Fuller nor the names of any contributors
- *    may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
  * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *    - Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *    - Redistributions in binary form must reproduce the above
+ *      copyright notice, this list of conditions and the following
+ *      disclaimer in the documentation and/or other materials provided
+ *      with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -280,6 +284,89 @@ int close(int d) {
 	return _real_close(d);
 }
 
+/*!
+ * Rewrite anchors referenced by tables to remove slashes and check for
+ * validity.
+ * Taken from FreeBSD: src/sys/contrib/pf/net/pf_table.c,v 1.7
+ */
+int pfr_fix_anchor(char *anchor) {
+        size_t siz = MAXPATHLEN;
+        int i;
+
+        if (anchor[0] == '/') {
+                char *path;
+                int off;
+
+                path = anchor;
+                off = 1;
+                while (*++path == '/')
+                        off++;
+                bcopy(path, anchor, siz - off);
+                memset(anchor + siz - off, 0, off);
+        }
+        if (anchor[siz - 1])
+                return (-1);
+        for (i = strlen(anchor); i < siz; i++)
+                if (anchor[i])
+                        return (-1);
+        return (0);
+}
+
+
+/*!
+ * Validate a table structure.
+ * Taken from FreeBSD: src/sys/contrib/pf/net/pf_table.c,v 1.7
+ */
+int pfr_validate_table(struct pfr_table *tbl) {
+	int i;
+
+	assert(tbl->pfrt_name[0]);
+
+	assert(!tbl->pfrt_name[PF_TABLE_NAME_SIZE-1]);
+
+	for (i = strlen(tbl->pfrt_name); i < PF_TABLE_NAME_SIZE; i++)
+		assert(!tbl->pfrt_name[i]);
+
+	assert(pfr_fix_anchor(tbl->pfrt_anchor) == 0);
+
+	assert(tbl->pfrt_flags == 0);
+	return (1);
+}
+
+/*!
+ * Validate an address structure.
+ * Taken from FreeBSD: src/sys/contrib/pf/net/pf_table.c,v 1.7
+ */
+int pfr_validate_addr(struct pfr_addr *ad) {
+	int i;
+
+	assert(ad->pfra_af == AF_INET || ad->pfra_af == AF_INET6);
+
+	switch (ad->pfra_af) {
+	case AF_INET:
+		assert(ad->pfra_net <= 32);
+		break;
+	case AF_INET6:
+		assert(ad->pfra_net <= 128);
+		break;
+	default:
+		/* Unreachable */
+		break;
+	}
+
+	if (ad->pfra_net < 128)
+		assert(!(((caddr_t)ad)[ad->pfra_net/8] & (0xFF >> (ad->pfra_net%8))));
+
+	for (i = (ad->pfra_net+7)/8; i < sizeof(ad->pfra_u); i++)
+		assert(!((caddr_t)ad)[i]);
+
+	if (ad->pfra_not)
+		assert(ad->pfra_not == 1);
+
+	assert(!ad->pfra_fback);
+        return (1);
+}
+
 int ioctl(int d, unsigned long request, ...) {
 	va_list ap;
 	caddr_t argp;
@@ -355,6 +442,9 @@ int ioctl(int d, unsigned long request, ...) {
 				/* Verify structure initialization */
 				assert(iot->pfrio_esize == sizeof(struct pfr_addr));
 
+				/* Validate table */
+				assert(pfr_validate_table (&iot->pfrio_table));
+
 				/* Find the table */
 				size = 0; /* Number of addresses added */
 				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
@@ -365,11 +455,7 @@ int ioctl(int d, unsigned long request, ...) {
 						address = iot->pfrio_buffer;
 						max = iot->pfrio_size / sizeof(struct pfr_addr);
 						for (i = 0; i < max; i++) {
-							assert (address->pfra_af == AF_INET || address->pfra_af == AF_INET6);
-							if (address->pfra_af == AF_INET)
-								assert(address->pfra_net == 32);
-							else
-								assert(address->pfra_net == 128);
+							assert(pfr_validate_addr(address));
 
 							addressNode = malloc(sizeof(PFAddressNode));
 							init_pfnode((PFNode *) addressNode);
@@ -396,6 +482,9 @@ int ioctl(int d, unsigned long request, ...) {
 				/* Verify structure initialization */
 				assert(iot->pfrio_esize == sizeof(struct pfr_addr));
 
+				/* Validate table */
+				pfr_validate_table (&iot->pfrio_table);
+
 				/* Find the table */
 				size = 0; /* Number of addresses deleted */
 				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
@@ -407,11 +496,7 @@ int ioctl(int d, unsigned long request, ...) {
 						max = iot->pfrio_size / sizeof(struct pfr_addr);
 						for (i = 0; i < max; i++) {
 							int addrMatch = 0;
-							assert (address->pfra_af == AF_INET || address->pfra_af == AF_INET6);
-							if (address->pfra_af == AF_INET)
-								assert(address->pfra_net == 32);
-							else
-								assert(address->pfra_net == 128);
+							assert(pfr_validate_addr(address));
 
 							for (addressNode = (PFAddressNode *) tableNode->addrs.firstNode; addressNode != NULL; addressNode = addressNode->next) {
 								if (memcmp(&addressNode->addr, address, sizeof(addressNode->addr)) == 0) {
