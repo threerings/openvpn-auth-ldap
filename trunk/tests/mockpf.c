@@ -453,7 +453,7 @@ int ioctl(int d, unsigned long request, ...) {
 					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
 						/* Matched. Add the addresses */
 						address = iot->pfrio_buffer;
-						max = iot->pfrio_size / sizeof(struct pfr_addr);
+						max = iot->pfrio_size;
 						for (i = 0; i < max; i++) {
 							assert(pfr_validate_addr(address));
 
@@ -493,7 +493,7 @@ int ioctl(int d, unsigned long request, ...) {
 					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
 						/* Matched the table. Delete the addresses */
 						address = iot->pfrio_buffer;
-						max = iot->pfrio_size / sizeof(struct pfr_addr);
+						max = iot->pfrio_size;
 						for (i = 0; i < max; i++) {
 							int addrMatch = 0;
 							assert(pfr_validate_addr(address));
@@ -533,7 +533,7 @@ int ioctl(int d, unsigned long request, ...) {
 					/* Check the name */
 					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
 						/* Matched. Check our caller's buffer size */
-						size = sizeof(struct pfr_addr) * tableNode->addrs.nodeCount;
+						size = tableNode->addrs.nodeCount;
 						if (iot->pfrio_size < size) {
 							iot->pfrio_size = size;
 							return 0;
