@@ -68,9 +68,11 @@
 	/* Try IPv4, then IPv6 */
 	if (inet_pton(AF_INET, [address cString], &_addr.pfra_ip4addr)) {
 		_addr.pfra_af = AF_INET;
+		_addr.pfra_net = 32;
 		return self;
 	} else if(inet_pton(AF_INET6, [address cString], &_addr.pfra_ip6addr)) {
 		_addr.pfra_af = AF_INET6;
+		_addr.pfra_net = 128;
 		return self;
 	}
 

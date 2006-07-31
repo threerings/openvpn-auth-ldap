@@ -42,7 +42,7 @@ int main(int argc, const char *argv[]) {
 	openvpn_plugin_handle_t handle;
 	const char *config;
 	unsigned int type;
-	const char *envp[3]; /* username, password, NULL */
+	const char *envp[4]; /* username, password, ifconfig_pool_remote_ip, NULL */
 	char username[30];
 	char *password;
 	int err;
@@ -69,18 +69,36 @@ int main(int argc, const char *argv[]) {
 
 	asprintf((char **) &envp[0], "username=%s", username);
 	asprintf((char **) &envp[1], "password=%s", password);
-	envp[2] = NULL;
+	envp[2] = "ifconfig_pool_remote_ip=10.0.50.1";
+	envp[3] = NULL;
 
 	handle = openvpn_plugin_open_v1(&type, argp, envp);
 
 	if (!handle)
 		errx(1, "Initialization Failed!\n");
 
+	/* Authenticate */
 	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY, argp, envp);
 	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
 		printf("Authorization Failed!\n");
 	} else {
 		printf("Authorization Succeed!\n");
+	}
+
+	/* Client Connect */
+	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_CONNECT, argp, envp);
+	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
+		printf("client-connect failed!\n");
+	} else {
+		printf("client-connect succeed!\n");
+	}
+
+	/* Client Disconnect */
+	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_DISCONNECT, argp, envp);
+	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
+		printf("client-disconnect failed!\n");
+	} else {
+		printf("client-disconnect succeed!\n");
 	}
 
 	openvpn_plugin_close_v1(handle);

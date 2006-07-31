@@ -628,7 +628,6 @@ error:
 
 				case LF_AUTH_PFTABLE:
 					config = [self currentSectionContext];
-					[config setSearchFilter: [value string]];
 					[config setPFTable: [value string]];
 					break;
 

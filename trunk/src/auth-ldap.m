@@ -42,10 +42,15 @@
 #include <TRLDAPEntry.h>
 #include <TRLDAPGroupConfig.h>
 #include <LFLDAPConnection.h>
+#include <TRPacketFilter.h>
+#include <TRPFAddress.h>
 
 /* Plugin Context */
 typedef struct ldap_ctx {
 	LFAuthLDAPConfig *config;
+#ifdef HAVE_PF
+	TRPacketFilter *pf;
+#endif
 } ldap_ctx;
 
 
@@ -195,16 +200,56 @@ static LFString *createSearchFilter(LFString *template, const char *username) {
 OPENVPN_EXPORT openvpn_plugin_handle_t
 openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[]) {
 	ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
-
-
+#ifdef HAVE_PF
+	LFString *tableName;
+	TRLDAPGroupConfig *groupConfig;
+	TREnumerator *groupIter;
+#endif
 	ctx->config = [[LFAuthLDAPConfig alloc] initWithConfigFile: argv[1]];
 	if (!ctx->config) {
+		free(ctx);
 		return (NULL);
 	}
 
-	*type = OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY);
+#ifdef HAVE_PF
+	ctx->pf = NULL;
+
+	/* Acquire a reference to /dev/pf */
+	ctx->pf = [[TRPacketFilter alloc] init];
+	if (!ctx->config) {
+		/* /dev/pf could not be opened. Is it available? */
+		ctx->pf = nil;
+	} else {
+		/* Clear out all referenced PF tables */
+		if ((tableName = [ctx->config pfTable])) {
+			if (![ctx->pf clearAddressesFromTable: tableName])
+				goto error;
+		}
+		if ([ctx->config ldapGroups]) {
+			groupIter = [[ctx->config ldapGroups] objectEnumerator];
+			while ((groupConfig = [groupIter nextObject]) != nil) {
+				if ((tableName = [groupConfig pfTable]))
+					if (![ctx->pf clearAddressesFromTable: tableName])
+						goto error;
+			}
+		}
+	}
+
+#endif /* HAVE_PF */
+
+	*type = OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY) |
+		OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_CLIENT_CONNECT) |
+		OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_CLIENT_DISCONNECT);
 
 	return (ctx);
+
+error:
+	if (ctx->pf)
+		[ctx->pf release];
+	if (ctx->config)
+		[ctx->config release];
+	free (ctx);
+	return NULL;
 }
 
 OPENVPN_EXPORT void
@@ -212,6 +257,10 @@ openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 {
 	ldap_ctx *ctx = handle;
 	[ctx->config release];
+#ifdef HAVE_PF
+	if (ctx->pf)
+		[ctx->pf release];
+#endif
 	free(ctx);
 }
 
@@ -256,13 +305,10 @@ error:
 	return nil;
 }
 
-static TRLDAPEntry *auth_ldap_user(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char *username, const char *password) {
-	LFLDAPConnection	*authConn;
-	TREnumerator		*entryIter;
+static TRLDAPEntry *find_ldap_user (LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char *username) {
+	LFString		*searchFilter;
 	TRArray			*ldapEntries;
 	TRLDAPEntry		*result = nil;
-	LFString		*searchFilter;
-	TRLDAPEntry		*entry;
 
 	/* Assemble our search filter */
 	searchFilter = createSearchFilter([config searchFilter], username);
@@ -275,47 +321,52 @@ static TRLDAPEntry *auth_ldap_user(LFLDAPConnection *ldap, LFAuthLDAPConfig *con
 	[searchFilter release];
 	if (!ldapEntries)
 		return nil;
-		
-	/* Create a second connection for binding */
-	authConn = connect_ldap(config);
-	if (!authConn) {
+	if ([ldapEntries count] < 1) {
 		[ldapEntries release];
 		return nil;
 	}
+		
+	/* The specified search string may (but should not) return more than one entry.
+	 * We ignore any extras. */
+	result = [[ldapEntries lastObject] retain];
 
-	/* The specified search string may return more than one entry.
-	 * We'll acquiesce to the operator's potentially disastrous demands,
-	 * and try to bind with all of them. */
-	entryIter = [ldapEntries objectEnumerator];
-	while ((entry = [entryIter nextObject]) != nil) {
-		LFString *passwordString;
-
-		/* Allocate the string to pass to bindWithDN */
-		passwordString = [[LFString alloc] initWithCString: password];
-
-		if ([authConn bindWithDN: [entry dn] password: passwordString]) {
-			[passwordString release];
-			result = [entry retain];
-			break;
-		}
-		[passwordString release];
-	}
-
-	[authConn release];
 	[ldapEntries release];
-	[entryIter release];
 
 	return result;
 }
 
-static TRLDAPGroupConfig *validate_ldap_groups(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser) {
+
+static BOOL auth_ldap_user(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser, const char *password) {
+	LFLDAPConnection *authConn;
+	LFString *passwordString;
+	BOOL result = NO;
+
+	/* Create a second connection for binding */
+	authConn = connect_ldap(config);
+	if (!authConn) {
+		return NO;
+	}
+
+	/* Allocate the string to pass to bindWithDN */
+	passwordString = [[LFString alloc] initWithCString: password];
+
+	if ([authConn bindWithDN: [ldapUser dn] password: passwordString]) {
+		result = YES;
+	}
+
+	[passwordString release];
+	[authConn release];
+
+	return result;
+}
+
+static TRLDAPGroupConfig *find_ldap_group(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser) {
 	TREnumerator *groupIter;
 	TRLDAPGroupConfig *groupConfig;
 	TRArray *ldapEntries;
 	TREnumerator *entryIter;
 	TRLDAPEntry *entry;
 	TRLDAPGroupConfig *result = nil;
-
 
 	/*
 	 * Groups are loaded into the array in the order that they are listed
@@ -352,52 +403,151 @@ static TRLDAPGroupConfig *validate_ldap_groups(LFLDAPConnection *ldap, LFAuthLDA
 	return result;
 }
 
+/*! Handle user authentication. */
+static int handle_auth_user_pass_verify(ldap_ctx *ctx, LFLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *password) {
+	TRLDAPGroupConfig *groupConfig;
+
+	/* Authenticate the user */
+	if (!auth_ldap_user(ldap, ctx->config, ldapUser, password))
+		return (OPENVPN_PLUGIN_FUNC_ERROR);
+
+	/* User authenticated, find group, if any */
+	if ([ctx->config ldapGroups]) {
+		groupConfig = find_ldap_group(ldap, ctx->config, ldapUser);
+		if (!groupConfig && [ctx->config requireGroup]) {
+			/* No group match, and group membership is required */
+			return OPENVPN_PLUGIN_FUNC_ERROR;
+		} else {
+			/* Group match! */
+			return OPENVPN_PLUGIN_FUNC_SUCCESS;
+		}
+	} else {
+		// No groups, user OK
+		return OPENVPN_PLUGIN_FUNC_SUCCESS;
+	}
+
+	/* Never reached */
+	return OPENVPN_PLUGIN_FUNC_ERROR;
+}
+
+/*! Handle both connection and disconnection events. */
+static int handle_client_connect_disconnect(ldap_ctx *ctx, LFLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *remoteAddress, BOOL connecting) {
+	TRLDAPGroupConfig *groupConfig;
+#ifdef HAVE_PF
+	LFString *tableName;
+	LFString *addressString;
+	TRPFAddress *address;
+#endif
+
+	/* Locate the group (config), if any */
+	if ([ctx->config ldapGroups]) {
+		groupConfig = find_ldap_group(ldap, ctx->config, ldapUser);
+		if (!groupConfig && [ctx->config requireGroup]) {
+			/* No group match, and group membership is required */
+			return OPENVPN_PLUGIN_FUNC_ERROR;
+		}
+	}
+
+#ifdef HAVE_PF
+	/* Grab the request PF table name, if any */
+	if (groupConfig) {
+		tableName = [groupConfig pfTable];
+	} else {
+		tableName = [ctx->config pfTable];
+	}
+
+	/* If requested, add (or remove) the remote address */
+	if (tableName) {
+		/* pf isn't available ... */
+		if (!ctx->pf)
+			return OPENVPN_PLUGIN_FUNC_ERROR;
+
+		addressString = [[LFString alloc] initWithCString: remoteAddress];
+		address = [[TRPFAddress alloc] initWithPresentationAddress: addressString];
+		[addressString release];
+		if (connecting) {
+			if (![ctx->pf addAddress: address toTable: tableName]) {
+				[address release];
+				return OPENVPN_PLUGIN_FUNC_ERROR;
+			}
+		} else {
+			if (![ctx->pf deleteAddress: address fromTable: tableName]) {
+				[address release];
+				return OPENVPN_PLUGIN_FUNC_ERROR;
+			}
+		}
+		[address release];
+	}
+
+#endif /* HAVE_PF */
+
+	return OPENVPN_PLUGIN_FUNC_SUCCESS;
+}
+
+
+
 OPENVPN_EXPORT int
 openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const char *argv[], const char *envp[]) {
-	const char *username = get_env("username", envp);
-	const char *password = get_env("password", envp);
+	const char *username, *password, *remoteAddress;
 	ldap_ctx *ctx = handle;
-	LFLDAPConnection *ldap;
-	TRLDAPEntry *ldapUser;
-	TRLDAPGroupConfig *groupConfig;
+	LFLDAPConnection *ldap = nil;
+	TRLDAPEntry *ldapUser = nil;
 	int ret = OPENVPN_PLUGIN_FUNC_ERROR;
 
-	if (type != OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY)
-		return (OPENVPN_PLUGIN_FUNC_ERROR);
+	username = get_env("username", envp);
+	password = get_env("password", envp);
+	remoteAddress = get_env("ifconfig_pool_remote_ip", envp);
 
-	if (!username || !password)
+	/* At the very least, we need a username to work with */
+	if (!username)
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
-
 
 	/* Create an LDAP connection */
 	if (!(ldap = connect_ldap(ctx->config))) {
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
 	}
 
-	/* Search and bind */
-	ldapUser = auth_ldap_user(ldap, ctx->config, username, password);
+	/* Find the user record */
+	ldapUser = find_ldap_user(ldap, ctx->config, username);
 	if (!ldapUser) {
-		/* No such user or authentication failure */
+		/* No such user. */
 		ret = OPENVPN_PLUGIN_FUNC_ERROR;
-	} else {
-		/* User authenticated */
-		/* Match up groups, if any */
-		if ([ctx->config ldapGroups]) {
-			groupConfig = validate_ldap_groups(ldap, ctx->config, ldapUser);
-			if (!groupConfig && [ctx->config requireGroup]) {
-				/* No group match, and group membership is required */
-				ret = OPENVPN_PLUGIN_FUNC_ERROR;
-			} else {
-				/* Group match! */
-				ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
-			}
-		} else {
-			// No groups, user OK
-			ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
-		}
+		goto cleanup;
 	}
 
-	[ldapUser release];
-	[ldap release];
+	switch (type) {
+		/* Password Authentication */
+		case OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY:
+			if (!password) {
+				ret = OPENVPN_PLUGIN_FUNC_ERROR;
+			} else {
+				ret = handle_auth_user_pass_verify(ctx, ldap, ldapUser, password);
+			}
+			break;
+		/* New connection established */
+		case OPENVPN_PLUGIN_CLIENT_CONNECT:
+			if (!remoteAddress) {
+				ret = OPENVPN_PLUGIN_FUNC_ERROR;
+			} else {
+				ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, YES);
+			}
+			break;
+		case OPENVPN_PLUGIN_CLIENT_DISCONNECT:
+			if (!remoteAddress) {
+				ret = OPENVPN_PLUGIN_FUNC_ERROR;
+			} else {
+				ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, NO);
+			}
+			break;
+		default:
+			ret = OPENVPN_PLUGIN_FUNC_ERROR;
+			break;
+	}
+
+cleanup:
+	if (ldapUser)
+		[ldapUser release];
+	if (ldap)
+		[ldap release];
 	return (ret);
 }

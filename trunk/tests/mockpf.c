@@ -328,7 +328,7 @@ int ioctl(int d, unsigned long request, ...) {
 				iot = (struct pfioc_table *) argp;
 
 				/* Verify structure initialization */
-				assert(iot->pfrio_esize == sizeof(struct pfr_table));
+				assert(iot->pfrio_esize == 0);
 
 				/* Find the table */
 				size = 0; /* Number of addresses cleared */
@@ -365,6 +365,12 @@ int ioctl(int d, unsigned long request, ...) {
 						address = iot->pfrio_buffer;
 						max = iot->pfrio_size / sizeof(struct pfr_addr);
 						for (i = 0; i < max; i++) {
+							assert (address->pfra_af == AF_INET || address->pfra_af == AF_INET6);
+							if (address->pfra_af == AF_INET)
+								assert(address->pfra_net == 32);
+							else
+								assert(address->pfra_net == 128);
+
 							addressNode = malloc(sizeof(PFAddressNode));
 							init_pfnode((PFNode *) addressNode);
 							memcpy(&addressNode->addr, address, sizeof(addressNode->addr));
@@ -401,6 +407,12 @@ int ioctl(int d, unsigned long request, ...) {
 						max = iot->pfrio_size / sizeof(struct pfr_addr);
 						for (i = 0; i < max; i++) {
 							int addrMatch = 0;
+							assert (address->pfra_af == AF_INET || address->pfra_af == AF_INET6);
+							if (address->pfra_af == AF_INET)
+								assert(address->pfra_net == 32);
+							else
+								assert(address->pfra_net == 128);
+
 							for (addressNode = (PFAddressNode *) tableNode->addrs.firstNode; addressNode != NULL; addressNode = addressNode->next) {
 								if (memcmp(&addressNode->addr, address, sizeof(addressNode->addr)) == 0) {
 									/* Matched the address */

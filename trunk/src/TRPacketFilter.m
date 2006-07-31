@@ -68,6 +68,10 @@
 	[super dealloc];
 }
 
+- (void) _logIOFailure: (const char *) request {
+	warn("pf ioctl request %s failed", request);
+}
+
 /* !Return an array of table names */
 - (TRArray *) tables {
 	TRArray *result = nil;
@@ -87,9 +91,8 @@
 	while (1) {
 		io.pfrio_size = size;
 		if (ioctl(_fd, DIOCRGETTABLES, &io) == -1) {
-			int saved_errno = errno;
+			[self _logIOFailure: "DIOCRGETTABLES"];
 			free(io.pfrio_buffer);
-			errno = saved_errno;
 			return nil;
 		}
 
@@ -126,13 +129,13 @@
 
 	/* Initialize the io structure */
 	memset(&io, 0, sizeof(io));
-	io.pfrio_esize = sizeof(struct pfr_table);
 
 	/* Copy in the table name */
 	strcpy(io.pfrio_table.pfrt_name, [tableName cString]);
 
 	/* Issue the ioctl */
 	if (ioctl(_fd, DIOCRCLRADDRS, &io) == -1) {
+		[self _logIOFailure: "DIOCRCLRADDRS"];
 		return false;
 	}
 
@@ -154,6 +157,7 @@
 
 	/* Issue the ioctl */
 	if (ioctl(_fd, DIOCRADDADDRS, &io) == -1) {
+		[self _logIOFailure: "DIOCRADDADDRS"];
 		return false;
 	}
 
@@ -179,6 +183,7 @@
 
 	/* Issue the ioctl */
 	if (ioctl(_fd, DIOCRDELADDRS, &io) == -1) {
+		[self _logIOFailure: "DIOCRDELADDRS"];
 		return false;
 	}
 
@@ -213,9 +218,8 @@
 	while (1) {
 		io.pfrio_size = size;
 		if (ioctl(_fd, DIOCRGETADDRS, &io) == -1) {
-			int saved_errno = errno;
+			[self _logIOFailure: "DIOCRGETADDRS"];
 			free(io.pfrio_buffer);
-			errno = saved_errno;
 			return nil;
 		}
 
