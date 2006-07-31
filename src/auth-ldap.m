@@ -435,7 +435,7 @@ static int handle_auth_user_pass_verify(ldap_ctx *ctx, LFLDAPConnection *ldap, T
 
 /*! Handle both connection and disconnection events. */
 static int handle_client_connect_disconnect(ldap_ctx *ctx, LFLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *remoteAddress, BOOL connecting) {
-	TRLDAPGroupConfig *groupConfig;
+	TRLDAPGroupConfig *groupConfig = nil;
 #ifdef HAVE_PF
 	LFString *tableName;
 	LFString *addressString;
