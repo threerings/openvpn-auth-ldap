@@ -37,6 +37,8 @@ tests: ${TEST_OBJS} ../src/libauth-ldap-testing.a
 test:: tests
 	./tests
 
+install::
+
 clean::
 	rm -f $(TEST_OBJS) tests
 
