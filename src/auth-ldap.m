@@ -197,21 +197,12 @@ static LFString *createSearchFilter(LFString *template, const char *username) {
 	return (result);
 }
 
-OPENVPN_EXPORT openvpn_plugin_handle_t
-openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[]) {
-	ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
 #ifdef HAVE_PF
+static BOOL pf_open(struct ldap_ctx *ctx) {
 	LFString *tableName;
 	TRLDAPGroupConfig *groupConfig;
 	TREnumerator *groupIter;
-#endif
-	ctx->config = [[LFAuthLDAPConfig alloc] initWithConfigFile: argv[1]];
-	if (!ctx->config) {
-		free(ctx);
-		return (NULL);
-	}
 
-#ifdef HAVE_PF
 	ctx->pf = NULL;
 
 	/* Acquire a reference to /dev/pf */
@@ -219,40 +210,60 @@ openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[
 	if (!ctx->config) {
 		/* /dev/pf could not be opened. Is it available? */
 		ctx->pf = nil;
-	} else {
-		/* Clear out all referenced PF tables */
-		if ((tableName = [ctx->config pfTable])) {
-			if (![ctx->pf clearAddressesFromTable: tableName])
-				goto error;
-		}
-		if ([ctx->config ldapGroups]) {
-			groupIter = [[ctx->config ldapGroups] objectEnumerator];
-			while ((groupConfig = [groupIter nextObject]) != nil) {
-				if ((tableName = [groupConfig pfTable]))
-					if (![ctx->pf clearAddressesFromTable: tableName]) {
-						[groupIter release];
-						goto error;
-					}
-			}
-			[groupIter release];
-		}
+		return YES;
 	}
 
+	/* Clear out all referenced PF tables */
+	if ((tableName = [ctx->config pfTable])) {
+		if (![ctx->pf clearAddressesFromTable: tableName])
+			goto error;
+	}
+
+	if ([ctx->config ldapGroups]) {
+		groupIter = [[ctx->config ldapGroups] objectEnumerator];
+		while ((groupConfig = [groupIter nextObject]) != nil) {
+			if ((tableName = [groupConfig pfTable]))
+				if (![ctx->pf clearAddressesFromTable: tableName]) {
+					[groupIter release];
+					goto error;
+				}
+		}
+		[groupIter release];
+	}
+
+	return YES;
+
+error:
+	[ctx->pf release];
+	ctx->pf = NULL;
+	return NO;
+}
 #endif /* HAVE_PF */
+
+OPENVPN_EXPORT openvpn_plugin_handle_t
+openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[]) {
+	ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
+	ctx->config = [[LFAuthLDAPConfig alloc] initWithConfigFile: argv[1]];
+	if (!ctx->config) {
+		free(ctx);
+		return (NULL);
+	}
+
+#ifdef HAVE_PF
+	/* Open reference to /dev/pf and clear out all of our PF tables */
+	if (!pf_open(ctx)) {
+		[ctx->config release];
+		free(ctx);
+		return (NULL);
+	}
+#endif
+
 
 	*type = OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY) |
 		OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_CLIENT_CONNECT) |
 		OPENVPN_PLUGIN_MASK(OPENVPN_PLUGIN_CLIENT_DISCONNECT);
 
 	return (ctx);
-
-error:
-	if (ctx->pf)
-		[ctx->pf release];
-	if (ctx->config)
-		[ctx->config release];
-	free (ctx);
-	return NULL;
 }
 
 OPENVPN_EXPORT void
@@ -433,13 +444,42 @@ static int handle_auth_user_pass_verify(ldap_ctx *ctx, LFLDAPConnection *ldap, T
 	return OPENVPN_PLUGIN_FUNC_ERROR;
 }
 
+#ifdef HAVE_PF
+/* Add (or remove) the remote address */
+static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, LFString *tableName, const char *remoteAddress, BOOL connecting) {
+	LFString *addressString;
+	TRPFAddress *address;
+
+	/* pf isn't available ... */
+	if (!ctx->pf)
+		return NO;
+
+	addressString = [[LFString alloc] initWithCString: remoteAddress];
+	address = [[TRPFAddress alloc] initWithPresentationAddress: addressString];
+	[addressString release];
+	if (connecting) {
+		if (![ctx->pf addAddress: address toTable: tableName]) {
+			[address release];
+			return NO;
+		}
+	} else {
+		if (![ctx->pf deleteAddress: address fromTable: tableName]) {
+			[address release];
+			return NO;
+		}
+	}
+	[address release];
+
+	return YES;
+}
+#endif /* HAVE_PF */
+
+
 /*! Handle both connection and disconnection events. */
 static int handle_client_connect_disconnect(ldap_ctx *ctx, LFLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *remoteAddress, BOOL connecting) {
 	TRLDAPGroupConfig *groupConfig = nil;
 #ifdef HAVE_PF
-	LFString *tableName;
-	LFString *addressString;
-	TRPFAddress *address;
+	LFString *tableName = nil;
 #endif
 
 	/* Locate the group (config), if any */
@@ -459,29 +499,9 @@ static int handle_client_connect_disconnect(ldap_ctx *ctx, LFLDAPConnection *lda
 		tableName = [ctx->config pfTable];
 	}
 
-	/* If requested, add (or remove) the remote address */
-	if (tableName) {
-		/* pf isn't available ... */
-		if (!ctx->pf)
+	if (tableName)
+		if (!pf_client_connect_disconnect(ctx, tableName, remoteAddress, connecting))
 			return OPENVPN_PLUGIN_FUNC_ERROR;
-
-		addressString = [[LFString alloc] initWithCString: remoteAddress];
-		address = [[TRPFAddress alloc] initWithPresentationAddress: addressString];
-		[addressString release];
-		if (connecting) {
-			if (![ctx->pf addAddress: address toTable: tableName]) {
-				[address release];
-				return OPENVPN_PLUGIN_FUNC_ERROR;
-			}
-		} else {
-			if (![ctx->pf deleteAddress: address fromTable: tableName]) {
-				[address release];
-				return OPENVPN_PLUGIN_FUNC_ERROR;
-			}
-		}
-		[address release];
-	}
-
 #endif /* HAVE_PF */
 
 	return OPENVPN_PLUGIN_FUNC_SUCCESS;
