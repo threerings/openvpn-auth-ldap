@@ -1,0 +1,25 @@
+top_srcdir=	@top_srcdir@
+
+SUBDIR=		tools \
+		src \
+		@CHECK_DIRS@
+
+include Mk/subdir.mk
+include Mk/autoconf.mk
+
+.PHONY: docs
+
+all::
+
+# The documentation depends on generated source code
+docs:: all
+	${DOXYGEN} doxyfile
+
+clean::
+	rm -rf docs
+
+distclean::
+	rm -f config.log config.status configure.lineno config.cache config.h \
+	doxyfile
+	rm -rf autom4te.cache
+	rm -f Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk
