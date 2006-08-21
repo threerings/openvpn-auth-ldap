@@ -33,6 +33,7 @@
  */
 
 #include <syslog.h>
+#include <stdio.h>
 #include <stdarg.h>
 
 #include "TRLog.h"
@@ -42,6 +43,8 @@
 		va_list ap; \
 		va_start(ap, message); \
 		vsyslog(priority, message, ap); \
+		vfprintf(stderr, message, ap); \
+		fprintf(stderr, "\n"); \
 		va_end(ap); \
 	}
 

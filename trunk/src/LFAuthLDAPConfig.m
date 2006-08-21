@@ -35,7 +35,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
-#include <err.h>
 #include <errno.h>
 #include <assert.h>
 
@@ -43,6 +42,7 @@
 #include "TRLDAPGroupConfig.h"
 #include "LFString.h"
 #include "TRHash.h"
+#include "TRLog.h"
 
 #include "auth-ldap.h"
 
@@ -315,7 +315,7 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable *tables[])
 	_configFileName = [[LFString alloc] initWithCString: fileName];
 	configFD = open(fileName, O_RDONLY);
 	if (configFD == -1) {
-		warn("Failed to open \"%s\" for reading", [_configFileName cString]);
+		[TRLog error: "Failed to open \"%s\" for reading", [_configFileName cString]];
 		goto error;
 	}
 
@@ -392,7 +392,7 @@ error:
  * Report a named section that should not be named to the user.
  */
 - (void) errorNamedSection: (TRConfigToken *) section withName: (TRConfigToken *) name {
-	warnx("Auth-LDAP Configuration Error: %s section types must be unnamed (%s:%u).", [section cString], [_configFileName cString], [name lineNumber]);
+	[TRLog error: "Auth-LDAP Configuration Error: %s section types must be unnamed (%s:%u).", [section cString], [_configFileName cString], [name lineNumber]];
 	[_configDriver errorStop];
 }
 
@@ -400,7 +400,7 @@ error:
  * Report an unknown key to the user.
  */
 - (void) errorUnknownKey: (TRConfigToken *) key {
-	warnx("Auth-LDAP Configuration Error: %s key is unknown (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]);
+	[TRLog error: "Auth-LDAP Configuration Error: %s key is unknown (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]];
 	[_configDriver errorStop];
 }
 
@@ -408,7 +408,7 @@ error:
  * Report a duplicate key to the user.
  */
 - (void) errorMultiKey: (TRConfigToken *) key {
-	warnx("Auth-LDAP Configuration Error: multiple occurances of key %s (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]);
+	[TRLog error: "Auth-LDAP Configuration Error: multiple occurances of key %s (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]];
 	[_configDriver errorStop];
 }
 
@@ -416,7 +416,7 @@ error:
  * Report an invalid integer value to the user.
  */
 - (void) errorIntValue: (TRConfigToken *) value {
-	warnx("Auth-LDAP Configuration Error: %s value is not an integer (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]);
+	[TRLog error: "Auth-LDAP Configuration Error: %s value is not an integer (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]];
 	[_configDriver errorStop];
 }
 
@@ -424,7 +424,7 @@ error:
  * Report an invalid boolean value to the user.
  */
 - (void) errorBoolValue: (TRConfigToken *) value {
-	warnx("Auth-LDAP Configuration Error: %s value is not a boolean value -- use either 'True' or 'False' (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]);
+	[TRLog error: "Auth-LDAP Configuration Error: %s value is not a boolean value -- use either 'True' or 'False' (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]];
 	[_configDriver errorStop];
 }
 
@@ -432,8 +432,8 @@ error:
  * Report an unknown section type to the user.
  */
 - (void) errorUnknownSection: (TRConfigToken *) section {
-	warnx("Auth-LDAP Configuration Error: %s is not a known section type within this context (%s:%u).",
-			[section cString], [_configFileName cString], [section lineNumber]);
+	[TRLog error: "Auth-LDAP Configuration Error: %s is not a known section type within this context (%s:%u).",
+			[section cString], [_configFileName cString], [section lineNumber]];
 	[_configDriver errorStop];
 }
 
@@ -441,9 +441,9 @@ error:
  * Report mismatched section closure to the user.
  */
 - (void) errorMismatchedSection: (TRConfigToken *) section {
-	warnx("Auth-LDAP Configuration Error: '</%s>' is a mismatched section closure. Expected \"</%s>\" (%s:%u).",
+	[TRLog error: "Auth-LDAP Configuration Error: '</%s>' is a mismatched section closure. Expected \"</%s>\" (%s:%u).",
 			[section cString], string_for_opcode([self currentSectionOpcode], Sections),
-			[_configFileName cString], [section lineNumber]);
+			[_configFileName cString], [section lineNumber]];
 	[_configDriver errorStop];
 }
 
@@ -461,7 +461,8 @@ error:
 			if (table[i].required) {
 				LFString *key = [[LFString alloc] initWithCString: table[i].name];
 				if ([[self currentSectionHashTable] valueForKey: key] == nil) {
-					warnx("Auth-LDAP Configuration Error: Section %s is a missing required key '%s' (%s:%u).", string_for_opcode([self currentSectionOpcode], Sections), table[i].name, [_configFileName cString], [section lineNumber]);
+					[TRLog error: "Auth-LDAP Configuration Error: Section %s is a missing required key '%s' (%s:%u).",
+						string_for_opcode([self currentSectionOpcode], Sections), table[i].name, [_configFileName cString], [section lineNumber]];
 					[key release];
 					[_configDriver errorStop];
 					return NO;
@@ -696,7 +697,8 @@ error:
 			break;
 		default:
 			/* Must be unreachable! */
-			errx(1, "Unhandled section type in setKey!\n");
+			[TRLog error: "Unhandled section type in setKey!\n"];
+			abort();
 			break;
 	}
 
@@ -739,7 +741,8 @@ error:
 			break;
 		default:
 			/* Must be unreachable! */
-			errx(1, "Unhandled section type in endSection!\n");
+			[TRLog error: "Unhandled section type in endSection!\n"];
+			abort();
 			return;
 
 	}
@@ -750,9 +753,9 @@ error:
 
 - (void) parseError: (TRConfigToken *) badToken {
 	if (badToken)
-		warnx("A parse error occured while attempting to comprehend %s, on line %u.", [badToken cString], [badToken lineNumber]);
+		[TRLog error: "A parse error occured while attempting to comprehend %s, on line %u.", [badToken cString], [badToken lineNumber]];
 	else
-		warnx("A parse error occured while attempting to read your configuration file.");
+		[TRLog error: "A parse error occured while attempting to read your configuration file."];
 	[_configDriver errorStop];
 }
 

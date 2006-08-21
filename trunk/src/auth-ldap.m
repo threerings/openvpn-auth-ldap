@@ -33,6 +33,9 @@
 #include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <errno.h>
+
 #include <ldap.h>
 
 #include <openvpn-plugin.h>
@@ -44,6 +47,7 @@
 #include <LFLDAPConnection.h>
 #include <TRPacketFilter.h>
 #include <TRPFAddress.h>
+#include <TRLog.h>
 
 /* Plugin Context */
 typedef struct ldap_ctx {
@@ -209,14 +213,18 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 	ctx->pf = [[TRPacketFilter alloc] init];
 	if (!ctx->config) {
 		/* /dev/pf could not be opened. Is it available? */
+		[TRLog error: "Failed to open /dev/pf: %s", [TRPacketFilter strerror: errno]];
 		ctx->pf = nil;
 		return YES;
 	}
 
 	/* Clear out all referenced PF tables */
 	if ((tableName = [ctx->config pfTable])) {
-		if (![ctx->pf clearAddressesFromTable: tableName])
+		if (![ctx->pf clearAddressesFromTable: tableName]) {
+			[TRLog error: "Failed to clear packet filter table \"%s\": %s",
+					[tableName cString], [TRPacketFilter strerror: errno]];
 			goto error;
+		}
 	}
 
 	if ([ctx->config ldapGroups]) {
@@ -224,6 +232,8 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 		while ((groupConfig = [groupIter nextObject]) != nil) {
 			if ((tableName = [groupConfig pfTable]))
 				if (![ctx->pf clearAddressesFromTable: tableName]) {
+					[TRLog error: "Failed to clear packet filter table \"%s\": %s",
+							[tableName cString], [TRPacketFilter strerror: errno]];
 					[groupIter release];
 					goto error;
 				}
@@ -284,8 +294,10 @@ LFLDAPConnection *connect_ldap(LFAuthLDAPConfig *config) {
 
 	/* Initialize our LDAP Connection */
 	ldap = [[LFLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
-	if (!ldap)
+	if (!ldap) {
+		[TRLog error: "Unable to open LDAP connection to %s\n", [[config url] cString]];
 		return nil;
+	}
 
         /* Certificate file */
 	if ((value = [config tlsCACertFile])) 
@@ -422,8 +434,10 @@ static int handle_auth_user_pass_verify(ldap_ctx *ctx, LFLDAPConnection *ldap, T
 	TRLDAPGroupConfig *groupConfig;
 
 	/* Authenticate the user */
-	if (!auth_ldap_user(ldap, ctx->config, ldapUser, password))
+	if (!auth_ldap_user(ldap, ctx->config, ldapUser, password)) {
+		[TRLog error: "Incorrect password supplied for LDAP DN \"%s\".", [[ldapUser dn] cString]];
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
+	}
 
 	/* User authenticated, find group, if any */
 	if ([ctx->config ldapGroups]) {
@@ -451,19 +465,25 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, LFString *tableNa
 	TRPFAddress *address;
 
 	/* pf isn't available ... */
-	if (!ctx->pf)
+	if (!ctx->pf) {
+		[TRLog error: "Packet filter configured, but unavailable."];
 		return NO;
+	}
 
 	addressString = [[LFString alloc] initWithCString: remoteAddress];
 	address = [[TRPFAddress alloc] initWithPresentationAddress: addressString];
 	[addressString release];
 	if (connecting) {
 		if (![ctx->pf addAddress: address toTable: tableName]) {
+			[TRLog error: "Failed to add address \"%s\" to table \"%s\": %s",
+					[addressString cString], [tableName cString], [TRPacketFilter strerror: errno]];
 			[address release];
 			return NO;
 		}
 	} else {
 		if (![ctx->pf deleteAddress: address fromTable: tableName]) {
+			[TRLog error: "Failed to remove address \"%s\" from table \"%s\": %s",
+					[addressString cString], [tableName cString], [TRPacketFilter strerror: errno]];
 			[address release];
 			return NO;
 		}
@@ -486,6 +506,7 @@ static int handle_client_connect_disconnect(ldap_ctx *ctx, LFLDAPConnection *lda
 	if ([ctx->config ldapGroups]) {
 		groupConfig = find_ldap_group(ldap, ctx->config, ldapUser);
 		if (!groupConfig && [ctx->config requireGroup]) {
+			[TRLog error: "No matching LDAP group found for user DN \"%s\", and group membership is required.", [[ldapUser dn] cString]];
 			/* No group match, and group membership is required */
 			return OPENVPN_PLUGIN_FUNC_ERROR;
 		}
@@ -522,11 +543,14 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	remoteAddress = get_env("ifconfig_pool_remote_ip", envp);
 
 	/* At the very least, we need a username to work with */
-	if (!username)
+	if (!username) {
+		[TRLog debug: "No remote username supplied to OpenVPN LDAP Plugin."];
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
+	}
 
 	/* Create an LDAP connection */
 	if (!(ldap = connect_ldap(ctx->config))) {
+		[TRLog error: "LDAP connect failed."];
 		return (OPENVPN_PLUGIN_FUNC_ERROR);
 	}
 
@@ -534,6 +558,7 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	ldapUser = find_ldap_user(ldap, ctx->config, username);
 	if (!ldapUser) {
 		/* No such user. */
+		[TRLog warning: "LDAP user \"%s\" was not found.", username];
 		ret = OPENVPN_PLUGIN_FUNC_ERROR;
 		goto cleanup;
 	}
@@ -542,6 +567,7 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 		/* Password Authentication */
 		case OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY:
 			if (!password) {
+				[TRLog debug: "No remote password supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY)."];
 				ret = OPENVPN_PLUGIN_FUNC_ERROR;
 			} else {
 				ret = handle_auth_user_pass_verify(ctx, ldap, ldapUser, password);
@@ -550,6 +576,7 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 		/* New connection established */
 		case OPENVPN_PLUGIN_CLIENT_CONNECT:
 			if (!remoteAddress) {
+				[TRLog debug: "No remote address supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_CLIENT_CONNECT)."];
 				ret = OPENVPN_PLUGIN_FUNC_ERROR;
 			} else {
 				ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, YES);
@@ -557,12 +584,14 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 			break;
 		case OPENVPN_PLUGIN_CLIENT_DISCONNECT:
 			if (!remoteAddress) {
+				[TRLog debug: "No remote address supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_CLIENT_DISCONNECT)."];
 				ret = OPENVPN_PLUGIN_FUNC_ERROR;
 			} else {
 				ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, NO);
 			}
 			break;
 		default:
+			[TRLog debug: "Unhandled plugin type in OpenVPN LDAP Plugin (type=%d)", type];
 			ret = OPENVPN_PLUGIN_FUNC_ERROR;
 			break;
 	}
