@@ -100,6 +100,15 @@ START_TEST (test_initWithDuplicateKeys) {
 }
 END_TEST
 
+START_TEST (test_initWithMissingKey) {
+	LFAuthLDAPConfig *config;
+
+	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_REQUIRED];
+	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted a missing required key.");
+
+	[config release];
+}
+END_TEST
 
 Suite *LFAuthLDAPConfig_suite(void) {
 	Suite *s = suite_create("LFAuthLDAPConfig");
@@ -110,6 +119,7 @@ Suite *LFAuthLDAPConfig_suite(void) {
 	tcase_add_test(tc_parse, test_initWithIncorrectlyNamedSection);
 	tcase_add_test(tc_parse, test_initWithMismatchedSection);
 	tcase_add_test(tc_parse, test_initWithDuplicateKeys);
+	tcase_add_test(tc_parse, test_initWithMissingKey);
 
 	return s;
 }
