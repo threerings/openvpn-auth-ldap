@@ -163,6 +163,7 @@ static OpcodeTable *LDAPSection[] = {
 static OpcodeTable *AuthSection[] = {
 	AuthSectionVariables,
 	GenericLDAPVariables,
+	GenericPFVariables,
 	NULL
 };
 
