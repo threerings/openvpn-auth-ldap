@@ -15,6 +15,7 @@ PLUGIN_OBJS=	auth-ldap.o \
 		TRHash.o \
 		TRLDAPEntry.o \
 		TRObject.o \
+		TRLog.o \
 		LFString.o \
 		LFLDAPConnection.o \
 		LFAuthLDAPConfig.o \
