@@ -32,10 +32,10 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <err.h>
 #include <sys/time.h>
 
 #include "LFLDAPConnection.h"
+#include "TRLog.h"
 
 #include "auth-ldap.h"
 
@@ -60,7 +60,7 @@ static int ldap_get_errno(LDAP *ld) {
 	ldap_initialize(&ldapConn, [url cString]);
 
 	if (!ldapConn) {
-		warnx("Unable to initialize LDAP server %s", [url cString]);
+		[TRLog error: "Unable to initialize LDAP server %s", [url cString]];
 		[self release];
 		return (NULL);
 	}
@@ -71,11 +71,11 @@ static int ldap_get_errno(LDAP *ld) {
 	ldapTimeout.tv_usec = 0;
 
 	if (ldap_set_option(ldapConn, LDAP_OPT_NETWORK_TIMEOUT, &ldapTimeout) != LDAP_OPT_SUCCESS)
-		warnx("Unable to set LDAP network timeout.");
+		[TRLog warning: "Unable to set LDAP network timeout."];
 
 	arg = LDAP_VERSION3;
 	if (ldap_set_option(ldapConn, LDAP_OPT_PROTOCOL_VERSION, &arg) != LDAP_OPT_SUCCESS) {
-		warnx("Unable to enable LDAPv3.");
+		[TRLog error: "Unable to enable LDAP v3 Protocol."];
 		[self release];
 		return (NULL);
 	}
@@ -87,7 +87,7 @@ static int ldap_get_errno(LDAP *ld) {
 	int err;
 	err = ldap_unbind_ext_s(ldapConn, NULL, NULL);
 	if (err != LDAP_SUCCESS) {
-		warnx("Unable to unbind from LDAP server: %s", ldap_err2string(err));
+		[TRLog warning: "Unable to unbind from LDAP server: %s", ldap_err2string(err)];
 	}
 	[super dealloc];
 }
@@ -99,7 +99,7 @@ static int ldap_get_errno(LDAP *ld) {
 	int err;
 	err = ldap_start_tls_s(ldapConn, NULL, NULL);
 	if (err != LDAP_SUCCESS) {
-		warnx("Unable to enable STARTTLS: %s", ldap_err2string(err));
+		[TRLog error: "Unable to enable STARTTLS: %s", ldap_err2string(err)];
 		return (NO);
 	}
 
@@ -124,7 +124,7 @@ static int ldap_get_errno(LDAP *ld) {
 					NULL,
 					NULL,
 					&msgid)) != LDAP_SUCCESS) {
-		warnx("ldap_bind failed immediately: %s", ldap_err2string(err));
+		[TRLog error: "ldap_bind failed immediately: %s", ldap_err2string(err)];
 		return (false);
 	}
 
@@ -135,7 +135,7 @@ static int ldap_get_errno(LDAP *ld) {
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
 			ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
-		warnx("ldap_bind failed: %s\n", ldap_err2string(err));
+		[TRLog error: "ldap_bind failed: %s\n", ldap_err2string(err)];
 		return (false);
 	}
 
@@ -157,7 +157,7 @@ static int ldap_get_errno(LDAP *ld) {
 		/* Bind succeeded */
 		return (true);
 	} else {
-		warnx("LDAP Authentication failed: %s\n", ldap_err2string(err));
+		[TRLog debug: "LDAP bind failed: %s\n", ldap_err2string(err)];
 		return (false);
 	}
 
@@ -221,13 +221,13 @@ static int ldap_get_errno(LDAP *ld) {
 	 * Non-hardcoded size limit.
 	 */
 	if ((err = ldap_search_ext_s(ldapConn, [base cString], scope, [filter cString], attrArray, 0, NULL, NULL, &timeout, 1024, &res)) != LDAP_SUCCESS) {
-		warnx("LDAP search failed: %d: %s", err, ldap_err2string(err));
+		[TRLog error: "LDAP search failed: %d: %s", err, ldap_err2string(err)];
 		goto finish;
 	}
 
 	/* Get the number of returned entries */
 	if ((numEntries = ldap_count_entries(ldapConn, res)) == -1) {
-		warnx("ldap_count_entries failed: %d: %s", numEntries, ldap_err2string(numEntries));
+		[TRLog debug: "ldap_count_entries failed: %d: %s", numEntries, ldap_err2string(numEntries)];
 		goto finish;
 	}
 
@@ -331,7 +331,7 @@ finish:
 
 	/* Perform the compare */
 	if ((err = ldap_compare_ext(ldapConn, [dn cString], [attribute cString], &bval, NULL, NULL, &msgid)) != LDAP_SUCCESS) {
-		warnx("LDAP compare failed: %d: %s", err, ldap_err2string(err));
+		[TRLog debug: "LDAP compare failed: %d: %s", err, ldap_err2string(err)];
 		return NO;
 	}
 
@@ -340,7 +340,7 @@ finish:
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
 			ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
-		warnx("ldap_compare_ext failed: %s\n", ldap_err2string(err));
+		[TRLog debug: "ldap_compare_ext failed: %s\n", ldap_err2string(err)];
 		return NO;
 	}
 
@@ -361,7 +361,7 @@ finish:
 - (BOOL) _setLDAPOption: (int) opt value: (const char *) value connection: (LDAP *) ldapConn {
 	int err;
 	if ((err = ldap_set_option(NULL, opt, (const void *) value)) != LDAP_SUCCESS) {
-		warnx("Unable to set ldap option %d to %s: %d: %s", opt, value, err, ldap_err2string(err));
+		[TRLog debug: "Unable to set ldap option %d to %s: %d: %s", opt, value, err, ldap_err2string(err)];
 		return (false);
 	}
 	return true;
@@ -373,7 +373,7 @@ finish:
 	int arg;
 	arg = LDAP_OPT_X_TLS_HARD;
 	if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &arg)) != LDAP_SUCCESS) {
-		warnx("Unable to set LDAP_OPT_X_TLS_HARD to %d: %d: %s", arg, err, ldap_err2string(err));
+		[TRLog debug: "Unable to set LDAP_OPT_X_TLS_HARD to %d: %d: %s", arg, err, ldap_err2string(err)];
 		return (false);
 	}
 	return (true);

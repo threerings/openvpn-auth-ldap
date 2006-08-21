@@ -43,9 +43,29 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <err.h>
 
 @implementation TRPacketFilter
+
+/**
+ * PF-specific strerror.
+ * Provides useful error messages for bizzare PF error codes.
+ */
++ (const char *) strerror: (int) pferrno {
+	const char *string;
+
+	switch (pferrno) {
+		case ESRCH:
+			/* Returned when a table, etc, is not found.
+			 * "No such process" doesn't make much sense here. */
+			string = "No such PF entry.";
+			break;
+		default:
+			string = strerror(errno);
+			break;
+	}
+	
+	return string;
+}
 
 - (id) init {
 	self = [super init];
@@ -55,8 +75,9 @@
 	/* Open a reference to /dev/pf */
 	if ((_fd = open(PF_DEV_PATH, O_RDWR)) == -1) {
 		/* Failed to open! */
-		warn("Failed to open %s: ", PF_DEV_PATH);
+		int saved_errno = errno;
 		[self release];
+		errno = saved_errno;
 		return nil;
 	}
 
@@ -66,10 +87,6 @@
 - (void) dealloc {
 	close(_fd);
 	[super dealloc];
-}
-
-- (void) _logIOFailure: (const char *) request {
-	warn("pf ioctl request %s failed", request);
 }
 
 /* !Return an array of table names */
@@ -91,8 +108,9 @@
 	while (1) {
 		io.pfrio_size = size;
 		if (ioctl(_fd, DIOCRGETTABLES, &io) == -1) {
-			[self _logIOFailure: "DIOCRGETTABLES"];
+			int saved_errno = errno;
 			free(io.pfrio_buffer);
+			errno = saved_errno;
 			return nil;
 		}
 
@@ -135,7 +153,6 @@
 
 	/* Issue the ioctl */
 	if (ioctl(_fd, DIOCRCLRADDRS, &io) == -1) {
-		[self _logIOFailure: "DIOCRCLRADDRS"];
 		return false;
 	}
 
@@ -157,7 +174,6 @@
 
 	/* Issue the ioctl */
 	if (ioctl(_fd, DIOCRADDADDRS, &io) == -1) {
-		[self _logIOFailure: "DIOCRADDADDRS"];
 		return false;
 	}
 
@@ -183,7 +199,6 @@
 
 	/* Issue the ioctl */
 	if (ioctl(_fd, DIOCRDELADDRS, &io) == -1) {
-		[self _logIOFailure: "DIOCRDELADDRS"];
 		return false;
 	}
 
@@ -218,8 +233,9 @@
 	while (1) {
 		io.pfrio_size = size;
 		if (ioctl(_fd, DIOCRGETADDRS, &io) == -1) {
-			[self _logIOFailure: "DIOCRGETADDRS"];
+			int saved_errno = errno;
 			free(io.pfrio_buffer);
+			errno = saved_errno;
 			return nil;
 		}
 
