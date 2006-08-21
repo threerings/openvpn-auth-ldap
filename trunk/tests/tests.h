@@ -50,6 +50,7 @@
 #define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
 #define AUTH_LDAP_CONF_MISMATCHED	DATA_PATH("auth-ldap-mismatched.conf")
 #define AUTH_LDAP_CONF_MULTIKEY	DATA_PATH("auth-ldap-multikey.conf")
+#define AUTH_LDAP_CONF_REQUIRED DATA_PATH("auth-ldap-required.conf")
 
 /*
  * Unit Tests

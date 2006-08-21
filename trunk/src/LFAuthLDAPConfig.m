@@ -88,78 +88,120 @@ typedef struct OpcodeTable {
 	const char *name;
 	ConfigOpcode opcode;
 	BOOL multi;
+	BOOL required;
 } OpcodeTable;
 
 /* Section Types */
 static OpcodeTable SectionTypes[] = {
-	{ "LDAP",		LF_LDAP_SECTION, NO },
-	{ "Authorization",	LF_AUTH_SECTION, NO },
-	{ "Group",		LF_GROUP_SECTION, YES },
+	/* name			opcode			multi	required */
+	{ "LDAP",		LF_LDAP_SECTION, 	NO,	YES },
+	{ "Authorization",	LF_AUTH_SECTION, 	NO,	YES },
+	{ "Group",		LF_GROUP_SECTION, 	YES,	NO },
 	{ NULL, 0 }
 };
 
 /* Generic LDAP Search Variables */
 static OpcodeTable GenericLDAPVariables[] = {
-	{ "BaseDN",		LF_LDAP_BASEDN, NO },
-	{ "SearchFilter",	LF_LDAP_SEARCH_FILTER, NO },
+	/* name			opcode			multi	required */
+	{ "BaseDN",		LF_LDAP_BASEDN,		NO,	YES },
+	{ "SearchFilter",	LF_LDAP_SEARCH_FILTER,	NO,	YES },
 	{ NULL, 0 }
 };
 
-/* Generic LDAP Search Variables */
+/* Generic PF Table Variables */
 static OpcodeTable GenericPFVariables[] = {
+	/* name			opcode			multi	required */
 #ifdef HAVE_PF
-	{ "PFTable",		LF_AUTH_PFTABLE, NO },
+	{ "PFTable",		LF_AUTH_PFTABLE,	NO,	NO },
 #endif
 	{ NULL, 0 }
 };
 
 /* LDAP Section Variables */
 static OpcodeTable LDAPSectionVariables[] = {
-	{ "URL",		LF_LDAP_URL, NO },
-	{ "Timeout",		LF_LDAP_TIMEOUT, NO },
-	{ "BindDN",		LF_LDAP_BINDDN, NO },
-	{ "Password",		LF_LDAP_PASSWORD, NO },
-	{ "TLSEnable",		LF_LDAP_TLS, NO },
-	{ "TLSCACertFile",	LF_LDAP_TLS_CA_CERTFILE, NO },
-	{ "TLSCACertDir",	LF_LDAP_TLS_CA_CERTDIR, NO },
-	{ "TLSCertFile",	LF_LDAP_TLS_CERTFILE, NO },
-	{ "TLSKeyFile",		LF_LDAP_TLS_KEYFILE, NO },
-	{ "TLSCipherSuite",	LF_LDAP_TLS_CIPHER_SUITE, NO },
+	/* name			opcode			multi	required */
+	{ "URL",		LF_LDAP_URL,		NO,	YES },
+	{ "Timeout",		LF_LDAP_TIMEOUT,	NO,	NO },
+	{ "BindDN",		LF_LDAP_BINDDN,		NO,	NO },
+	{ "Password",		LF_LDAP_PASSWORD,	NO,	NO },
+	{ "TLSEnable",		LF_LDAP_TLS,		NO,	NO },
+	{ "TLSCACertFile",	LF_LDAP_TLS_CA_CERTFILE, NO,	NO },
+	{ "TLSCACertDir",	LF_LDAP_TLS_CA_CERTDIR,	NO,	NO },
+	{ "TLSCertFile",	LF_LDAP_TLS_CERTFILE,	NO,	NO },
+	{ "TLSKeyFile",		LF_LDAP_TLS_KEYFILE,	NO,	NO },
+	{ "TLSCipherSuite",	LF_LDAP_TLS_CIPHER_SUITE, NO,	NO },
 	{ NULL, 0 }
 };
 
 /* Authorization Section Variables */
 static OpcodeTable AuthSectionVariables[] = {
-	{ "RequireGroup",	LF_AUTH_REQUIRE_GROUP, NO },
+	/* name			opcode			multi	required */
+	{ "RequireGroup",	LF_AUTH_REQUIRE_GROUP,	NO,	NO },
 	{ NULL, 0}
 };
 
 /* Group Section Variables */
 static OpcodeTable GroupSectionVariables[] = {
-	{ "MemberAttribute",	LF_GROUP_MEMBER_ATTRIBUTE, NO },
+	/* name			opcode			multi	required */
+	{ "MemberAttribute",	LF_GROUP_MEMBER_ATTRIBUTE, NO,	NO },
 	{ NULL, 0 }
 };
 
-/* Parse a string, returning the associated entry from the supplied table */
-static OpcodeTable *parse_opcode (TRConfigToken *token, OpcodeTable table[]) {
-	unsigned int i;
-	const char *cp = [token cString];
+/* Section Types */
+static OpcodeTable *Sections[] = {
+	SectionTypes,
+	NULL
+};
 
-	for (i = 0; table[i].name; i++)
-		if (strcasecmp(cp, table[i].name) == 0)
-			return (&table[i]);
+/* LDAP Section Definition */
+static OpcodeTable *LDAPSection[] = {
+	LDAPSectionVariables,
+	NULL
+};
+
+/* Auth Section Definition */
+static OpcodeTable *AuthSection[] = {
+	AuthSectionVariables,
+	GenericLDAPVariables,
+	NULL
+};
+
+/* Group Section Definition */
+static OpcodeTable *GroupSection[] = {
+	GroupSectionVariables,
+	GenericLDAPVariables,
+	GenericPFVariables,
+	NULL
+};
+
+/* Parse a string, returning the associated entry from the supplied table */
+static OpcodeTable *parse_opcode (TRConfigToken *token, OpcodeTable **tables) {
+	const char *cp = [token cString];
+	OpcodeTable *table, **p;
+	unsigned int i;
+
+	for (p = tables; *p; p++) {
+		table = *p;
+		for (i = 0; table[i].name; i++)
+			if (strcasecmp(cp, table[i].name) == 0)
+				return (&table[i]);
+	}
 
 	/* Unknown opcode */
 	return (NULL);
 }
 
 /* Parse a string, returning the associated opcode from the supplied table */
-static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable table[]) {
+static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable *tables[]) {
+	OpcodeTable *table, **p;
 	unsigned int i;
 
-	for (i = 0; table[i].name; i++)
-		if (table[i].opcode == opcode)
-			return (table[i].name);
+	for (p = tables; *p; p++) {
+		table = *p;
+		for (i = 0; table[i].name; i++)
+			if (table[i].opcode == opcode)
+				return (table[i].name);
+	}
 
 	/* Unknown opcode */
 	return (NULL);
@@ -349,7 +391,7 @@ error:
  * Report a named section that should not be named to the user.
  */
 - (void) errorNamedSection: (TRConfigToken *) section withName: (TRConfigToken *) name {
-	warnx("Auth-LDAP Configuration Error: %s section types must be unnamed (%s:%u).", [section cString], [_configFileName cString], [name lineNumber]); \
+	warnx("Auth-LDAP Configuration Error: %s section types must be unnamed (%s:%u).", [section cString], [_configFileName cString], [name lineNumber]);
 	[_configDriver errorStop];
 }
 
@@ -357,7 +399,7 @@ error:
  * Report an unknown key to the user.
  */
 - (void) errorUnknownKey: (TRConfigToken *) key {
-	warnx("Auth-LDAP Configuration Error: %s key is unknown (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]); \
+	warnx("Auth-LDAP Configuration Error: %s key is unknown (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]);
 	[_configDriver errorStop];
 }
 
@@ -365,7 +407,7 @@ error:
  * Report a duplicate key to the user.
  */
 - (void) errorMultiKey: (TRConfigToken *) key {
-	warnx("Auth-LDAP Configuration Error: multiple occurances of key %s (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]); \
+	warnx("Auth-LDAP Configuration Error: multiple occurances of key %s (%s:%u).", [key cString], [_configFileName cString], [key lineNumber]);
 	[_configDriver errorStop];
 }
 
@@ -373,7 +415,7 @@ error:
  * Report an invalid integer value to the user.
  */
 - (void) errorIntValue: (TRConfigToken *) value {
-	warnx("Auth-LDAP Configuration Error: %s value is not an integer (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]); \
+	warnx("Auth-LDAP Configuration Error: %s value is not an integer (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]);
 	[_configDriver errorStop];
 }
 
@@ -381,7 +423,7 @@ error:
  * Report an invalid boolean value to the user.
  */
 - (void) errorBoolValue: (TRConfigToken *) value {
-	warnx("Auth-LDAP Configuration Error: %s value is not a boolean value -- use either 'True' or 'False' (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]); \
+	warnx("Auth-LDAP Configuration Error: %s value is not a boolean value -- use either 'True' or 'False' (%s:%u).", [value cString], [_configFileName cString], [value lineNumber]);
 	[_configDriver errorStop];
 }
 
@@ -389,7 +431,8 @@ error:
  * Report an unknown section type to the user.
  */
 - (void) errorUnknownSection: (TRConfigToken *) section {
-	warnx("Auth-LDAP Configuration Error: %s is not a known section type within this context (%s:%u).", [section cString], [_configFileName cString], [section lineNumber]); \
+	warnx("Auth-LDAP Configuration Error: %s is not a known section type within this context (%s:%u).",
+			[section cString], [_configFileName cString], [section lineNumber]);
 	[_configDriver errorStop];
 }
 
@@ -397,9 +440,39 @@ error:
  * Report mismatched section closure to the user.
  */
 - (void) errorMismatchedSection: (TRConfigToken *) section {
-	warnx("Auth-LDAP Configuration Error: '</%s>' is a mismatched section closure. Expected \"</%s>\" (%s:%u).", [section cString], string_for_opcode([self currentSectionOpcode], SectionTypes), [_configFileName cString], [section lineNumber]); \
+	warnx("Auth-LDAP Configuration Error: '</%s>' is a mismatched section closure. Expected \"</%s>\" (%s:%u).",
+			[section cString], string_for_opcode([self currentSectionOpcode], Sections),
+			[_configFileName cString], [section lineNumber]);
 	[_configDriver errorStop];
 }
+
+/*!
+ * Check for any missing required variables and report them to the user.
+ * @return YES on success, NO on failure.
+ */
+- (BOOL) validateRequiredVariables: (OpcodeTable **) tables withSectionEnd: (TRConfigToken *) section {
+	OpcodeTable *table, **p;
+	unsigned int i;
+
+	for (p = tables; *p; p++) {
+		table = *p;
+		for (i = 0; table[i].name; i++) {
+			if (table[i].required) {
+				LFString *key = [[LFString alloc] initWithCString: table[i].name];
+				if ([[self currentSectionHashTable] valueForKey: key] == nil) {
+					warnx("Auth-LDAP Configuration Error: Section %s is a missing required key '%s' (%s:%u).", string_for_opcode([self currentSectionOpcode], Sections), table[i].name, [_configFileName cString], [section lineNumber]);
+					[key release];
+					[_configDriver errorStop];
+					return NO;
+				}
+				[key release];
+			}
+		}
+	}
+	return YES;
+}
+
+
 
 /*!
  * Called by the lemon generated parser when a new section is found.
@@ -408,7 +481,7 @@ error:
 	OpcodeTable *opcodeEntry;
 
 	/* Parse the section opcode */
-	opcodeEntry = parse_opcode(sectionType, SectionTypes);
+	opcodeEntry = parse_opcode(sectionType, Sections);
 
 	/* Enter handler for the current state */
 	switch([self currentSectionOpcode]) {
@@ -485,7 +558,7 @@ error:
 			return;
 
 		case LF_LDAP_SECTION:
-			opcodeEntry = parse_opcode(key, LDAPSectionVariables);
+			opcodeEntry = parse_opcode(key, LDAPSection);
 			if (!opcodeEntry) {
 				[self errorUnknownKey: key];
 				return;
@@ -550,17 +623,10 @@ error:
 			break;
 
 		case LF_AUTH_SECTION:
-			/* Opcode must be one of AuthSectionVariables, GenericLDAPVariables, or GenericPFVariables */
-			opcodeEntry = parse_opcode(key, AuthSectionVariables);
+			opcodeEntry = parse_opcode(key, AuthSection);
 			if (!opcodeEntry) {
-				opcodeEntry = parse_opcode(key, GenericLDAPVariables);
-				if (!opcodeEntry) {
-					opcodeEntry = parse_opcode(key, GenericPFVariables);
-					if (!opcodeEntry) {
-						[self errorUnknownKey: key];
-						return;
-					}
-				}
+				[self errorUnknownKey: key];
+				return;
 			}
 
 			switch(opcodeEntry->opcode) {
@@ -593,20 +659,11 @@ error:
 			}
 			break;
 		case LF_GROUP_SECTION:
-			/* Opcode must be one of GroupSectionVariables, GenericLDAPVariables, or GenericPFVariables */
-			opcodeEntry = parse_opcode(key, GroupSectionVariables);
+			opcodeEntry = parse_opcode(key, GroupSection);
 			if (!opcodeEntry) {
-				opcodeEntry = parse_opcode(key, GenericLDAPVariables);
-				if (!opcodeEntry) {
-					opcodeEntry = parse_opcode(key, GenericPFVariables);
-					if (!opcodeEntry) {
-						[self errorUnknownKey: key];
-						return;
-					}
-				}
+				[self errorUnknownKey: key];
+				return;
 			}
-
-
 
 			switch(opcodeEntry->opcode) {
 				TRLDAPGroupConfig *config;
@@ -658,7 +715,7 @@ error:
  */
 - (void) endSection: (TRConfigToken *) sectionEnd {
 	OpcodeTable *opcodeEntry;
-	opcodeEntry = parse_opcode(sectionEnd, SectionTypes);
+	opcodeEntry = parse_opcode(sectionEnd, Sections);
 
 	/* Mismatched section? */
 	if (!opcodeEntry || opcodeEntry->opcode != [self currentSectionOpcode]) {
@@ -666,14 +723,17 @@ error:
 		return;
 	}
 
-	/* TODO: Handle missing required settings */
 	switch (opcodeEntry->opcode) {
 		case LF_LDAP_SECTION:
+			[self validateRequiredVariables: LDAPSection withSectionEnd: sectionEnd];
 			break;
 		case LF_AUTH_SECTION:
+			[self validateRequiredVariables: AuthSection withSectionEnd: sectionEnd];
 			break;
 		case LF_GROUP_SECTION:
 			/* Add the group config to the array */
+			if (![self validateRequiredVariables: GroupSection withSectionEnd: sectionEnd])
+				break;
 			[_ldapGroups addObject: [self currentSectionContext]];
 			break;
 		default:
