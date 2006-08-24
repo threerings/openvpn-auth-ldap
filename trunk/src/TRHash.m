@@ -105,7 +105,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
  * Initialize a new TRHash with an maximum capacity of
  * numItems.
  */
-- (id) initWithCapacity: (unsigned int) numItems {
+- (id) initWithCapacity: (unsigned long) numItems {
 	self = [self init];
 	if (!self)
 		return nil;
