@@ -54,6 +54,7 @@
 	BOOL _requireGroup;
 	LFString *_pfTable;
 	TRArray *_ldapGroups;
+	BOOL _pfEnabled;
 
 	/* Parser State */
 	LFString *_configFileName;
@@ -105,6 +106,9 @@
 
 - (LFString *) pfTable;
 - (void) setPFTable: (LFString *) tableName;
+
+- (BOOL) pfEnabled;
+- (void) setPFEnabled: (BOOL) newPFSetting;
 
 - (TRArray *) ldapGroups;
 
