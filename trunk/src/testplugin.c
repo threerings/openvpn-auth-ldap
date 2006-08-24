@@ -39,6 +39,9 @@
 
 #include <openvpn-plugin.h>
 
+const char username_template[] = "username=";
+const char password_template[] = "password=";
+
 int main(int argc, const char *argv[]) {
 	openvpn_plugin_handle_t handle;
 	const char *config;
@@ -69,8 +72,15 @@ int main(int argc, const char *argv[]) {
 
 	password = getpass("Password: ");
 
-	asprintf((char **) &envp[0], "username=%s", username);
-	asprintf((char **) &envp[1], "password=%s", password);
+	/* Set up username and password */
+	envp[0] = malloc(sizeof(username_template) + strlen(username));
+	strcpy((char *) envp[0], username_template);
+	strcat((char *) envp[0], username);
+
+	envp[1] = malloc(sizeof(password_template) + strlen(password));
+	strcpy((char *) envp[1], password_template);
+	strcat((char *) envp[1], password);
+	/* Remote Pool IP */
 	envp[2] = "ifconfig_pool_remote_ip=10.0.50.1";
 	envp[3] = NULL;
 
