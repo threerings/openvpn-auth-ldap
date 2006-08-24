@@ -258,13 +258,12 @@ openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[
 	}
 
 #ifdef HAVE_PF
+	ctx->pf = NULL;
 	/* Open reference to /dev/pf and clear out all of our PF tables */
 	if ([ctx->config pfEnabled] && !pf_open(ctx)) {
 		[ctx->config release];
 		free(ctx);
 		return (NULL);
-	} else {
-		ctx->pf = NULL;
 	}
 #endif
 
