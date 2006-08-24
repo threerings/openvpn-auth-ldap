@@ -652,6 +652,7 @@ error:
 
 				case LF_AUTH_PFTABLE:
 					[self setPFTable: [value string]];
+					[self setPFEnabled: YES];
 					break;
 
 				/* Unknown Setting */
@@ -688,6 +689,7 @@ error:
 				case LF_AUTH_PFTABLE:
 					config = [self currentSectionContext];
 					[config setPFTable: [value string]];
+					[self setPFEnabled: YES];
 					break;
 
 				/* Unknown Setting */
@@ -873,6 +875,15 @@ error:
 
 - (LFString *) pfTable {
 	return (_pfTable);
+}
+
+
+- (BOOL) pfEnabled {
+	return (_pfEnabled);
+}
+
+- (void) setPFEnabled: (BOOL) newPFSetting {
+	_pfEnabled = newPFSetting;
 }
 
 - (TRArray *) ldapGroups {
