@@ -43,9 +43,11 @@
 		va_list ap; \
 		va_start(ap, message); \
 		vsyslog(priority, message, ap); \
-		vfprintf(stderr, message, ap); \
-		fprintf(stderr, "\n"); \
 		va_end(ap); \
+		va_start(ap, message); \
+		vfprintf(stderr, message, ap); \
+		va_end(ap); \
+		fprintf(stderr, "\n"); \
 	}
 
 @implementation TRLog
