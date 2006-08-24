@@ -55,6 +55,13 @@ typedef struct _TRArrayStack {
 @interface TRArrayReverseObjectEnumerator : TRArrayObjectEnumerator
 @end
 
+/*
+ * We need to declare prototypes for our private methods, as some broken
+ * versions of gcc won't pick them up from the implementation.
+ */
+@interface TRArray (TRArrayPrivate)
+- (TRArrayStack *) _privateArrayContext: (BOOL) top;
+@end
 
 @implementation TRArray
 
