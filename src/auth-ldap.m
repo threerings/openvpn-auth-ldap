@@ -468,18 +468,18 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, LFString *tableNa
 	address = [[TRPFAddress alloc] initWithPresentationAddress: addressString];
 	[addressString release];
 	if (connecting) {
-		[TRLog debug: "Adding address \"%s\" to packet filter table \"%s\".", [addressString cString], [tableName cString]];
+		[TRLog debug: "Adding address \"%s\" to packet filter table \"%s\".", remoteAddress, [tableName cString]];
 		if (![ctx->pf addAddress: address toTable: tableName]) {
 			[TRLog error: "Failed to add address \"%s\" to table \"%s\": %s",
-					[addressString cString], [tableName cString], [TRPacketFilter strerror: errno]];
+					remoteAddress, [tableName cString], [TRPacketFilter strerror: errno]];
 			[address release];
 			return NO;
 		}
 	} else {
-		[TRLog debug: "Removing address \"%s\" from packet filter table \"%s\".", [addressString cString], [tableName cString]];
+		[TRLog debug: "Removing address \"%s\" from packet filter table \"%s\".", remoteAddress, [tableName cString]];
 		if (![ctx->pf deleteAddress: address fromTable: tableName]) {
 			[TRLog error: "Failed to remove address \"%s\" from table \"%s\": %s",
-					[addressString cString], [tableName cString], [TRPacketFilter strerror: errno]];
+					remoteAddress, [tableName cString], [TRPacketFilter strerror: errno]];
 			[address release];
 			return NO;
 		}
