@@ -211,11 +211,11 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 
 	/* Acquire a reference to /dev/pf */
 	ctx->pf = [[TRPacketFilter alloc] init];
-	if (!ctx->config) {
+	if (!ctx->pf) {
 		/* /dev/pf could not be opened. Is it available? */
 		[TRLog error: "Failed to open /dev/pf: %s", [TRPacketFilter strerror: errno]];
 		ctx->pf = nil;
-		return YES;
+		return NO;
 	}
 
 	/* Clear out all referenced PF tables */
@@ -261,7 +261,7 @@ openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[
 
 #ifdef HAVE_PF
 	/* Open reference to /dev/pf and clear out all of our PF tables */
-	if (!pf_open(ctx)) {
+	if ([ctx->config pfEnabled] && !pf_open(ctx)) {
 		[ctx->config release];
 		free(ctx);
 		return (NULL);
@@ -464,12 +464,6 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, LFString *tableNa
 	LFString *addressString;
 	TRPFAddress *address;
 
-	/* pf isn't available ... */
-	if (!ctx->pf) {
-		[TRLog error: "Packet filter configured, but unavailable."];
-		return NO;
-	}
-
 	addressString = [[LFString alloc] initWithCString: remoteAddress];
 	address = [[TRPFAddress alloc] initWithPresentationAddress: addressString];
 	[addressString release];
@@ -515,7 +509,7 @@ static int handle_client_connect_disconnect(ldap_ctx *ctx, LFLDAPConnection *lda
 	}
 
 #ifdef HAVE_PF
-	/* Grab the request PF table name, if any */
+	/* Grab the requested PF table name, if any */
 	if (groupConfig) {
 		tableName = [groupConfig pfTable];
 	} else {

@@ -66,6 +66,10 @@ START_TEST (test_initWithConfigFile) {
 	fail_if([config ldapGroups] == nil);
 	fail_if([[config ldapGroups] lastObject] == nil);
 
+#ifdef HAVE_PF
+	fail_unless([config pfEnabled]);
+#endif
+
 	[config release];
 }
 END_TEST
