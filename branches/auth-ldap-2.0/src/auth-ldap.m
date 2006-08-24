@@ -207,8 +207,6 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 	TRLDAPGroupConfig *groupConfig;
 	TREnumerator *groupIter;
 
-	ctx->pf = NULL;
-
 	/* Acquire a reference to /dev/pf */
 	ctx->pf = [[TRPacketFilter alloc] init];
 	if (!ctx->pf) {
@@ -265,6 +263,8 @@ openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[
 		[ctx->config release];
 		free(ctx);
 		return (NULL);
+	} else {
+		ctx->pf = NULL;
 	}
 #endif
 
