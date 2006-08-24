@@ -49,6 +49,15 @@
 
 @end
 
+/*
+ * We need to declare prototypes for our private methods, as some broken
+ * versions of gcc won't pick them up from the implementation.
+ */
+@interface TRHash (TRHashPrivate)
+- (hash_t *) _privateHashContext;
+@end
+
+
 @implementation TRHash
 
 /*
