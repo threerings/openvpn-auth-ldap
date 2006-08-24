@@ -44,7 +44,7 @@
 	hash_t *_hash;
 }
 
-- (id) initWithCapacity: (unsigned int) numItems;
+- (id) initWithCapacity: (unsigned long) numItems;
 - (id) valueForKey: (LFString *) key;
 - (void) setObject: (id) anObject forKey: (LFString *) key;
 - (void) removeObjectForKey: (LFString *) key;
