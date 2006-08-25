@@ -1,10 +1,9 @@
 /*
- * TRObject.h
- * Project Root Class
- *
- * Author: Landon Fuller <landonf@threerings.net>
+ * xmalloc.c
+ * "Safe" malloc routines -- and by safe, I mean: "fail deterministically"
  *
  * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2005 - 2006 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +14,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of any contributors
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,38 +31,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TROBJECT_H
-#define TROBJECT_H
+#include <stdlib.h>
+#include <string.h>
+#include <err.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+/* Safe Malloc */
+void *xmalloc(size_t size) {
+	void *ptr;
+	ptr = malloc(size);
+	if (!ptr)
+		err(1, "malloc returned NULL");
 
-#include <stdbool.h>
-#include <objc/Object.h>
-
-@protocol TRObject
-/* Reference counting */
-- (id) retain;
-- (void) release;
-
-/* Equality */
-- (BOOL) isEqual: (id) anObject;
-@end
-
-
-@interface TRObject : Object <TRObject> {
-	unsigned int _refCount;
+	return (ptr);
 }
 
-- (id) init;
-- (unsigned int) refCount;
-- (id) retain;
-- (void) release;
-- (BOOL) isEqual: (id) anObject;
+void *xrealloc(void *oldptr, size_t size) {
+	void *ptr;
+	ptr = realloc(oldptr, size);
+	if (!ptr)
+		err(1, "realloc returned NULL");
 
-- (void) dealloc;
+	oldptr = ptr;
 
-@end
+	return (ptr);
+}
 
-#endif /* TROBJECT_H */
+char *xstrdup(const char *str) {
+	void *ptr;
+	ptr = strdup(str);
+	if (!ptr)
+		err(1, "strdup returned NULL");
+
+	return (ptr);
+}

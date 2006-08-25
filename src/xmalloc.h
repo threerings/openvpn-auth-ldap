@@ -1,8 +1,10 @@
 /*
- * auth_ldap.h
- * OpenVPN LDAP Authentication Plugin
+ * xmalloc.h
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * "Safe" malloc routines -- and by safe, I mean "fail deterministically"
+ *
+ * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2005 - 2006 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AUTH_LDAP_H
-#define AUTH_LDAP_H
+#ifndef MALLOC_H
+#define MALLOC_H
 
 #include <stdlib.h>
 
@@ -39,4 +41,4 @@ void *xmalloc(size_t size);
 void *xrealloc(void *ptr, size_t size);
 char *xstrdup(const char *str);
 
-#endif /* AUTH_LDAP_H */
+#endif /* MALLOC_H */
