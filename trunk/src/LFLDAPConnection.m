@@ -37,7 +37,7 @@
 #include "LFLDAPConnection.h"
 #include "TRLog.h"
 
-#include "auth-ldap.h"
+#include "xmalloc.h"
 
 static int ldap_get_errno(LDAP *ld) {
 	int err;

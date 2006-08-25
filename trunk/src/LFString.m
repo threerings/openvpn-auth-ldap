@@ -42,7 +42,7 @@
 
 #include "LFString.h"
 
-#include "auth-ldap.h"
+#include "xmalloc.h"
 
 @implementation LFString
 

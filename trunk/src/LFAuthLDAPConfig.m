@@ -44,7 +44,7 @@
 #include "TRHash.h"
 #include "TRLog.h"
 
-#include "auth-ldap.h"
+#include "xmalloc.h"
 
 /* All Variables and Section Types */
 typedef enum {

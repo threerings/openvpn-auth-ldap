@@ -26,6 +26,7 @@ PLUGIN_OBJS=	auth-ldap.o \
 		TRLDAPGroupConfig.o \
 		TRPacketFilter.o \
 		TRPFAddress.o \
+		xmalloc.o \
 		strlcpy.o
 
 GEN_SRCS=	TRConfigParser.m \
