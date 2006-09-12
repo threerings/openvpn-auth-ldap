@@ -49,8 +49,6 @@
 #include <TRPFAddress.h>
 #include <TRLog.h>
 
-#include <xmalloc.h>
-
 /* Plugin Context */
 typedef struct ldap_ctx {
 	LFAuthLDAPConfig *config;
@@ -59,6 +57,36 @@ typedef struct ldap_ctx {
 #endif
 } ldap_ctx;
 
+
+/* Safe Malloc */
+void *xmalloc(size_t size) {
+	void *ptr;
+	ptr = malloc(size);
+	if (!ptr)
+		err(1, "malloc returned NULL");
+
+	return (ptr);
+}
+
+void *xrealloc(void *oldptr, size_t size) {
+	void *ptr;
+	ptr = realloc(oldptr, size);
+	if (!ptr)
+		err(1, "realloc returned NULL");
+
+	oldptr = ptr;
+
+	return (ptr);
+}
+
+char *xstrdup(const char *str) {
+	void *ptr;
+	ptr = strdup(str);
+	if (!ptr)
+		err(1, "strdup returned NULL");
+
+	return (ptr);
+}
 
 static const char *get_env(const char *key, const char *env[]) {
 	int i;
