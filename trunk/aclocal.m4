@@ -398,3 +398,28 @@ AC_DEFUN([TR_PF_IOCTL],[
 		AC_DEFINE([PF_DEV_PATH], ["/dev/pf"], [Path to the pf(4) device.])
 	fi
 ])
+
+#------------------------------------------------------------------------
+# TR_WERROR --
+#
+#	Enable -Werror
+#
+# Arguments:
+#	None.
+#
+# Requires:
+#	none
+#
+# Depends:
+#	none
+#
+# Results:
+#	Modifies CFLAGS variable.
+#------------------------------------------------------------------------
+AC_DEFUN([TR_WERROR],[
+	AC_REQUIRE([AC_PROG_CC])
+	AC_ARG_ENABLE(werror, AC_HELP_STRING([--enable-werror], [Add -Werror to CFLAGS. Used for development.]), [enable_werror=${enableval}], [enable_werror=no])
+	if test x"$enable_werror" != "xno"; then
+		CFLAGS="$CFLAGS -Werror"
+	fi
+])
