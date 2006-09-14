@@ -298,6 +298,14 @@ LFLDAPConnection *connect_ldap(LFAuthLDAPConfig *config) {
 		return nil;
 	}
 
+	/* Bind if requested */
+	if ([config bindDN]) {
+		if (![ldap bindWithDN: [config bindDN] password: [config bindPassword]]) {
+			[TRLog error: "Unable to bind as %s", [[config bindDN] cString]];
+			goto error;
+		}
+	}
+
         /* Certificate file */
 	if ((value = [config tlsCACertFile])) 
 		if (![ldap setTLSCACertFile: value])
