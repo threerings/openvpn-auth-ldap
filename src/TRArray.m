@@ -35,7 +35,7 @@
 #include <stdlib.h>
 
 #include "TRArray.h"
-#include "xmalloc.h"
+#include "auth-ldap.h"
 
 typedef struct _TRArrayStack {
 	id object;
