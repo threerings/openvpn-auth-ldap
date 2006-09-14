@@ -1,0 +1,112 @@
+****************
+* INTRODUCTION *
+****************
+
+The vast majority of this implementation is subject to the standard
+3-clause BSD license. Copyright is held by Three Rings Design and
+Landon Fuller, and the license and official copyright can be found at
+the bottom of this file.
+
+Small portions of the implementation were taken from various sources, including:
+	- FreeBSD libc (strlcpy)
+	- FreeBSD kernel (pf ioctl validation)
+	- kazlib (hash table implementation)
+
+Associated copyrights and licenses are documented below. You'll find that they
+are all compatible and as permissive as the standard BSD license -- in fact,
+most are simply small variations on the license.
+
+In addition, some public domain sources are included with this distribution and
+used as a part of the build process:
+	- The lemon parser generator (http://www.hwaci.com/sw/lemon/)
+	- Makeheaders (http://www.hwaci.com/sw/mkhdr/)
+
+***************************
+* COPYRIGHTS AND LICENSES *
+***************************
+
+The src/strlcpy.c and src/strlcpy.h files were taken from FreeBSD libc
+and are subject to the following copyright:
+
+	Copyright (c) 1998 Todd C. Miller <Todd.Miller@courtesan.com>
+	All rights reserved.
+
+Please refer to the strlcpy source files for a copy of their (BSD)
+license.
+
+The src/hash.c and src/hash.h files were taken from kazlib, and
+are subject to the following copyright and license:
+	Copyright (C) 1997 Kaz Kylheku <kaz@ashi.footprints.net>
+
+	Free Software License:
+	All rights are reserved by the author, with the following exceptions:
+	Permission is granted to freely reproduce and distribute this software,
+	possibly in exchange for a fee, provided that this copyright notice appears
+	intact. Permission is also granted to adapt this software to produce
+	derivative works, as long as the modified versions carry this copyright
+	notice and additional notices stating that the work has been modified.
+	This source code may be translated into executable form and incorporated
+	into proprietary software; there is no requirement for such software to
+	contain a copyright notice related to this source.
+
+Small portions of test/mockpf.c and test/mockpf.h were taken from the pf(4)
+kernel implementation. These files are used only for the unit tests,
+and thus not included in the final output. They are subject to the following
+copyright and license:
+
+	Copyright (c) 2002 Cedric Berger
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions
+	are met:
+
+	- Redistributions of source code must retain the above copyright
+	notice, this list of conditions and the following disclaimer.
+	- Redistributions in binary form must reproduce the above
+	copyright notice, this list of conditions and the following
+	disclaimer in the documentation and/or other materials provided
+	with the distribution.
+
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+	"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+	FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+	CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+	ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+
+All other code is subject to the following copyright and license:
+
+Copyright (c) 2006 Three Rings Design, Inc.
+Copyright (c) 2005 - 2006 Landon Fuller <landonf@threerings.net>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+3. Neither the name of the copyright holders nor the names of any
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
