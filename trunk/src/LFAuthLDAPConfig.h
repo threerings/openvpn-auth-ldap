@@ -47,6 +47,8 @@
 	LFString *_tlsCertFile;
 	LFString *_tlsKeyFile;
 	LFString *_tlsCipherSuite;
+	LFString *_bindDN;
+	LFString *_bindPassword;
 
 	/* Authentication / Authorization Settings */
 	LFString *_baseDN;
@@ -94,6 +96,12 @@
 
 - (LFString *) tlsCipherSuite;
 - (void) setTLSCipherSuite: (LFString *) cipherSuite;
+
+- (LFString *) bindDN;
+- (void) setBindDN: (LFString *) bindDN;
+
+- (LFString *) bindPassword;
+- (void) setBindPassword: (LFString *) bindPassword;
 
 - (LFString *) baseDN;
 - (void) setBaseDN: (LFString *) baseDN;

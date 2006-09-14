@@ -273,6 +273,10 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable *tables[])
 - (void) dealloc {
 	if (_url)
 		[_url release];
+	if (_bindDN)
+		[_bindDN release];
+	if (_bindPassword)
+		[_bindPassword release];
 	if (_tlsCACertFile)
 		[_tlsCACertFile release];
 	if (_tlsCACertDir)
@@ -574,6 +578,16 @@ error:
 					[self setURL: [value string]];
 					break;
 
+				/* LDAP Bind DN */
+				case LF_LDAP_BINDDN:
+					[self setBindDN: [value string]];
+					break;
+
+				/* LDAP Bind Password */
+				case LF_LDAP_PASSWORD:
+					[self setBindPassword: [value string]];
+					break;
+
 				/* LDAP Connection Timeout */
 				case LF_LDAP_TIMEOUT:
 					if (![value intValue: &timeout]) {
@@ -612,7 +626,7 @@ error:
 					[self setTLSKeyFile: [value string]];
 					break;
 
-				/* LDAP Key File */
+				/* TLS Cipher Suite */
 				case LF_LDAP_TLS_CIPHER_SUITE:
 					[self setTLSCipherSuite: [value string]];
 					break;
@@ -773,6 +787,26 @@ error:
 
 - (LFString *) url {
 	return (_url);
+}
+
+- (LFString *) bindDN {
+	return (_bindDN);
+}
+
+- (void) setBindDN: (LFString *) bindDN {
+	if (_bindDN)
+		[_bindDN release];
+	_bindDN = [bindDN retain];
+}
+
+- (LFString *) bindPassword {
+	return (_bindPassword);
+}
+
+- (void) setBindPassword: (LFString *) bindPassword {
+	if (_bindPassword)
+		[_bindPassword release];
+	_bindPassword = [bindPassword retain];
 }
 
 - (void) setURL: (LFString *) newURL {
