@@ -88,17 +88,17 @@ static int (*_real_ioctl)(int, unsigned long, ...) = NULL;
 
 /* Static example tables */
 static struct pfr_table artist_table = {
-	{ '\0' },
-	"ips_artist",
-	0,
-	0
+	.pfrt_anchor = { '\0' },
+	.pfrt_name = "ips_artist",
+	.pfrt_flags = 0,
+	.pfrt_fback = 0
 };
 
 static struct pfr_table dev_table = {
-	{ '\0' },
-	"ips_developer",
-	0,
-	0
+	.pfrt_anchor = { '\0' },
+	.pfrt_name = "ips_developer",
+	.pfrt_flags = 0,
+	.pfrt_fback = 0
 };
 
 /*! Generic structure definition for either list type. */
@@ -290,7 +290,7 @@ int close(int d) {
  * Taken from FreeBSD: src/sys/contrib/pf/net/pf_table.c,v 1.7
  */
 int pfr_fix_anchor(char *anchor) {
-        size_t siz = MAXPATHLEN;
+        size_t siz = sizeof(((struct pfr_table *) NULL)->pfrt_anchor);
         int i;
 
         if (anchor[0] == '/') {
@@ -304,11 +304,11 @@ int pfr_fix_anchor(char *anchor) {
                 bcopy(path, anchor, siz - off);
                 memset(anchor + siz - off, 0, off);
         }
-        if (anchor[siz - 1])
-                return (-1);
+
+	assert(anchor[siz - 1] == 0);
         for (i = strlen(anchor); i < siz; i++)
-                if (anchor[i])
-                        return (-1);
+		assert(!anchor[i]);
+
         return (0);
 }
 
