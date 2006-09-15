@@ -1,0 +1,33 @@
+srcdir=         @srcdir@
+top_srcdir=     @top_srcdir@
+top_builddir=   @top_builddir@
+VPATH=          @srcdir@
+
+include ${top_builddir}/Mk/autoconf.mk
+include ${top_builddir}/Mk/compile.mk
+include ${top_builddir}/Mk/subdir.mk
+
+# Build the Lemon tool
+LEMON_OBJS=	lemon.o
+LEMON_GEN_SRCS=	lempar.c
+
+MAKEHEADERS_OBJS=	makeheaders.o
+CFLAGS=
+
+all:: lemon makeheaders
+
+lempar.c: lempar.c.in
+	cat $(srcdir)/lempar.c.in >lempar.c
+
+lemon: $(LEMON_OBJS) $(LEMON_GEN_SRCS)
+	$(CC) ${CFLAGS} -o $@ $(LEMON_OBJS) $(LIBS) $(LDFLAGS)
+
+makeheaders: $(MAKEHEADERS_OBJS)
+	$(CC) ${CFLAGS} -o $@ $(MAKEHEADERS_OBJS) $(LIBS) $(LDFLAGS)
+
+clean::
+	rm -f $(LEMON_OBJS) $(LEMON_GEN_SRCS) lemon
+	rm -f $(MAKEHEADERS_OBJS) makeheaders
+
+distclean:: clean
+	rm -f Makefile

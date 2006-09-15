@@ -1,0 +1,46 @@
+srcdir=         @srcdir@
+top_srcdir=     @top_srcdir@
+top_builddir=   @top_builddir@
+VPATH=          @srcdir@
+
+include ${top_builddir}/Mk/autoconf.mk
+include ${top_builddir}/Mk/compile.mk
+
+
+TEST_OBJS=	tests.o \
+		mockpf.o \
+		LFString.o \
+		LFAuthLDAPConfig.o \
+		LFLDAPConnection.o \
+		TRLDAPEntry.o \
+		TRArray.o \
+		TRHash.o \
+		TRObject.o \
+		TRPacketFilter.o \
+		TRPFAddress.o \
+		TRConfigToken.o \
+		TRConfigLexer.o \
+		TRConfig.o \
+		TRLDAPGroupConfig.o
+
+CFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
+OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
+LIBS+=		-lauth-ldap-testing $(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@
+LDFLAGS+=	-L${top_builddir}src $(LIBS)
+
+# Recompile the tests every time
+all: tests
+
+tests: ${TEST_OBJS} ../src/libauth-ldap-testing.a
+	${CC} -o $@ ${TEST_OBJS} ${LDFLAGS}
+
+test:: tests
+	./tests
+
+install::
+
+clean::
+	rm -f $(TEST_OBJS) tests
+
+distclean:: clean
+	rm -f Makefile
