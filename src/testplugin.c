@@ -35,7 +35,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <errno.h>
 
 #include <openvpn-plugin.h>
 
@@ -49,7 +48,6 @@ int main(int argc, const char *argv[]) {
 	const char *envp[4]; /* username, password, ifconfig_pool_remote_ip, NULL */
 	char username[30];
 	char *password;
-	char dynamic_conf[] = "/tmp/openvpn-auth-ldap-test.XXXXXXXXXXXXX";
 	int err;
 
 	if (argc != 2) {
@@ -92,33 +90,23 @@ int main(int argc, const char *argv[]) {
 	/* Authenticate */
 	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY, argp, envp);
 	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
-		errx(1, "Authorization Failed!\n");
+		printf("Authorization Failed!\n");
 	} else {
 		printf("Authorization Succeed!\n");
 	}
 
 	/* Client Connect */
-	if (mkstemp(dynamic_conf) == -1)
-		errx(1, "Error creating temporary file %s: %s\n", dynamic_conf, strerror(errno));
-
-	if (unlink(dynamic_conf) != 0)
-		errx(1, "Error deleting temporary file %s: %s\n", dynamic_conf, strerror(errno));
-
-	/* Point '$1' to a temporary configuration file path */
-	argp[1] = dynamic_conf;
 	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_CONNECT, argp, envp);
 	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
-		errx(1, "client-connect failed!\n");
+		printf("client-connect failed!\n");
 	} else {
 		printf("client-connect succeed!\n");
 	}
-	/* Reset argp */
-	argp[1] = config;
 
 	/* Client Disconnect */
 	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_DISCONNECT, argp, envp);
 	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
-		errx(1, "client-disconnect failed!\n");
+		printf("client-disconnect failed!\n");
 	} else {
 		printf("client-disconnect succeed!\n");
 	}
@@ -127,5 +115,5 @@ int main(int argc, const char *argv[]) {
 	free((char *) envp[0]);
 	free((char *) envp[1]);
 
-	exit(0);
+	exit (0);
 }
