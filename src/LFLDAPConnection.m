@@ -135,32 +135,21 @@ static int ldap_get_errno(LDAP *ld) {
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
 			ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
-		[TRLog error: "ldap_bind failed: %s\n", ldap_err2string(err)];
+		[TRLog error: "ldap_bind failed: %s", ldap_err2string(err)];
 		return (false);
 	}
 
 	/* Fish out the bind result */
 	err = ldap_parse_sasl_bind_result(ldapConn, res, &servercred, 0);
 	ber_bvfree(servercred); /* We're only doing simple auth */
-	/* Did the parse (not the bind!) succeed? */
-	if (err != LDAP_SUCCESS) {
-		ldap_msgfree(res);
-		return (false);
-	}
+	ldap_msgfree(res);
 
-	/* How about the actual bind? */
-	if (ldap_parse_result(ldapConn, res, &err, NULL, NULL, NULL, NULL, 1) != LDAP_SUCCESS) {
-		/* Parsing failed */
-		return (false);
-	}
+	/* Did the the bind succeed? */
 	if (err == LDAP_SUCCESS) {
-		/* Bind succeeded */
 		return (true);
-	} else {
-		[TRLog debug: "LDAP bind failed: %s\n", ldap_err2string(err)];
-		return (false);
 	}
 
+	[TRLog error: "ldap_bind failed: %s", ldap_err2string(err)];
 	return (false);
 }
 
@@ -340,7 +329,7 @@ finish:
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
 			ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
-		[TRLog debug: "ldap_compare_ext failed: %s\n", ldap_err2string(err)];
+		[TRLog debug: "ldap_compare_ext failed: %s", ldap_err2string(err)];
 		return NO;
 	}
 
