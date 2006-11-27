@@ -31,10 +31,14 @@
 		</p>
 
 		<h2><a id="get">Download</a></h2>
+		<h4>Changes since 2.0</h4>
+		<ul>
+			<li>SECURITY: Fixed a bug in bind handling, where OpenVPN Auth-LDAP would accept empty passwords when validating against Novell Directory Server. This is known to not affect OpenLDAP (our test platform).</li>
+		</ul>
 		<p>
-			The source for auth-ldap 2.0 can be downloaded <a
-				href="auth-ldap-2.0.tar.gz">here</a>, and verified against this <a
-				href="auth-ldap-2.0.tar.gz.sig">GPG signature.</a> The 
+			The source for auth-ldap 2.0.1 can be downloaded <a
+				href="auth-ldap-2.0.1.tar.gz">here</a>, and verified against this <a
+				href="auth-ldap-2.0.1.tar.gz.sig">GPG signature.</a> The 
 			signature was made with key 0x85971303, which you can find <a
                 href="http://dpw.threerings.net/dpw_public_key.asc">here</a> or 
             retrieve from a subkeys.pgp.net keyserver.
