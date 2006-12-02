@@ -110,12 +110,24 @@ static int ldap_get_errno(LDAP *ld) {
 	int msgid, err;
 	LDAPMessage *res;
 	struct berval cred;
-	struct berval *servercred;
+	struct berval *servercred = NULL;
 	struct timeval timeout;
 
 	/* Set up berval structure for our credentials */
 	cred.bv_val = (char *) [password cString];
 	cred.bv_len = [password length] - 1; /* Length includes NULL terminator */
+
+	/*
+	 * By default, some LDAP servers, in accordance with the RFC, treat a bind
+	 * with a valid DN and an empty (zero length) password as a successful
+	 * anonymous bind. There is no way to determine from the bind result
+	 * whether the bind was anonymous. Thus, we must forbid zero length
+	 * passwords.
+	 */
+	if (cred.bv_len == 0) {
+		[TRLog error: "ldap_bind with zero-length password is forbidden."];
+		return (false);
+	}
 
 	if ((err = ldap_sasl_bind(ldapConn,
 					[bindDN cString],
@@ -128,9 +140,9 @@ static int ldap_get_errno(LDAP *ld) {
 		return (false);
 	}
 
+	/* Wait for the result */
 	timeout.tv_sec = _timeout;
 	timeout.tv_usec = 0;
-
 	if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
@@ -139,13 +151,27 @@ static int ldap_get_errno(LDAP *ld) {
 		return (false);
 	}
 
-	/* Fish out the bind result */
+	/* Parse the bind result */
 	err = ldap_parse_sasl_bind_result(ldapConn, res, &servercred, 0);
-	ber_bvfree(servercred); /* We're only doing simple auth */
-	ldap_msgfree(res);
+	if (servercred != NULL)
+		ber_bvfree(servercred);
+
+	/* Did the parse (not the bind) succeed. Different LDAP
+	 * libraries seem to differ on whether this is the parse result,
+	 * or the bind result, so we play it safe and pull the bind result */
+	if (err != LDAP_SUCCESS) {
+		ldap_msgfree(res);
+		return false;
+	}
 
 	/* Did the the bind succeed? */
+	if (ldap_parse_result(ldapConn, res, &err, NULL, NULL, NULL, NULL, 1) != LDAP_SUCCESS) {
+		/* Parsing failed */
+		return false;
+	}
+
 	if (err == LDAP_SUCCESS) {
+		/* Bind succeeded */
 		return (true);
 	}
 
