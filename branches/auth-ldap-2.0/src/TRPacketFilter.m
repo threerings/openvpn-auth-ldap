@@ -35,6 +35,7 @@
 #include "TRPacketFilter.h"
 #include "TRPFAddress.h"
 #include "LFString.h"
+#include "xmalloc.h"
 
 #ifdef HAVE_PF
 
