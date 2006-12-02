@@ -1,0 +1,71 @@
+srcdir=         @srcdir@
+top_srcdir=     @top_srcdir@
+top_builddir=   @top_builddir@
+VPATH=          @srcdir@
+
+include ${top_builddir}/Mk/autoconf.mk
+include ${top_builddir}/Mk/compile.mk
+include ${top_builddir}/Mk/subdir.mk
+
+PLUGIN_NAME=	openvpn-auth-ldap
+PLUGIN_OBJS=	auth-ldap.o \
+		hash.o \
+		TRArray.o \
+		TREnumerator.o \
+		TRHash.o \
+		TRLDAPEntry.o \
+		TRObject.o \
+		TRLog.o \
+		LFString.o \
+		LFLDAPConnection.o \
+		LFAuthLDAPConfig.o \
+		TRConfig.o \
+		TRConfigToken.o \
+		TRConfigParser.o \
+		TRConfigLexer.o \
+		TRLDAPGroupConfig.o \
+		TRPacketFilter.o \
+		TRPFAddress.o \
+		strlcpy.o
+
+GEN_SRCS=	TRConfigParser.m \
+		TRConfigParser.h \
+		TRConfigLexer.m
+
+TEST_LIB=	libauth-ldap-testing.a
+TEST_OBJS=	testplugin.o
+
+CFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
+OBJCFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
+LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS)
+
+
+INSTALL_LIB=		$(INSTALL) -m 755
+PLUGIN_INSTALL_DIR=	$(DESTDIR)$(libdir)
+
+all:: $(PLUGIN_FILE) $(TEST_LIB) testplugin
+
+# Work-around for gnumake bug.
+# It fails to check if 'TRConfigParser.h' has been created
+# after lemon has been called, and goes looking for a
+# rule to build it.
+TRConfigParser.h: TRConfigParser.m
+
+$(PLUGIN_FILE): $(GEN_SRCS) $(PLUGIN_OBJS)
+	$(MAKE_PLUGIN)
+
+$(TEST_LIB): $(GEN_SRCS) $(PLUGIN_OBJS)
+	$(AR) -r $@ $(PLUGIN_OBJS)
+
+testplugin:: $(TEST_OBJS) $(TEST_LIB)
+	$(CC) -o $@ ${TEST_OBJS} ${LDFLAGS} -L. -lauth-ldap-testing ${LIBS}
+	
+install:: $(PLUGIN_FILE)
+	$(INSTALL_PLUGIN)
+
+clean::
+	rm -f $(TEST_OBJS) $(PLUGIN_OBJS) $(TEST_LIB) $(GEN_SRCS) testplugin
+	$(CLEAN_PLUGIN)
+
+distclean:: clean
+	rm -f Makefile
