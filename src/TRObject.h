@@ -42,6 +42,8 @@
 #include <stdbool.h>
 #include <objc/Object.h>
 
+#include "auth-ldap.h"
+
 @protocol TRObject
 /* Reference counting */
 - (id) retain;
