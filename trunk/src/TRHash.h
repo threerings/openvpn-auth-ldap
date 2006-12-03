@@ -45,6 +45,7 @@
 }
 
 - (id) initWithCapacity: (unsigned long) numItems;
+- (BOOL) isFull;
 - (id) valueForKey: (LFString *) key;
 - (void) setObject: (id) anObject forKey: (LFString *) key;
 - (void) removeObjectForKey: (LFString *) key;
