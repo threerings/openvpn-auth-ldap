@@ -1,6 +1,6 @@
 /*
- * tests.c
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRVPNSession.m
+ * TRVPNSession Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -32,61 +32,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
-
-#include <stdlib.h>
-#include <unistd.h>
-#include <check.h>
-#include <stdio.h>
-
-#include <tests.h>
-
-void print_usage(const char *name) {
-	printf("Usage: %s [filename]\n", name);
-	printf(" [filename]\tWrite XML log to <filename>\n");
-}
-
-int main(int argc, char *argv[]) {
-	Suite *s;
-	SRunner *sr;
-	int nf;
-
-	if (argc > 2) {
-		print_usage(argv[0]);
-		exit(1);
-	}
-
-	/* Load all test suites */
-	s = LFString_suite();
-	sr = srunner_create(s);
-	srunner_add_suite(sr, LFAuthLDAPConfig_suite());
-	srunner_add_suite(sr, LFLDAPConnection_suite());
-	srunner_add_suite(sr, TRLDAPEntry_suite());
-	srunner_add_suite(sr, TRObject_suite());
-	srunner_add_suite(sr, TRArray_suite());
-	srunner_add_suite(sr, TRHash_suite());
-	srunner_add_suite(sr, TRConfigToken_suite());
-	srunner_add_suite(sr, TRConfigLexer_suite());
-	srunner_add_suite(sr, TRConfig_suite());
-	srunner_add_suite(sr, TRLDAPGroupConfig_suite());
-	srunner_add_suite(sr, TRVPNSession_suite());
-#ifdef HAVE_PF
-	srunner_add_suite(sr, TRPacketFilter_suite());
-	srunner_add_suite(sr, TRPFAddress_suite());
 #endif
 
-	/* Enable XML output */
-	if (argc == 2)
-		srunner_set_xml(sr, argv[1]);
+#include <check.h>
 
-	/* Run tests */
-	srunner_run_all(sr, CK_NORMAL);
+#include <src/TRVPNSession.h>
 
-	nf = srunner_ntests_failed(sr);
-	srunner_free(sr);
+START_TEST(test_initWithUsername) {
+	TRVPNSession *session;
+	LFString *username = [[LFString alloc] initWithCString: "user"];
 
-	if (nf == 0)
-		exit(EXIT_SUCCESS);
-	else
-		exit(EXIT_FAILURE);
+	session = [[TRVPNSession alloc] initWithUsername: username];
+
+	fail_unless([session username] == username);
+
+	[username release];
+	[session release];
+}
+END_TEST
+
+Suite *TRVPNSession_suite(void) {
+	Suite *s = suite_create("TRVPNSession");
+
+	TCase *tc_session = tcase_create("VPN Session");
+	suite_add_tcase(s, tc_session);
+	tcase_add_test(tc_session, test_initWithUsername);
+
+	return s;
 }
