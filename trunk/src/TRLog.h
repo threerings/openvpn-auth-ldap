@@ -40,6 +40,8 @@
 
 @interface TRLog : TRObject
 
++ (void) _quiesceLogging: (BOOL) quiesce;
+
 #define DO_LOG_DECL(logName) \
 	/** Log a logname message */ \
 	+ (void) logName: (const char *) message, ...;
