@@ -41,6 +41,8 @@
 
 #include <tests.h>
 
+#include "src/TRLog.h"
+
 void print_usage(const char *name) {
 	printf("Usage: %s [filename]\n", name);
 	printf(" [filename]\tWrite XML log to <filename>\n");
@@ -80,7 +82,9 @@ int main(int argc, char *argv[]) {
 		srunner_set_xml(sr, argv[1]);
 
 	/* Run tests */
+	[TRLog _quiesceLogging: YES];
 	srunner_run_all(sr, CK_NORMAL);
+	[TRLog _quiesceLogging: NO];
 
 	nf = srunner_ntests_failed(sr);
 	srunner_free(sr);
