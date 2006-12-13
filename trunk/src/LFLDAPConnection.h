@@ -57,6 +57,7 @@
 		    attributes: (TRArray *) attributes;
 - (BOOL) compareDN: (LFString *) dn withAttribute: (LFString *) attribute value: (LFString *) value;
 
+- (BOOL) setReferralEnabled: (BOOL) enabled;
 - (BOOL) setTLSCACertFile: (LFString *) fileName;
 - (BOOL) setTLSCACertDir: (LFString *) directory;
 - (BOOL) setTLSClientCert: (LFString *) certFile keyFile: (LFString *) keyFile;

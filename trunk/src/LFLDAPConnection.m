@@ -376,7 +376,7 @@ finish:
 - (BOOL) _setLDAPOption: (int) opt value: (const char *) value connection: (LDAP *) ldapConn {
 	int err;
 	if ((err = ldap_set_option(NULL, opt, (const void *) value)) != LDAP_SUCCESS) {
-		[TRLog debug: "Unable to set ldap option %d to %s: %d: %s", opt, value, err, ldap_err2string(err)];
+		[TRLog debug: "Unable to set ldap option %d to %s: %d: %s", opt, value == NULL ? "False" : value, err, ldap_err2string(err)];
 		return (false);
 	}
 	return true;
@@ -392,6 +392,13 @@ finish:
 		return (false);
 	}
 	return (true);
+}
+
+- (BOOL) setReferralEnabled: (BOOL) enabled {
+	if (enabled)
+		return [self _setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_OFF connection: ldapConn];
+	else
+		return [self _setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_OFF connection: ldapConn];
 }
 
 - (BOOL) setTLSCACertFile: (LFString *) fileName {
