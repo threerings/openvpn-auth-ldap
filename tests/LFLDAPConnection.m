@@ -58,6 +58,9 @@ START_TEST(test_init) {
 
 	conn = [[LFLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
 
+	/* Referrals */
+	fail_unless([conn setReferralEnabled: [config referralEnabled]]);
+
 	/* Certificate file */
 	if ((value = [config tlsCACertFile]))
 		fail_unless([conn setTLSCACertFile: value]);
