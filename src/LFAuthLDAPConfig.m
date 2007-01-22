@@ -66,6 +66,7 @@ typedef enum {
 	LF_LDAP_TIMEOUT,		/* LDAP Server Timeout */
 	LF_LDAP_BINDDN,			/* Bind DN for LDAP Searches */
 	LF_LDAP_PASSWORD,		/* Associated Password */
+	LF_LDAP_REFERRAL,		/* Enable Referrals */
 	LF_LDAP_TLS,			/* Enable TLS */
 	LF_LDAP_TLS_CA_CERTFILE,	/* TLS CA Certificate File */
 	LF_LDAP_TLS_CA_CERTDIR,		/* TLS CA Certificate Dir */
@@ -124,6 +125,7 @@ static OpcodeTable LDAPSectionVariables[] = {
 	{ "Timeout",		LF_LDAP_TIMEOUT,	NO,	NO },
 	{ "BindDN",		LF_LDAP_BINDDN,		NO,	NO },
 	{ "Password",		LF_LDAP_PASSWORD,	NO,	NO },
+	{ "FollowReferrals",	LF_LDAP_REFERRAL,	NO,	NO },
 	{ "TLSEnable",		LF_LDAP_TLS,		NO,	NO },
 	{ "TLSCACertFile",	LF_LDAP_TLS_CA_CERTFILE, NO,	NO },
 	{ "TLSCACertDir",	LF_LDAP_TLS_CA_CERTDIR,	NO,	NO },
@@ -572,6 +574,7 @@ error:
 			switch (opcodeEntry->opcode) {
 				int timeout;
 				BOOL enableTLS;
+				BOOL enableReferral;
 
 				/* LDAP URL */
 				case LF_LDAP_URL:
@@ -595,6 +598,15 @@ error:
 						return;
 					}
 					[self setTimeout: timeout];
+					break;
+
+				/* LDAP Referrals Enabled */
+				case LF_LDAP_REFERRAL:
+					if (![value boolValue: &enableReferral]) {
+						[self errorBoolValue: value];
+						return;
+					}
+					[self setReferralEnabled: enableReferral];
 					break;
 
 				/* LDAP TLS Enabled */
@@ -841,6 +853,14 @@ error:
 	if (_searchFilter)
 		[_searchFilter release];
 	_searchFilter = [searchFilter retain];
+}
+
+- (BOOL) referralEnabled {
+	return (_referralEnabled);
+}
+
+- (void) setReferralEnabled: (BOOL) newReferralSetting {
+	_referralEnabled = newReferralSetting;
 }
 
 - (int) timeout {
