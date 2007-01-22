@@ -41,6 +41,7 @@
 	/* LDAP Settings */
 	LFString *_url;
 	BOOL _tlsEnabled;
+	BOOL _referralEnabled;
 	int _timeout;
 	LFString *_tlsCACertFile;
 	LFString *_tlsCACertDir;
@@ -108,6 +109,9 @@
 
 - (LFString *) searchFilter;
 - (void) setSearchFilter: (LFString *) searchFilter;
+
+- (BOOL) referralEnabled;
+- (void) setReferralEnabled: (BOOL) newReferralSetting;
 
 - (BOOL) requireGroup;
 - (void) setRequireGroup: (BOOL) requireGroup;

@@ -298,6 +298,15 @@ LFLDAPConnection *connect_ldap(LFAuthLDAPConfig *config) {
 		return nil;
 	}
 
+	/* Referrals */
+	if ([config referralEnabled]) {
+		if (![ldap setReferralEnabled: YES])
+			goto error;
+	} else {
+		if (![ldap setReferralEnabled: NO])
+			goto error;
+	}
+
 	/* Bind if requested */
 	if ([config bindDN]) {
 		if (![ldap bindWithDN: [config bindDN] password: [config bindPassword]]) {
