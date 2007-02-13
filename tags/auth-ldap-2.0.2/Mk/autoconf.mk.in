@@ -1,0 +1,43 @@
+SHELL			= @SHELL@
+
+CC			= @CC@
+
+CFLAGS			= @CFLAGS@ @DEFS@ -Wall
+OBJCFLAGS		= @OBJCFLAGS@ ${OBJC_RUNTIME_FLAGS} -fno-strict-aliasing ${CFLAGS}
+OBJC_LIBS		= @OBJC_LIBS@
+OBJC_RUNTIME            = @OBJC_RUNTIME@
+OBJC_RUNTIME_FLAGS      = @OBJC_RUNTIME_FLAGS@
+
+PLUGIN_LD		= @PLUGIN_LD@
+PLUGIN_LD_FLAGS		= @PLUGIN_LD_FLAGS@
+PLUGIN_CFLAGS		= @PLUGIN_CFLAGS@
+PLUGIN_SUFFIX		= @PLUGIN_SUFFIX@
+PLUGIN_FILE		= @PLUGIN_FILE@
+
+MAKE_PLUGIN		= @MAKE_PLUGIN@
+INSTALL_PLUGIN		= @INSTALL_PLUGIN@
+CLEAN_PLUGIN		= @CLEAN_PLUGIN@
+
+LDAP_LIBS		= @LDAP_LIBS@
+LDAP_CFLAGS		= @LDAP_CFLAGS@
+
+OPENVPN_CFLAGS		= @OPENVPN_CFLAGS@
+
+LDFLAGS                 = @LDFLAGS@
+
+INSTALL                 = @INSTALL@
+LN_S                    = @LN_S@
+
+RE2C			= @RE2C@
+DOXYGEN			= @DOXYGEN@
+
+prefix			= @prefix@
+sysconfdir		= @sysconfdir@
+exec_prefix		= @exec_prefix@
+bindir			= @bindir@
+datadir			= @datadir@
+libdir			= @libdir@
+localstatedir		= @localstatedir@
+infodir			= @infodir@
+
+SILENT			= @
