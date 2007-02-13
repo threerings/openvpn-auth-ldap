@@ -46,13 +46,6 @@ START_TEST(test_initWithCapacity) {
 }
 END_TEST
 
-START_TEST(test_isFull) {
-	TRHash *hash = [[TRHash alloc] initWithCapacity: 0];
-	fail_unless([hash isFull]);
-	[hash release];
-}
-END_TEST
-
 START_TEST(test_setObjectForKey) {
 	TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
 	LFString *string = [[LFString alloc] initWithCString: "Hello, World"];
@@ -180,7 +173,6 @@ Suite *TRHash_suite(void) {
 	TCase *tc_hash = tcase_create("Hash");
 	suite_add_tcase(s, tc_hash);
 	tcase_add_test(tc_hash, test_initWithCapacity);
-	tcase_add_test(tc_hash, test_isFull);
 	tcase_add_test(tc_hash, test_setObjectForKey);
 	tcase_add_test(tc_hash, test_setObjectForKey_replacement);
 	tcase_add_test(tc_hash, test_removeObjectForKey);

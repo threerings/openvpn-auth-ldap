@@ -38,12 +38,9 @@
 
 #include "TRLog.h"
 
-static BOOL _quiesce = NO;
-
 #define DO_LOG(logName, priority) \
 	+ (void) logName: (const char *) message, ... { \
 		va_list ap; \
-		if (_quiesce) return; \
 		va_start(ap, message); \
 		vsyslog(priority, message, ap); \
 		va_end(ap); \
@@ -54,13 +51,6 @@ static BOOL _quiesce = NO;
 	}
 
 @implementation TRLog
-
-/*!
- * Private method that quiets all logging for the purpose of unit testing.
- */
-+ (void) _quiesceLogging: (BOOL) quiesce {
-	_quiesce = quiesce;
-}
 
 DO_LOG(error, LOG_ERR);
 DO_LOG(warning, LOG_WARNING);
