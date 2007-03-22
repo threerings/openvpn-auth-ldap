@@ -37,6 +37,12 @@
 
 #include "TRObject.h"
 
+typedef enum {
+	TRLOG_ERR,
+	TRLOG_WARNING,
+	TRLOG_INFO,
+	TRLOG_DEBUG
+} loglevel_t;
 
 @interface TRLog : TRObject
 
@@ -50,6 +56,8 @@ DO_LOG_DECL(error);
 DO_LOG_DECL(warning);
 DO_LOG_DECL(info);
 DO_LOG_DECL(debug);
+
++ (void) log: (loglevel_t) level withMessage: (const char *) message, ...;
 
 #undef DO_LOG_DECL
 
