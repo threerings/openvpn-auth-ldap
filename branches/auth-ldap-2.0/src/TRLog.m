@@ -38,23 +38,70 @@
 
 #include "TRLog.h"
 
+/*! Log a message to stderr. */
+static void log_stderr(const char *message, va_list args) {
+	/* Log the message to stderr */
+	vfprintf(stderr, message, args);
+	fprintf(stderr, "\n");
+}
+
+/*! Log a message to syslog. */
+static void log_syslog(int priority, const char *message, va_list args) {
+	vsyslog(priority, message, args);
+}
+
+@implementation TRLog
+
 #define DO_LOG(logName, priority) \
 	+ (void) logName: (const char *) message, ... { \
 		va_list ap; \
 		va_start(ap, message); \
-		vsyslog(priority, message, ap); \
+		log_syslog(priority, message, ap); \
 		va_end(ap); \
 		va_start(ap, message); \
-		vfprintf(stderr, message, ap); \
+		log_stderr(message, ap); \
 		va_end(ap); \
-		fprintf(stderr, "\n"); \
 	}
-
-@implementation TRLog
 
 DO_LOG(error, LOG_ERR);
 DO_LOG(warning, LOG_WARNING);
 DO_LOG(info, LOG_INFO);
 DO_LOG(debug, LOG_DEBUG);
+
+#undef DO_LOG
+
+/*!
+ * Log a message with the supplied priority.
+ */
++ (void) log: (loglevel_t) level withMessage: (const char *) message, ... {
+	va_list ap;
+	int priority = LOG_ERR;
+
+	/* Map the TRLog log level to a syslog priority. */
+	switch (level) {
+		case TRLOG_ERR:
+			priority = LOG_ERR;
+			break;
+		case TRLOG_WARNING:
+			priority = LOG_WARNING;
+			break;
+		case TRLOG_INFO:
+			priority = LOG_INFO;
+			break;
+		case TRLOG_DEBUG:
+			priority = LOG_DEBUG;
+			break;
+	}
+
+	/* Log the message to syslog */
+	va_start(ap, message);
+	log_syslog(priority, message, ap);
+	va_end(ap);
+
+	/* Log the message to stderr */
+	va_start(ap, message);
+	log_stderr(message, ap);
+	va_end(ap);
+}
 
 @end

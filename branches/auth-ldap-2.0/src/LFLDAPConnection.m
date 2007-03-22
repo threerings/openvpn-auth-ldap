@@ -46,12 +46,44 @@ static int ldap_get_errno(LDAP *ld) {
 	return err;
 }
 
+/*
+ * Private Methods
+ */
+@interface LFLDAPConnection (Private)
+- (void) log: (loglevel_t) level withLDAPError: (int) error message: (char *) message;
+@end
+
+@implementation LFLDAPConnection (Private)
+
+/*!
+ * Log an LDAP error, including the LDAP_OPT_ERROR_STRING, if available.
+ */
+- (void) log: (loglevel_t) level withLDAPError: (int) error message: (char *) message {
+
+	char *ld_error = NULL;
+	ldap_get_option(ldapConn, LDAP_OPT_ERROR_STRING, &ld_error);
+	if (ld_error && strlen(ld_error) != 0) {
+		[TRLog log: level withMessage: "%s: %s (%s)", message, ldap_err2string(error), ld_error];
+	} else {
+		[TRLog log: level withMessage: "%s: %s", message, ldap_err2string(error)];
+	}
+
+	if (ld_error) {
+		ldap_memfree(ld_error);
+	}
+
+}
+
+@end
+
+/*
+ * Public Methods
+ */
 @implementation LFLDAPConnection
 
 - (id) initWithURL: (LFString *) url timeout: (int) timeout {
 	struct timeval ldapTimeout;
 	int arg;
-	// int err;
 
 	self = [self init];
 	if (!self)
@@ -87,7 +119,7 @@ static int ldap_get_errno(LDAP *ld) {
 	int err;
 	err = ldap_unbind_ext_s(ldapConn, NULL, NULL);
 	if (err != LDAP_SUCCESS) {
-		[TRLog warning: "Unable to unbind from LDAP server: %s", ldap_err2string(err)];
+		[self log: TRLOG_WARNING withLDAPError: err message: "Unable to unbind from LDAP server"];
 	}
 	[super dealloc];
 }
@@ -99,7 +131,7 @@ static int ldap_get_errno(LDAP *ld) {
 	int err;
 	err = ldap_start_tls_s(ldapConn, NULL, NULL);
 	if (err != LDAP_SUCCESS) {
-		[TRLog error: "Unable to enable STARTTLS: %s", ldap_err2string(err)];
+		[self log: TRLOG_ERR withLDAPError: err message: "Unable to enable STARTTLS"];
 		return (NO);
 	}
 
@@ -136,7 +168,7 @@ static int ldap_get_errno(LDAP *ld) {
 					NULL,
 					NULL,
 					&msgid)) != LDAP_SUCCESS) {
-		[TRLog error: "ldap_bind failed immediately: %s", ldap_err2string(err)];
+		[self log: TRLOG_ERR withLDAPError: err message: "LDAP bind failed immediately"];
 		return (false);
 	}
 
@@ -147,7 +179,7 @@ static int ldap_get_errno(LDAP *ld) {
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
 			ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
-		[TRLog error: "ldap_bind failed: %s", ldap_err2string(err)];
+		[self log: TRLOG_ERR withLDAPError: err message: "LDAP bind failed"];
 		return (false);
 	}
 
@@ -175,7 +207,7 @@ static int ldap_get_errno(LDAP *ld) {
 		return (true);
 	}
 
-	[TRLog error: "ldap_bind failed: %s", ldap_err2string(err)];
+	[self log: TRLOG_ERR withLDAPError: err message: "LDAP bind failed"];
 	return (false);
 }
 
@@ -236,7 +268,7 @@ static int ldap_get_errno(LDAP *ld) {
 	 * Non-hardcoded size limit.
 	 */
 	if ((err = ldap_search_ext_s(ldapConn, [base cString], scope, [filter cString], attrArray, 0, NULL, NULL, &timeout, 1024, &res)) != LDAP_SUCCESS) {
-		[TRLog error: "LDAP search failed: %d: %s", err, ldap_err2string(err)];
+		[self log: TRLOG_ERR withLDAPError: err message: "LDAP search failed"];
 		goto finish;
 	}
 
@@ -355,6 +387,7 @@ finish:
 		err = ldap_get_errno(ldapConn);
 		if (err == LDAP_TIMEOUT)
 			ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
+
 		[TRLog debug: "ldap_compare_ext failed: %s", ldap_err2string(err)];
 		return NO;
 	}
