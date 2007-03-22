@@ -117,17 +117,6 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 }
 
 /*!
- * If the hash is full, returns YES.
- * Attempting to add an item to a full hash will trigger an assertion.
- */
-- (BOOL) isFull {
-	if (hash_isfull(_hash))
-		return YES;
-	else
-		return NO;
-}
-
-/*!
  * Remove the key and associated value from the hash table.
  */
 - (void) removeObjectForKey: (LFString *) key {

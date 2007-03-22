@@ -1,10 +1,8 @@
 /*
- * TRVPNSession.m
- * An active VPN session
+ * auth_ldap.h
+ * OpenVPN LDAP Authentication Plugin
  *
- * Author: Landon Fuller <landonf@threerings.net>
- *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +13,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of any contributors
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,26 +30,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TRVPNSession.h"
+#ifndef AUTH_LDAP_H
+#define AUTH_LDAP_H
 
-@implementation TRVPNSession
+#include <stdlib.h>
 
-- (id) initWithUsername: (LFString *) username {
-	self = [self init];
-	if (!self)
-		return nil;
+void *xmalloc(size_t size);
+void *xrealloc(void *ptr, size_t size);
+char *xstrdup(const char *str);
 
-	_username = [username retain];
-	return (self);
-}
-
-- (void) dealloc {
-	[_username release];
-	[super dealloc];
-}
-
-- (LFString *) username {
-	return (_username);
-}
-
-@end
+#endif /* AUTH_LDAP_H */

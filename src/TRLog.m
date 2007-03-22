@@ -38,8 +38,6 @@
 
 #include "TRLog.h"
 
-static BOOL _quiesce = NO;
-
 /*! Log a message to stderr. */
 static void log_stderr(const char *message, va_list args) {
 	/* Log the message to stderr */
@@ -52,21 +50,11 @@ static void log_syslog(int priority, const char *message, va_list args) {
 	vsyslog(priority, message, args);
 }
 
-
-
 @implementation TRLog
-
-/*!
- * Private method that quiets all logging for the purpose of unit testing.
- */
-+ (void) _quiesceLogging: (BOOL) quiesce {
-	_quiesce = quiesce;
-}
 
 #define DO_LOG(logName, priority) \
 	+ (void) logName: (const char *) message, ... { \
 		va_list ap; \
-		if (_quiesce) return; \
 		va_start(ap, message); \
 		log_syslog(priority, message, ap); \
 		va_end(ap); \
@@ -88,9 +76,6 @@ DO_LOG(debug, LOG_DEBUG);
 + (void) log: (loglevel_t) level withMessage: (const char *) message, ... {
 	va_list ap;
 	int priority = LOG_ERR;
-
-	/* Logging quiesced for debugging. */
-	if (_quiesce) return;
 
 	/* Map the TRLog log level to a syslog priority. */
 	switch (level) {
@@ -118,6 +103,5 @@ DO_LOG(debug, LOG_DEBUG);
 	log_stderr(message, ap);
 	va_end(ap);
 }
-
 
 @end

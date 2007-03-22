@@ -35,7 +35,6 @@
 #include "TRPacketFilter.h"
 #include "TRPFAddress.h"
 #include "LFString.h"
-#include "xmalloc.h"
 
 #ifdef HAVE_PF
 
@@ -146,10 +145,6 @@
 - (BOOL) clearAddressesFromTable: (LFString *) tableName {
 	struct pfioc_table io;
 
-	/* Validate name */
-	if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
-		return false;
-
 	/* Initialize the io structure */
 	memset(&io, 0, sizeof(io));
 
@@ -167,10 +162,6 @@
 /*! Add an address to the specified table. */
 - (BOOL) addAddress: (TRPFAddress *) address toTable: (LFString *) tableName {
 	struct pfioc_table io;
-
-	/* Validate name */
-	if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
-		return false;
 
 	/* Initialize the io structure */
 	memset(&io, 0, sizeof(io));
@@ -196,10 +187,6 @@
 /*! Delete an address from the specified table. */
 - (BOOL) deleteAddress: (TRPFAddress *) address fromTable: (LFString *) tableName {
 	struct pfioc_table io;
-
-	/* Validate name */
-	if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
-		return false;
 
 	/* Initialize the io structure */
 	memset(&io, 0, sizeof(io));
@@ -230,10 +217,6 @@
 	struct pfioc_table io;
 	struct pfr_addr *pfrAddr;
 	int size, i;
-
-	/* Validate name */
-	if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
-		return false;
 
 	/* Initialize the io structure */
 	memset(&io, 0, sizeof(io));

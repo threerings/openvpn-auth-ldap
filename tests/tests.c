@@ -1,10 +1,10 @@
 /*
- * xmalloc.h
+ * tests.c
+ * OpenVPN LDAP Authentication Plugin Unit Tests
  *
- * "Safe" malloc routines -- and by safe, I mean "fail deterministically"
+ * Author: Landon Fuller <landonf@threerings.net>
  *
  * Copyright (c) 2006 Three Rings Design, Inc.
- * Copyright (c) 2005 - 2006 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,13 +32,60 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MALLOC_H
-#define MALLOC_H
+#include <config.h>
 
 #include <stdlib.h>
+#include <unistd.h>
+#include <check.h>
+#include <stdio.h>
 
-void *xmalloc(size_t size);
-void *xrealloc(void *ptr, size_t size);
-char *xstrdup(const char *str);
+#include <tests.h>
 
-#endif /* MALLOC_H */
+void print_usage(const char *name) {
+	printf("Usage: %s [filename]\n", name);
+	printf(" [filename]\tWrite XML log to <filename>\n");
+}
+
+int main(int argc, char *argv[]) {
+	Suite *s;
+	SRunner *sr;
+	int nf;
+
+	if (argc > 2) {
+		print_usage(argv[0]);
+		exit(1);
+	}
+
+	/* Load all test suites */
+	s = LFString_suite();
+	sr = srunner_create(s);
+	srunner_add_suite(sr, LFAuthLDAPConfig_suite());
+	srunner_add_suite(sr, LFLDAPConnection_suite());
+	srunner_add_suite(sr, TRLDAPEntry_suite());
+	srunner_add_suite(sr, TRObject_suite());
+	srunner_add_suite(sr, TRArray_suite());
+	srunner_add_suite(sr, TRHash_suite());
+	srunner_add_suite(sr, TRConfigToken_suite());
+	srunner_add_suite(sr, TRConfigLexer_suite());
+	srunner_add_suite(sr, TRConfig_suite());
+	srunner_add_suite(sr, TRLDAPGroupConfig_suite());
+#ifdef HAVE_PF
+	srunner_add_suite(sr, TRPacketFilter_suite());
+	srunner_add_suite(sr, TRPFAddress_suite());
+#endif
+
+	/* Enable XML output */
+	if (argc == 2)
+		srunner_set_xml(sr, argv[1]);
+
+	/* Run tests */
+	srunner_run_all(sr, CK_NORMAL);
+
+	nf = srunner_ntests_failed(sr);
+	srunner_free(sr);
+
+	if (nf == 0)
+		exit(EXIT_SUCCESS);
+	else
+		exit(EXIT_FAILURE);
+}

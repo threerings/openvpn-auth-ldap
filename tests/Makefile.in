@@ -21,8 +21,7 @@ TEST_OBJS=	tests.o \
 		TRConfigToken.o \
 		TRConfigLexer.o \
 		TRConfig.o \
-		TRLDAPGroupConfig.o \
-		TRVPNSession.o
+		TRLDAPGroupConfig.o
 
 CFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
