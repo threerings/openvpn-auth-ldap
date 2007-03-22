@@ -46,8 +46,8 @@
 }
 
 - (void) dealloc {
-	[super dealloc];
 	[_username release];
+	[super dealloc];
 }
 
 - (LFString *) username {
