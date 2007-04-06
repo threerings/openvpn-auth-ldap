@@ -429,7 +429,7 @@ finish:
 
 - (BOOL) setReferralEnabled: (BOOL) enabled {
 	if (enabled)
-		return [self _setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_OFF connection: ldapConn];
+		return [self _setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_ON connection: ldapConn];
 	else
 		return [self _setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_OFF connection: ldapConn];
 }
