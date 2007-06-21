@@ -13,18 +13,22 @@ DISTNAME=	auth-ldap-${PORTVERSION}
 MAINTAINER=	snb@threerings.net
 COMMENT=	LDAP authentication plugin for OpenVPN
 
-PLIST_FILES=	lib/openvpn-auth-ldap.so
-
-USE_OPENLDAP=	yes
 BUILD_DEPENDS=	re2c:${PORTSDIR}/devel/re2c \
 		${NONEXISTENT}:${PORTSDIR}/security/openvpn:extract
 
-# XXX need to find OpenVPN version and add proper configure flags
+GNU_CONFIGURE=	yes
+USE_OPENLDAP=	yes
+OPENVPN_WRKSRC=	`cd ${PORTSDIR}/security/openvpn; make -V WRKSRC`
+CONFIGURE_ARGS+=	--with-openldap=${LOCALBASE} \
+			--with-openvpn=${OPENVPN_WRKSRC}
+
+PORTDOCS=	README
+PLIST_FILES=	lib/openvpn-auth-ldap.so
 
 post-install:
 .if !defined(NOPORTDOCS)
+	${MKDIR} ${DOCSDIR}
 	${INSTALL_DATA} ${WRKSRC}/README ${DOCSDIR}
-PLIST_FILES+=	${DOCSDIR}/README
 .endif
 
 .include <bsd.port.mk>
