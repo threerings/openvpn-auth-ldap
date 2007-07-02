@@ -51,6 +51,8 @@ static int ldap_get_errno(LDAP *ld) {
  */
 @interface LFLDAPConnection (Private)
 - (void) log: (loglevel_t) level withLDAPError: (int) error message: (char *) message;
+- (BOOL) setLDAPOption: (int) opt value: (const char *) value connection: (LDAP *) ldapConn;
+- (BOOL) setTLSRequireCert;
 @end
 
 @implementation LFLDAPConnection (Private)
@@ -72,6 +74,32 @@ static int ldap_get_errno(LDAP *ld) {
 		ldap_memfree(ld_error);
 	}
 
+}
+
+/*!
+ * Set an LDAP option.
+ */
+- (BOOL) setLDAPOption: (int) opt value: (const char *) value connection: (LDAP *) ldapConn {
+	int err;
+	if ((err = ldap_set_option(NULL, opt, (const void *) value)) != LDAP_SUCCESS) {
+		[TRLog debug: "Unable to set ldap option %d to %s: %d: %s", opt, value == NULL ? "False" : value, err, ldap_err2string(err)];
+		return (false);
+	}
+	return true;
+}
+
+/*! 
+ * Always require a valid certificate
+ */	
+- (BOOL) setTLSRequireCert {
+	int err;
+	int arg;
+	arg = LDAP_OPT_X_TLS_HARD;
+	if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &arg)) != LDAP_SUCCESS) {
+		[TRLog debug: "Unable to set LDAP_OPT_X_TLS_HARD to %d: %d: %s", arg, err, ldap_err2string(err)];
+		return (false);
+	}
+	return (true);
 }
 
 @end
@@ -405,58 +433,36 @@ finish:
 	return NO;
 }
 
-
-- (BOOL) _setLDAPOption: (int) opt value: (const char *) value connection: (LDAP *) ldapConn {
-	int err;
-	if ((err = ldap_set_option(NULL, opt, (const void *) value)) != LDAP_SUCCESS) {
-		[TRLog debug: "Unable to set ldap option %d to %s: %d: %s", opt, value == NULL ? "False" : value, err, ldap_err2string(err)];
-		return (false);
-	}
-	return true;
-}
-
-/* Always require a valid certificate */	
-- (BOOL) _setTLSRequireCert {
-	int err;
-	int arg;
-	arg = LDAP_OPT_X_TLS_HARD;
-	if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &arg)) != LDAP_SUCCESS) {
-		[TRLog debug: "Unable to set LDAP_OPT_X_TLS_HARD to %d: %d: %s", arg, err, ldap_err2string(err)];
-		return (false);
-	}
-	return (true);
-}
-
 - (BOOL) setReferralEnabled: (BOOL) enabled {
 	if (enabled)
-		return [self _setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_ON connection: ldapConn];
+		return [self setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_ON connection: ldapConn];
 	else
-		return [self _setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_OFF connection: ldapConn];
+		return [self setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_OFF connection: ldapConn];
 }
 
 - (BOOL) setTLSCACertFile: (LFString *) fileName {
-	if ([self _setLDAPOption: LDAP_OPT_X_TLS_CACERTFILE value: [fileName cString] connection: ldapConn])
-		if ([self _setTLSRequireCert])
+	if ([self setLDAPOption: LDAP_OPT_X_TLS_CACERTFILE value: [fileName cString] connection: ldapConn])
+		if ([self setTLSRequireCert])
 			return true;
 	return false;
 }
 
 - (BOOL) setTLSCACertDir: (LFString *) directory {
-	if ([self _setLDAPOption: LDAP_OPT_X_TLS_CACERTDIR value: [directory cString] connection: ldapConn])
-		if ([self _setTLSRequireCert])
+	if ([self setLDAPOption: LDAP_OPT_X_TLS_CACERTDIR value: [directory cString] connection: ldapConn])
+		if ([self setTLSRequireCert])
 			return true;
 	return false;
 }
 
 - (BOOL) setTLSClientCert: (LFString *) certFile keyFile: (LFString *) keyFile {
-	if ([self _setLDAPOption: LDAP_OPT_X_TLS_CERTFILE value: [certFile cString] connection: ldapConn])
-		if ([self _setLDAPOption: LDAP_OPT_X_TLS_KEYFILE value: [keyFile cString] connection: ldapConn])
+	if ([self setLDAPOption: LDAP_OPT_X_TLS_CERTFILE value: [certFile cString] connection: ldapConn])
+		if ([self setLDAPOption: LDAP_OPT_X_TLS_KEYFILE value: [keyFile cString] connection: ldapConn])
 			return true;
 	return false;
 }
 
 - (BOOL) setTLSCipherSuite: (LFString *) cipherSuite {
-	return [self _setLDAPOption: LDAP_OPT_X_TLS_CIPHER_SUITE value: [cipherSuite cString] connection: ldapConn];
+	return [self setLDAPOption: LDAP_OPT_X_TLS_CIPHER_SUITE value: [cipherSuite cString] connection: ldapConn];
 }
 
 @end
