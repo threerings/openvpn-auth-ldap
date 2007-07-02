@@ -237,8 +237,7 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable *tables[])
 		return self;
 
 	_opcode = LF_UNKNOWN_OPCODE;
-	/* Totally arbitrary number. More keys than this will cause assert() to trigger */
-	_hash = [[TRHash alloc] initWithCapacity: 65536];
+	_hash = [[TRHash alloc] initWithCapacity: HASHCOUNT_T_MAX];
 
 	return self;
 }
