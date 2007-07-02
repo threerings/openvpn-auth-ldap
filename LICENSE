@@ -16,10 +16,10 @@ Associated copyrights and licenses are documented below. You'll find that they
 are all compatible and as permissive as the standard BSD license -- in fact,
 most are simply small variations on the license.
 
-In addition, some public domain sources are included with this distribution and
-used as a part of the build process:
-	- The lemon parser generator (http://www.hwaci.com/sw/lemon/)
-	- Makeheaders (http://www.hwaci.com/sw/mkhdr/)
+Some additional sources are included with this distribution and used as a part
+of the build process; they are not linked with the final product:
+	- The lemon parser generator - Public Domain (http://www.hwaci.com/sw/lemon/)
+	- Makeheaders - GPL (http://www.hwaci.com/sw/mkhdr/)
 
 ***************************
 * COPYRIGHTS AND LICENSES *
