@@ -96,7 +96,7 @@
 	return (numBytes);
 }
 
-/*!
+/**
  * Return a hash value for the receiver.
  * Hash algorithm borrowed from kazlib.
  */

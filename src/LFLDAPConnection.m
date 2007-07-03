@@ -57,7 +57,7 @@ static int ldap_get_errno(LDAP *ld) {
 
 @implementation LFLDAPConnection (Private)
 
-/*!
+/**
  * Log an LDAP error, including the LDAP_OPT_ERROR_STRING, if available.
  */
 - (void) log: (loglevel_t) level withLDAPError: (int) error message: (char *) message {
@@ -76,7 +76,7 @@ static int ldap_get_errno(LDAP *ld) {
 
 }
 
-/*!
+/**
  * Set an LDAP option.
  */
 - (BOOL) setLDAPOption: (int) opt value: (const char *) value connection: (LDAP *) ldapConn {
@@ -88,7 +88,7 @@ static int ldap_get_errno(LDAP *ld) {
 	return true;
 }
 
-/*! 
+/** 
  * Always require a valid certificate
  */	
 - (BOOL) setTLSRequireCert {
@@ -152,7 +152,7 @@ static int ldap_get_errno(LDAP *ld) {
 	[super dealloc];
 }
 
-/*!
+/**
  * Start TLS on the LDAP connection.
  */
 - (BOOL) startTLS {
@@ -239,7 +239,7 @@ static int ldap_get_errno(LDAP *ld) {
 	return (false);
 }
 
-/*!
+/**
  * Run an LDAP search.
  * @param filter: LDAP search filter.
  * @param scope: LDAP scope (LDAP_SCOPE_BASE, LDAP_SCOPE_ONE, or LDAP_SCOPE_SUBTREE)

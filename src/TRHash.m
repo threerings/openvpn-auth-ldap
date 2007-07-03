@@ -36,7 +36,7 @@
 #include <string.h>
 #include <assert.h>
 
-/*!
+/**
  * Hash key enumerator.
  */
 @interface TRHashKeyEnumerator : TREnumerator <TREnumerator> {
@@ -101,7 +101,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 	[super dealloc];
 }
 
-/*!
+/**
  * Initialize a new TRHash with an maximum capacity of
  * numItems.
  */
@@ -116,7 +116,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 	return self;
 }
 
-/*!
+/**
  * If the hash is full, returns YES.
  * Attempting to add an item to a full hash will trigger an assertion.
  */
@@ -127,7 +127,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 		return NO;
 }
 
-/*!
+/**
  * Remove the key and associated value from the hash table.
  */
 - (void) removeObjectForKey: (LFString *) key {
@@ -154,7 +154,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 	hnode_destroy(node);
 }
 
-/*!
+/**
  * Returns the associated value for a given key.
  */
 - (id) valueForKey: (LFString *) key {
@@ -170,7 +170,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 }
 
 
-/*!
+/**
  * Add anObject to the hash table with key.
  * Both the key and value are retained.
  */
@@ -196,7 +196,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 	return _hash;
 }
 
-/*!
+/**
  * Return a key enumerator.
  * Due to our lack of an autorelease pool,
  * it is the caller's responsibility to release

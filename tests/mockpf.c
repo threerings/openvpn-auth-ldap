@@ -101,26 +101,26 @@ static struct pfr_table dev_table = {
 	.pfrt_fback = 0
 };
 
-/*! Generic structure definition for either list type. */
+/** Generic structure definition for either list type. */
 typedef struct PFNode {
 	struct PFNode *prev;
 	struct PFNode *next;
 } PFNode;
 
-/*! Generic list structure. */
+/** Generic list structure. */
 typedef struct PFList {
 	unsigned int nodeCount;
 	PFNode *firstNode;
 } PFList;
 
-/*! Double linked list of addresses. */
+/** Double linked list of addresses. */
 typedef struct PFAddressNode {
 	struct PFAddressNode *prev;
 	struct PFAddressNode *next;
 	struct pfr_addr addr;
 } PFAddressNode;
 
-/*! Double linked list of tables. */
+/** Double linked list of tables. */
 typedef struct PFTableNode {
 	struct PFTableNode *prev;
 	struct PFTableNode *next;
@@ -130,13 +130,13 @@ typedef struct PFTableNode {
 
 static PFList *pf_tables;
 
-/*! Initialize a new list. */
+/** Initialize a new list. */
 static void init_pflist(PFList *list) {
 	list->firstNode = NULL;
 	list->nodeCount = 0;
 }
 
-/*! Initialize a new node. */
+/** Initialize a new node. */
 static void init_pfnode(PFNode *node) {
 	node->prev = NULL;
 	node->next = NULL;
@@ -284,7 +284,7 @@ int close(int d) {
 	return _real_close(d);
 }
 
-/*!
+/**
  * Rewrite anchors referenced by tables to remove slashes and check for
  * validity.
  * Taken from FreeBSD: src/sys/contrib/pf/net/pf_table.c,v 1.7
@@ -313,7 +313,7 @@ int pfr_fix_anchor(char *anchor) {
 }
 
 
-/*!
+/**
  * Validate a table structure.
  * Taken from FreeBSD: src/sys/contrib/pf/net/pf_table.c,v 1.7
  */
@@ -333,7 +333,7 @@ int pfr_validate_table(struct pfr_table *tbl) {
 	return (1);
 }
 
-/*!
+/**
  * Validate an address structure.
  * Taken from FreeBSD: src/sys/contrib/pf/net/pf_table.c,v 1.7
  */

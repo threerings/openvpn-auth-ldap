@@ -44,7 +44,7 @@
 /* A complex set of TRConfig* header dependencies dictates the following order
  * of declarations and includes */
 
-/*!
+/**
  * Object Data Types.
  * Tokens are always strings (TOKEN_DATATYPE_STRING),
  * but sometimes they can also be integers and booleans.

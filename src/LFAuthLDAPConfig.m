@@ -352,7 +352,7 @@ error:
 	return (NULL);
 }
 
-/*!
+/**
  * Return the current section opcode from the top
  * of the section stack.
  */
@@ -360,28 +360,28 @@ error:
 	return [[_sectionStack lastObject] opcode];
 }
 
-/*!
+/**
  * Return the current section's hash table.
  */
 - (TRHash *) currentSectionHashTable {
 	return [[_sectionStack lastObject] hashTable];
 }
 
-/*!
+/**
  * Return the current section's context.
  */
 - (id) currentSectionContext {
 	return [[_sectionStack lastObject] context];
 }
 
-/*!
+/**
  * Set the current section's context.
  */
 - (void) setCurrentSectionContext: (id) context {
 	[[_sectionStack lastObject] setContext: context];
 }
 
-/*!
+/**
  * Allocate a SectionState object and push it onto the
  * section stack.
  */
@@ -393,7 +393,7 @@ error:
 	[section release];
 }
 
-/*!
+/**
  * Report a named section that should not be named to the user.
  */
 - (void) errorNamedSection: (TRConfigToken *) section withName: (TRConfigToken *) name {
@@ -401,7 +401,7 @@ error:
 	[_configDriver errorStop];
 }
 
-/*!
+/**
  * Report an unknown key to the user.
  */
 - (void) errorUnknownKey: (TRConfigToken *) key {
@@ -409,7 +409,7 @@ error:
 	[_configDriver errorStop];
 }
 
-/*!
+/**
  * Report a duplicate key to the user.
  */
 - (void) errorMultiKey: (TRConfigToken *) key {
@@ -417,7 +417,7 @@ error:
 	[_configDriver errorStop];
 }
 
-/*!
+/**
  * Report an invalid integer value to the user.
  */
 - (void) errorIntValue: (TRConfigToken *) value {
@@ -425,7 +425,7 @@ error:
 	[_configDriver errorStop];
 }
 
-/*!
+/**
  * Report an invalid boolean value to the user.
  */
 - (void) errorBoolValue: (TRConfigToken *) value {
@@ -433,7 +433,7 @@ error:
 	[_configDriver errorStop];
 }
 
-/*!
+/**
  * Report an unknown section type to the user.
  */
 - (void) errorUnknownSection: (TRConfigToken *) section {
@@ -442,7 +442,7 @@ error:
 	[_configDriver errorStop];
 }
 
-/*!
+/**
  * Report mismatched section closure to the user.
  */
 - (void) errorMismatchedSection: (TRConfigToken *) section {
@@ -452,7 +452,7 @@ error:
 	[_configDriver errorStop];
 }
 
-/*!
+/**
  * Check for any missing required variables and report them to the user.
  * @return YES on success, NO on failure.
  */
@@ -481,7 +481,7 @@ error:
 
 
 
-/*!
+/**
  * Called by the lemon generated parser when a new section is found.
  */
 - (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name {
@@ -550,7 +550,7 @@ error:
 	return;
 }
 
-/*!
+/**
  * Called by the lemon-generated parser when a key value pair is found.
  */
 - (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
@@ -739,7 +739,7 @@ error:
 	}
 }
 
-/*!
+/**
  * Verify that the now closed section isn't mismatched, and then pop it off
  * the section stack.
  */

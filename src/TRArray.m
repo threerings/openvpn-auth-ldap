@@ -43,8 +43,8 @@ typedef struct _TRArrayStack {
 	struct _TRArrayStack *next;
 } TRArrayStack;
 
-/*!
- * Linked list enumerator.
+/**
+ * Array enumerator.
  */
 @interface TRArrayObjectEnumerator : TREnumerator {
 	TRArray *_array;
@@ -52,17 +52,25 @@ typedef struct _TRArrayStack {
 }
 - (id) initWithArray: (TRArray *) array;
 @end
+
+/**
+ * Reverse array enumerator.
+ */
 @interface TRArrayReverseObjectEnumerator : TRArrayObjectEnumerator
 @end
 
 /*
- * We need to declare prototypes for our private methods, as some broken
+ * We need to declare prototypes for our private methods, as some
  * versions of gcc won't pick them up from the implementation.
  */
 @interface TRArray (TRArrayPrivate)
 - (TRArrayStack *) _privateArrayContext: (BOOL) top;
 @end
 
+/**
+ * A simple array implementation, provides forward and reverse
+ * enumerators.
+ */
 @implementation TRArray
 
 - (id) init {
@@ -99,7 +107,7 @@ typedef struct _TRArrayStack {
 	return _count;
 }
 
-/*!
+/**
  * Add anObject to the array.
  * @param anObject: Object to add;
  */
@@ -117,7 +125,7 @@ typedef struct _TRArrayStack {
 	_count++;
 }
 
-/*!
+/**
  * Remove top-most object from the array (LIFO).
  */
 - (void) removeObject {
@@ -134,7 +142,7 @@ typedef struct _TRArrayStack {
 	_count--;
 }
 
-/*!
+/**
  * Return the last object added to the array.
  * @return Last object added to the array.
  */
@@ -143,7 +151,7 @@ typedef struct _TRArrayStack {
 	return _stack->object;
 }
 
-/*!
+/**
  * Test if the array contains anObject.
  * Implemented by calling isEqual on all objects in the array.
  * @param anObject: Object to test for equality.
@@ -168,7 +176,7 @@ typedef struct _TRArrayStack {
 		return _stackBottom;
 }
 
-/*!
+/**
  * Return a object enumerator.
  * This enumerater walks the stack,
  * implementing a LIFO interface.
@@ -181,7 +189,7 @@ typedef struct _TRArrayStack {
         return [[TRArrayObjectEnumerator alloc] initWithArray: self];
 }
 
-/*!
+/**
  * Return a object enumerator.
  * This enumerater walks the stack in reverse,
  * implementing a FIFO interface.
@@ -239,8 +247,8 @@ typedef struct _TRArrayStack {
         if (!self)
                 return self;
 
-	/* We want the bottom-most element of the stack,
-	 * skipping the NULL terminator */
+    	/* We want the bottom-most element of the stack,
+    	 * skipping the NULL terminator */
         _stack = [array _privateArrayContext: NO]->prev;
 
         return self;
