@@ -39,6 +39,7 @@
 #include "TRHash.h"
 
 @interface TRLDAPEntry : TRObject {
+@private
 	LFString *_dn;
 	TRHash *_attributes;
 }

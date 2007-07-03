@@ -44,6 +44,7 @@
 #include "TRObject.h"
 
 @interface TRPFAddress : TRObject {
+@private
 	struct pfr_addr _addr;
 }
 

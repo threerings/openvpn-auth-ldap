@@ -48,6 +48,7 @@
 #define TRCONFIGTOKEN_H
 
 @interface TRConfigToken : TRObject {
+@private
 	/* Parser's token identifier */
 	int _tokenID;
 

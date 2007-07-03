@@ -57,6 +57,9 @@
 - (void) dealloc;
 @end
 
+/**
+ * Base class. Handles reference counting and equality.
+ */
 @implementation TRObject
 
 - (id) init {

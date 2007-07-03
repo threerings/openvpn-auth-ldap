@@ -44,6 +44,9 @@
 
 #include "xmalloc.h"
 
+/**
+ * OO String wrapper.
+ */
 @implementation LFString
 
 - (void) dealloc {
@@ -51,6 +54,9 @@
 	[super dealloc];
 }
 
+/**
+ * Initialize with a copy of the given C string.
+ */
 - (id) initWithCString: (const char *) cString {
 	self = [self init];
 	if (self != NULL) {
@@ -61,6 +67,9 @@
 	return (self);
 }
 
+/**
+ * Initialize with a copy of the provided LFString.
+ */
 - (id) initWithString: (LFString *) string {
 	self = [self init];
 	if (self != NULL) {
@@ -71,7 +80,9 @@
 	return (self);
 }
 
-/* Initialize with a potentially non-NULL terminated string */
+/**
+ * Initialize with a potentially non-NULL terminated string
+ */
 - (id) initWithBytes: (const char *) data numBytes: (size_t) length {
 	self = [self init];
 	if (self != NULL) {
@@ -88,10 +99,16 @@
 	return (self);
 }
 
+/**
+ * Return the C string value.
+ */
 - (const char *) cString {
 	return (bytes);
 }
 
+/**
+ * Return the size in bytes.
+ */
 - (size_t) length {
 	return (numBytes);
 }
@@ -122,6 +139,11 @@
 	return hash;
 }
 
+/**
+ * Store the integer value in the provided
+ * value argument, and return true if the conversion
+ * was successful
+ */
 - (BOOL) intValue: (int *) value {
 	long i;
 	char *endptr;
@@ -146,6 +168,9 @@
 	return (true);
 }
 
+/**
+ * Append cString.
+ */
 - (void) appendCString: (const char *) cString {
 	size_t len;
 
@@ -164,6 +189,9 @@
 	strncat(bytes, cString, len + 1);
 }
 
+/**
+ * Append string.
+ */
 - (void) appendString: (LFString *) string {
 	size_t len;
 
@@ -182,6 +210,9 @@
 	strncat(bytes, [string cString], len + 1);
 }
 
+/**
+ * Append a single character.
+ */
 - (void) appendChar: (char) c {
 	char s[2];
 	s[0] = c;
@@ -189,6 +220,9 @@
 	[self appendCString: (const char *) &s];
 }
 
+/**
+ * Return the index of the first match of the given C string.
+ */
 - (size_t) indexToCString: (const char *) cString {
 	size_t index = 0;
 	char *p;
@@ -211,6 +245,10 @@
 	return (index);
 }
 
+/**
+ * Return the index of the character following the first match
+ * of the given C string.
+ */
 - (size_t) indexFromCString: (const char *) cString {
 	size_t index = 0;
 	char *p;
@@ -234,6 +272,10 @@
 	return (index);
 }
 
+/**
+ * Return the index to the first match for any character
+ * in the given set.
+ */
 - (size_t) indexToCharset: (const char *) cString {
 	size_t index = 0;
 	char *p;

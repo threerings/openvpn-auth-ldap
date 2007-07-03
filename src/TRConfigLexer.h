@@ -51,6 +51,7 @@ typedef enum {
 } LexerStartCondition;
 
 @interface TRConfigLexer : TRObject {
+@private
 	/* Input buffer */
 	char *buffer;
 	size_t bufferLength;

@@ -34,6 +34,9 @@
 
 #include "TREnumerator.h"
 
+/**
+ * Abstract enumerator superclass.
+ */
 @implementation TREnumerator
 
 - (id) nextObject {

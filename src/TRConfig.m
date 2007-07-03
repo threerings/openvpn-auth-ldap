@@ -38,6 +38,9 @@
 
 #include "TRConfig.h"
 
+/**
+ * An Apache-style configuration file parser/lexer.
+ */
 @implementation TRConfig
 
 /**

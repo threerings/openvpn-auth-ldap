@@ -39,6 +39,7 @@
 #include "LFString.h"
 
 @interface TRLDAPGroupConfig : TRObject {
+@private
 	LFString *_baseDN;
 	LFString *_searchFilter;
 	LFString *_memberAttribute;

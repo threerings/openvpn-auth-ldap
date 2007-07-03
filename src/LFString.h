@@ -43,6 +43,7 @@
 #include "strlcpy.h"
 
 @interface LFString : TRObject {
+@private
 	char *bytes;
 	size_t numBytes;
 }

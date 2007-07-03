@@ -269,6 +269,9 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable *tables[])
 
 @end
 
+/**
+ * Handles parsing of the plugin configuration file.
+ */
 @implementation LFAuthLDAPConfig
 
 - (void) dealloc {
@@ -300,6 +303,11 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable *tables[])
 	[super dealloc];
 }
 
+/**
+ * Initialize with the provided configuration file path.
+ * The file will be parsed, and if an error occurs,
+ * NULL returned.
+ */
 - (id) initWithConfigFile: (const char *) fileName {
 	SectionState *section;
 	int configFD;

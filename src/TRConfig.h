@@ -71,6 +71,7 @@ typedef enum {
 #include "TRConfigParser.h"
 
 @interface TRConfig : TRObject {
+@private
 	int _fd;
 	BOOL _error;
 	id <TRConfigDelegate> _delegate;
