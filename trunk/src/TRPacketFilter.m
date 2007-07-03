@@ -143,7 +143,7 @@
 }
 
 /*! Clear all addreses from the specified table. */
-- (BOOL) clearAddressesFromTable: (LFString *) tableName {
+- (BOOL) flushTable: (LFString *) tableName {
 	struct pfioc_table io;
 
 	/* Validate name */

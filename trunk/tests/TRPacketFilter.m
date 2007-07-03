@@ -81,9 +81,9 @@ START_TEST(test_tables) {
 }
 END_TEST
 
-START_TEST(test_clearAddressesFromTable) {
+START_TEST(test_flushTable) {
 	LFString *name = [[LFString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf clearAddressesFromTable: name]);
+	fail_unless([pf flushTable: name]);
 	[name release];
 }
 END_TEST
@@ -95,7 +95,7 @@ START_TEST(test_addAddressToTable) {
 	LFString *name;
 
        	name = [[LFString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf clearAddressesFromTable: name]);
+	fail_unless([pf flushTable: name]);
 
 	/* Addd IPv4 Address */
 	addrString = [[LFString alloc] initWithCString: "127.0.0.1"];
@@ -133,7 +133,7 @@ START_TEST(test_deleteAddressFromTable) {
 	LFString *name;
 
        	name = [[LFString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf clearAddressesFromTable: name]);
+	fail_unless([pf flushTable: name]);
 
 	/* Addd IPv4 Address */
 	addrString = [[LFString alloc] initWithCString: "127.0.0.1"];
@@ -163,7 +163,7 @@ START_TEST(test_addressesFromTable) {
 	LFString *name;
 
        	name = [[LFString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf clearAddressesFromTable: name]);
+	fail_unless([pf flushTable: name]);
 
 	/* Addd IPv4 Address */
 	addrString = [[LFString alloc] initWithCString: "127.0.0.1"];
@@ -188,7 +188,7 @@ Suite *TRPacketFilter_suite(void) {
 	suite_add_tcase(s, tc_pf);
 	tcase_add_test(tc_pf, test_init);
 	tcase_add_test(tc_pf, test_tables);
-	tcase_add_test(tc_pf, test_clearAddressesFromTable);
+	tcase_add_test(tc_pf, test_flushTable);
 	tcase_add_test(tc_pf, test_addAddressToTable);
 	tcase_add_test(tc_pf, test_deleteAddressFromTable);
 	tcase_add_test(tc_pf, test_addressesFromTable);
