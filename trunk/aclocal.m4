@@ -400,6 +400,83 @@ AC_DEFUN([TR_PF_IOCTL],[
 ])
 
 #------------------------------------------------------------------------
+# TR_OPENSSL --
+#
+#	Locate the OpenSSL libraries and headers
+#
+# Arguments:
+#	None.
+#
+# Requires:
+#	none
+#
+# Depends:
+#	none
+#
+# Results:
+#
+#	Adds a --with-openssl switch to configure.
+#	Result is cached.
+#
+#	Substitutes the following variables:
+#		OPENSSL_LIBS OPENSSL_CFLAGS
+#------------------------------------------------------------------------
+AC_DEFUN([TR_OPENSSL],[
+	AC_REQUIRE([AC_PROG_CC])
+	AC_ARG_WITH(openssl, AC_HELP_STRING([--with-openssl], [Specify the openssl installation location]), [with_openssl=${withval}])
+
+	# Save LIBS, CFLAGS
+	# depending on whether the cache is used,
+	# the variables may or may not be modified.
+	OLD_LIBS="${LIBS}"
+	OLD_CFLAGS="${CFLAGS}"
+
+	OPENSSL_LIBS="-lssl -lcrypto"
+	OPENSSL_CFLAGS=""
+
+	if test x"${with_openssl}" != x; then
+		OPENSSL_LIBS="${OPENSSL_LIBS} -L${with_openssl}/lib"
+		OPENSSL_CFLAGS="${OPENSSL_CFLAGS} -I${with_openssl}/include"
+	fi
+
+	# Add -lssl. The following tests will ensure that the library exists and functions with the detected C compiler
+	LIBS="${LIBS} ${OPENSSL_LIBS}"
+	CFLAGS="${CFLAGS} ${OPENSSL_CFLAGS}"
+
+	AC_MSG_CHECKING([for openssl])
+	AC_CACHE_VAL(od_cv_openssl, [
+		AC_LINK_IFELSE([
+				AC_LANG_PROGRAM([
+						#include <openssl/ssl.h>
+					], [
+						CRYPTO_set_id_callback(NULL);
+					])
+				], [
+					# Failed
+					od_cv_openssl="yes"
+				], [
+					# Success
+					od_cv_openssl="no"
+				]
+		)
+	])
+	AC_MSG_RESULT(${od_cv_openssl})
+
+	if test x"${od_cv_openssl}" = x"no"; then
+			AC_MSG_FAILURE([Could not locate a working OpenSSL library installation. Try --with-openssl=])
+	fi
+
+	# Restore LIBS & CFLAGS
+	LIBS="${OLD_LIBS}"
+	CFLAGS="${OLD_CFLAGS}"
+
+	AC_SUBST([OPENSSL_CFLAGS])
+	AC_SUBST([OPENSSL_LIBS])
+])
+
+
+
+#------------------------------------------------------------------------
 # TR_WERROR --
 #
 #	Enable -Werror
