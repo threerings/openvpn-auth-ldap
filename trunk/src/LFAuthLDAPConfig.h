@@ -38,6 +38,7 @@
 #include "TRConfig.h"
 
 @interface LFAuthLDAPConfig : TRObject <TRConfigDelegate> {
+@private
 	/* LDAP Settings */
 	LFString *_url;
 	BOOL _tlsEnabled;

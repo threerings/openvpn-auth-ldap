@@ -52,8 +52,9 @@ static void log_syslog(int priority, const char *message, va_list args) {
 	vsyslog(priority, message, args);
 }
 
-
-
+/**
+ * OpenVPN Auth-LDAP Logger.
+ */
 @implementation TRLog
 
 /**
@@ -64,6 +65,7 @@ static void log_syslog(int priority, const char *message, va_list args) {
 }
 
 #define DO_LOG(logName, priority) \
+    /** Log a priority message. */ \
 	+ (void) logName: (const char *) message, ... { \
 		va_list ap; \
 		if (_quiesce) return; \

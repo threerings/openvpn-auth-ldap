@@ -42,6 +42,7 @@
 #include "LFString.h"
 
 @interface LFLDAPConnection : TRObject {
+@private
 	LDAP *ldapConn;
 	int _timeout;
 }

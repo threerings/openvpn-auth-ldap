@@ -34,6 +34,9 @@
 
 #include "TRVPNSession.h"
 
+/**
+ * VPN session state.
+ */
 @implementation TRVPNSession
 
 - (id) initWithUsername: (LFString *) username {

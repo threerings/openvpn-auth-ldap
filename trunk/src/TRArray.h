@@ -39,6 +39,7 @@
 #include "TREnumerator.h"
 
 @interface TRArray : TRObject {
+@private
 	unsigned int _count;
 	struct _TRArrayStack *_stack;
 	struct _TRArrayStack *_stackBottom;

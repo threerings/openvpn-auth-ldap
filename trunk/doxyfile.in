@@ -137,7 +137,7 @@ SHORT_NAMES            = NO
 # comments will behave just like the Qt-style comments (thus requiring an 
 # explicit @brief command for a brief description.
 
-JAVADOC_AUTOBRIEF      = NO
+JAVADOC_AUTOBRIEF      = YES
 
 # The MULTILINE_CPP_IS_BRIEF tag can be set to YES to make Doxygen 
 # treat a multi-line C++ special comment block (i.e. a block of //! or /// 
@@ -235,7 +235,7 @@ EXTRACT_LOCAL_CLASSES  = YES
 # the interface are included in the documentation. 
 # If set to NO (the default) only methods in the interface are included.
 
-EXTRACT_LOCAL_METHODS  = NO
+EXTRACT_LOCAL_METHODS  = YES
 
 # If the HIDE_UNDOC_MEMBERS tag is set to YES, Doxygen will hide all 
 # undocumented members of documented classes, files or namespaces. 
@@ -958,7 +958,7 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator 
 # instead of the = operator.
 
-PREDEFINED             = HAVE_PF:=YES
+PREDEFINED             = HAVE_PF=yes
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 

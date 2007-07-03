@@ -53,6 +53,7 @@
 
 
 @interface TRObject : Object <TRObject> {
+@private
 	unsigned int _refCount;
 }
 

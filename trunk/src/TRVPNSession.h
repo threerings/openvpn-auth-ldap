@@ -39,6 +39,7 @@
 #include "LFString.h"
 
 @interface TRVPNSession: TRObject {
+@private
 	LFString *_username;
 }
 

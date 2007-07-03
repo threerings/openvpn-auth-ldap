@@ -34,6 +34,9 @@
 
 #include "TRLDAPEntry.h"
 
+/**
+ * An LDAP entry.
+ */
 @implementation TRLDAPEntry
 
 - (id) initWithDN: (LFString *) dn attributes: (TRHash *) attributes {
@@ -53,10 +56,16 @@
 	[super dealloc];
 }
 
+/**
+ * Returns the entry's distinguished name.
+ */
 - (LFString *) dn {
 	return _dn;
 }
 
+/**
+ * Return the entries' attributes as a dictionary.
+ */
 - (TRHash *) attributes {
 	return _attributes;
 }

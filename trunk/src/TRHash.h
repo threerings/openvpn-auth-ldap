@@ -41,6 +41,7 @@
 #include "hash.h"
 
 @interface TRHash : TRObject {
+@private
 	hash_t *_hash;
 }
 

@@ -38,6 +38,9 @@
 
 #include "TRConfigToken.h"
 
+/**
+ * Represents a config file parser token.
+ */
 @implementation TRConfigToken
 
 - (void) dealloc {
@@ -61,10 +64,16 @@
 	return (self);
 }
 
+/**
+ * Return the lemon token id.
+ */
 - (int) tokenID {
 	return _tokenID;
 }
 
+/**
+ * Return the line number from which the token was parsed.
+ */
 - (unsigned int) lineNumber {
 	return _lineNumber;
 }
