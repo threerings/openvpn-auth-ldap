@@ -45,6 +45,9 @@
 #include <string.h>
 #include <errno.h>
 
+/**
+ * An interface to a local OpenBSD Packet Filter.
+ */
 @implementation TRPacketFilter
 
 /**
@@ -90,7 +93,7 @@
 	[super dealloc];
 }
 
-/* !Return an array of table names */
+/** Return an array of table names */
 - (TRArray *) tables {
 	TRArray *result = nil;
 	struct pfioc_table io;
@@ -142,7 +145,7 @@
 	return result;
 }
 
-/*! Clear all addreses from the specified table. */
+/** Clear all addreses from the specified table. */
 - (BOOL) flushTable: (LFString *) tableName {
 	struct pfioc_table io;
 
@@ -164,7 +167,7 @@
 	return true;
 }
 
-/*! Add an address to the specified table. */
+/** Add an address to the specified table. */
 - (BOOL) addAddress: (TRPFAddress *) address toTable: (LFString *) tableName {
 	struct pfioc_table io;
 
@@ -193,7 +196,7 @@
 	return true;
 }
 
-/*! Delete an address from the specified table. */
+/** Delete an address from the specified table. */
 - (BOOL) deleteAddress: (TRPFAddress *) address fromTable: (LFString *) tableName {
 	struct pfioc_table io;
 
@@ -224,7 +227,7 @@
 
 
 
-/*! Return an array of all addresses from the specified table. */
+/** Return an array of all addresses from the specified table. */
 - (TRArray *) addressesFromTable: (LFString *) tableName {
 	TRArray *result = nil;
 	struct pfioc_table io;

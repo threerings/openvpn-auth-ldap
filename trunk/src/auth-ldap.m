@@ -417,7 +417,7 @@ static TRLDAPGroupConfig *find_ldap_group(LFLDAPConnection *ldap, LFAuthLDAPConf
 	return result;
 }
 
-/*! Handle user authentication. */
+/** Handle user authentication. */
 static int handle_auth_user_pass_verify(ldap_ctx *ctx, LFLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *password) {
 	TRLDAPGroupConfig *groupConfig;
 
@@ -479,7 +479,7 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, LFString *tableNa
 #endif /* HAVE_PF */
 
 
-/*! Handle both connection and disconnection events. */
+/** Handle both connection and disconnection events. */
 static int handle_client_connect_disconnect(ldap_ctx *ctx, LFLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *remoteAddress, BOOL connecting) {
 	TRLDAPGroupConfig *groupConfig = nil;
 #ifdef HAVE_PF

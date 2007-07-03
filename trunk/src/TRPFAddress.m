@@ -47,6 +47,9 @@
 #include "TRPFAddress.h"
 #include "LFString.h"
 
+/**
+ * Represents a single IPv4 or IPv6 address, for use with PF.
+ */
 @implementation TRPFAddress
 
 - (id) init {
@@ -60,7 +63,10 @@
 	return self;
 }
 
-
+/**
+ * Initialize with an IPv4 or IPv6 address string.
+ * @param address An IPv4 or IPv6 address in human-readable format (eg 127.0.0.1 or ::1)
+ */
 - (id) initWithPresentationAddress: (LFString *) address {
 	if (![self init])
 		return nil;
@@ -81,6 +87,9 @@
 	return nil;
 }
 
+/**
+ * Initialize with a copy of the provided pfr_addr structure.
+ */
 - (id) initWithPFRAddr: (struct pfr_addr *) pfrAddr {
 	if (![self init])
 		return nil;
@@ -91,6 +100,9 @@
 	return self;
 }
 
+/**
+ * Returns a borrowed reference to the instance's pfr_addr representation.
+ */
 - (struct pfr_addr *) pfrAddr {
 	return &_addr;
 }

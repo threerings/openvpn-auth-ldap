@@ -40,7 +40,7 @@
 
 @implementation TRConfig
 
-/*!
+/**
  * Initialize and return a TRConfig parser.
  * @param fd: A file descriptor open for reading. This file descriptor will be
  * 		mmap()ed, and thus must reference a file.
@@ -57,7 +57,7 @@
 	return self;
 }
 
-/*!
+/**
  * Parse the configuration file
  * @result true on success, false on failure.
  */

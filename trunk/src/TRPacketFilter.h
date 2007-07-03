@@ -55,7 +55,7 @@
 @class TRPFAddress;
 
 @interface TRPacketFilter : TRObject {
-	/*! Cached reference to /dev/pf. */
+	/** Cached reference to /dev/pf. */
 	int _fd;
 }
 

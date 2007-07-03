@@ -40,14 +40,14 @@
 
 static BOOL _quiesce = NO;
 
-/*! Log a message to stderr. */
+/** Log a message to stderr. */
 static void log_stderr(const char *message, va_list args) {
 	/* Log the message to stderr */
 	vfprintf(stderr, message, args);
 	fprintf(stderr, "\n");
 }
 
-/*! Log a message to syslog. */
+/** Log a message to syslog. */
 static void log_syslog(int priority, const char *message, va_list args) {
 	vsyslog(priority, message, args);
 }
@@ -56,7 +56,7 @@ static void log_syslog(int priority, const char *message, va_list args) {
 
 @implementation TRLog
 
-/*!
+/**
  * Private method that quiets all logging for the purpose of unit testing.
  */
 + (void) _quiesceLogging: (BOOL) quiesce {
@@ -82,7 +82,7 @@ DO_LOG(debug, LOG_DEBUG);
 
 #undef DO_LOG
 
-/*!
+/**
  * Log a message with the supplied priority.
  */
 + (void) log: (loglevel_t) level withMessage: (const char *) message, ... {

@@ -69,14 +69,14 @@
 	return _lineNumber;
 }
 
-/*!
+/**
  * Return the token's string value.
  */
 - (LFString *) string {
 	return _string;
 }
 
-/*!
+/**
  * Return the token's C string value.
  * @return NULL terminated C string. The result is only valid for the
  * lifetime of the TRConfigToken object.
@@ -85,7 +85,7 @@
 	return [_string cString];
 }
 
-/*!
+/**
  * Get the token's integer value.
  * Returns true on success, false on failure.
  * The integer value will be stored in the value argument.
@@ -119,7 +119,7 @@
 	return result;
 }
 
-/*!
+/**
  * Get the token's boolean value.
  * Returns true on success, false on failure.
  * The boolean value will be stored in the value argument.
