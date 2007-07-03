@@ -44,16 +44,16 @@
  * Apple's Obj-C compiler assumes that all objects
  * inherit from NSObject, and must call [super dealloc]
  * in their dealloc method. If you don't, the compiler
- * complains.
+ * prints a warning (which breaks -Werror):
+ *    TRObject.m:61: warning: method possibly missing a [super dealloc] call
  *
- * So, let's pretend to give Object a dealloc method,
- * but never call it.
- * Thanks Apple!
+ * So, let's pretend to give Object a dealloc method
+ * and hide our call to it via if (false).
  *
  * Additionally, we implement brain-dead, non-thread-safe
  * reference counting.
  */ 
-@interface Object (AppleAddedAReallyStupidGCCWarning)
+@interface Object (AppleDeallocGCCWarning)
 - (void) dealloc;
 @end
 
