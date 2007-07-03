@@ -62,7 +62,7 @@
 + (const char *) strerror: (int) pferrno;
 
 - (TRArray *) tables;
-- (BOOL) clearAddressesFromTable: (LFString *) tableName;
+- (BOOL) flushTable: (LFString *) tableName;
 - (BOOL) addAddress: (TRPFAddress *) address toTable: (LFString *) tableName;
 - (BOOL) deleteAddress: (TRPFAddress *) address fromTable: (LFString *) tableName;
 - (TRArray *) addressesFromTable: (LFString *) tableName;

@@ -190,7 +190,7 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 
 	/* Clear out all referenced PF tables */
 	if ((tableName = [ctx->config pfTable])) {
-		if (![ctx->pf clearAddressesFromTable: tableName]) {
+		if (![ctx->pf flushTable: tableName]) {
 			[TRLog error: "Failed to clear packet filter table \"%s\": %s",
 					[tableName cString], [TRPacketFilter strerror: errno]];
 			goto error;
@@ -201,7 +201,7 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 		groupIter = [[ctx->config ldapGroups] objectEnumerator];
 		while ((groupConfig = [groupIter nextObject]) != nil) {
 			if ((tableName = [groupConfig pfTable]))
-				if (![ctx->pf clearAddressesFromTable: tableName]) {
+				if (![ctx->pf flushTable: tableName]) {
 					[TRLog error: "Failed to clear packet filter table \"%s\": %s",
 							[tableName cString], [TRPacketFilter strerror: errno]];
 					[groupIter release];
