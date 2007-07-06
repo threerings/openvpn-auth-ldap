@@ -42,6 +42,7 @@
 #include <tests.h>
 
 #include "TRLog.h"
+#include "util/TRAutoreleasePool.h"
 
 void print_usage(const char *name) {
 	printf("Usage: %s [filename]\n", name);
@@ -52,6 +53,7 @@ int main(int argc, char *argv[]) {
 	Suite *s;
 	SRunner *sr;
 	int nf;
+	TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
 
 	if (argc > 2) {
 		print_usage(argv[0]);
@@ -89,6 +91,8 @@ int main(int argc, char *argv[]) {
 
 	nf = srunner_ntests_failed(sr);
 	srunner_free(sr);
+	[pool release];
+
 
 	if (nf == 0)
 		exit(EXIT_SUCCESS);

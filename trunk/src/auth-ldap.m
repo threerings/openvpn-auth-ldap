@@ -204,15 +204,14 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 	if ([ctx->config ldapGroups]) {
 		groupIter = [[ctx->config ldapGroups] objectEnumerator];
 		while ((groupConfig = [groupIter nextObject]) != nil) {
-			if ((tableName = [groupConfig pfTable]))
+			if ((tableName = [groupConfig pfTable])) {
 				if (![ctx->pf flushTable: tableName]) {
 					[TRLog error: "Failed to clear packet filter table \"%s\": %s",
 							[tableName cString], [TRPacketFilter strerror: errno]];
-					[groupIter release];
 					goto error;
 				}
+			}
 		}
-		[groupIter release];
 	}
 
 	return YES;
@@ -419,7 +418,6 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
 				result = groupConfig;
 			}
 		}
-		[entryIter release];
 		[ldapEntries release];
 		if (result)
 			break;
