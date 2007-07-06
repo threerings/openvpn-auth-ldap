@@ -38,7 +38,7 @@
 
 #include <check.h>
 
-#include <TRHash.h>
+#include <util/TRHash.h>
 
 START_TEST(test_initWithCapacity) {
 	TRHash *hash = [[TRHash alloc] initWithCapacity: 42];
@@ -55,7 +55,7 @@ END_TEST
 
 START_TEST(test_setObjectForKey) {
 	TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
-	LFString *string = [[LFString alloc] initWithCString: "Hello, World"];
+	TRString *string = [[TRString alloc] initWithCString: "Hello, World"];
 	unsigned int refCount = [string refCount];
 
 	[hash setObject: string forKey: string];
@@ -80,9 +80,9 @@ END_TEST
  */
 START_TEST(test_setObjectForKey_replacement) {
 	TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
-	LFString *key = [[LFString alloc] initWithCString: "Key"];
-	LFString *value1 = [[LFString alloc] initWithCString: "Hello, World"];
-	LFString *value2 = [[LFString alloc] initWithCString: "Goodbye, World"];
+	TRString *key = [[TRString alloc] initWithCString: "Key"];
+	TRString *value1 = [[TRString alloc] initWithCString: "Hello, World"];
+	TRString *value2 = [[TRString alloc] initWithCString: "Goodbye, World"];
 	unsigned int refCount = [key refCount];
 
 	/* Insert value1 */
@@ -108,8 +108,8 @@ END_TEST
 
 START_TEST(test_removeObjectForKey) {
 	TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
-	LFString *key = [[LFString alloc] initWithCString: "Key"];
-	LFString *value = [[LFString alloc] initWithCString: "Value"];
+	TRString *key = [[TRString alloc] initWithCString: "Key"];
+	TRString *value = [[TRString alloc] initWithCString: "Value"];
 	unsigned int refCount = [key refCount];
 
 	/* Insert */
@@ -131,8 +131,8 @@ END_TEST
 
 START_TEST(test_valueForKey) {
 	TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
-	LFString *key = [[LFString alloc] initWithCString: "Key"];
-	LFString *value = [[LFString alloc] initWithCString: "Value"];
+	TRString *key = [[TRString alloc] initWithCString: "Key"];
+	TRString *value = [[TRString alloc] initWithCString: "Value"];
 
 	/* Insert */
 	[hash setObject: value forKey: key];
@@ -149,8 +149,8 @@ END_TEST
 
 START_TEST(test_keyEnumerator) {
 	TRHash *hash = [[TRHash alloc] initWithCapacity: HASHCOUNT_T_MAX];
-	LFString *key = [[LFString alloc] initWithCString: "Key"];
-	LFString *value = [[LFString alloc] initWithCString: "Value"];
+	TRString *key = [[TRString alloc] initWithCString: "Key"];
+	TRString *value = [[TRString alloc] initWithCString: "Value"];
 	TREnumerator *iter;
 	id obj;
 

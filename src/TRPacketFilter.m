@@ -34,8 +34,8 @@
 
 #include "TRPacketFilter.h"
 #include "TRPFAddress.h"
-#include "LFString.h"
-#include "xmalloc.h"
+#include "util/TRString.h"
+#include "util/xmalloc.h"
 
 #ifdef HAVE_PF
 
@@ -135,7 +135,7 @@
 	size = io.pfrio_size / sizeof(struct pfr_table);
 	table = (struct pfr_table *) io.pfrio_buffer;
 	for (i = 0; i < size; i++) {
-		LFString *name = [[LFString alloc] initWithCString: table->pfrt_name];
+		TRString *name = [[TRString alloc] initWithCString: table->pfrt_name];
 		[result addObject: name];
 		[name release];
 		table++;
@@ -146,7 +146,7 @@
 }
 
 /** Clear all addreses from the specified table. */
-- (BOOL) flushTable: (LFString *) tableName {
+- (BOOL) flushTable: (TRString *) tableName {
 	struct pfioc_table io;
 
 	/* Validate name */
@@ -168,7 +168,7 @@
 }
 
 /** Add an address to the specified table. */
-- (BOOL) addAddress: (TRPFAddress *) address toTable: (LFString *) tableName {
+- (BOOL) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName {
 	struct pfioc_table io;
 
 	/* Validate name */
@@ -197,7 +197,7 @@
 }
 
 /** Delete an address from the specified table. */
-- (BOOL) deleteAddress: (TRPFAddress *) address fromTable: (LFString *) tableName {
+- (BOOL) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName {
 	struct pfioc_table io;
 
 	/* Validate name */
@@ -228,7 +228,7 @@
 
 
 /** Return an array of all addresses from the specified table. */
-- (TRArray *) addressesFromTable: (LFString *) tableName {
+- (TRArray *) addressesFromTable: (TRString *) tableName {
 	TRArray *result = nil;
 	struct pfioc_table io;
 	struct pfr_addr *pfrAddr;

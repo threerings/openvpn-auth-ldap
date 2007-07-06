@@ -38,11 +38,11 @@
 
 #include <stdlib.h>
 
-#include "strlcpy.h"
+#include "util/strlcpy.h"
 
 #include "TRObject.h"
 #include "TRConfig.h"
-#include "LFString.h"
+#include "util/TRString.h"
 
 #ifndef TRCONFIGTOKEN_H
 #define TRCONFIGTOKEN_H
@@ -56,7 +56,7 @@
 	unsigned int _lineNumber;
 
 	/* String value */
-	LFString *_string;
+	TRString *_string;
 
 	/* Current data type */
 	TRConfigDataType _dataType;
@@ -73,7 +73,7 @@
 - (int) tokenID;
 - (unsigned int) lineNumber;
 
-- (LFString *) string;
+- (TRString *) string;
 - (const char *) cString;
 - (BOOL) intValue: (int *) value;
 - (BOOL) boolValue: (BOOL *) value;

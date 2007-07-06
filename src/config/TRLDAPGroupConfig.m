@@ -51,43 +51,43 @@
 }
 
 
-- (LFString *) baseDN {
+- (TRString *) baseDN {
 	return (_baseDN);
 }
 
-- (void) setBaseDN: (LFString *) baseDN {
+- (void) setBaseDN: (TRString *) baseDN {
 	if (_baseDN)
 		[_baseDN release];
 	_baseDN = [baseDN retain];
 }
 
-- (LFString *) searchFilter {
+- (TRString *) searchFilter {
 	return (_searchFilter);
 }
 
-- (void) setSearchFilter: (LFString *) searchFilter {
+- (void) setSearchFilter: (TRString *) searchFilter {
 	if (_searchFilter)
 		[_searchFilter release];
 	_searchFilter = [searchFilter retain];
 }
 
-- (LFString *) memberAttribute {
+- (TRString *) memberAttribute {
 	return (_memberAttribute);
 }
 
-- (void) setMemberAttribute: (LFString *) memberAttribute {
+- (void) setMemberAttribute: (TRString *) memberAttribute {
 	if (_memberAttribute)
 		[_memberAttribute release];
 	_memberAttribute = [memberAttribute retain];
 }
 
-- (void) setPFTable: (LFString *) tableName {
+- (void) setPFTable: (TRString *) tableName {
 	if (_pfTable)
 		[_pfTable release];
 	_pfTable = [tableName retain];
 }
 
-- (LFString *) pfTable {
+- (TRString *) pfTable {
 	return (_pfTable);
 }
 

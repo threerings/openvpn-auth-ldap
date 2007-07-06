@@ -4,7 +4,8 @@ top_builddir=   @top_builddir@
 VPATH=          @srcdir@
 
 SUBDIR=		config \
-		ldap
+		ldap \
+		util
 
 include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
@@ -12,18 +13,12 @@ include ${top_builddir}/Mk/subdir.mk
 
 PLUGIN_NAME=	openvpn-auth-ldap
 PLUGIN_OBJS=	auth-ldap.o \
-		hash.o \
-		TRArray.o \
-		TREnumerator.o \
-		TRHash.o \
 		TRObject.o \
 		TRLog.o \
-		LFString.o \
 		TRPacketFilter.o \
 		TRPFAddress.o \
 		TRVPNSession.o \
-		xmalloc.o \
-		strlcpy.o
+
 
 TEST_LIB=	libauth-ldap-testing.a
 TEST_OBJS=	testplugin.o
@@ -32,7 +27,8 @@ CFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
 OBJCFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
 LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS) \
 		-Lconfig -lauth-ldap-config \
-		-Lldap -lauth-ldap-ldap
+		-Lldap -lauth-ldap-ldap \
+		-Lutil -lauth-ldap-util
 
 
 INSTALL_LIB=		$(INSTALL) -m 755

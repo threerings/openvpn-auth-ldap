@@ -49,7 +49,7 @@
 
 START_TEST (test_initWithConfigFile) {
 	TRAuthLDAPConfig *config;
-	LFString *string;
+	TRString *string;
 
 	config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
 	fail_if(config == NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");

@@ -36,27 +36,27 @@
 #define TRLDAPGROUPCONFIG_H  
 
 #include "TRObject.h"
-#include "LFString.h"
+#include "util/TRString.h"
 
 @interface TRLDAPGroupConfig : TRObject {
 @private
-	LFString *_baseDN;
-	LFString *_searchFilter;
-	LFString *_memberAttribute;
-	LFString *_pfTable;
+	TRString *_baseDN;
+	TRString *_searchFilter;
+	TRString *_memberAttribute;
+	TRString *_pfTable;
 }
 
-- (LFString *) baseDN;
-- (void) setBaseDN: (LFString *) baseDN;
+- (TRString *) baseDN;
+- (void) setBaseDN: (TRString *) baseDN;
 
-- (LFString *) searchFilter;
-- (void) setSearchFilter: (LFString *) searchFilter;
+- (TRString *) searchFilter;
+- (void) setSearchFilter: (TRString *) searchFilter;
 
-- (LFString *) memberAttribute;
-- (void) setMemberAttribute: (LFString *) memberAttribute;
+- (TRString *) memberAttribute;
+- (void) setMemberAttribute: (TRString *) memberAttribute;
 
-- (LFString *) pfTable;
-- (void) setPFTable: (LFString *) tableName;
+- (TRString *) pfTable;
+- (void) setPFTable: (TRString *) tableName;
 
 @end
 

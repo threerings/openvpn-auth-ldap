@@ -39,7 +39,7 @@
  */
 @implementation TRLDAPEntry
 
-- (id) initWithDN: (LFString *) dn attributes: (TRHash *) attributes {
+- (id) initWithDN: (TRString *) dn attributes: (TRHash *) attributes {
 	self = [self init];
 	if (!self)
 		return self;
@@ -59,7 +59,7 @@
 /**
  * Returns the entry's distinguished name.
  */
-- (LFString *) dn {
+- (TRString *) dn {
 	return _dn;
 }
 

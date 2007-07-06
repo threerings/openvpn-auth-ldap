@@ -41,7 +41,7 @@
 #include <check.h>
 
 #include <TRPacketFilter.h>
-#include <LFString.h>
+#include <util/TRString.h>
 
 #include "mockpf.h"
 
@@ -82,23 +82,23 @@ START_TEST(test_tables) {
 END_TEST
 
 START_TEST(test_flushTable) {
-	LFString *name = [[LFString alloc] initWithCString: "ips_artist"];
+	TRString *name = [[TRString alloc] initWithCString: "ips_artist"];
 	fail_unless([pf flushTable: name]);
 	[name release];
 }
 END_TEST
 
 START_TEST(test_addAddressToTable) {
-	LFString *addrString;
+	TRString *addrString;
 	TRPFAddress *pfAddress;
 	TRArray *addresses;
-	LFString *name;
+	TRString *name;
 
-       	name = [[LFString alloc] initWithCString: "ips_artist"];
+       	name = [[TRString alloc] initWithCString: "ips_artist"];
 	fail_unless([pf flushTable: name]);
 
 	/* Addd IPv4 Address */
-	addrString = [[LFString alloc] initWithCString: "127.0.0.1"];
+	addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
 	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
 	fail_unless([pf addAddress: pfAddress toTable: name]);
@@ -110,7 +110,7 @@ START_TEST(test_addAddressToTable) {
 	[pfAddress release];
 
 	/* Test with IPv6 */
-	addrString = [[LFString alloc] initWithCString: "::1"];
+	addrString = [[TRString alloc] initWithCString: "::1"];
 	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
 	fail_unless([pf addAddress: pfAddress toTable: name]);
@@ -127,16 +127,16 @@ START_TEST(test_addAddressToTable) {
 END_TEST
 
 START_TEST(test_deleteAddressFromTable) {
-	LFString *addrString;
+	TRString *addrString;
 	TRPFAddress *pfAddress;
 	TRArray *addresses;
-	LFString *name;
+	TRString *name;
 
-       	name = [[LFString alloc] initWithCString: "ips_artist"];
+       	name = [[TRString alloc] initWithCString: "ips_artist"];
 	fail_unless([pf flushTable: name]);
 
 	/* Addd IPv4 Address */
-	addrString = [[LFString alloc] initWithCString: "127.0.0.1"];
+	addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
 	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
 	fail_unless([pf addAddress: pfAddress toTable: name]);
@@ -157,16 +157,16 @@ END_TEST
 
 
 START_TEST(test_addressesFromTable) {
-	LFString *addrString;
+	TRString *addrString;
 	TRPFAddress *pfAddress;
 	TRArray *addresses;
-	LFString *name;
+	TRString *name;
 
-       	name = [[LFString alloc] initWithCString: "ips_artist"];
+       	name = [[TRString alloc] initWithCString: "ips_artist"];
 	fail_unless([pf flushTable: name]);
 
 	/* Addd IPv4 Address */
-	addrString = [[LFString alloc] initWithCString: "127.0.0.1"];
+	addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
 	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
 	fail_unless([pf addAddress: pfAddress toTable: name]);

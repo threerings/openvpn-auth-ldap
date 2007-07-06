@@ -33,7 +33,7 @@ $(LIB): $(GEN_SRCS) $(LIB_OBJS)
 	$(AR) -r $@ $(LIB_OBJS)
 
 clean::
-	rm -f $(LIB_OBJS) $(LIB)
+	rm -f $(GEN_SRCS) $(LIB_OBJS) $(LIB)
 
 distclean:: clean
 	rm -f Makefile

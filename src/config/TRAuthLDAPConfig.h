@@ -34,34 +34,34 @@
 #define LFAUTHLDAPCONFIG_H
 
 #include "TRObject.h"
-#include "TRArray.h"
+#include "util/TRArray.h"
 #include "TRConfig.h"
 
 @interface TRAuthLDAPConfig : TRObject <TRConfigDelegate> {
 @private
 	/* LDAP Settings */
-	LFString *_url;
+	TRString *_url;
 	BOOL _tlsEnabled;
 	BOOL _referralEnabled;
 	int _timeout;
-	LFString *_tlsCACertFile;
-	LFString *_tlsCACertDir;
-	LFString *_tlsCertFile;
-	LFString *_tlsKeyFile;
-	LFString *_tlsCipherSuite;
-	LFString *_bindDN;
-	LFString *_bindPassword;
+	TRString *_tlsCACertFile;
+	TRString *_tlsCACertDir;
+	TRString *_tlsCertFile;
+	TRString *_tlsKeyFile;
+	TRString *_tlsCipherSuite;
+	TRString *_bindDN;
+	TRString *_bindPassword;
 
 	/* Authentication / Authorization Settings */
-	LFString *_baseDN;
-	LFString *_searchFilter;
+	TRString *_baseDN;
+	TRString *_searchFilter;
 	BOOL _requireGroup;
-	LFString *_pfTable;
+	TRString *_pfTable;
 	TRArray *_ldapGroups;
 	BOOL _pfEnabled;
 
 	/* Parser State */
-	LFString *_configFileName;
+	TRString *_configFileName;
 	TRConfig *_configDriver;
 	TRArray *_sectionStack;
 }
@@ -75,8 +75,8 @@
 - (void) parseError: (TRConfigToken *) badToken;
 
 /* Accessors */
-- (LFString *) url;
-- (void) setURL: (LFString *) newURL;
+- (TRString *) url;
+- (void) setURL: (TRString *) newURL;
 
 - (int) timeout;
 - (void) setTimeout: (int) newTimeout;
@@ -84,32 +84,32 @@
 - (BOOL) tlsEnabled;
 - (void) setTLSEnabled: (BOOL) newTLSSetting;
 
-- (LFString *) tlsCACertFile;
-- (void) setTLSCACertFile: (LFString *) fileName;
+- (TRString *) tlsCACertFile;
+- (void) setTLSCACertFile: (TRString *) fileName;
 
-- (LFString *) tlsCACertDir;
-- (void) setTLSCACertDir: (LFString *) directoryName;
+- (TRString *) tlsCACertDir;
+- (void) setTLSCACertDir: (TRString *) directoryName;
 
-- (LFString *) tlsCertFile;
-- (void) setTLSCertFile: (LFString *) newFilename;
+- (TRString *) tlsCertFile;
+- (void) setTLSCertFile: (TRString *) newFilename;
 
-- (LFString *) tlsKeyFile;
-- (void) setTLSKeyFile: (LFString *) fileName;
+- (TRString *) tlsKeyFile;
+- (void) setTLSKeyFile: (TRString *) fileName;
 
-- (LFString *) tlsCipherSuite;
-- (void) setTLSCipherSuite: (LFString *) cipherSuite;
+- (TRString *) tlsCipherSuite;
+- (void) setTLSCipherSuite: (TRString *) cipherSuite;
 
-- (LFString *) bindDN;
-- (void) setBindDN: (LFString *) bindDN;
+- (TRString *) bindDN;
+- (void) setBindDN: (TRString *) bindDN;
 
-- (LFString *) bindPassword;
-- (void) setBindPassword: (LFString *) bindPassword;
+- (TRString *) bindPassword;
+- (void) setBindPassword: (TRString *) bindPassword;
 
-- (LFString *) baseDN;
-- (void) setBaseDN: (LFString *) baseDN;
+- (TRString *) baseDN;
+- (void) setBaseDN: (TRString *) baseDN;
 
-- (LFString *) searchFilter;
-- (void) setSearchFilter: (LFString *) searchFilter;
+- (TRString *) searchFilter;
+- (void) setSearchFilter: (TRString *) searchFilter;
 
 - (BOOL) referralEnabled;
 - (void) setReferralEnabled: (BOOL) newReferralSetting;
@@ -117,8 +117,8 @@
 - (BOOL) requireGroup;
 - (void) setRequireGroup: (BOOL) requireGroup;
 
-- (LFString *) pfTable;
-- (void) setPFTable: (LFString *) tableName;
+- (TRString *) pfTable;
+- (void) setPFTable: (TRString *) tableName;
 
 - (BOOL) pfEnabled;
 - (void) setPFEnabled: (BOOL) newPFSetting;

@@ -1,6 +1,6 @@
 AC_PREREQ(2.57)
 AC_INIT(auth-ldap, [2.0], landonf@opendarwin.org)
-AC_CONFIG_SRCDIR(${srcdir}/src/LFString.m)
+AC_CONFIG_SRCDIR(${srcdir}/src/auth-ldap.m)
 AC_CONFIG_HEADERS(config.h)
 
 AC_CANONICAL_SYSTEM
@@ -73,9 +73,11 @@ AC_CONFIG_FILES([Makefile
 		 src/Makefile
 		 src/config/Makefile
 		 src/ldap/Makefile
+		 src/util/Makefile
 		 tests/Makefile
 		 tests/config/Makefile
 		 tests/ldap/Makefile
+		 tests/util/Makefile
 		 Mk/autoconf.mk
 		 Mk/compile.mk
 		 Mk/subdir.mk

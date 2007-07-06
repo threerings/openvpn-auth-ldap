@@ -42,10 +42,10 @@
 
 START_TEST(test_initWithDN) {
 	TRLDAPEntry *entry;
-	LFString *dn;
+	TRString *dn;
 	TRHash *attributes;
 
-	dn = [[LFString alloc] initWithCString: "dc=foobar"];
+	dn = [[TRString alloc] initWithCString: "dc=foobar"];
 	/* Make something up for the attributes */
 	attributes = [[TRHash alloc] initWithCapacity: 1];
 	[attributes setObject: dn forKey: dn];

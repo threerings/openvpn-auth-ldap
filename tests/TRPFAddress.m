@@ -48,7 +48,7 @@
 #include <arpa/inet.h>
 
 START_TEST(test_initWithPresentationAddress) {
-	LFString *addrString;
+	TRString *addrString;
 	TRPFAddress *pfAddr;
 	/* Independent verification */
 	struct pfr_addr *result;
@@ -56,7 +56,7 @@ START_TEST(test_initWithPresentationAddress) {
 	struct in6_addr addr6;
 
 	/* Test with IPv4 */
-	addrString = [[LFString alloc] initWithCString: "127.0.0.1"];
+	addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
 	fail_unless(inet_pton(AF_INET, "127.0.0.1", &addr4));
 
 	pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
@@ -70,7 +70,7 @@ START_TEST(test_initWithPresentationAddress) {
 	[pfAddr release];
 
 	/* Test with IPv6 */
-	addrString = [[LFString alloc] initWithCString: "::1"];
+	addrString = [[TRString alloc] initWithCString: "::1"];
 	fail_unless(inet_pton(AF_INET6, "::1", &addr6));
 
 	pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];

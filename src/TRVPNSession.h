@@ -36,15 +36,15 @@
 #define TRVPNSESSION_H
 
 #include "TRObject.h"
-#include "LFString.h"
+#include "util/TRString.h"
 
 @interface TRVPNSession: TRObject {
 @private
-	LFString *_username;
+	TRString *_username;
 }
 
-- (id) initWithUsername: (LFString *) username;
-- (LFString *) username;
+- (id) initWithUsername: (TRString *) username;
+- (TRString *) username;
 
 @end
 

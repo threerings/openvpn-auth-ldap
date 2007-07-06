@@ -55,7 +55,7 @@
 		_dataType = TOKEN_DATATYPE_STRING;
 		_tokenID = tokenID;
 		_lineNumber = line;
-		_string = [[LFString alloc] initWithBytes: data numBytes: length];
+		_string = [[TRString alloc] initWithBytes: data numBytes: length];
 		if (!_string) {
 			[self release];
 			return NULL;
@@ -81,7 +81,7 @@
 /**
  * Return the token's string value.
  */
-- (LFString *) string {
+- (TRString *) string {
 	return _string;
 }
 

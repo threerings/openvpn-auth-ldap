@@ -40,7 +40,7 @@
 #define TRPFADDRESS_H
 
 #include "TRPacketFilter.h"
-#include "LFString.h"
+#include "util/TRString.h"
 #include "TRObject.h"
 
 @interface TRPFAddress : TRObject {
@@ -48,7 +48,7 @@
 	struct pfr_addr _addr;
 }
 
-- (id) initWithPresentationAddress: (LFString *) address;
+- (id) initWithPresentationAddress: (TRString *) address;
 - (id) initWithPFRAddr: (struct pfr_addr *) pfrAddr;
 - (struct pfr_addr *) pfrAddr;
 

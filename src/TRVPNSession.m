@@ -39,7 +39,7 @@
  */
 @implementation TRVPNSession
 
-- (id) initWithUsername: (LFString *) username {
+- (id) initWithUsername: (TRString *) username {
 	self = [self init];
 	if (!self)
 		return nil;
@@ -53,7 +53,7 @@
 	[super dealloc];
 }
 
-- (LFString *) username {
+- (TRString *) username {
 	return (_username);
 }
 

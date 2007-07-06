@@ -1,10 +1,8 @@
 /*
- * TRHash.h
- * Hash table
+ * util/TRString.h
+ * Brain-dead Dynamic Strings
  *
- * Author: Landon Fuller <landonf@threerings.net>
- *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +13,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of any contributors
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,26 +30,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRHASH_H
-#define TRHASH_H
+#ifndef LFSTRING_H
+#define LFSTRING_H
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdlib.h>
 
 #include "TRObject.h"
-#include "TREnumerator.h"
-#include "LFString.h"
-#include "hash.h"
+#include "util/strlcpy.h"
 
-@interface TRHash : TRObject {
+@interface TRString : TRObject {
 @private
-	hash_t *_hash;
+	char *bytes;
+	size_t numBytes;
 }
 
-- (id) initWithCapacity: (unsigned long) numItems;
-- (BOOL) isFull;
-- (id) valueForKey: (LFString *) key;
-- (void) setObject: (id) anObject forKey: (LFString *) key;
-- (void) removeObjectForKey: (LFString *) key;
-- (TREnumerator *) keyEnumerator;
+- (id) initWithCString: (const char *) cString;
+- (id) initWithString: (TRString *) string;
+- (id) initWithBytes: (const char *) data numBytes: (size_t) length;
+
+- (const char *) cString;
+- (size_t) length;
+- (unsigned long) hash;
+
+- (BOOL) intValue: (int *) value;
+
+- (size_t) indexToCString: (const char *) cString;
+- (size_t) indexToCharset: (const char *) cString;
+
+- (char) charAtIndex: (size_t) index;
+- (TRString *) substringToIndex: (size_t) index;
+- (TRString *) substringFromIndex: (size_t) index;
+- (TRString *) substringToCString: (const char *) cString;
+- (TRString *) substringFromCString: (const char *) cString;
+- (TRString *) substringToCharset: (const char *) cString;
+- (TRString *) substringFromCharset: (const char *) cString;
+
+- (void) appendChar: (char) c;
+- (void) appendCString: (const char *) cString;
+- (void) appendString: (TRString *) string;
 
 @end
 
-#endif /* TRHASH_H */
+#endif /* LFSTRING_H */

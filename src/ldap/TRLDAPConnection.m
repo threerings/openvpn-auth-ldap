@@ -37,7 +37,7 @@
 #include "ldap/TRLDAPConnection.h"
 #include "TRLog.h"
 
-#include "xmalloc.h"
+#include "util/xmalloc.h"
 
 static int ldap_get_errno(LDAP *ld) {
 	int err;
@@ -109,7 +109,7 @@ static int ldap_get_errno(LDAP *ld) {
  */
 @implementation TRLDAPConnection
 
-- (id) initWithURL: (LFString *) url timeout: (int) timeout {
+- (id) initWithURL: (TRString *) url timeout: (int) timeout {
 	struct timeval ldapTimeout;
 	int arg;
 
@@ -166,7 +166,7 @@ static int ldap_get_errno(LDAP *ld) {
 	return (YES);
 }
 
-- (BOOL) bindWithDN: (LFString *) bindDN password: (LFString *) password {
+- (BOOL) bindWithDN: (TRString *) bindDN password: (TRString *) password {
 	int msgid, err;
 	LDAPMessage *res;
 	struct berval cred;
@@ -248,9 +248,9 @@ static int ldap_get_errno(LDAP *ld) {
  * @return: An array of TRLDAPEntry instances.
  */
 - (TRArray *)
-	searchWithFilter: (LFString *) filter
+	searchWithFilter: (TRString *) filter
 	scope: (int) scope
-	baseDN: (LFString *) base
+	baseDN: (TRString *) base
 	attributes: (TRArray *) attributes
 {
 	TREnumerator *iter;
@@ -264,7 +264,7 @@ static int ldap_get_errno(LDAP *ld) {
 	struct timeval timeout;
 
 	char **attrArray;
-	LFString *attrString;
+	TRString *attrString;
 
 	int count;
 	int numEntries;
@@ -320,20 +320,20 @@ static int ldap_get_errno(LDAP *ld) {
 		TRHash *ldapAttributes;
 		BerElement *ptr;
 		int maxCapacity = 2048;
-		LFString *dn;
+		TRString *dn;
 		char *dnCString;
 
 		ldapAttributes = [[TRHash alloc] initWithCapacity: maxCapacity];
 
 		/* Grab our entry's DN */
 		dnCString = ldap_get_dn(ldapConn, entry);
-		dn = [[LFString alloc] initWithCString: dnCString];
+		dn = [[TRString alloc] initWithCString: dnCString];
 		ldap_memfree(dnCString);
 		
 		/* Load all attributes and associated values */
 		for (attr = ldap_first_attribute(ldapConn, entry, &ptr); attr != NULL; attr = ldap_next_attribute(ldapConn, entry, ptr)) {
-			LFString *attrName;
-			LFString *valueString;
+			TRString *attrName;
+			TRString *valueString;
 			TRArray *attrValues;
 			int i;
 
@@ -341,7 +341,7 @@ static int ldap_get_errno(LDAP *ld) {
 			if(--maxCapacity == 0)
 				break;
 
-			attrName = [[LFString alloc] initWithCString: attr];
+			attrName = [[TRString alloc] initWithCString: attr];
 			attrValues = [[TRArray alloc] init];
 
 			vals = ldap_get_values_len(ldapConn, entry, attr);
@@ -351,7 +351,7 @@ static int ldap_get_errno(LDAP *ld) {
 					 * client of this API could do something dumb. There doesn't seem to be any sane
 					 * way to determine whether data is binary or non-binary. At the very least, we
 					 * enforce NULL termination by turning the data into a string. */
-					valueString = [[LFString alloc] initWithBytes: vals[i]->bv_val numBytes: vals[i]->bv_len];
+					valueString = [[TRString alloc] initWithBytes: vals[i]->bv_val numBytes: vals[i]->bv_len];
 					/* Pass our value string to the attrValues array */
 					[attrValues addObject: valueString];
 					[valueString release];
@@ -389,7 +389,7 @@ finish:
 	return entries;
 }
 
-- (BOOL) compareDN: (LFString *) dn withAttribute: (LFString *) attribute value: (LFString *) value {
+- (BOOL) compareDN: (TRString *) dn withAttribute: (TRString *) attribute value: (TRString *) value {
 	struct timeval	timeout;
 	LDAPMessage	*res;
 	struct berval	bval;
@@ -440,28 +440,28 @@ finish:
 		return [self setLDAPOption: LDAP_OPT_REFERRALS value: LDAP_OPT_OFF connection: ldapConn];
 }
 
-- (BOOL) setTLSCACertFile: (LFString *) fileName {
+- (BOOL) setTLSCACertFile: (TRString *) fileName {
 	if ([self setLDAPOption: LDAP_OPT_X_TLS_CACERTFILE value: [fileName cString] connection: ldapConn])
 		if ([self setTLSRequireCert])
 			return true;
 	return false;
 }
 
-- (BOOL) setTLSCACertDir: (LFString *) directory {
+- (BOOL) setTLSCACertDir: (TRString *) directory {
 	if ([self setLDAPOption: LDAP_OPT_X_TLS_CACERTDIR value: [directory cString] connection: ldapConn])
 		if ([self setTLSRequireCert])
 			return true;
 	return false;
 }
 
-- (BOOL) setTLSClientCert: (LFString *) certFile keyFile: (LFString *) keyFile {
+- (BOOL) setTLSClientCert: (TRString *) certFile keyFile: (TRString *) keyFile {
 	if ([self setLDAPOption: LDAP_OPT_X_TLS_CERTFILE value: [certFile cString] connection: ldapConn])
 		if ([self setLDAPOption: LDAP_OPT_X_TLS_KEYFILE value: [keyFile cString] connection: ldapConn])
 			return true;
 	return false;
 }
 
-- (BOOL) setTLSCipherSuite: (LFString *) cipherSuite {
+- (BOOL) setTLSCipherSuite: (TRString *) cipherSuite {
 	return [self setLDAPOption: LDAP_OPT_X_TLS_CIPHER_SUITE value: [cipherSuite cString] connection: ldapConn];
 }
 

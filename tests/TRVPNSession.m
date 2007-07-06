@@ -42,7 +42,7 @@
 
 START_TEST(test_initWithUsername) {
 	TRVPNSession *session;
-	LFString *username = [[LFString alloc] initWithCString: "user"];
+	TRString *username = [[TRString alloc] initWithCString: "user"];
 
 	session = [[TRVPNSession alloc] initWithUsername: username];
 
