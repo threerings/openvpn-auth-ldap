@@ -75,8 +75,6 @@ START_TEST(test_tables) {
 
     fail_unless(strcmp([[tableIter nextObject] cString], "ips_artist") == 0);
     fail_unless(strcmp([[tableIter nextObject] cString], "ips_developer") == 0);
-
-    [tables release];
 }
 END_TEST
 
@@ -104,7 +102,6 @@ START_TEST(test_addAddressToTable) {
     addresses = [pf addressesFromTable: name];
     fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
 
-    [addresses release];
     [addrString release];
     [pfAddress release];
 
@@ -117,7 +114,6 @@ START_TEST(test_addAddressToTable) {
     fail_unless([addresses count] == 2, "Incorrect number of addresses. (expected 2, got %d)", [addresses count]);
 
 
-    [addresses release];
     [addrString release];
     [pfAddress release];
 
@@ -141,12 +137,10 @@ START_TEST(test_deleteAddressFromTable) {
     fail_unless([pf addAddress: pfAddress toTable: name]);
     addresses = [pf addressesFromTable: name];
     fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
-    [addresses release];
 
     fail_unless([pf deleteAddress: pfAddress fromTable: name]);
     addresses = [pf addressesFromTable: name];
     fail_unless([addresses count] == 0, "Incorrect number of addresses. (expected 0, got %d)", [addresses count]);
-    [addresses release];
 
     [addrString release];
     [pfAddress release];
@@ -172,7 +166,6 @@ START_TEST(test_addressesFromTable) {
     addresses = [pf addressesFromTable: name];
     fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
 
-    [addresses release];
     [addrString release];
     [pfAddress release];
     [name release];
