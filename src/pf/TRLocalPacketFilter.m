@@ -142,7 +142,7 @@
     }
 
     free(io.pfrio_buffer);
-    return result;
+    return [result autorelease];
 }
 
 /** Clear all addreses from the specified table. */
@@ -282,7 +282,7 @@
     }
 
     free(io.pfrio_buffer);
-    return result;
+    return [result autorelease];
 
 }
 
