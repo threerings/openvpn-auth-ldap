@@ -49,6 +49,7 @@
 #include <pf/TRPacketFilter.h>
 #include <pf/TRPFAddress.h>
 
+#include <util/TRAutoreleasePool.h>
 #include <util/TRString.h>
 #include <util/xmalloc.h>
 
@@ -226,6 +227,8 @@ error:
 OPENVPN_EXPORT openvpn_plugin_handle_t
 openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[]) {
 	ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
+
+	/* Read the configuration */
 	ctx->config = [[TRAuthLDAPConfig alloc] initWithConfigFile: argv[1]];
 	if (!ctx->config) {
 		free(ctx);
@@ -254,11 +257,17 @@ OPENVPN_EXPORT void
 openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 {
 	ldap_ctx *ctx = handle;
+
+	/* Clean up the configuration file */
 	[ctx->config release];
+	
+	/* Clean up PF */
 #ifdef HAVE_PF
 	if (ctx->pf)
 		[ctx->pf release];
 #endif
+
+	/* Finished */
 	free(ctx);
 }
 
@@ -523,7 +532,11 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	ldap_ctx *ctx = handle;
 	TRLDAPConnection *ldap = nil;
 	TRLDAPEntry *ldapUser = nil;
+	TRAutoreleasePool *pool = nil;
 	int ret = OPENVPN_PLUGIN_FUNC_ERROR;
+
+	/* Per-request allocation pool. */
+	pool = [[TRAutoreleasePool alloc] init];
 
 	username = get_env("username", envp);
 	password = get_env("password", envp);
@@ -532,13 +545,13 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	/* At the very least, we need a username to work with */
 	if (!username) {
 		[TRLog debug: "No remote username supplied to OpenVPN LDAP Plugin."];
-		return (OPENVPN_PLUGIN_FUNC_ERROR);
+		goto cleanup;
 	}
 
 	/* Create an LDAP connection */
 	if (!(ldap = connect_ldap(ctx->config))) {
 		[TRLog error: "LDAP connect failed."];
-		return (OPENVPN_PLUGIN_FUNC_ERROR);
+		goto cleanup;
 	}
 
 	/* Find the user record */
@@ -546,7 +559,6 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 	if (!ldapUser) {
 		/* No such user. */
 		[TRLog warning: "LDAP user \"%s\" was not found.", username];
-		ret = OPENVPN_PLUGIN_FUNC_ERROR;
 		goto cleanup;
 	}
 
@@ -555,7 +567,6 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 		case OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY:
 			if (!password) {
 				[TRLog debug: "No remote password supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY)."];
-				ret = OPENVPN_PLUGIN_FUNC_ERROR;
 			} else {
 				ret = handle_auth_user_pass_verify(ctx, ldap, ldapUser, password);
 			}
@@ -564,7 +575,6 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 		case OPENVPN_PLUGIN_CLIENT_CONNECT:
 			if (!remoteAddress) {
 				[TRLog debug: "No remote address supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_CLIENT_CONNECT)."];
-				ret = OPENVPN_PLUGIN_FUNC_ERROR;
 			} else {
 				ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, YES);
 			}
@@ -572,21 +582,24 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 		case OPENVPN_PLUGIN_CLIENT_DISCONNECT:
 			if (!remoteAddress) {
 				[TRLog debug: "No remote address supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_CLIENT_DISCONNECT)."];
-				ret = OPENVPN_PLUGIN_FUNC_ERROR;
 			} else {
 				ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, NO);
 			}
 			break;
 		default:
 			[TRLog debug: "Unhandled plugin type in OpenVPN LDAP Plugin (type=%d)", type];
-			ret = OPENVPN_PLUGIN_FUNC_ERROR;
 			break;
 	}
 
 cleanup:
-	if (ldapUser)
+	if (ldapUser != nil)
 		[ldapUser release];
-	if (ldap)
+
+	if (ldap != nil)
 		[ldap release];
+
+	if (pool != nil)
+		[pool release];
+
 	return (ret);
 }
