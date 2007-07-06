@@ -142,9 +142,10 @@ static TRString *createSearchFilter(TRString *template, const char *username) {
 	TRString *result, *part;
 	TRString *quotedName;
 	const char userFormat[] = "%u";
+	TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
 
 	/* Copy the template */
-	templateString = [[TRString alloc] initWithString: template];
+	templateString = [[[TRString alloc] initWithString: template] autorelease];
 
 	/* Initialize the result */
 	result = [[TRString alloc] init];
@@ -157,14 +158,12 @@ static TRString *createSearchFilter(TRString *template, const char *username) {
 
 		/* Append everything until the first %u */
 		[result appendString: part];
-		[part release];
 
 		/* Append the username */
 		[result appendString: quotedName];
 
 		/* Move templateString past the %u */
 		temp = [templateString substringFromCString: userFormat];
-		[templateString release];
 		templateString = temp;
 	}
 
@@ -173,8 +172,9 @@ static TRString *createSearchFilter(TRString *template, const char *username) {
 	/* Append the remainder, if any */
 	if (templateString) {
 		[result appendString: templateString];
-		[templateString release];
 	}
+
+	[pool release];
 
 	return (result);
 }
