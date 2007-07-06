@@ -13,7 +13,15 @@ all:: pre-all
 
 pre-all::
 
-clean distclean::
+clean::
+	@if test x"$(SUBDIR)" != "x"; then \
+		for subdir in $(SUBDIR); do\
+			echo ===\> making $@ in ${DIRPRFX}$$subdir; \
+			( cd $$subdir && $(MAKE) DIRPRFX=${DIRPRFX}$$subdir/ $@) || exit 1; \
+		done \
+	fi
+
+distclean:: clean
 	@if test x"$(SUBDIR)" != "x"; then \
 		for subdir in $(SUBDIR); do\
 			echo ===\> making $@ in ${DIRPRFX}$$subdir; \
