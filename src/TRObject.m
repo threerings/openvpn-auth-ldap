@@ -39,6 +39,7 @@
 #include <assert.h>
 
 #include "TRObject.h"
+#include "util/TRAutoreleasePool.h"
 
 /*
  * Apple's Obj-C compiler assumes that all objects
@@ -103,6 +104,23 @@
 	_refCount--;
 	if (!_refCount)
 		[self dealloc];
+}
+
+/*!
+ * Add the object to the current autorelease pool. Objects in the autorelease
+ * pool will be released at a later time.
+ * @result Returns a reference to the receiver.
+ */
+- (id) autorelease
+{
+        [TRAutoreleasePool addObject: self];
+        return self;
+}
+
+/* Don't auto-release the class object! */
++ (id) autorelease
+{
+        return self;
 }
 
 @end
