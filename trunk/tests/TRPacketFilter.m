@@ -40,8 +40,8 @@
 
 #include <check.h>
 
-#include <src/TRPacketFilter.h>
-#include <src/LFString.h>
+#include <TRPacketFilter.h>
+#include <LFString.h>
 
 #include "mockpf.h"
 

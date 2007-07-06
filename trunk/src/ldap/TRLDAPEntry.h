@@ -1,5 +1,5 @@
 /*
- * TRLDAPEntry.m
+ * ldap/TRLDAPEntry.h
  * LDAP Entry
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -32,42 +32,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TRLDAPEntry.h"
+#ifndef TRLDAPENTRY_H
+#define TRLDAPENTRY_H
 
-/**
- * An LDAP entry.
- */
-@implementation TRLDAPEntry
+#include "TRObject.h"
+#include "TRHash.h"
 
-- (id) initWithDN: (LFString *) dn attributes: (TRHash *) attributes {
-	self = [self init];
-	if (!self)
-		return self;
-
-	_dn = [dn retain];
-	_attributes = [attributes retain];
-
-	return self;
+@interface TRLDAPEntry : TRObject {
+@private
+	LFString *_dn;
+	TRHash *_attributes;
 }
 
-- (void) dealloc {
-	[_dn release];
-	[_attributes release];
-	[super dealloc];
-}
-
-/**
- * Returns the entry's distinguished name.
- */
-- (LFString *) dn {
-	return _dn;
-}
-
-/**
- * Return the entries' attributes as a dictionary.
- */
-- (TRHash *) attributes {
-	return _attributes;
-}
+- (id) initWithDN: (LFString *) dn attributes: (TRHash *) attributes;
+- (LFString *) dn;
+- (TRHash *) attributes;
 
 @end
+
+#endif /* TRLDAPENTRY_H */

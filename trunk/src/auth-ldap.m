@@ -42,9 +42,9 @@
 
 #include <LFString.h>
 #include <LFAuthLDAPConfig.h>
-#include <TRLDAPEntry.h>
+#include <ldap/TRLDAPEntry.h>
 #include <TRLDAPGroupConfig.h>
-#include <LFLDAPConnection.h>
+#include <ldap/TRLDAPConnection.h>
 #include <TRPacketFilter.h>
 #include <TRPFAddress.h>
 #include <TRLog.h>
@@ -259,12 +259,12 @@ openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 	free(ctx);
 }
 
-LFLDAPConnection *connect_ldap(LFAuthLDAPConfig *config) {
-	LFLDAPConnection *ldap;
+TRLDAPConnection *connect_ldap(LFAuthLDAPConfig *config) {
+	TRLDAPConnection *ldap;
 	LFString *value;
 
 	/* Initialize our LDAP Connection */
-	ldap = [[LFLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
+	ldap = [[TRLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
 	if (!ldap) {
 		[TRLog error: "Unable to open LDAP connection to %s\n", [[config url] cString]];
 		return nil;
@@ -319,7 +319,7 @@ error:
 	return nil;
 }
 
-static TRLDAPEntry *find_ldap_user (LFLDAPConnection *ldap, LFAuthLDAPConfig *config, const char *username) {
+static TRLDAPEntry *find_ldap_user (TRLDAPConnection *ldap, LFAuthLDAPConfig *config, const char *username) {
 	LFString		*searchFilter;
 	TRArray			*ldapEntries;
 	TRLDAPEntry		*result = nil;
@@ -350,8 +350,8 @@ static TRLDAPEntry *find_ldap_user (LFLDAPConnection *ldap, LFAuthLDAPConfig *co
 }
 
 
-static BOOL auth_ldap_user(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser, const char *password) {
-	LFLDAPConnection *authConn;
+static BOOL auth_ldap_user(TRLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser, const char *password) {
+	TRLDAPConnection *authConn;
 	LFString *passwordString;
 	BOOL result = NO;
 
@@ -374,7 +374,7 @@ static BOOL auth_ldap_user(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, TRL
 	return result;
 }
 
-static TRLDAPGroupConfig *find_ldap_group(LFLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser) {
+static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser) {
 	TREnumerator *groupIter;
 	TRLDAPGroupConfig *groupConfig;
 	TRArray *ldapEntries;
@@ -418,7 +418,7 @@ static TRLDAPGroupConfig *find_ldap_group(LFLDAPConnection *ldap, LFAuthLDAPConf
 }
 
 /** Handle user authentication. */
-static int handle_auth_user_pass_verify(ldap_ctx *ctx, LFLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *password) {
+static int handle_auth_user_pass_verify(ldap_ctx *ctx, TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *password) {
 	TRLDAPGroupConfig *groupConfig;
 
 	/* Authenticate the user */
@@ -480,7 +480,7 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, LFString *tableNa
 
 
 /** Handle both connection and disconnection events. */
-static int handle_client_connect_disconnect(ldap_ctx *ctx, LFLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *remoteAddress, BOOL connecting) {
+static int handle_client_connect_disconnect(ldap_ctx *ctx, TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *remoteAddress, BOOL connecting) {
 	TRLDAPGroupConfig *groupConfig = nil;
 #ifdef HAVE_PF
 	LFString *tableName = nil;
@@ -518,7 +518,7 @@ OPENVPN_EXPORT int
 openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const char *argv[], const char *envp[]) {
 	const char *username, *password, *remoteAddress;
 	ldap_ctx *ctx = handle;
-	LFLDAPConnection *ldap = nil;
+	TRLDAPConnection *ldap = nil;
 	TRLDAPEntry *ldapUser = nil;
 	int ret = OPENVPN_PLUGIN_FUNC_ERROR;
 

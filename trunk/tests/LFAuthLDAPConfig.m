@@ -36,7 +36,7 @@
 #include <config.h>
 #endif
 
-#include <src/LFAuthLDAPConfig.h>
+#include <LFAuthLDAPConfig.h>
 
 #include <check.h>
 #include <string.h>

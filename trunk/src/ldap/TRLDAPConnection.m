@@ -1,5 +1,5 @@
 /*
- * LFLDAPConnection.m
+ * TRLDAPConnection.m
  * Simple LDAP Wrapper
  *
  * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
@@ -34,7 +34,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-#include "LFLDAPConnection.h"
+#include "ldap/TRLDAPConnection.h"
 #include "TRLog.h"
 
 #include "xmalloc.h"
@@ -49,13 +49,13 @@ static int ldap_get_errno(LDAP *ld) {
 /*
  * Private Methods
  */
-@interface LFLDAPConnection (Private)
+@interface TRLDAPConnection (Private)
 - (void) log: (loglevel_t) level withLDAPError: (int) error message: (char *) message;
 - (BOOL) setLDAPOption: (int) opt value: (const char *) value connection: (LDAP *) ldapConn;
 - (BOOL) setTLSRequireCert;
 @end
 
-@implementation LFLDAPConnection (Private)
+@implementation TRLDAPConnection (Private)
 
 /**
  * Log an LDAP error, including the LDAP_OPT_ERROR_STRING, if available.
@@ -107,7 +107,7 @@ static int ldap_get_errno(LDAP *ld) {
 /*
  * Public Methods
  */
-@implementation LFLDAPConnection
+@implementation TRLDAPConnection
 
 - (id) initWithURL: (LFString *) url timeout: (int) timeout {
 	struct timeval ldapTimeout;

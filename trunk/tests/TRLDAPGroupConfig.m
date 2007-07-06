@@ -36,7 +36,7 @@
 #include <config.h>
 #endif
 
-#include <src/TRLDAPGroupConfig.h>
+#include <TRLDAPGroupConfig.h>
 
 #include <check.h>
 

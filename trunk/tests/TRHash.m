@@ -38,7 +38,7 @@
 
 #include <check.h>
 
-#include <src/TRHash.h>
+#include <TRHash.h>
 
 START_TEST(test_initWithCapacity) {
 	TRHash *hash = [[TRHash alloc] initWithCapacity: 42];
