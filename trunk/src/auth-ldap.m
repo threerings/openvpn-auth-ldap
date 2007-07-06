@@ -357,8 +357,6 @@ static TRLDAPEntry *find_ldap_user (TRLDAPConnection *ldap, TRAuthLDAPConfig *co
 	 * We ignore any extras. */
 	result = [[ldapEntries lastObject] retain];
 
-	[ldapEntries release];
-
 	return result;
 }
 
@@ -420,7 +418,6 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
 				result = groupConfig;
 			}
 		}
-		[ldapEntries release];
 		if (result)
 			break;
 	}

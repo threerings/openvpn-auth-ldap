@@ -386,7 +386,7 @@ static int ldap_get_errno(LDAP *ld) {
 finish:
 	if (attrArray)
 		free(attrArray);
-	return entries;
+	return [entries autorelease];
 }
 
 - (BOOL) compareDN: (TRString *) dn withAttribute: (TRString *) attribute value: (TRString *) value {
