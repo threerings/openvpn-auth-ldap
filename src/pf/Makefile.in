@@ -8,6 +8,7 @@ include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
 LIB_OBJS=	TRLocalPacketFilter.o \
+		TRPacketFilter.o \
 		TRPFAddress.o
 
 LIB=		libauth-ldap-pf.a

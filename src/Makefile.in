@@ -29,6 +29,12 @@ LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS) \
 		-Lldap -lauth-ldap-ldap \
 		-Lpf -lauth-ldap-pf \
 		-Lutil -lauth-ldap-util
+		
+MODULE_LIBS=	config/libauth-ldap-config.a \
+		ldap/libauth-ldap-ldap.a \
+		pf/libauth-ldap-pf.a \
+		util/libauth-ldap-util.a
+
 
 
 INSTALL_LIB=		$(INSTALL) -m 755
@@ -36,10 +42,10 @@ PLUGIN_INSTALL_DIR=	$(DESTDIR)$(libdir)
 
 all:: $(PLUGIN_FILE) $(TEST_LIB) testplugin
 
-$(PLUGIN_FILE): $(PLUGIN_OBJS)
+$(PLUGIN_FILE): $(PLUGIN_OBJS) $(MODULE_LIBS)
 	$(MAKE_PLUGIN)
 
-$(TEST_LIB): $(GEN_SRCS) $(PLUGIN_OBJS)
+$(TEST_LIB): $(GEN_SRCS) $(PLUGIN_OBJS) $(MODULE_LIBS)
 	$(AR) -r $@ $(PLUGIN_OBJS)
 
 testplugin:: $(TEST_OBJS) $(TEST_LIB)

@@ -1,5 +1,5 @@
 /*
- * TRLocalPacketFilter.h vi:ts=4:sw=4:expandtab:
+ * TRLocalPacketFilter.m vi:ts=4:sw=4:expandtab:
  * Interface to local OpenBSD /dev/pf
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -32,46 +32,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#if !defined(TRPACKETFILTER_H) && defined HAVE_PF
-#define TRPACKETFILTER_H
-
-/* pf includes */
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <net/if.h>
-#include <net/pfvar.h>
-
-#include <TRObject.h>
-
-#include <util/TRString.h>
-#include <util/TRArray.h>
-
-#include "TRPacketFilter.h"
+#include "TRLocalPacketFilter.h"
 #include "TRPFAddress.h"
 
-/* Forward Declarations */
-@class TRPFAddress;
+#include <util/TRString.h>
+#include <util/xmalloc.h>
 
-@interface TRLocalPacketFilter : TRPacketFilter {
-@private
-    /** Cached reference to /dev/pf. */
-    int _fd;
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <assert.h>
+
+/**
+ * Abstract Packet Filter Class
+ */
+@implementation TRPacketFilter
+
++ (char *) stringForError: (pferror_t) error {
+    switch (error) {
+        case PF_SUCCESS:
+            return "No error";
+        case PF_ERROR_NOT_FOUND:
+            return "Not found";
+        case PF_ERROR_INVALID_NAME:
+            return "Invalid name";
+        case PF_ERROR_UNAVAILABLE:
+            return "Unavailable";
+        case PF_ERROR_PERMISSION:
+            return "Permission denied";
+        case PF_ERROR_INVALID_ARGUMENT:
+            return "Invalid argument";
+        case PF_ERROR_INTERNAL:
+            return "Internal error";
+        case PF_ERROR_UNKNOWN:
+            return "Unknown error";
+    }
+
+    abort();
+    return "Unreachable";
 }
 
-- (pferror_t) open;
-- (void) close;
-
-- (pferror_t) tables: (TRArray **) result;
-- (pferror_t) flushTable: (TRString *) tableName;
-- (pferror_t) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName;
-- (pferror_t) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName;
-- (pferror_t) addressesFromTable: (TRString *) tableName withResult: (TRArray **) result;
-
 @end
-
-#endif /* TRPACKETFILTER_H && HAVE_PF */

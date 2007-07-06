@@ -1,6 +1,6 @@
 /*
  * TRLocalPacketFilter.m vi:ts=4:sw=4:expandtab:
- * Interface to OpenBSD pf
+ * Interface to local OpenBSD /dev/pf
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -34,8 +34,9 @@
 
 #include "TRLocalPacketFilter.h"
 #include "TRPFAddress.h"
-#include "util/TRString.h"
-#include "util/xmalloc.h"
+
+#include <util/TRString.h>
+#include <util/xmalloc.h>
 
 #ifdef HAVE_PF
 
@@ -44,6 +45,49 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
+
+/**
+ * Private Methods
+ * @internal
+ */
+@interface TRLocalPacketFilter (Private)
++ (pferror_t) mapErrno;
+- (int) ioctl: (unsigned long) request withArgp: (void *) argp;
+@end
+
+@implementation TRLocalPacketFilter (Private)
+
+/**
+ * Map PF errno values to pferror_t values
+ */
++ (pferror_t) mapErrno {
+    switch (errno) {
+        case ESRCH:
+            /* Returned when a table, etc, is not found.
+             * "No such process" doesn't make much sense here. */
+            return PF_ERROR_NOT_FOUND;
+
+        case EINVAL:
+            return PF_ERROR_INVALID_ARGUMENT;
+
+        case EPERM:
+            /* Returned when /dev/pf can't be opened, and? */
+            return PF_ERROR_PERMISSION;
+
+        default:
+            return PF_ERROR_UNKNOWN;
+            break;
+    }
+}
+
+/* ioctl() with an extra seat-belt. */
+- (int) ioctl: (unsigned long) request withArgp: (void *) argp {
+    assert(_fd >= 0);
+    return ioctl(_fd, request, argp);
+}
+
+@end
 
 /**
  * An interface to a local OpenBSD Packet Filter.
@@ -51,51 +95,48 @@
 @implementation TRLocalPacketFilter
 
 /**
- * PF-specific strerror.
- * Provides useful error messages for bizzare PF error codes.
+ * Initialize a new instance.
  */
-+ (const char *) strerror: (int) pferrno {
-    const char *string;
-
-    switch (pferrno) {
-        case ESRCH:
-            /* Returned when a table, etc, is not found.
-             * "No such process" doesn't make much sense here. */
-            string = "No such PF entry.";
-            break;
-        default:
-            string = strerror(errno);
-            break;
-    }
-    
-    return string;
-}
-
 - (id) init {
     self = [super init];
-    if (!self)
+    if (self == nil)
         return self;
 
-    /* Open a reference to /dev/pf */
-    if ((_fd = open(PF_DEV_PATH, O_RDWR)) == -1) {
-        /* Failed to open! */
-        int saved_errno = errno;
-        [self release];
-        errno = saved_errno;
-        return nil;
-    }
-
+    _fd = -1;
     return self;
 }
 
+/**
+ * Open a reference to /dev/pf. Must be called before
+ * any other PF methods.
+ */
+- (pferror_t) open {
+    /* Open a reference to /dev/pf */
+    if ((_fd = open(PF_DEV_PATH, O_RDWR)) == -1)
+        return [TRLocalPacketFilter mapErrno];
+    else
+        return PF_SUCCESS;
+}
+
+/**
+ * Close and release any open references to /dev/pf.
+ * This is called automatically when the object is released.
+ */
+- (void) close {
+    if (_fd != -1) {
+        close(_fd);
+        _fd = -1;
+    }
+}
+
 - (void) dealloc {
-    close(_fd);
+    [self close];
     [super dealloc];
 }
 
 /** Return an array of table names */
-- (TRArray *) tables {
-    TRArray *result = nil;
+- (pferror_t) tables: (TRArray **) result {
+    TRArray *tables = nil;
     struct pfioc_table io;
     struct pfr_table *table;
     int size, i;
@@ -111,11 +152,13 @@
     /* Loop until success. */
     while (1) {
         io.pfrio_size = size;
-        if (ioctl(_fd, DIOCRGETTABLES, &io) == -1) {
-            int saved_errno = errno;
+        if ([self ioctl: DIOCRGETTABLES withArgp: &io] == -1) {
+            pferror_t ret;
+
+            ret = [TRLocalPacketFilter mapErrno];
             free(io.pfrio_buffer);
-            errno = saved_errno;
-            return nil;
+            *result = nil;
+            return ret;
         }
 
         /* Do we need a larger buffer? */
@@ -130,28 +173,29 @@
     }
 
     /* Iterate over the returned tables, building our array */
-    result = [[TRArray alloc] init];
+    tables = [[TRArray alloc] init];
 
     size = io.pfrio_size / sizeof(struct pfr_table);
     table = (struct pfr_table *) io.pfrio_buffer;
     for (i = 0; i < size; i++) {
         TRString *name = [[TRString alloc] initWithCString: table->pfrt_name];
-        [result addObject: name];
+        [tables addObject: name];
         [name release];
         table++;
     }
 
     free(io.pfrio_buffer);
-    return [result autorelease];
+    *result = [tables autorelease];
+    return PF_SUCCESS;
 }
 
 /** Clear all addreses from the specified table. */
-- (BOOL) flushTable: (TRString *) tableName {
+- (pferror_t) flushTable: (TRString *) tableName {
     struct pfioc_table io;
 
     /* Validate name */
     if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
-        return false;
+        return PF_ERROR_INVALID_NAME;
 
     /* Initialize the io structure */
     memset(&io, 0, sizeof(io));
@@ -160,20 +204,20 @@
     strcpy(io.pfrio_table.pfrt_name, [tableName cString]);
 
     /* Issue the ioctl */
-    if (ioctl(_fd, DIOCRCLRADDRS, &io) == -1) {
-        return false;
+    if ([self ioctl: DIOCRCLRADDRS withArgp: &io] == -1) {
+        return [TRLocalPacketFilter mapErrno];
     }
 
-    return true;
+    return PF_SUCCESS;
 }
 
 /** Add an address to the specified table. */
-- (BOOL) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName {
+- (pferror_t) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName {
     struct pfioc_table io;
 
     /* Validate name */
     if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
-        return false;
+        return PF_ERROR_INVALID_NAME;
 
     /* Initialize the io structure */
     memset(&io, 0, sizeof(io));
@@ -185,24 +229,24 @@
     io.pfrio_size = 1;
 
     /* Issue the ioctl */
-    if (ioctl(_fd, DIOCRADDADDRS, &io) == -1) {
-        return false;
+    if ([self ioctl: DIOCRADDADDRS withArgp: &io] == -1) {
+        return [TRLocalPacketFilter mapErrno];
     }
 
     if (io.pfrio_nadd != 1) {
-        return false;
+        return PF_ERROR_INTERNAL;
     }
 
-    return true;
+    return PF_SUCCESS;
 }
 
 /** Delete an address from the specified table. */
-- (BOOL) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName {
+- (pferror_t) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName {
     struct pfioc_table io;
 
     /* Validate name */
     if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
-        return false;
+        return PF_ERROR_INVALID_NAME;
 
     /* Initialize the io structure */
     memset(&io, 0, sizeof(io));
@@ -214,29 +258,31 @@
     io.pfrio_size = 1;
 
     /* Issue the ioctl */
-    if (ioctl(_fd, DIOCRDELADDRS, &io) == -1) {
-        return false;
+    if ([self ioctl: DIOCRDELADDRS withArgp: &io] == -1) {
+        return [TRLocalPacketFilter mapErrno];
     }
 
     if (io.pfrio_ndel != 1) {
-        return false;
+        return PF_ERROR_INTERNAL;
     }
 
-    return true;
+    return PF_SUCCESS;
 }
 
 
 
 /** Return an array of all addresses from the specified table. */
-- (TRArray *) addressesFromTable: (TRString *) tableName {
-    TRArray *result = nil;
+- (pferror_t) addressesFromTable: (TRString *) tableName withResult: (TRArray **) result {
+    TRArray *addresses = nil;
     struct pfioc_table io;
     struct pfr_addr *pfrAddr;
     int size, i;
 
     /* Validate name */
-    if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
-        return false;
+    if ([tableName length] > sizeof(io.pfrio_table.pfrt_name)) {
+        *result = nil;
+        return PF_ERROR_INVALID_NAME;
+    }
 
     /* Initialize the io structure */
     memset(&io, 0, sizeof(io));
@@ -252,11 +298,13 @@
     /* Loop until success. */
     while (1) {
         io.pfrio_size = size;
-        if (ioctl(_fd, DIOCRGETADDRS, &io) == -1) {
-            int saved_errno = errno;
+        if ([self ioctl: DIOCRGETADDRS withArgp: &io] == -1) {
+            pferror_t ret;
+
+            ret = [TRLocalPacketFilter mapErrno];
             free(io.pfrio_buffer);
-            errno = saved_errno;
-            return nil;
+            *result = nil;
+            return ret;
         }
 
         /* Do we need a larger buffer? */
@@ -271,19 +319,19 @@
     }
 
     /* Iterate over the returned addresses, building our array */
-    result = [[TRArray alloc] init];
+    addresses = [[TRArray alloc] init];
 
     pfrAddr = (struct pfr_addr *) io.pfrio_buffer;
     for (i = 0; i < io.pfrio_size; i++) {
         TRPFAddress *address = [[TRPFAddress alloc] initWithPFRAddr: pfrAddr];
-        [result addObject: address];
+        [addresses addObject: address];
         [address release];
         pfrAddr++;
     }
 
     free(io.pfrio_buffer);
-    return [result autorelease];
-
+    *result = [addresses autorelease];
+    return PF_SUCCESS;
 }
 
 @end

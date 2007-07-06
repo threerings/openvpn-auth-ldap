@@ -50,6 +50,7 @@ static TRLocalPacketFilter *pf = nil;
 void setUp(void) {
     mockpf_setup();
     pf = [[TRLocalPacketFilter alloc] init];
+    [pf open];
 }
 
 void tearDown(void) {
@@ -67,8 +68,7 @@ START_TEST(test_tables) {
     TRArray *tables;
     TREnumerator *tableIter;
 
-    tables = [pf tables];
-    fail_if(tables == nil);
+    fail_unless([pf tables: &tables] == PF_SUCCESS);
 
     /* Assume a few things about our mock pf implementation */
     tableIter = [tables objectEnumerator];
@@ -80,7 +80,7 @@ END_TEST
 
 START_TEST(test_flushTable) {
     TRString *name = [[TRString alloc] initWithCString: "ips_artist"];
-    fail_unless([pf flushTable: name]);
+    fail_unless([pf flushTable: name] == PF_SUCCESS);
     [name release];
 }
 END_TEST
@@ -91,15 +91,15 @@ START_TEST(test_addAddressToTable) {
     TRArray *addresses;
     TRString *name;
 
-           name = [[TRString alloc] initWithCString: "ips_artist"];
-    fail_unless([pf flushTable: name]);
+    name = [[TRString alloc] initWithCString: "ips_artist"];
+    fail_unless([pf flushTable: name] == PF_SUCCESS);
 
     /* Addd IPv4 Address */
     addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
     pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
-    fail_unless([pf addAddress: pfAddress toTable: name]);
-    addresses = [pf addressesFromTable: name];
+    fail_unless([pf addAddress: pfAddress toTable: name] == PF_SUCCESS);
+    fail_unless([pf addressesFromTable: name withResult: &addresses] == PF_SUCCESS);
     fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
 
     [addrString release];
@@ -109,8 +109,8 @@ START_TEST(test_addAddressToTable) {
     addrString = [[TRString alloc] initWithCString: "::1"];
     pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
-    fail_unless([pf addAddress: pfAddress toTable: name]);
-    addresses = [pf addressesFromTable: name];
+    fail_unless([pf addAddress: pfAddress toTable: name] == PF_SUCCESS);
+    fail_unless([pf addressesFromTable: name withResult: &addresses] == PF_SUCCESS);
     fail_unless([addresses count] == 2, "Incorrect number of addresses. (expected 2, got %d)", [addresses count]);
 
 
@@ -127,19 +127,19 @@ START_TEST(test_deleteAddressFromTable) {
     TRArray *addresses;
     TRString *name;
 
-           name = [[TRString alloc] initWithCString: "ips_artist"];
-    fail_unless([pf flushTable: name]);
+    name = [[TRString alloc] initWithCString: "ips_artist"];
+    fail_unless([pf flushTable: name] == PF_SUCCESS);
 
     /* Addd IPv4 Address */
     addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
     pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
-    fail_unless([pf addAddress: pfAddress toTable: name]);
-    addresses = [pf addressesFromTable: name];
+    fail_unless([pf addAddress: pfAddress toTable: name] == PF_SUCCESS);
+    fail_unless([pf addressesFromTable: name withResult: &addresses] == PF_SUCCESS);
     fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
 
-    fail_unless([pf deleteAddress: pfAddress fromTable: name]);
-    addresses = [pf addressesFromTable: name];
+    fail_unless([pf deleteAddress: pfAddress fromTable: name] == PF_SUCCESS);
+    fail_unless([pf addressesFromTable: name withResult: &addresses] == PF_SUCCESS);
     fail_unless([addresses count] == 0, "Incorrect number of addresses. (expected 0, got %d)", [addresses count]);
 
     [addrString release];
@@ -155,15 +155,15 @@ START_TEST(test_addressesFromTable) {
     TRArray *addresses;
     TRString *name;
 
-           name = [[TRString alloc] initWithCString: "ips_artist"];
-    fail_unless([pf flushTable: name]);
+    name = [[TRString alloc] initWithCString: "ips_artist"];
+    fail_unless([pf flushTable: name] == PF_SUCCESS);
 
     /* Addd IPv4 Address */
     addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
     pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
-    fail_unless([pf addAddress: pfAddress toTable: name]);
-    addresses = [pf addressesFromTable: name];
+    fail_unless([pf addAddress: pfAddress toTable: name] == PF_SUCCESS);
+    fail_unless([pf addressesFromTable: name withResult: &addresses] == PF_SUCCESS);
     fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
 
     [addrString release];

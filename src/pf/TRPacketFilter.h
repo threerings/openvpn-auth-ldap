@@ -1,6 +1,6 @@
 /*
- * TRLocalPacketFilter.h vi:ts=4:sw=4:expandtab:
- * Interface to local OpenBSD /dev/pf
+ * TRPacketFilter.h vi:ts=4:sw=4:expandtab:
+ * Generic interface to the OpenBSD Packet Filter
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,42 +36,29 @@
 #include <config.h>
 #endif
 
-#if !defined(TRPACKETFILTER_H) && defined HAVE_PF
-#define TRPACKETFILTER_H
-
-/* pf includes */
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <net/if.h>
-#include <net/pfvar.h>
-
 #include <TRObject.h>
 
-#include <util/TRString.h>
-#include <util/TRArray.h>
+#ifndef __TRPACKETFILTER_H__
+#define __TRPACKETFILTER_H__
 
-#include "TRPacketFilter.h"
-#include "TRPFAddress.h"
+typedef enum {
+    PF_SUCCESS                  = 0,    /* No error occured. */
+    PF_ERROR_NOT_FOUND          = 1,    /* Unknown (eg, table) name. */
+    PF_ERROR_INVALID_NAME       = 2,    /* Invalid (eg, table) name. */
+    PF_ERROR_UNAVAILABLE        = 3,    /* PF unavailable (eg, could not open /dev/pf). */
+    PF_ERROR_PERMISSION         = 4,    /* PF permission denied (eg, insufficient permissions to /dev/pf). */
+    PF_ERROR_INVALID_ARGUMENT   = 5,    /* An invalid argument was supplied. */
+    PF_ERROR_INTERNAL           = 6,    /* An internal error occured. */
+    PF_ERROR_UNKNOWN            = 7     /* An unknown error occured. */
+} pferror_t;
 
-/* Forward Declarations */
-@class TRPFAddress;
+/**
+ * Abstract Packet Filter Class
+ */
+@interface TRPacketFilter : TRObject
 
-@interface TRLocalPacketFilter : TRPacketFilter {
-@private
-    /** Cached reference to /dev/pf. */
-    int _fd;
-}
-
-- (pferror_t) open;
-- (void) close;
-
-- (pferror_t) tables: (TRArray **) result;
-- (pferror_t) flushTable: (TRString *) tableName;
-- (pferror_t) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName;
-- (pferror_t) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName;
-- (pferror_t) addressesFromTable: (TRString *) tableName withResult: (TRArray **) result;
++ (char *) stringForError: (pferror_t) error;
 
 @end
 
-#endif /* TRPACKETFILTER_H && HAVE_PF */
+#endif /* __TRPACKETFILTER_H__ */
