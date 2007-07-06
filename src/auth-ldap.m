@@ -422,7 +422,6 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
 			break;
 	}
 
-	[groupIter release];
 	return result;
 }
 
