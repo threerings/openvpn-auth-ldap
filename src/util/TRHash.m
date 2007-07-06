@@ -205,7 +205,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
  * the returned value.
  */
 - (TREnumerator *) keyEnumerator {
-	return [[TRHashKeyEnumerator alloc] initWithHash: self];
+	return [[[TRHashKeyEnumerator alloc] initWithHash: self] autorelease];
 }
 
 @end /* TRHash */

@@ -164,7 +164,6 @@ START_TEST(test_keyEnumerator) {
 	fail_unless(obj == value || obj == key);
 	obj = [iter nextObject];
 	fail_unless(obj == value || obj == key);
-	[iter release];
 
 	/* Clean up */
 	[hash release];
