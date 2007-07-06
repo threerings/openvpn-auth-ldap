@@ -28,6 +28,9 @@ OPENVPN_CFLAGS		= @OPENVPN_CFLAGS@
 
 LDFLAGS                 = @LDFLAGS@
 
+AR			= @AR@
+RANLIB			= @RANLIB@
+
 INSTALL                 = @INSTALL@
 LN_S                    = @LN_S@
 

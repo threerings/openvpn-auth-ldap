@@ -16,6 +16,9 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
+AC_CHECK_TOOL(RANLIB, ranlib, :)
+AC_CHECK_TOOL(AR, ar, :)
+
 AC_PATH_PROG([RE2C], [re2c], [no])
 if test x"$RE2C" = x"no"; then
 	AC_MSG_ERROR([re2c was not found in your PATH. It can be downloaded from http://re2c.org])
@@ -68,19 +71,25 @@ OD_OBJC_RUNTIME
 AC_CACHE_SAVE
 
 # Output
-AC_CONFIG_FILES([Makefile
-		 tools/Makefile
-		 src/Makefile
-		 src/config/Makefile
-		 src/ldap/Makefile
-		 src/util/Makefile
-		 tests/Makefile
-		 tests/config/Makefile
-		 tests/ldap/Makefile
-		 tests/util/Makefile
-		 Mk/autoconf.mk
-		 Mk/compile.mk
-		 Mk/subdir.mk
-		 doxyfile])
+AC_CONFIG_FILES([
+	Makefile
+	tools/Makefile
 
+	src/Makefile
+	src/config/Makefile
+	src/ldap/Makefile
+	src/pf/Makefile
+	src/util/Makefile
+
+	tests/Makefile
+	tests/config/Makefile
+	tests/ldap/Makefile
+	tests/pf/Makefile
+	tests/util/Makefile
+
+	Mk/autoconf.mk
+	Mk/compile.mk
+	Mk/subdir.mk
+	doxyfile
+])
 AC_OUTPUT
