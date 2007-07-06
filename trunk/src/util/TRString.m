@@ -324,7 +324,7 @@
 	strlcpy(cString, bytes, index + 1);
 	[string initWithCString: cString];
 	free(cString);
-	return (string);
+	return ([string autorelease]);
 }
 
 - (TRString *) substringFromIndex: (size_t) index {
@@ -341,7 +341,7 @@
 
 	[string initWithCString: cString];
 	free(cString);
-	return (string);
+	return ([string autorelease]);
 }
 
 - (TRString *) substringToCString: (const char *) cString {
