@@ -1,6 +1,6 @@
 /*
- * TRPacketFilter.m
- * TRPacketFilter Unit Tests
+ * TRLocalPacketFilter.m
+ * TRLocalPacketFilter Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -40,16 +40,16 @@
 
 #include <check.h>
 
-#include <pf/TRPacketFilter.h>
+#include <pf/TRLocalPacketFilter.h>
 #include <util/TRString.h>
 
 #include "mockpf.h"
 
-static TRPacketFilter *pf = nil;
+static TRLocalPacketFilter *pf = nil;
 
 void setUp(void) {
 	mockpf_setup();
-	pf = [[TRPacketFilter alloc] init];
+	pf = [[TRLocalPacketFilter alloc] init];
 }
 
 void tearDown(void) {
@@ -179,8 +179,8 @@ START_TEST(test_addressesFromTable) {
 }
 END_TEST
 
-Suite *TRPacketFilter_suite(void) {
-	Suite *s = suite_create("TRPacketFilter");
+Suite *TRLocalPacketFilter_suite(void) {
+	Suite *s = suite_create("TRLocalPacketFilter");
 
 	TCase *tc_pf = tcase_create("PF Ioctl");
 	tcase_add_checked_fixture(tc_pf, setUp, tearDown);

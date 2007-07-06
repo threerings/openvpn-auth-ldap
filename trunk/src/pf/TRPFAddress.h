@@ -39,7 +39,7 @@
 #if !defined(TRPFADDRESS_H) && defined(HAVE_PF)
 #define TRPFADDRESS_H
 
-#include "TRPacketFilter.h"
+#include "TRLocalPacketFilter.h"
 #include "util/TRString.h"
 #include "TRObject.h"
 

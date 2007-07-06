@@ -8,7 +8,7 @@ include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
 OBJS=	mockpf.o \
-	TRPacketFilter.o \
+	TRLocalPacketFilter.o \
 	TRPFAddress.o
 LIB=	libauth-ldap-test-pf.a
 

@@ -46,7 +46,7 @@
 #include <ldap/TRLDAPEntry.h>
 #include <ldap/TRLDAPConnection.h>
 
-#include <pf/TRPacketFilter.h>
+#include <pf/TRLocalPacketFilter.h>
 #include <pf/TRPFAddress.h>
 
 #include <util/TRAutoreleasePool.h>
@@ -59,7 +59,7 @@
 typedef struct ldap_ctx {
 	TRAuthLDAPConfig *config;
 #ifdef HAVE_PF
-	TRPacketFilter *pf;
+	TRLocalPacketFilter *pf;
 #endif
 } ldap_ctx;
 
@@ -186,10 +186,10 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 	TREnumerator *groupIter;
 
 	/* Acquire a reference to /dev/pf */
-	ctx->pf = [[TRPacketFilter alloc] init];
+	ctx->pf = [[TRLocalPacketFilter alloc] init];
 	if (!ctx->pf) {
 		/* /dev/pf could not be opened. Is it available? */
-		[TRLog error: "Failed to open /dev/pf: %s", [TRPacketFilter strerror: errno]];
+		[TRLog error: "Failed to open /dev/pf: %s", [TRLocalPacketFilter strerror: errno]];
 		ctx->pf = nil;
 		return NO;
 	}
@@ -198,7 +198,7 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 	if ((tableName = [ctx->config pfTable])) {
 		if (![ctx->pf flushTable: tableName]) {
 			[TRLog error: "Failed to clear packet filter table \"%s\": %s",
-					[tableName cString], [TRPacketFilter strerror: errno]];
+					[tableName cString], [TRLocalPacketFilter strerror: errno]];
 			goto error;
 		}
 	}
@@ -209,7 +209,7 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 			if ((tableName = [groupConfig pfTable])) {
 				if (![ctx->pf flushTable: tableName]) {
 					[TRLog error: "Failed to clear packet filter table \"%s\": %s",
-							[tableName cString], [TRPacketFilter strerror: errno]];
+							[tableName cString], [TRLocalPacketFilter strerror: errno]];
 					goto error;
 				}
 			}
@@ -467,7 +467,7 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, TRString *tableNa
 		[TRLog debug: "Adding address \"%s\" to packet filter table \"%s\".", remoteAddress, [tableName cString]];
 		if (![ctx->pf addAddress: address toTable: tableName]) {
 			[TRLog error: "Failed to add address \"%s\" to table \"%s\": %s",
-					remoteAddress, [tableName cString], [TRPacketFilter strerror: errno]];
+					remoteAddress, [tableName cString], [TRLocalPacketFilter strerror: errno]];
 			[address release];
 			return NO;
 		}
@@ -475,7 +475,7 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, TRString *tableNa
 		[TRLog debug: "Removing address \"%s\" from packet filter table \"%s\".", remoteAddress, [tableName cString]];
 		if (![ctx->pf deleteAddress: address fromTable: tableName]) {
 			[TRLog error: "Failed to remove address \"%s\" from table \"%s\": %s",
-					remoteAddress, [tableName cString], [TRPacketFilter strerror: errno]];
+					remoteAddress, [tableName cString], [TRLocalPacketFilter strerror: errno]];
 			[address release];
 			return NO;
 		}

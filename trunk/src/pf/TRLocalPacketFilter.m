@@ -1,5 +1,5 @@
 /*
- * TRPacketFilter.m
+ * TRLocalPacketFilter.m
  * Interface to OpenBSD pf
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TRPacketFilter.h"
+#include "TRLocalPacketFilter.h"
 #include "TRPFAddress.h"
 #include "util/TRString.h"
 #include "util/xmalloc.h"
@@ -48,7 +48,7 @@
 /**
  * An interface to a local OpenBSD Packet Filter.
  */
-@implementation TRPacketFilter
+@implementation TRLocalPacketFilter
 
 /**
  * PF-specific strerror.
