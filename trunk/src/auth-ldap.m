@@ -41,10 +41,13 @@
 #include <openvpn-plugin.h>
 
 #include <LFString.h>
-#include <LFAuthLDAPConfig.h>
+
+#include <config/TRAuthLDAPConfig.h>
+#include <config/TRLDAPGroupConfig.h>
+
 #include <ldap/TRLDAPEntry.h>
-#include <TRLDAPGroupConfig.h>
 #include <ldap/TRLDAPConnection.h>
+
 #include <TRPacketFilter.h>
 #include <TRPFAddress.h>
 #include <TRLog.h>
@@ -53,7 +56,7 @@
 
 /* Plugin Context */
 typedef struct ldap_ctx {
-	LFAuthLDAPConfig *config;
+	TRAuthLDAPConfig *config;
 #ifdef HAVE_PF
 	TRPacketFilter *pf;
 #endif
@@ -223,7 +226,7 @@ error:
 OPENVPN_EXPORT openvpn_plugin_handle_t
 openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[]) {
 	ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
-	ctx->config = [[LFAuthLDAPConfig alloc] initWithConfigFile: argv[1]];
+	ctx->config = [[TRAuthLDAPConfig alloc] initWithConfigFile: argv[1]];
 	if (!ctx->config) {
 		free(ctx);
 		return (NULL);
@@ -259,7 +262,7 @@ openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 	free(ctx);
 }
 
-TRLDAPConnection *connect_ldap(LFAuthLDAPConfig *config) {
+TRLDAPConnection *connect_ldap(TRAuthLDAPConfig *config) {
 	TRLDAPConnection *ldap;
 	LFString *value;
 
@@ -319,7 +322,7 @@ error:
 	return nil;
 }
 
-static TRLDAPEntry *find_ldap_user (TRLDAPConnection *ldap, LFAuthLDAPConfig *config, const char *username) {
+static TRLDAPEntry *find_ldap_user (TRLDAPConnection *ldap, TRAuthLDAPConfig *config, const char *username) {
 	LFString		*searchFilter;
 	TRArray			*ldapEntries;
 	TRLDAPEntry		*result = nil;
@@ -350,7 +353,7 @@ static TRLDAPEntry *find_ldap_user (TRLDAPConnection *ldap, LFAuthLDAPConfig *co
 }
 
 
-static BOOL auth_ldap_user(TRLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser, const char *password) {
+static BOOL auth_ldap_user(TRLDAPConnection *ldap, TRAuthLDAPConfig *config, TRLDAPEntry *ldapUser, const char *password) {
 	TRLDAPConnection *authConn;
 	LFString *passwordString;
 	BOOL result = NO;
@@ -374,7 +377,7 @@ static BOOL auth_ldap_user(TRLDAPConnection *ldap, LFAuthLDAPConfig *config, TRL
 	return result;
 }
 
-static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, LFAuthLDAPConfig *config, TRLDAPEntry *ldapUser) {
+static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConfig *config, TRLDAPEntry *ldapUser) {
 	TREnumerator *groupIter;
 	TRLDAPGroupConfig *groupConfig;
 	TRArray *ldapEntries;

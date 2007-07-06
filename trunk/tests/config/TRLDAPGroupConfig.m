@@ -1,6 +1,6 @@
 /*
- * TRConfig.h
- * Generic Configuration Parser
+ * TRLDAPGroupConfig.m
+ * TRLDAPGroundConfig Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -15,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of any contributors
+ * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,56 +32,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRCONFIG_H
-#define TRCONFIG_H
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include "TRObject.h"
+#include <config/TRLDAPGroupConfig.h>
 
-/* A complex set of TRConfig* header dependencies dictates the following order
- * of declarations and includes */
+#include <check.h>
 
-/**
- * Object Data Types.
- * Tokens are always strings (TOKEN_DATATYPE_STRING),
- * but sometimes they can also be integers and booleans.
- * In other words, the integer and boolean datatypes should
- * be considered to provide a superset of functionality to the
- * string data type.
- */
-typedef enum {
-	TOKEN_DATATYPE_STRING,
-	TOKEN_DATATYPE_INT,
-	TOKEN_DATATYPE_BOOL
-} TRConfigDataType;
+/* Data Constants */
+#define TEST_LDAP_BASEDN	"ou=People,dc=example,dc=com"
+#define TEST_LDAP_ATTRIBUTE	"uniqueMember"
+#define TEST_LDAP_FILTER	"(|(cn=artists)(cn=engineers))"
 
-#include "TRConfigToken.h"
-#include "TRConfigLexer.h"
+Suite *TRLDAPGroupConfig_suite(void) {
+	Suite *s = suite_create("TRLDAPGroupConfig");
 
-@protocol TRConfigDelegate
-- (void) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
-- (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
-- (void) endSection: (TRConfigToken *) sectionEnd;
-- (void) parseError: (TRConfigToken *) badToken;
-@end
+	TCase *tc_main = tcase_create("Main");
+	suite_add_tcase(s, tc_main);
 
-#include "TRConfigParser.h"
-
-@interface TRConfig : TRObject {
-@private
-	int _fd;
-	BOOL _error;
-	id <TRConfigDelegate> _delegate;
+	return s;
 }
-
-- (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate;
-- (BOOL) parseConfig;
-/* Callback used to stop the running parser */
-- (void) errorStop;
-
-@end
-
-#endif /* TRCONFIG_H */

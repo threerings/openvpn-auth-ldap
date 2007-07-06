@@ -1,5 +1,5 @@
 /*
- * LFAuthLDAPConfig.m
+ * TRAuthLDAPConfig.m
  * Simple Configuration
  *
  * Copyright (c) 2005 - 2006 Landon Fuller <landonf@threerings.net>
@@ -38,7 +38,7 @@
 #include <errno.h>
 #include <assert.h>
 
-#include "LFAuthLDAPConfig.h"
+#include "TRAuthLDAPConfig.h"
 #include "TRLDAPGroupConfig.h"
 #include "LFString.h"
 #include "TRHash.h"
@@ -272,7 +272,7 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable *tables[])
 /**
  * Handles parsing of the plugin configuration file.
  */
-@implementation LFAuthLDAPConfig
+@implementation TRAuthLDAPConfig
 
 - (void) dealloc {
 	if (_url)

@@ -7,17 +7,23 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-LIB_OBJS=	TRLDAPConnection.o \
-		TRLDAPEntry.o
-LIB=		libauth-ldap-ldap.a
+OBJS=	TRAuthLDAPConfig.o \
+	TRConfig.o \
+	TRConfigLexer.o \
+	TRConfigToken.o \
+	TRLDAPGroupConfig.o
+LIB=	libauth-ldap-test-config.a
+
+CFLAGS+=	@CHECK_CFLAGS@
+OBJCFLAGS+=	@CHECK_CFLAGS@
 
 all:: $(LIB)
 
-$(LIB): $(LIB_OBJS)
-	$(AR) -r $@ $(LIB_OBJS)
+$(LIB): $(OBJS)
+	$(AR) -r $@ $(OBJS)
 
 clean::
-	rm -f $(LIB_OBJS) $(LIB)
+	rm -f $(OBJS) $(LIB)
 
 distclean:: clean
 	rm -f Makefile

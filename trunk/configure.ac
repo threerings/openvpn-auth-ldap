@@ -71,8 +71,10 @@ AC_CACHE_SAVE
 AC_CONFIG_FILES([Makefile
 		 tools/Makefile
 		 src/Makefile
+		 src/config/Makefile
 		 src/ldap/Makefile
 		 tests/Makefile
+		 tests/config/Makefile
 		 tests/ldap/Makefile
 		 Mk/autoconf.mk
 		 Mk/compile.mk

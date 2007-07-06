@@ -3,10 +3,10 @@
 .SECONDARY:
 
 .m.o:
-	${CC} ${OBJCFLAGS} -c $< -o $@ -I${srcdir} -I${top_srcdir}/src -I${top_builddir} -I${top_builddir}/src -I${top_srcdir}/tests -I${top_builddir}/tests -I.
+	${CC} ${OBJCFLAGS} -c $< -o $@ -I${srcdir} -I${top_srcdir}/src -I${top_builddir} -I${top_builddir}/src -I. -I${top_srcdir}/tests -I${top_builddir}/tests
 
 .c.o:
-	${CC} ${CFLAGS} -c $< -o $@ -I${srcdir} -I${top_srcdir}/src -I${top_builddir} -I${top_builddir}/src -I${top_srcdir}/tests -I${top_builddir}/tests -I.
+	${CC} ${CFLAGS} -c $< -o $@ -I${srcdir} -I${top_srcdir}/src -I${top_builddir} -I${top_builddir}/src -I. -I${top_srcdir}/tests -I${top_builddir}/tests
 
 .lemon.m:
 	${top_builddir}/tools/lemon -m -q $<
