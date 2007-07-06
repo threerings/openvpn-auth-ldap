@@ -1,5 +1,5 @@
 /*
- * TRPacketFilter.h
+ * TRLocalPacketFilter.h
  * Interface to OpenBSD pf
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -54,7 +54,7 @@
 /* Forward Declarations */
 @class TRPFAddress;
 
-@interface TRPacketFilter : TRObject {
+@interface TRLocalPacketFilter : TRObject {
 @private
 	/** Cached reference to /dev/pf. */
 	int _fd;

@@ -7,7 +7,7 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-LIB_OBJS=	TRPacketFilter.o \
+LIB_OBJS=	TRLocalPacketFilter.o \
 		TRPFAddress.o
 
 LIB=		libauth-ldap-pf.a
