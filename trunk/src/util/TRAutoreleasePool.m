@@ -39,6 +39,7 @@
 
 #include <stdlib.h>
 #include <pthread.h>
+#include <assert.h>
 
 #include "TRAutoreleasePool.h"
 #include "xmalloc.h"
@@ -197,6 +198,7 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
 
 	/* Get our per-thread stack */
 	stack = CURTHREAD_GET_POOLSTACK();
+	assert(stack != NULL);
 
 	[stack->pool addObject: anObject];
 }
@@ -215,16 +217,16 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
 }
 
 - (id) retain {
-    /* Can not retain an autorelease pool. */
-    abort();
+	/* Can not retain an autorelease pool. */
+	abort();
     
-    /* Not reached. */
+	/* Not reached. */
 	return nil;
 }
 
 - (id) autorelease {
-    /* Can not autorelease an autorelease pool. */
-    abort();
+	/* Can not autorelease an autorelease pool. */
+	abort();
 
 	/* Not reached */
 	return nil;
