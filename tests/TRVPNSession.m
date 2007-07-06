@@ -38,7 +38,7 @@
 
 #include <check.h>
 
-#include <src/TRVPNSession.h>
+#include <TRVPNSession.h>
 
 START_TEST(test_initWithUsername) {
 	TRVPNSession *session;

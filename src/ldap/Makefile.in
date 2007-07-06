@@ -1,0 +1,23 @@
+srcdir=         @srcdir@
+top_srcdir=     @top_srcdir@
+top_builddir=   @top_builddir@
+VPATH=          @srcdir@
+
+include ${top_builddir}/Mk/autoconf.mk
+include ${top_builddir}/Mk/compile.mk
+include ${top_builddir}/Mk/subdir.mk
+
+OBJS=	TRLDAPConnection.o \
+	TRLDAPEntry.o
+LIB=	libauth-ldap-ldap.a
+
+all:: $(LIB)
+
+$(LIB): $(OBJS)
+	$(AR) -r $@ $(OBJS)
+
+clean::
+	rm -f $(OBJS) $(LIB)
+
+distclean:: clean
+	rm -f Makefile

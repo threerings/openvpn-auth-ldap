@@ -1,6 +1,6 @@
 /*
- * LFLDAPConnection.m
- * LFLDAPConnection Unit Tests
+ * TRLDAPEntry.m
+ * TRLDAPEntry Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,58 +36,37 @@
 #include <config.h>
 #endif
 
-#include <src/LFAuthLDAPConfig.h>
-#include <src/LFLDAPConnection.h>
-
 #include <check.h>
-#include <string.h>
 
-#include "tests.h"
+#include <ldap/TRLDAPEntry.h>
 
-/* Data Constants */
-#define TEST_LDAP_URL	"ldap://ldap1.example.org"
-#define TEST_LDAP_TIMEOUT	15
+START_TEST(test_initWithDN) {
+	TRLDAPEntry *entry;
+	LFString *dn;
+	TRHash *attributes;
 
-START_TEST(test_init) {
-	LFAuthLDAPConfig *config;
-	LFLDAPConnection *conn;
-	LFString *value;
+	dn = [[LFString alloc] initWithCString: "dc=foobar"];
+	/* Make something up for the attributes */
+	attributes = [[TRHash alloc] initWithCapacity: 1];
+	[attributes setObject: dn forKey: dn];
 
-	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
-	fail_if(config == NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
+	entry = [[TRLDAPEntry alloc] initWithDN: dn attributes: attributes];
 
-	conn = [[LFLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
+	fail_unless([entry attributes] == attributes);
+	fail_unless([entry dn] == dn);
 
-	/* Referrals */
-	fail_unless([conn setReferralEnabled: [config referralEnabled]]);
-
-	/* Certificate file */
-	if ((value = [config tlsCACertFile]))
-		fail_unless([conn setTLSCACertFile: value]);
-
-	/* Certificate directory */
-	if ((value = [config tlsCACertDir]))
-		fail_unless([conn setTLSCACertDir: value]);
-
-	/* Client Certificate Pair */
-	if ([config tlsCertFile] && [config tlsKeyFile])
-		fail_unless([conn setTLSClientCert: [config tlsCertFile] keyFile: [config tlsKeyFile]]);
-
-	/* Cipher suite */
-	if ((value = [config tlsCipherSuite]))
-		fail_unless([conn setTLSCipherSuite: value]);
-
-	[config release];
-	[conn release];
+	[entry release];
+	[dn release];
+	[attributes release];
 }
 END_TEST
 
-Suite *LFLDAPConnection_suite(void) {
-	Suite *s = suite_create("LFLDAPConnection");
+Suite *TRLDAPEntry_suite(void) {
+	Suite *s = suite_create("TRLDAPEntry");
 
-	TCase *tc_ldap = tcase_create("LDAP");
-	suite_add_tcase(s, tc_ldap);
-	tcase_add_test(tc_ldap, test_init);
+	TCase *tc_entry = tcase_create("LDAP Entry");
+	suite_add_tcase(s, tc_entry);
+	tcase_add_test(tc_entry, test_initWithDN);
 
 	return s;
 }

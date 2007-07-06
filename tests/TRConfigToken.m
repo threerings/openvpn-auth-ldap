@@ -36,8 +36,8 @@
 #include <config.h>
 #endif
 
-#include <src/TRConfigToken.h>
-#include <src/TRConfigParser.h>
+#include <TRConfigToken.h>
+#include <TRConfigParser.h>
 
 #include <check.h>
 #include <string.h>

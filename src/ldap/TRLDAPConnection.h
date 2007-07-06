@@ -1,10 +1,8 @@
 /*
- * TRLDAPEntry.m
- * TRLDAPEntry Unit Tests
+ * ldap/TRLDAPConnection.h
+ * Simple LDAP Wrapper
  *
- * Author: Landon Fuller <landonf@threerings.net>
- *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,41 +30,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#ifndef LFLDAPCONNECTION_H
+#define LFLDAPCONNECTION_H
 
-#include <check.h>
+#include <ldap.h>
 
-#include <src/TRLDAPEntry.h>
+#include "TRObject.h"
+#include "TRArray.h"
+#include "TRHash.h"
+#include "LFString.h"
 
-START_TEST(test_initWithDN) {
-	TRLDAPEntry *entry;
-	LFString *dn;
-	TRHash *attributes;
+#include "ldap/TRLDAPEntry.h"
 
-	dn = [[LFString alloc] initWithCString: "dc=foobar"];
-	/* Make something up for the attributes */
-	attributes = [[TRHash alloc] initWithCapacity: 1];
-	[attributes setObject: dn forKey: dn];
-
-	entry = [[TRLDAPEntry alloc] initWithDN: dn attributes: attributes];
-
-	fail_unless([entry attributes] == attributes);
-	fail_unless([entry dn] == dn);
-
-	[entry release];
-	[dn release];
-	[attributes release];
+@interface TRLDAPConnection : TRObject {
+@private
+	LDAP *ldapConn;
+	int _timeout;
 }
-END_TEST
 
-Suite *TRLDAPEntry_suite(void) {
-	Suite *s = suite_create("TRLDAPEntry");
+- (id) initWithURL: (LFString *) url timeout: (int) timeout;
+- (BOOL) startTLS;
 
-	TCase *tc_entry = tcase_create("LDAP Entry");
-	suite_add_tcase(s, tc_entry);
-	tcase_add_test(tc_entry, test_initWithDN);
+- (BOOL) bindWithDN: (LFString *) bindDN password: (LFString *) password;
 
-	return s;
-}
+- (TRArray *) searchWithFilter: (LFString *) filter
+			 scope: (int) scope
+			baseDN: (LFString *) base
+		    attributes: (TRArray *) attributes;
+- (BOOL) compareDN: (LFString *) dn withAttribute: (LFString *) attribute value: (LFString *) value;
+
+- (BOOL) setReferralEnabled: (BOOL) enabled;
+- (BOOL) setTLSCACertFile: (LFString *) fileName;
+- (BOOL) setTLSCACertDir: (LFString *) directory;
+- (BOOL) setTLSClientCert: (LFString *) certFile keyFile: (LFString *) keyFile;
+- (BOOL) setTLSCipherSuite: (LFString *) cipherSuite;
+
+@end
+
+#endif /* LFLDAPCONNECTION_H */

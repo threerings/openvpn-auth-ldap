@@ -1,6 +1,6 @@
 /*
- * tests.h
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRLDAPEntry.m
+ * LDAP Entry
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -15,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Landon Fuller nor the names of any contributors
+ * 3. Neither the name of the copyright holder nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,41 +32,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "ldap/TRLDAPEntry.h"
 
-/*
- * Useful Paths
+/**
+ * An LDAP entry.
  */
-#define DATA_PATH(relative)	TEST_DATA "/" relative
+@implementation TRLDAPEntry
 
-#ifndef HAVE_PF
-#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
-#else
-#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap-pf.conf")
-#endif /* HAVE_PF */
+- (id) initWithDN: (LFString *) dn attributes: (TRHash *) attributes {
+	self = [self init];
+	if (!self)
+		return self;
 
-#define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
-#define AUTH_LDAP_CONF_MISMATCHED	DATA_PATH("auth-ldap-mismatched.conf")
-#define AUTH_LDAP_CONF_MULTIKEY	DATA_PATH("auth-ldap-multikey.conf")
-#define AUTH_LDAP_CONF_REQUIRED DATA_PATH("auth-ldap-required.conf")
+	_dn = [dn retain];
+	_attributes = [attributes retain];
 
-/*
- * Unit Tests
+	return self;
+}
+
+- (void) dealloc {
+	[_dn release];
+	[_attributes release];
+	[super dealloc];
+}
+
+/**
+ * Returns the entry's distinguished name.
  */
+- (LFString *) dn {
+	return _dn;
+}
 
-Suite *LFString_suite(void);
-Suite *LFAuthLDAPConfig_suite(void);
-Suite *LFLDAPConnection_suite(void);
-Suite *TRLDAPEntry_suite(void);
-Suite *TRObject_suite(void);
-Suite *TRArray_suite(void);
-Suite *TRHash_suite(void);
-Suite *TRConfigToken_suite(void);
-Suite *TRConfigLexer_suite(void);
-Suite *TRConfig_suite(void);
-Suite *TRLDAPGroupConfig_suite(void);
-Suite *TRPacketFilter_suite(void);
-Suite *TRPFAddress_suite(void);
-Suite *TRVPNSession_suite(void);
+/**
+ * Return the entries' attributes as a dictionary.
+ */
+- (TRHash *) attributes {
+	return _attributes;
+}
+
+@end

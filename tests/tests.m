@@ -41,7 +41,7 @@
 
 #include <tests.h>
 
-#include "src/TRLog.h"
+#include "TRLog.h"
 
 void print_usage(const char *name) {
 	printf("Usage: %s [filename]\n", name);
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 	s = LFString_suite();
 	sr = srunner_create(s);
 	srunner_add_suite(sr, LFAuthLDAPConfig_suite());
-	srunner_add_suite(sr, LFLDAPConnection_suite());
+	srunner_add_suite(sr, TRLDAPConnection_suite());
 	srunner_add_suite(sr, TRLDAPEntry_suite());
 	srunner_add_suite(sr, TRObject_suite());
 	srunner_add_suite(sr, TRArray_suite());

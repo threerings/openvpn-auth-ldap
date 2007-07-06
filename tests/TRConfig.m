@@ -40,7 +40,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include <src/TRConfig.h>
+#include <TRConfig.h>
 
 /* Path Constants */
 #define DATA_PATH(relative)	TEST_DATA "/" relative

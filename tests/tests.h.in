@@ -1,8 +1,10 @@
 /*
- * LFLDAPConnection.h
- * Simple LDAP Wrapper
+ * tests.h
+ * OpenVPN LDAP Authentication Plugin Unit Tests
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Author: Landon Fuller <landonf@threerings.net>
+ *
+ * Copyright (c) 2006 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,40 +32,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LFLDAPCONNECTION_H
-#define LFLDAPCONNECTION_H
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-#include <ldap.h>
+/*
+ * Useful Paths
+ */
+#define DATA_PATH(relative)	"@TEST_DATA@/" relative
 
-#include "TRObject.h"
-#include "TRArray.h"
-#include "TRHash.h"
-#include "TRLDAPEntry.h"
-#include "LFString.h"
+#ifndef HAVE_PF
+#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
+#else
+#define AUTH_LDAP_CONF		DATA_PATH("auth-ldap-pf.conf")
+#endif /* HAVE_PF */
 
-@interface LFLDAPConnection : TRObject {
-@private
-	LDAP *ldapConn;
-	int _timeout;
-}
+#define AUTH_LDAP_CONF_NAMED	DATA_PATH("auth-ldap-named.conf")
+#define AUTH_LDAP_CONF_MISMATCHED	DATA_PATH("auth-ldap-mismatched.conf")
+#define AUTH_LDAP_CONF_MULTIKEY	DATA_PATH("auth-ldap-multikey.conf")
+#define AUTH_LDAP_CONF_REQUIRED DATA_PATH("auth-ldap-required.conf")
 
-- (id) initWithURL: (LFString *) url timeout: (int) timeout;
-- (BOOL) startTLS;
+/*
+ * Unit Tests
+ */
 
-- (BOOL) bindWithDN: (LFString *) bindDN password: (LFString *) password;
-
-- (TRArray *) searchWithFilter: (LFString *) filter
-			 scope: (int) scope
-			baseDN: (LFString *) base
-		    attributes: (TRArray *) attributes;
-- (BOOL) compareDN: (LFString *) dn withAttribute: (LFString *) attribute value: (LFString *) value;
-
-- (BOOL) setReferralEnabled: (BOOL) enabled;
-- (BOOL) setTLSCACertFile: (LFString *) fileName;
-- (BOOL) setTLSCACertDir: (LFString *) directory;
-- (BOOL) setTLSClientCert: (LFString *) certFile keyFile: (LFString *) keyFile;
-- (BOOL) setTLSCipherSuite: (LFString *) cipherSuite;
-
-@end
-
-#endif /* LFLDAPCONNECTION_H */
+Suite *LFString_suite(void);
+Suite *LFAuthLDAPConfig_suite(void);
+Suite *TRLDAPConnection_suite(void);
+Suite *TRLDAPEntry_suite(void);
+Suite *TRObject_suite(void);
+Suite *TRArray_suite(void);
+Suite *TRHash_suite(void);
+Suite *TRConfigToken_suite(void);
+Suite *TRConfigLexer_suite(void);
+Suite *TRConfig_suite(void);
+Suite *TRLDAPGroupConfig_suite(void);
+Suite *TRPacketFilter_suite(void);
+Suite *TRPFAddress_suite(void);
+Suite *TRVPNSession_suite(void);

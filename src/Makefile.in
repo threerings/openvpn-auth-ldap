@@ -3,6 +3,8 @@ top_srcdir=     @top_srcdir@
 top_builddir=   @top_builddir@
 VPATH=          @srcdir@
 
+SUBDIR=		ldap
+
 include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
@@ -13,11 +15,9 @@ PLUGIN_OBJS=	auth-ldap.o \
 		TRArray.o \
 		TREnumerator.o \
 		TRHash.o \
-		TRLDAPEntry.o \
 		TRObject.o \
 		TRLog.o \
 		LFString.o \
-		LFLDAPConnection.o \
 		LFAuthLDAPConfig.o \
 		TRConfig.o \
 		TRConfigToken.o \
@@ -39,7 +39,8 @@ TEST_OBJS=	testplugin.o
 
 CFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
 OBJCFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
-LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS)
+LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS) \
+		-Lldap -lauth-ldap-ldap
 
 
 INSTALL_LIB=		$(INSTALL) -m 755

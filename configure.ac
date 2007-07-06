@@ -68,6 +68,15 @@ OD_OBJC_RUNTIME
 AC_CACHE_SAVE
 
 # Output
-AC_CONFIG_FILES([Makefile tools/Makefile src/Makefile tests/Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk doxyfile])
+AC_CONFIG_FILES([Makefile
+		 tools/Makefile
+		 src/Makefile
+		 src/ldap/Makefile
+		 tests/Makefile
+		 tests/ldap/Makefile
+		 Mk/autoconf.mk
+		 Mk/compile.mk
+		 Mk/subdir.mk
+		 doxyfile])
 
 AC_OUTPUT

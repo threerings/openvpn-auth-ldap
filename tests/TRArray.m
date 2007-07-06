@@ -38,8 +38,8 @@
 
 #include <check.h>
 
-#include <src/TRArray.h>
-#include <src/LFString.h>
+#include <TRArray.h>
+#include <LFString.h>
 
 START_TEST (test_addObject) {
 	TRArray *array = [[TRArray alloc] init];

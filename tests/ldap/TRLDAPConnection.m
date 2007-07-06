@@ -1,6 +1,6 @@
 /*
- * TRObject.m
- * TRObject Unit Tests
+ * TRLDAPConnection.m
+ * TRLDAPConnection Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,55 +36,58 @@
 #include <config.h>
 #endif
 
+#include <LFAuthLDAPConfig.h>
+#include <ldap/TRLDAPConnection.h>
+
 #include <check.h>
+#include <string.h>
 
-#include <TRObject.h>
+#include "tests.h"
 
-START_TEST (test_retainRelease) {
-	TRObject *obj;
+/* Data Constants */
+#define TEST_LDAP_URL	"ldap://ldap1.example.org"
+#define TEST_LDAP_TIMEOUT	15
 
-	/* Initialize the object */
-	obj = [[TRObject alloc] init];
-	fail_unless([obj refCount] == 1, "Newly initialized TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
+START_TEST(test_init) {
+	LFAuthLDAPConfig *config;
+	TRLDAPConnection *conn;
+	LFString *value;
 
-	/* Increment the refcount */
-	[obj retain];
-	fail_unless([obj refCount] == 2, "Retained TRObject has unexpected reference count (Expected 2, got %d)", [obj refCount]);
+	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
+	fail_if(config == NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
 
-	/* Decrement the refcount */
-	[obj release];
-	fail_unless([obj refCount] == 1, "Released TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
+	conn = [[TRLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
 
-	/* Deallocate the object */
-	[obj release];
+	/* Referrals */
+	fail_unless([conn setReferralEnabled: [config referralEnabled]]);
+
+	/* Certificate file */
+	if ((value = [config tlsCACertFile]))
+		fail_unless([conn setTLSCACertFile: value]);
+
+	/* Certificate directory */
+	if ((value = [config tlsCACertDir]))
+		fail_unless([conn setTLSCACertDir: value]);
+
+	/* Client Certificate Pair */
+	if ([config tlsCertFile] && [config tlsKeyFile])
+		fail_unless([conn setTLSClientCert: [config tlsCertFile] keyFile: [config tlsKeyFile]]);
+
+	/* Cipher suite */
+	if ((value = [config tlsCipherSuite]))
+		fail_unless([conn setTLSCipherSuite: value]);
+
+	[config release];
+	[conn release];
 }
 END_TEST
 
-START_TEST (test_isEqual) {
-	TRObject *obj;
+Suite *TRLDAPConnection_suite(void) {
+	Suite *s = suite_create("TRLDAPConnection");
 
-	/* Initialize the object */
-	obj = [[TRObject alloc] init];
-
-	fail_unless([obj isEqual: obj]);
-
-	/* Deallocate the object */
-	[obj release];
-}
-END_TEST
-
-
-Suite *TRObject_suite(void) {
-	Suite *s = suite_create("TRObject");
-
-	TCase *tc_general = tcase_create("General");
-	suite_add_tcase(s, tc_general);
-	tcase_add_test(tc_general, test_isEqual);
-
-	TCase *tc_refcount = tcase_create("Reference Counting");
-	suite_add_tcase(s, tc_refcount);
-	tcase_add_test(tc_refcount, test_retainRelease);
-
+	TCase *tc_ldap = tcase_create("LDAP");
+	suite_add_tcase(s, tc_ldap);
+	tcase_add_test(tc_ldap, test_init);
 
 	return s;
 }

@@ -36,7 +36,7 @@
 #include <config.h>
 #endif
 
-#include <src/LFString.h>
+#include <LFString.h>
 
 #include <check.h>
 #include <string.h>
