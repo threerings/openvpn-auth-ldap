@@ -1,10 +1,10 @@
 /*
- * ldap/TRLDAPEntry.h
+ * TRLDAPEntry.h vi:ts=4:sw=4:expandtab:
  * LDAP Entry
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,8 +40,8 @@
 
 @interface TRLDAPEntry : TRObject {
 @private
-	TRString *_dn;
-	TRHash *_attributes;
+    TRString *_dn;
+    TRHash *_attributes;
 }
 
 - (id) initWithDN: (TRString *) dn attributes: (TRHash *) attributes;

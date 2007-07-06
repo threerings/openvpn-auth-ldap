@@ -1,9 +1,9 @@
 /*
- * xmalloc.c
- * "Safe" malloc routines -- and by safe, I mean: "fail deterministically"
+ * xmalloc.c vi:ts=4:sw=4:expandtab:
+ * "Safe" malloc routines -- and by safe, I mean: "fail quickly"
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
- * Copyright (c) 2005 - 2006 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2005 - 2007 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,30 +37,30 @@
 
 /* Safe Malloc */
 void *xmalloc(size_t size) {
-	void *ptr;
-	ptr = malloc(size);
-	if (!ptr)
-		err(1, "malloc returned NULL");
+    void *ptr;
+    ptr = malloc(size);
+    if (!ptr)
+        err(1, "malloc returned NULL");
 
-	return (ptr);
+    return (ptr);
 }
 
 void *xrealloc(void *oldptr, size_t size) {
-	void *ptr;
-	ptr = realloc(oldptr, size);
-	if (!ptr)
-		err(1, "realloc returned NULL");
+    void *ptr;
+    ptr = realloc(oldptr, size);
+    if (!ptr)
+        err(1, "realloc returned NULL");
 
-	oldptr = ptr;
+    oldptr = ptr;
 
-	return (ptr);
+    return (ptr);
 }
 
 char *xstrdup(const char *str) {
-	void *ptr;
-	ptr = strdup(str);
-	if (!ptr)
-		err(1, "strdup returned NULL");
+    void *ptr;
+    ptr = strdup(str);
+    if (!ptr)
+        err(1, "strdup returned NULL");
 
-	return (ptr);
+    return (ptr);
 }

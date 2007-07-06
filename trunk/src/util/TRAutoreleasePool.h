@@ -1,12 +1,12 @@
 /* 
- * TRAutoreleasePool.h
+ * TRAutoreleasePool.h vi:ts=4:sw=4:expandtab:
  *
- * Copyright (C) 2006 Landon Fuller <landonf@opendarwin.org>
+ * Copyright (C) 2006 - 2007 Landon Fuller <landonf@opendarwin.org>
  * All rights reserved.
  *
  * Author: Landon Fuller <landonf@opendarwin.org>
  *
- * This file is part of libFoundation.
+ * This file is part of Substrate.
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted, provided
@@ -32,7 +32,7 @@ typedef struct _TRAutoreleasePoolBucket TRAutoreleasePoolBucket;
 @interface TRAutoreleasePool : TRObject
 {
 @private
-	TRAutoreleasePoolBucket *poolBucket;
+    TRAutoreleasePoolBucket *poolBucket;
 }
 
 + (void) addObject:(id)anObject;

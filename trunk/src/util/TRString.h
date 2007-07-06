@@ -1,8 +1,8 @@
 /*
- * util/TRString.h
+ * TRString.h vi:ts=4:sw=4:expandtab:
  * Brain-dead Dynamic Strings
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2005 - 2007 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,8 +44,8 @@
 
 @interface TRString : TRObject {
 @private
-	char *bytes;
-	size_t numBytes;
+    char *bytes;
+    size_t numBytes;
 }
 
 - (id) initWithCString: (const char *) cString;

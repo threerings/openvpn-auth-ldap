@@ -1,5 +1,5 @@
 /*
- * TRLDAPConnection.m
+ * TRLDAPConnection.m vi:ts=4:sw=4:expandtab:
  * TRLDAPConnection Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -45,49 +45,49 @@
 #include "tests.h"
 
 /* Data Constants */
-#define TEST_LDAP_URL	"ldap://ldap1.example.org"
-#define TEST_LDAP_TIMEOUT	15
+#define TEST_LDAP_URL    "ldap://ldap1.example.org"
+#define TEST_LDAP_TIMEOUT    15
 
 START_TEST(test_init) {
-	TRAuthLDAPConfig *config;
-	TRLDAPConnection *conn;
-	TRString *value;
+    TRAuthLDAPConfig *config;
+    TRLDAPConnection *conn;
+    TRString *value;
 
-	config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
-	fail_if(config == NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
+    config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
+    fail_if(config == NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
 
-	conn = [[TRLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
+    conn = [[TRLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
 
-	/* Referrals */
-	fail_unless([conn setReferralEnabled: [config referralEnabled]]);
+    /* Referrals */
+    fail_unless([conn setReferralEnabled: [config referralEnabled]]);
 
-	/* Certificate file */
-	if ((value = [config tlsCACertFile]))
-		fail_unless([conn setTLSCACertFile: value]);
+    /* Certificate file */
+    if ((value = [config tlsCACertFile]))
+        fail_unless([conn setTLSCACertFile: value]);
 
-	/* Certificate directory */
-	if ((value = [config tlsCACertDir]))
-		fail_unless([conn setTLSCACertDir: value]);
+    /* Certificate directory */
+    if ((value = [config tlsCACertDir]))
+        fail_unless([conn setTLSCACertDir: value]);
 
-	/* Client Certificate Pair */
-	if ([config tlsCertFile] && [config tlsKeyFile])
-		fail_unless([conn setTLSClientCert: [config tlsCertFile] keyFile: [config tlsKeyFile]]);
+    /* Client Certificate Pair */
+    if ([config tlsCertFile] && [config tlsKeyFile])
+        fail_unless([conn setTLSClientCert: [config tlsCertFile] keyFile: [config tlsKeyFile]]);
 
-	/* Cipher suite */
-	if ((value = [config tlsCipherSuite]))
-		fail_unless([conn setTLSCipherSuite: value]);
+    /* Cipher suite */
+    if ((value = [config tlsCipherSuite]))
+        fail_unless([conn setTLSCipherSuite: value]);
 
-	[config release];
-	[conn release];
+    [config release];
+    [conn release];
 }
 END_TEST
 
 Suite *TRLDAPConnection_suite(void) {
-	Suite *s = suite_create("TRLDAPConnection");
+    Suite *s = suite_create("TRLDAPConnection");
 
-	TCase *tc_ldap = tcase_create("LDAP");
-	suite_add_tcase(s, tc_ldap);
-	tcase_add_test(tc_ldap, test_init);
+    TCase *tc_ldap = tcase_create("LDAP");
+    suite_add_tcase(s, tc_ldap);
+    tcase_add_test(tc_ldap, test_init);
 
-	return s;
+    return s;
 }

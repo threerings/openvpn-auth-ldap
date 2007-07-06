@@ -1,8 +1,8 @@
 /*
- * TRAuthLDAPConfig.h
+ * TRAuthLDAPConfig.h vi:ts=4:sw=4:expandtab:
  * Simple Configuration
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2005 - 2007 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,31 +39,31 @@
 
 @interface TRAuthLDAPConfig : TRObject <TRConfigDelegate> {
 @private
-	/* LDAP Settings */
-	TRString *_url;
-	BOOL _tlsEnabled;
-	BOOL _referralEnabled;
-	int _timeout;
-	TRString *_tlsCACertFile;
-	TRString *_tlsCACertDir;
-	TRString *_tlsCertFile;
-	TRString *_tlsKeyFile;
-	TRString *_tlsCipherSuite;
-	TRString *_bindDN;
-	TRString *_bindPassword;
+    /* LDAP Settings */
+    TRString *_url;
+    BOOL _tlsEnabled;
+    BOOL _referralEnabled;
+    int _timeout;
+    TRString *_tlsCACertFile;
+    TRString *_tlsCACertDir;
+    TRString *_tlsCertFile;
+    TRString *_tlsKeyFile;
+    TRString *_tlsCipherSuite;
+    TRString *_bindDN;
+    TRString *_bindPassword;
 
-	/* Authentication / Authorization Settings */
-	TRString *_baseDN;
-	TRString *_searchFilter;
-	BOOL _requireGroup;
-	TRString *_pfTable;
-	TRArray *_ldapGroups;
-	BOOL _pfEnabled;
+    /* Authentication / Authorization Settings */
+    TRString *_baseDN;
+    TRString *_searchFilter;
+    BOOL _requireGroup;
+    TRString *_pfTable;
+    TRArray *_ldapGroups;
+    BOOL _pfEnabled;
 
-	/* Parser State */
-	TRString *_configFileName;
-	TRConfig *_configDriver;
-	TRArray *_sectionStack;
+    /* Parser State */
+    TRString *_configFileName;
+    TRConfig *_configDriver;
+    TRArray *_sectionStack;
 }
 
 - (id) initWithConfigFile: (const char *) fileName;

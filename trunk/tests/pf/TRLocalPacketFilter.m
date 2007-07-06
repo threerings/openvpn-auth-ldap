@@ -1,5 +1,5 @@
 /*
- * TRLocalPacketFilter.m
+ * TRLocalPacketFilter.m vi:ts=4:sw=4:expandtab:
  * TRLocalPacketFilter Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -48,151 +48,151 @@
 static TRLocalPacketFilter *pf = nil;
 
 void setUp(void) {
-	mockpf_setup();
-	pf = [[TRLocalPacketFilter alloc] init];
+    mockpf_setup();
+    pf = [[TRLocalPacketFilter alloc] init];
 }
 
 void tearDown(void) {
-	mockpf_teardown();
-	[pf release];
-	pf = nil;
+    mockpf_teardown();
+    [pf release];
+    pf = nil;
 }
 
 START_TEST(test_init) {
-	fail_if(pf == nil);
+    fail_if(pf == nil);
 }
 END_TEST
 
 START_TEST(test_tables) {
-	TRArray *tables;
-	TREnumerator *tableIter;
+    TRArray *tables;
+    TREnumerator *tableIter;
 
-	tables = [pf tables];
-	fail_if(tables == nil);
+    tables = [pf tables];
+    fail_if(tables == nil);
 
-	/* Assume a few things about our mock pf implementation */
-	tableIter = [tables objectEnumerator];
+    /* Assume a few things about our mock pf implementation */
+    tableIter = [tables objectEnumerator];
 
-	fail_unless(strcmp([[tableIter nextObject] cString], "ips_artist") == 0);
-	fail_unless(strcmp([[tableIter nextObject] cString], "ips_developer") == 0);
+    fail_unless(strcmp([[tableIter nextObject] cString], "ips_artist") == 0);
+    fail_unless(strcmp([[tableIter nextObject] cString], "ips_developer") == 0);
 
-	[tables release];
+    [tables release];
 }
 END_TEST
 
 START_TEST(test_flushTable) {
-	TRString *name = [[TRString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf flushTable: name]);
-	[name release];
+    TRString *name = [[TRString alloc] initWithCString: "ips_artist"];
+    fail_unless([pf flushTable: name]);
+    [name release];
 }
 END_TEST
 
 START_TEST(test_addAddressToTable) {
-	TRString *addrString;
-	TRPFAddress *pfAddress;
-	TRArray *addresses;
-	TRString *name;
+    TRString *addrString;
+    TRPFAddress *pfAddress;
+    TRArray *addresses;
+    TRString *name;
 
-       	name = [[TRString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf flushTable: name]);
+           name = [[TRString alloc] initWithCString: "ips_artist"];
+    fail_unless([pf flushTable: name]);
 
-	/* Addd IPv4 Address */
-	addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
-	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
+    /* Addd IPv4 Address */
+    addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
+    pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
-	fail_unless([pf addAddress: pfAddress toTable: name]);
-	addresses = [pf addressesFromTable: name];
-	fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
+    fail_unless([pf addAddress: pfAddress toTable: name]);
+    addresses = [pf addressesFromTable: name];
+    fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
 
-	[addresses release];
-	[addrString release];
-	[pfAddress release];
+    [addresses release];
+    [addrString release];
+    [pfAddress release];
 
-	/* Test with IPv6 */
-	addrString = [[TRString alloc] initWithCString: "::1"];
-	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
+    /* Test with IPv6 */
+    addrString = [[TRString alloc] initWithCString: "::1"];
+    pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
-	fail_unless([pf addAddress: pfAddress toTable: name]);
-	addresses = [pf addressesFromTable: name];
-	fail_unless([addresses count] == 2, "Incorrect number of addresses. (expected 2, got %d)", [addresses count]);
+    fail_unless([pf addAddress: pfAddress toTable: name]);
+    addresses = [pf addressesFromTable: name];
+    fail_unless([addresses count] == 2, "Incorrect number of addresses. (expected 2, got %d)", [addresses count]);
 
 
-	[addresses release];
-	[addrString release];
-	[pfAddress release];
+    [addresses release];
+    [addrString release];
+    [pfAddress release];
 
-	[name release];
+    [name release];
 }
 END_TEST
 
 START_TEST(test_deleteAddressFromTable) {
-	TRString *addrString;
-	TRPFAddress *pfAddress;
-	TRArray *addresses;
-	TRString *name;
+    TRString *addrString;
+    TRPFAddress *pfAddress;
+    TRArray *addresses;
+    TRString *name;
 
-       	name = [[TRString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf flushTable: name]);
+           name = [[TRString alloc] initWithCString: "ips_artist"];
+    fail_unless([pf flushTable: name]);
 
-	/* Addd IPv4 Address */
-	addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
-	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
+    /* Addd IPv4 Address */
+    addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
+    pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
-	fail_unless([pf addAddress: pfAddress toTable: name]);
-	addresses = [pf addressesFromTable: name];
-	fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
-	[addresses release];
+    fail_unless([pf addAddress: pfAddress toTable: name]);
+    addresses = [pf addressesFromTable: name];
+    fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
+    [addresses release];
 
-	fail_unless([pf deleteAddress: pfAddress fromTable: name]);
-	addresses = [pf addressesFromTable: name];
-	fail_unless([addresses count] == 0, "Incorrect number of addresses. (expected 0, got %d)", [addresses count]);
-	[addresses release];
+    fail_unless([pf deleteAddress: pfAddress fromTable: name]);
+    addresses = [pf addressesFromTable: name];
+    fail_unless([addresses count] == 0, "Incorrect number of addresses. (expected 0, got %d)", [addresses count]);
+    [addresses release];
 
-	[addrString release];
-	[pfAddress release];
-	[name release];
+    [addrString release];
+    [pfAddress release];
+    [name release];
 }
 END_TEST
 
 
 START_TEST(test_addressesFromTable) {
-	TRString *addrString;
-	TRPFAddress *pfAddress;
-	TRArray *addresses;
-	TRString *name;
+    TRString *addrString;
+    TRPFAddress *pfAddress;
+    TRArray *addresses;
+    TRString *name;
 
-       	name = [[TRString alloc] initWithCString: "ips_artist"];
-	fail_unless([pf flushTable: name]);
+           name = [[TRString alloc] initWithCString: "ips_artist"];
+    fail_unless([pf flushTable: name]);
 
-	/* Addd IPv4 Address */
-	addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
-	pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
+    /* Addd IPv4 Address */
+    addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
+    pfAddress = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
 
-	fail_unless([pf addAddress: pfAddress toTable: name]);
-	addresses = [pf addressesFromTable: name];
-	fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
+    fail_unless([pf addAddress: pfAddress toTable: name]);
+    addresses = [pf addressesFromTable: name];
+    fail_unless([addresses count] == 1, "Incorrect number of addresses. (expected 1, got %d)", [addresses count]);
 
-	[addresses release];
-	[addrString release];
-	[pfAddress release];
-	[name release];
+    [addresses release];
+    [addrString release];
+    [pfAddress release];
+    [name release];
 }
 END_TEST
 
 Suite *TRLocalPacketFilter_suite(void) {
-	Suite *s = suite_create("TRLocalPacketFilter");
+    Suite *s = suite_create("TRLocalPacketFilter");
 
-	TCase *tc_pf = tcase_create("PF Ioctl");
-	tcase_add_checked_fixture(tc_pf, setUp, tearDown);
-	suite_add_tcase(s, tc_pf);
-	tcase_add_test(tc_pf, test_init);
-	tcase_add_test(tc_pf, test_tables);
-	tcase_add_test(tc_pf, test_flushTable);
-	tcase_add_test(tc_pf, test_addAddressToTable);
-	tcase_add_test(tc_pf, test_deleteAddressFromTable);
-	tcase_add_test(tc_pf, test_addressesFromTable);
+    TCase *tc_pf = tcase_create("PF Ioctl");
+    tcase_add_checked_fixture(tc_pf, setUp, tearDown);
+    suite_add_tcase(s, tc_pf);
+    tcase_add_test(tc_pf, test_init);
+    tcase_add_test(tc_pf, test_tables);
+    tcase_add_test(tc_pf, test_flushTable);
+    tcase_add_test(tc_pf, test_addAddressToTable);
+    tcase_add_test(tc_pf, test_deleteAddressFromTable);
+    tcase_add_test(tc_pf, test_addressesFromTable);
 
-	return s;
+    return s;
 }
 
 #endif /* HAVE_PF */

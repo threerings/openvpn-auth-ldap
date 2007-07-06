@@ -1,10 +1,10 @@
 /*
- * TRConfigToken.m
+ * TRConfigToken.m vi:ts=4:sw=4:expandtab:
  * Configuration Lexer Tokens
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,45 +44,45 @@
 @implementation TRConfigToken
 
 - (void) dealloc {
-	if (_string)
-		[_string release];
-	[super dealloc];
+    if (_string)
+        [_string release];
+    [super dealloc];
 }
 
 - (id) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID {
-	self = [self init];
-	if (self != NULL) {
-		_dataType = TOKEN_DATATYPE_STRING;
-		_tokenID = tokenID;
-		_lineNumber = line;
-		_string = [[TRString alloc] initWithBytes: data numBytes: length];
-		if (!_string) {
-			[self release];
-			return NULL;
-		}
-	}
-	return (self);
+    self = [self init];
+    if (self != NULL) {
+        _dataType = TOKEN_DATATYPE_STRING;
+        _tokenID = tokenID;
+        _lineNumber = line;
+        _string = [[TRString alloc] initWithBytes: data numBytes: length];
+        if (!_string) {
+            [self release];
+            return NULL;
+        }
+    }
+    return (self);
 }
 
 /**
  * Return the lemon token id.
  */
 - (int) tokenID {
-	return _tokenID;
+    return _tokenID;
 }
 
 /**
  * Return the line number from which the token was parsed.
  */
 - (unsigned int) lineNumber {
-	return _lineNumber;
+    return _lineNumber;
 }
 
 /**
  * Return the token's string value.
  */
 - (TRString *) string {
-	return _string;
+    return _string;
 }
 
 /**
@@ -91,7 +91,7 @@
  * lifetime of the TRConfigToken object.
  */
 - (const char *) cString {
-	return [_string cString];
+    return [_string cString];
 }
 
 /**
@@ -109,23 +109,23 @@
  * @result true on success, false on failure.
  */
 - (BOOL) intValue: (int *) value {
-	BOOL result;
+    BOOL result;
 
-	/* Check if the integer conversion has been cached */
-	if (_dataType == TOKEN_DATATYPE_INT) {
-		*value = _internalRep._intValue;
-		return true;
-	}
+    /* Check if the integer conversion has been cached */
+    if (_dataType == TOKEN_DATATYPE_INT) {
+        *value = _internalRep._intValue;
+        return true;
+    }
 
-	/* Otherwise, do the conversion and return the result,
-	 * caching on success */
-	result = [_string intValue: value];
-	if (result) {
-		_dataType = TOKEN_DATATYPE_INT;
-		_internalRep._intValue = *value;
-	}
+    /* Otherwise, do the conversion and return the result,
+     * caching on success */
+    result = [_string intValue: value];
+    if (result) {
+        _dataType = TOKEN_DATATYPE_INT;
+        _internalRep._intValue = *value;
+    }
 
-	return result;
+    return result;
 }
 
 /**
@@ -140,31 +140,31 @@
  * @result true on success, false on failure.
  */
 - (BOOL) boolValue: (BOOL *) value {
-	const char *cString;
+    const char *cString;
 
-	/* Check if the integer conversion has been cached */
-	if (_dataType == TOKEN_DATATYPE_BOOL) {
-		*value = _internalRep._boolValue;
-		return (YES);
-	}
+    /* Check if the integer conversion has been cached */
+    if (_dataType == TOKEN_DATATYPE_BOOL) {
+        *value = _internalRep._boolValue;
+        return (YES);
+    }
 
-	/* Otherwise, do the conversion and return the result,
-	 * caching on success */
-	cString = [_string cString];
+    /* Otherwise, do the conversion and return the result,
+     * caching on success */
+    cString = [_string cString];
 
-	if (strcasecmp(cString, "yes") == 0 || strcasecmp(cString, "true") == 0 || strcasecmp(cString, "1") == 0) {
-		_dataType = TOKEN_DATATYPE_BOOL;
-		_internalRep._boolValue = YES;
-		*value = YES;
-		return (YES);
-	} else if (strcasecmp(cString, "no") == 0 || strcasecmp(cString, "false") == 0 || strcasecmp(cString, "0") == 0) {
-		_dataType = TOKEN_DATATYPE_BOOL;
-		_internalRep._boolValue = NO;
-		*value = NO;
-		return (YES);
-	}
-	*value = NO;
-	return (NO);
+    if (strcasecmp(cString, "yes") == 0 || strcasecmp(cString, "true") == 0 || strcasecmp(cString, "1") == 0) {
+        _dataType = TOKEN_DATATYPE_BOOL;
+        _internalRep._boolValue = YES;
+        *value = YES;
+        return (YES);
+    } else if (strcasecmp(cString, "no") == 0 || strcasecmp(cString, "false") == 0 || strcasecmp(cString, "0") == 0) {
+        _dataType = TOKEN_DATATYPE_BOOL;
+        _internalRep._boolValue = NO;
+        *value = NO;
+        return (YES);
+    }
+    *value = NO;
+    return (NO);
 }
 
 

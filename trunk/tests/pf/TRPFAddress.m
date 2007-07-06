@@ -1,5 +1,5 @@
 /*
- * TRPPFAddress.m
+ * TRPPFAddress.m vi:ts=4:sw=4:expandtab:
  * TRPFAddress Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -48,52 +48,52 @@
 #include <arpa/inet.h>
 
 START_TEST(test_initWithPresentationAddress) {
-	TRString *addrString;
-	TRPFAddress *pfAddr;
-	/* Independent verification */
-	struct pfr_addr *result;
-	struct in_addr addr4;
-	struct in6_addr addr6;
+    TRString *addrString;
+    TRPFAddress *pfAddr;
+    /* Independent verification */
+    struct pfr_addr *result;
+    struct in_addr addr4;
+    struct in6_addr addr6;
 
-	/* Test with IPv4 */
-	addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
-	fail_unless(inet_pton(AF_INET, "127.0.0.1", &addr4));
+    /* Test with IPv4 */
+    addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
+    fail_unless(inet_pton(AF_INET, "127.0.0.1", &addr4));
 
-	pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
-	[addrString release];
+    pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
+    [addrString release];
 
-	/* Verify conversion */
-	fail_if(pfAddr == nil);
-	result = [pfAddr pfrAddr];
-	fail_unless(memcmp(&result->pfra_ip4addr, &addr4, sizeof(addr4)) == 0);
+    /* Verify conversion */
+    fail_if(pfAddr == nil);
+    result = [pfAddr pfrAddr];
+    fail_unless(memcmp(&result->pfra_ip4addr, &addr4, sizeof(addr4)) == 0);
 
-	[pfAddr release];
+    [pfAddr release];
 
-	/* Test with IPv6 */
-	addrString = [[TRString alloc] initWithCString: "::1"];
-	fail_unless(inet_pton(AF_INET6, "::1", &addr6));
+    /* Test with IPv6 */
+    addrString = [[TRString alloc] initWithCString: "::1"];
+    fail_unless(inet_pton(AF_INET6, "::1", &addr6));
 
-	pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
-	[addrString release];
+    pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
+    [addrString release];
 
-	/* Verify conversion */
-	fail_if(pfAddr == nil);
-	result = [pfAddr pfrAddr];
-	fail_unless(memcmp(&result->pfra_ip6addr, &addr6, sizeof(addr6)) == 0);
+    /* Verify conversion */
+    fail_if(pfAddr == nil);
+    result = [pfAddr pfrAddr];
+    fail_unless(memcmp(&result->pfra_ip6addr, &addr6, sizeof(addr6)) == 0);
 
-	[pfAddr release];
+    [pfAddr release];
 }
 END_TEST
 
 
 Suite *TRPFAddress_suite(void) {
-	Suite *s = suite_create("TRPFAddress");
+    Suite *s = suite_create("TRPFAddress");
 
-	TCase *tc_addr = tcase_create("Address");
-	suite_add_tcase(s, tc_addr);
-	tcase_add_test(tc_addr, test_initWithPresentationAddress);
+    TCase *tc_addr = tcase_create("Address");
+    suite_add_tcase(s, tc_addr);
+    tcase_add_test(tc_addr, test_initWithPresentationAddress);
 
-	return s;
+    return s;
 }
 
 #endif /* HAVE_PF */

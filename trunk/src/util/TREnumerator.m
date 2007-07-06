@@ -1,10 +1,10 @@
 /*
- * TREnumerator.m
+ * TREnumerator.m vi:ts=4:sw=4:expandtab:
  * Abstract enumerator class
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@
 @implementation TREnumerator
 
 - (id) nextObject {
-	return nil;
+    return nil;
 }
 
 @end

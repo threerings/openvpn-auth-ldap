@@ -1,10 +1,10 @@
 /*
- * TRVPNSession.h
+ * TRVPNSession.h vi:ts=4:sw=4:expandtab:
  * An active VPN session
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@
 
 @interface TRVPNSession: TRObject {
 @private
-	TRString *_username;
+    TRString *_username;
 }
 
 - (id) initWithUsername: (TRString *) username;

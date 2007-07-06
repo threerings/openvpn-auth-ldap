@@ -1,10 +1,10 @@
 /*
- * TRPFAddress.m
+ * TRPFAddress.m vi:ts=4:sw=4:expandtab:
  * OpenBSD PF Address
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,14 +53,14 @@
 @implementation TRPFAddress
 
 - (id) init {
-	self = [super init];
-	if (!self)
-		return self;
+    self = [super init];
+    if (!self)
+        return self;
 
-	/* Initialize the pfr_addr structure */
-	memset(&_addr, 0, sizeof(_addr));
+    /* Initialize the pfr_addr structure */
+    memset(&_addr, 0, sizeof(_addr));
 
-	return self;
+    return self;
 }
 
 /**
@@ -68,43 +68,43 @@
  * @param address An IPv4 or IPv6 address in human-readable format (eg 127.0.0.1 or ::1)
  */
 - (id) initWithPresentationAddress: (TRString *) address {
-	if (![self init])
-		return nil;
+    if (![self init])
+        return nil;
 
-	/* Try IPv4, then IPv6 */
-	if (inet_pton(AF_INET, [address cString], &_addr.pfra_ip4addr)) {
-		_addr.pfra_af = AF_INET;
-		_addr.pfra_net = 32;
-		return self;
-	} else if(inet_pton(AF_INET6, [address cString], &_addr.pfra_ip6addr)) {
-		_addr.pfra_af = AF_INET6;
-		_addr.pfra_net = 128;
-		return self;
-	}
+    /* Try IPv4, then IPv6 */
+    if (inet_pton(AF_INET, [address cString], &_addr.pfra_ip4addr)) {
+        _addr.pfra_af = AF_INET;
+        _addr.pfra_net = 32;
+        return self;
+    } else if(inet_pton(AF_INET6, [address cString], &_addr.pfra_ip6addr)) {
+        _addr.pfra_af = AF_INET6;
+        _addr.pfra_net = 128;
+        return self;
+    }
 
-	/* Fall through */
-	[self release];
-	return nil;
+    /* Fall through */
+    [self release];
+    return nil;
 }
 
 /**
  * Initialize with a copy of the provided pfr_addr structure.
  */
 - (id) initWithPFRAddr: (struct pfr_addr *) pfrAddr {
-	if (![self init])
-		return nil;
+    if (![self init])
+        return nil;
 
-	/* Copy the supplied pfr_addr structure */
-	memcpy(&_addr, pfrAddr, sizeof(_addr));
+    /* Copy the supplied pfr_addr structure */
+    memcpy(&_addr, pfrAddr, sizeof(_addr));
 
-	return self;
+    return self;
 }
 
 /**
  * Returns a borrowed reference to the instance's pfr_addr representation.
  */
 - (struct pfr_addr *) pfrAddr {
-	return &_addr;
+    return &_addr;
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- * TRAutoreleasePool.m
+ * TRAutoreleasePool.m vi:ts=4:sw=4:expandtab:
  *
  * Copyright (C) 2005 - 2007 Landon Fuller <landonf@opendarwin.org>
  * All rights reserved.
@@ -32,55 +32,55 @@ static unsigned int livecount;
 @implementation PoolTester
 
 - (void) release {
-	livecount--;
-	[super release];
+    livecount--;
+    [super release];
 }
 
 - (void) dealloc {
-	livecount--;
-	[super dealloc];
+    livecount--;
+    [super dealloc];
 }
 
 @end
 
 START_TEST (test_TRAutoreleasePool_addObject) {
-	TRAutoreleasePool *pool;
-	TRObject *obj;
-	int i;
+    TRAutoreleasePool *pool;
+    TRObject *obj;
+    int i;
 
-	/* Allocate a pool */
-	pool = [[TRAutoreleasePool alloc] init];
-	fail_if(pool == nil, "[[TRAutoreleasePool alloc] init] returned nil.\n");
+    /* Allocate a pool */
+    pool = [[TRAutoreleasePool alloc] init];
+    fail_if(pool == nil, "[[TRAutoreleasePool alloc] init] returned nil.\n");
 
-	/* Allocate an object to auto-release */
-	obj = [[PoolTester alloc] init];
-	[obj autorelease];
+    /* Allocate an object to auto-release */
+    obj = [[PoolTester alloc] init];
+    [obj autorelease];
 
-	/* Implicit refcount + dealloc */
-	livecount = 2;
+    /* Implicit refcount + dealloc */
+    livecount = 2;
 
-	/* Exercise the pool */
-	for (i = 0; i < 4096; i++) {
-		livecount++;
-		[obj retain];
-		[obj autorelease];
-	}
+    /* Exercise the pool */
+    for (i = 0; i < 4096; i++) {
+        livecount++;
+        [obj retain];
+        [obj autorelease];
+    }
 
-	/* Release it */
-	[pool release];
+    /* Release it */
+    [pool release];
 
-	fail_unless(livecount == 0, "[TRAutoreleasePool release] failed to release %d objects.", livecount);
+    fail_unless(livecount == 0, "[TRAutoreleasePool release] failed to release %d objects.", livecount);
 }
 END_TEST
 
 Suite *TRAutoreleasePool_suite(void) {
-	Suite *s = suite_create("TRAutoreleasePool");
+    Suite *s = suite_create("TRAutoreleasePool");
 
-	TCase *tc = tcase_create("Default");
+    TCase *tc = tcase_create("Default");
 
-	suite_add_tcase(s, tc);
+    suite_add_tcase(s, tc);
 
-	tcase_add_test(tc, test_TRAutoreleasePool_addObject);
+    tcase_add_test(tc, test_TRAutoreleasePool_addObject);
 
-	return s;
+    return s;
 }

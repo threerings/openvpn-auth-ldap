@@ -1,10 +1,10 @@
 /*
- * TRLDAPGroupConfig.h
+ * TRLDAPGroupConfig.h vi:ts=4:sw=4:expandtab:
  * LDAP Group Configuration
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,10 +40,10 @@
 
 @interface TRLDAPGroupConfig : TRObject {
 @private
-	TRString *_baseDN;
-	TRString *_searchFilter;
-	TRString *_memberAttribute;
-	TRString *_pfTable;
+    TRString *_baseDN;
+    TRString *_searchFilter;
+    TRString *_memberAttribute;
+    TRString *_pfTable;
 }
 
 - (TRString *) baseDN;

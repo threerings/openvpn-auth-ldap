@@ -1,8 +1,8 @@
 /*
- * testplugin.c
+ * testplugin.c vi:ts=4:sw=4:expandtab:
  * OpenVPN LDAP Authentication Plugin Test Driver
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2005 - 2007 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,21 +46,21 @@ const char conf_template[] = "/tmp/openvpn-auth-ldap-test.XXXXXXXXXXXXX";
 
 /* Configuration data */
 typedef struct {
-	/* User name and password environmental variables */
-	char *username;
-	char *password;
+    /* User name and password environmental variables */
+    char *username;
+    char *password;
 
-	/* Path to config file */
-	const char *config_file;
+    /* Path to config file */
+    const char *config_file;
 
-	/* OpenVPN plugin environment */
-	const char **envp;
+    /* OpenVPN plugin environment */
+    const char **envp;
 
-	/* OpenVPN plugin open/close arguments */
-	const char **argp;
+    /* OpenVPN plugin open/close arguments */
+    const char **argp;
 
-	/* OpenVPN 'command line' script arguments */
-	const char **argp_script;
+    /* OpenVPN 'command line' script arguments */
+    const char **argp_script;
 } plugin_data;
 
 /**
@@ -68,130 +68,130 @@ typedef struct {
  * interacts with the user on stdin, and calls other non-reentrant functions (eg getpass()).
  */
 static plugin_data *plugin_data_init (const char *config_file) {
-	plugin_data *data;
-	char username[128];
-	char *password;
+    plugin_data *data;
+    char username[128];
+    char *password;
 
-	/* Alloc and zero-initialize a new data structure */
-	data = calloc(1, sizeof(plugin_data));
+    /* Alloc and zero-initialize a new data structure */
+    data = calloc(1, sizeof(plugin_data));
 
-	/* Fetch the username and password */
-	printf("Username: ");
-	fgets(username, sizeof(username), stdin);
-	password = getpass("Password: ");
-	
-	/* Strip off the trailing \n */
-	username[strlen(username) - 1] = '\0';
+    /* Fetch the username and password */
+    printf("Username: ");
+    fgets(username, sizeof(username), stdin);
+    password = getpass("Password: ");
+    
+    /* Strip off the trailing \n */
+    username[strlen(username) - 1] = '\0';
 
-	/* Assemble the username env variable */
-	data->username = malloc(sizeof(username_template) + strlen(username));
-	strcpy(data->username, username_template);
-	strcat(data->username, username);
+    /* Assemble the username env variable */
+    data->username = malloc(sizeof(username_template) + strlen(username));
+    strcpy(data->username, username_template);
+    strcat(data->username, username);
 
-	/* Assemble the password env variable */
-	data->password = malloc(sizeof(password_template) + strlen(password));
-	strcpy(data->password, password_template);
-	strcat(data->password, password);
+    /* Assemble the password env variable */
+    data->password = malloc(sizeof(password_template) + strlen(password));
+    strcpy(data->password, password_template);
+    strcat(data->password, password);
 
-	/* Set up the plugin environment array -- username, password, ifconfig_pool_remote_ip, NULL */
-	data->envp = calloc(4, sizeof(char *));
-	data->envp[0] = data->username;
-	data->envp[1] = data->password;
-	data->envp[2] = "ifconfig_pool_remote_ip=10.0.50.1";
-	data->envp[3] = NULL;
+    /* Set up the plugin environment array -- username, password, ifconfig_pool_remote_ip, NULL */
+    data->envp = calloc(4, sizeof(char *));
+    data->envp[0] = data->username;
+    data->envp[1] = data->password;
+    data->envp[2] = "ifconfig_pool_remote_ip=10.0.50.1";
+    data->envp[3] = NULL;
 
-	/* Set up the plugin argument array -- plugin path, config file, NULL */
-	data->argp = calloc(3, sizeof(char *));
-	data->argp[0] = "plugin.so";
-	data->argp[1] = config_file;
-	data->argp[2] = NULL;
+    /* Set up the plugin argument array -- plugin path, config file, NULL */
+    data->argp = calloc(3, sizeof(char *));
+    data->argp[0] = "plugin.so";
+    data->argp[1] = config_file;
+    data->argp[2] = NULL;
 
-	/* Set up the plugin "script" argument array -- plugin path, dynamic config file, NULL */
-	// TODO: wire up dynamic config file support.
-	data->argp_script = calloc(3, sizeof(char *));
-	data->argp_script[0] = "plugin.so";
-	data->argp_script[1] = NULL;
-	data->argp_script[2] = NULL;
+    /* Set up the plugin "script" argument array -- plugin path, dynamic config file, NULL */
+    // TODO: wire up dynamic config file support.
+    data->argp_script = calloc(3, sizeof(char *));
+    data->argp_script[0] = "plugin.so";
+    data->argp_script[1] = NULL;
+    data->argp_script[2] = NULL;
 
-	return data;
+    return data;
 }
 
 static void plugin_data_free (plugin_data *data) {
-	if (data->username)
-		free(data->username);
+    if (data->username)
+        free(data->username);
 
-	if (data->password)
-		free(data->password);
+    if (data->password)
+        free(data->password);
 
-	if (data->envp)
-		free(data->envp);
+    if (data->envp)
+        free(data->envp);
 
-	if (data->argp)
-		free(data->argp);
+    if (data->argp)
+        free(data->argp);
 
-	if (data->argp_script)
-		free(data->argp_script);
+    if (data->argp_script)
+        free(data->argp_script);
 
-	free(data);
+    free(data);
 }
 
 int main(int argc, const char *argv[]) {
-	openvpn_plugin_handle_t handle;
-	plugin_data *data;
-	const char *config_file;
-	unsigned int plugin_type;
-	int retval = 1;
-	int err;
+    openvpn_plugin_handle_t handle;
+    plugin_data *data;
+    const char *config_file;
+    unsigned int plugin_type;
+    int retval = 1;
+    int err;
 
-	if (argc != 2) {
-		errx(1, "Usage: %s <config file>", argv[0]);
-	} else {
-		config_file = argv[1];
-	}
+    if (argc != 2) {
+        errx(1, "Usage: %s <config file>", argv[0]);
+    } else {
+        config_file = argv[1];
+    }
 
-	/* Configure the plugin environment */
-	data = plugin_data_init(config_file);
+    /* Configure the plugin environment */
+    data = plugin_data_init(config_file);
 
-	handle = openvpn_plugin_open_v1(&plugin_type, data->argp, data->envp);
+    handle = openvpn_plugin_open_v1(&plugin_type, data->argp, data->envp);
 
-	if (!handle) {
-		printf("Initialization Failed!\n");
-		goto cleanup;
-	}
+    if (!handle) {
+        printf("Initialization Failed!\n");
+        goto cleanup;
+    }
 
-	/* Authenticate */
-	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY, data->argp_script, data->envp);
-	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
-		printf("Authorization Failed!\n");
-		goto cleanup;
-	} else {
-		printf("Authorization Succeed!\n");
-	}
+    /* Authenticate */
+    err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY, data->argp_script, data->envp);
+    if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
+        printf("Authorization Failed!\n");
+        goto cleanup;
+    } else {
+        printf("Authorization Succeed!\n");
+    }
 
-	/* Client Connect */
-	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_CONNECT, data->argp_script, data->envp);
-	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
-		printf("client-connect failed!\n");
-		goto cleanup;
-	} else {
-		printf("client-connect succeed!\n");
-	}
+    /* Client Connect */
+    err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_CONNECT, data->argp_script, data->envp);
+    if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
+        printf("client-connect failed!\n");
+        goto cleanup;
+    } else {
+        printf("client-connect succeed!\n");
+    }
 
-	/* Client Disconnect */
-	err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_DISCONNECT, data->argp, data->envp);
-	if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
-		printf("client-disconnect failed!\n");
-		goto cleanup;
-	} else {
-		printf("client-disconnect succeed!\n");
-	}
+    /* Client Disconnect */
+    err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_DISCONNECT, data->argp, data->envp);
+    if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
+        printf("client-disconnect failed!\n");
+        goto cleanup;
+    } else {
+        printf("client-disconnect succeed!\n");
+    }
 
-	/* Everything worked. Set our return value accordingly. */
-	retval = 0;
+    /* Everything worked. Set our return value accordingly. */
+    retval = 0;
 
 cleanup:
-	openvpn_plugin_close_v1(handle);
-	plugin_data_free(data);
+    openvpn_plugin_close_v1(handle);
+    plugin_data_free(data);
 
-	exit(retval);
+    exit(retval);
 }

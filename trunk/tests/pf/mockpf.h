@@ -1,5 +1,5 @@
 /*
- * mockpf.h
+ * mockpf.h vi:ts=4:sw=4:expandtab:
  * Evil testing shim that captures pf ioctls and emulates
  * the /dev/pf interface.
  *

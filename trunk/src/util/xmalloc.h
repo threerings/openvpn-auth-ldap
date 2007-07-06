@@ -1,7 +1,7 @@
 /*
- * util/xmalloc.h
+ * xmalloc.h vi:ts=4:sw=4:expandtab:
  *
- * "Safe" malloc routines -- and by safe, I mean "fail deterministically"
+ * "Safe" malloc routines -- and by safe, I mean "fail quickly"
  *
  * Copyright (c) 2006 Three Rings Design, Inc.
  * Copyright (c) 2005 - 2006 Landon Fuller <landonf@threerings.net>

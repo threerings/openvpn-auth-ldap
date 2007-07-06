@@ -1,10 +1,10 @@
 /*
- * TRPFAddress.h
+ * TRPFAddress.h vi:ts=4:sw=4:expandtab:
  * OpenBSD PF Address
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@
 
 @interface TRPFAddress : TRObject {
 @private
-	struct pfr_addr _addr;
+    struct pfr_addr _addr;
 }
 
 - (id) initWithPresentationAddress: (TRString *) address;

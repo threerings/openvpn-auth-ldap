@@ -1,8 +1,8 @@
 /*
- * ldap/TRLDAPConnection.h
+ * TRLDAPConnection.h vi:ts=4:sw=4:expandtab:
  * Simple LDAP Wrapper
  *
- * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2005 - 2007 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,8 +44,8 @@
 
 @interface TRLDAPConnection : TRObject {
 @private
-	LDAP *ldapConn;
-	int _timeout;
+    LDAP *ldapConn;
+    int _timeout;
 }
 
 - (id) initWithURL: (TRString *) url timeout: (int) timeout;
@@ -54,9 +54,9 @@
 - (BOOL) bindWithDN: (TRString *) bindDN password: (TRString *) password;
 
 - (TRArray *) searchWithFilter: (TRString *) filter
-			 scope: (int) scope
-			baseDN: (TRString *) base
-		    attributes: (TRArray *) attributes;
+              scope: (int) scope
+              baseDN: (TRString *) base
+              attributes: (TRArray *) attributes;
 - (BOOL) compareDN: (TRString *) dn withAttribute: (TRString *) attribute value: (TRString *) value;
 
 - (BOOL) setReferralEnabled: (BOOL) enabled;

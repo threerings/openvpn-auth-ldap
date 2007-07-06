@@ -1,10 +1,11 @@
 /*
- * TRObject.h
+ * TRObject.h vi:ts=4:sw=4:expandtab:
  * Project Root Class
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2007 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +55,7 @@
 
 @interface TRObject : Object <TRObject> {
 @private
-	unsigned int _refCount;
+    unsigned int _refCount;
 }
 
 - (id) init;

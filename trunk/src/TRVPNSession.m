@@ -1,5 +1,5 @@
 /*
- * TRVPNSession.m
+ * TRVPNSession.m vi:ts=4:sw=4:expandtab:
  * An active VPN session
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -40,21 +40,21 @@
 @implementation TRVPNSession
 
 - (id) initWithUsername: (TRString *) username {
-	self = [self init];
-	if (!self)
-		return nil;
+    self = [self init];
+    if (!self)
+        return nil;
 
-	_username = [username retain];
-	return (self);
+    _username = [username retain];
+    return (self);
 }
 
 - (void) dealloc {
-	[_username release];
-	[super dealloc];
+    [_username release];
+    [super dealloc];
 }
 
 - (TRString *) username {
-	return (_username);
+    return (_username);
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- * mockpf.c
+ * mockpf.c vi:ts=4:sw=4:expandtab:
  * Evil testing shim that captures pf ioctls and emulates
  * the /dev/pf interface.
  *
@@ -9,7 +9,7 @@
  * implementation.
  *
  * Copyright (c) 2002 Cedric Berger
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,200 +88,200 @@ static int (*_real_ioctl)(int, unsigned long, ...) = NULL;
 
 /* Static example tables */
 static struct pfr_table artist_table = {
-	.pfrt_anchor = { '\0' },
-	.pfrt_name = "ips_artist",
-	.pfrt_flags = 0,
-	.pfrt_fback = 0
+    .pfrt_anchor = { '\0' },
+    .pfrt_name = "ips_artist",
+    .pfrt_flags = 0,
+    .pfrt_fback = 0
 };
 
 static struct pfr_table dev_table = {
-	.pfrt_anchor = { '\0' },
-	.pfrt_name = "ips_developer",
-	.pfrt_flags = 0,
-	.pfrt_fback = 0
+    .pfrt_anchor = { '\0' },
+    .pfrt_name = "ips_developer",
+    .pfrt_flags = 0,
+    .pfrt_fback = 0
 };
 
 /** Generic structure definition for either list type. */
 typedef struct PFNode {
-	struct PFNode *prev;
-	struct PFNode *next;
+    struct PFNode *prev;
+    struct PFNode *next;
 } PFNode;
 
 /** Generic list structure. */
 typedef struct PFList {
-	unsigned int nodeCount;
-	PFNode *firstNode;
+    unsigned int nodeCount;
+    PFNode *firstNode;
 } PFList;
 
 /** Double linked list of addresses. */
 typedef struct PFAddressNode {
-	struct PFAddressNode *prev;
-	struct PFAddressNode *next;
-	struct pfr_addr addr;
+    struct PFAddressNode *prev;
+    struct PFAddressNode *next;
+    struct pfr_addr addr;
 } PFAddressNode;
 
 /** Double linked list of tables. */
 typedef struct PFTableNode {
-	struct PFTableNode *prev;
-	struct PFTableNode *next;
-	struct pfr_table table;
-	PFList addrs;
+    struct PFTableNode *prev;
+    struct PFTableNode *next;
+    struct pfr_table table;
+    PFList addrs;
 } PFTableNode;
 
 static PFList *pf_tables;
 
 /** Initialize a new list. */
 static void init_pflist(PFList *list) {
-	list->firstNode = NULL;
-	list->nodeCount = 0;
+    list->firstNode = NULL;
+    list->nodeCount = 0;
 }
 
 /** Initialize a new node. */
 static void init_pfnode(PFNode *node) {
-	node->prev = NULL;
-	node->next = NULL;
+    node->prev = NULL;
+    node->next = NULL;
 }
 
 /* Insert a node into the list */
 static void insert_pfnode(PFList *list, PFNode *new, PFNode *position) {
-	list->nodeCount++;
+    list->nodeCount++;
 
-	/* Empty list */
-	if (!list->firstNode) {
-		list->firstNode = new;
-		return;
-	}
+    /* Empty list */
+    if (!list->firstNode) {
+        list->firstNode = new;
+        return;
+    }
 
-	/* Top of list? */
-	if (!position)
-		position = list->firstNode;
+    /* Top of list? */
+    if (!position)
+        position = list->firstNode;
 
-	new->prev = position->prev;
-	new->next = position;
+    new->prev = position->prev;
+    new->next = position;
 
-	if (position->prev)
-		position->prev->next = new;
-	else
-		list->firstNode = new;
+    if (position->prev)
+        position->prev->next = new;
+    else
+        list->firstNode = new;
 
-	position->prev = new;
+    position->prev = new;
 }
 
 /* Remove a node from a list */
 static void remove_pfnode(PFList *list, PFNode *node) {
-	list->nodeCount--;
+    list->nodeCount--;
 
-	/* Last remaining node */
-	if (!node->prev && !node->next) {
-		free(node);
-		list->firstNode = NULL;
-		return;
-	}
+    /* Last remaining node */
+    if (!node->prev && !node->next) {
+        free(node);
+        list->firstNode = NULL;
+        return;
+    }
 
-	if (node->prev)
-		node->prev->next = node->next;
-	else
-		list->firstNode = node->next;
+    if (node->prev)
+        node->prev->next = node->next;
+    else
+        list->firstNode = node->next;
 
-	if (node->next)
-		node->next->prev = node->prev;
+    if (node->next)
+        node->next->prev = node->prev;
 
-	free(node);
+    free(node);
 }
 
 /* Set up pf ioctl emulator */
 void mockpf_setup(void) {
-	PFTableNode *tableNode;
-	pf_tables = malloc(sizeof(PFList));
-	init_pflist(pf_tables);
+    PFTableNode *tableNode;
+    pf_tables = malloc(sizeof(PFList));
+    init_pflist(pf_tables);
 
-	/* Add our artist table */
-	tableNode = malloc(sizeof(PFTableNode));
-	init_pfnode((PFNode *) tableNode);
-	init_pflist(&tableNode->addrs);
-	tableNode->table = artist_table;
-	insert_pfnode(pf_tables, (PFNode *) tableNode, NULL);
+    /* Add our artist table */
+    tableNode = malloc(sizeof(PFTableNode));
+    init_pfnode((PFNode *) tableNode);
+    init_pflist(&tableNode->addrs);
+    tableNode->table = artist_table;
+    insert_pfnode(pf_tables, (PFNode *) tableNode, NULL);
 
-	/* Add our dev table */
-	tableNode = malloc(sizeof(PFTableNode));
-	init_pfnode((PFNode *) tableNode);
-	tableNode->table = dev_table;
-	init_pflist(&tableNode->addrs);
-	insert_pfnode(pf_tables, (PFNode *) tableNode, NULL);
+    /* Add our dev table */
+    tableNode = malloc(sizeof(PFTableNode));
+    init_pfnode((PFNode *) tableNode);
+    tableNode->table = dev_table;
+    init_pflist(&tableNode->addrs);
+    insert_pfnode(pf_tables, (PFNode *) tableNode, NULL);
 }
 
 /* Tear down ioctl emulator */
 void mockpf_teardown(void) {
-	while (pf_tables->firstNode) {
-		PFTableNode *tableNode = (PFTableNode *) pf_tables->firstNode;
+    while (pf_tables->firstNode) {
+        PFTableNode *tableNode = (PFTableNode *) pf_tables->firstNode;
 
-		/* Clear out the address list */
-		while (tableNode->addrs.firstNode)
-			remove_pfnode(&tableNode->addrs, tableNode->addrs.firstNode);
+        /* Clear out the address list */
+        while (tableNode->addrs.firstNode)
+            remove_pfnode(&tableNode->addrs, tableNode->addrs.firstNode);
 
-		remove_pfnode(pf_tables, pf_tables->firstNode);
-	}
+        remove_pfnode(pf_tables, pf_tables->firstNode);
+    }
 
-	free(pf_tables);
+    free(pf_tables);
 }
 
 int open(const char *path, int flags, ...) {
-	mode_t mode;
-	va_list ap;
+    mode_t mode;
+    va_list ap;
 
-	/* Grab the real symbol if necessary */
-	if (!_real_open)
-		_real_open = dlsym(RTLD_NEXT, "open");
+    /* Grab the real symbol if necessary */
+    if (!_real_open)
+        _real_open = dlsym(RTLD_NEXT, "open");
 
-	/* Are we opening /dev/pf ? */
-	if(strcmp(path, PF_DEV_PATH) == 0) {
-		/* Does a 'pf' reference already exist? */
-		if (pffd != -1) {
-			pfRefCount++;
-			return pffd;
-		} else {
-			pffd = _real_open("/dev/null", O_RDWR);
-			/* Only increment the refcount if the open succeeded */
-			if (pffd != -1)
-				pfRefCount++;
-			return pffd;
-		}
-	}
+    /* Are we opening /dev/pf ? */
+    if(strcmp(path, PF_DEV_PATH) == 0) {
+        /* Does a 'pf' reference already exist? */
+        if (pffd != -1) {
+            pfRefCount++;
+            return pffd;
+        } else {
+            pffd = _real_open("/dev/null", O_RDWR);
+            /* Only increment the refcount if the open succeeded */
+            if (pffd != -1)
+                pfRefCount++;
+            return pffd;
+        }
+    }
 
-	/* Call the real open */
-	if (flags & O_CREAT) {
-		va_start(ap, flags);
-		mode = va_arg(ap, int);
-		va_end(ap);
-		return _real_open(path, flags, mode);
-	} else {
-		return _real_open(path, flags);
-	}
+    /* Call the real open */
+    if (flags & O_CREAT) {
+        va_start(ap, flags);
+        mode = va_arg(ap, int);
+        va_end(ap);
+        return _real_open(path, flags, mode);
+    } else {
+        return _real_open(path, flags);
+    }
 }
 
 int close(int d) {
-	int ret;
+    int ret;
 
-	/* Grab the real symbol if necessary */
-	if (!_real_close)
-		_real_close = dlsym(RTLD_NEXT, "close");
+    /* Grab the real symbol if necessary */
+    if (!_real_close)
+        _real_close = dlsym(RTLD_NEXT, "close");
 
-	if (d == pffd) {
-		if (pfRefCount == 1) {
-			ret = _real_close(pffd);
-			/* Failure here is highly unlikely, but
-			 * we account for it anyway */
-			if (ret == -1) {
-				return ret;
-			} else {
-				pfRefCount--;
-				pffd = -1;
-			}
-		}
-	}
+    if (d == pffd) {
+        if (pfRefCount == 1) {
+            ret = _real_close(pffd);
+            /* Failure here is highly unlikely, but
+             * we account for it anyway */
+            if (ret == -1) {
+                return ret;
+            } else {
+                pfRefCount--;
+                pffd = -1;
+            }
+        }
+    }
 
-	/* Call the real close */
-	return _real_close(d);
+    /* Call the real close */
+    return _real_close(d);
 }
 
 /**
@@ -305,9 +305,9 @@ int pfr_fix_anchor(char *anchor) {
                 memset(anchor + siz - off, 0, off);
         }
 
-	assert(anchor[siz - 1] == 0);
+    assert(anchor[siz - 1] == 0);
         for (i = strlen(anchor); i < siz; i++)
-		assert(!anchor[i]);
+        assert(!anchor[i]);
 
         return (0);
 }
@@ -318,19 +318,19 @@ int pfr_fix_anchor(char *anchor) {
  * Taken from FreeBSD: src/sys/contrib/pf/net/pf_table.c,v 1.7
  */
 int pfr_validate_table(struct pfr_table *tbl) {
-	int i;
+    int i;
 
-	assert(tbl->pfrt_name[0]);
+    assert(tbl->pfrt_name[0]);
 
-	assert(!tbl->pfrt_name[PF_TABLE_NAME_SIZE-1]);
+    assert(!tbl->pfrt_name[PF_TABLE_NAME_SIZE-1]);
 
-	for (i = strlen(tbl->pfrt_name); i < PF_TABLE_NAME_SIZE; i++)
-		assert(!tbl->pfrt_name[i]);
+    for (i = strlen(tbl->pfrt_name); i < PF_TABLE_NAME_SIZE; i++)
+        assert(!tbl->pfrt_name[i]);
 
-	assert(pfr_fix_anchor(tbl->pfrt_anchor) == 0);
+    assert(pfr_fix_anchor(tbl->pfrt_anchor) == 0);
 
-	assert(tbl->pfrt_flags == 0);
-	return (1);
+    assert(tbl->pfrt_flags == 0);
+    return (1);
 }
 
 /**
@@ -338,230 +338,230 @@ int pfr_validate_table(struct pfr_table *tbl) {
  * Taken from FreeBSD: src/sys/contrib/pf/net/pf_table.c,v 1.7
  */
 int pfr_validate_addr(struct pfr_addr *ad) {
-	int i;
+    int i;
 
-	assert(ad->pfra_af == AF_INET || ad->pfra_af == AF_INET6);
+    assert(ad->pfra_af == AF_INET || ad->pfra_af == AF_INET6);
 
-	switch (ad->pfra_af) {
-	case AF_INET:
-		assert(ad->pfra_net <= 32);
-		break;
-	case AF_INET6:
-		assert(ad->pfra_net <= 128);
-		break;
-	default:
-		/* Unreachable */
-		break;
-	}
+    switch (ad->pfra_af) {
+    case AF_INET:
+        assert(ad->pfra_net <= 32);
+        break;
+    case AF_INET6:
+        assert(ad->pfra_net <= 128);
+        break;
+    default:
+        /* Unreachable */
+        break;
+    }
 
-	if (ad->pfra_net < 128)
-		assert(!(((caddr_t)ad)[ad->pfra_net/8] & (0xFF >> (ad->pfra_net%8))));
+    if (ad->pfra_net < 128)
+        assert(!(((caddr_t)ad)[ad->pfra_net/8] & (0xFF >> (ad->pfra_net%8))));
 
-	for (i = (ad->pfra_net+7)/8; i < sizeof(ad->pfra_u); i++)
-		assert(!((caddr_t)ad)[i]);
+    for (i = (ad->pfra_net+7)/8; i < sizeof(ad->pfra_u); i++)
+        assert(!((caddr_t)ad)[i]);
 
-	if (ad->pfra_not)
-		assert(ad->pfra_not == 1);
+    if (ad->pfra_not)
+        assert(ad->pfra_not == 1);
 
-	assert(!ad->pfra_fback);
+    assert(!ad->pfra_fback);
         return (1);
 }
 
 int ioctl(int d, unsigned long request, ...) {
-	va_list ap;
-	caddr_t argp;
+    va_list ap;
+    caddr_t argp;
 
-	/* Grab the real symbol if necessary */
-	if (!_real_ioctl)
-		_real_ioctl = dlsym(RTLD_NEXT, "ioctl");
+    /* Grab the real symbol if necessary */
+    if (!_real_ioctl)
+        _real_ioctl = dlsym(RTLD_NEXT, "ioctl");
 
-	/* Fish out the argument */
-	va_start(ap, request);
-	argp = va_arg(ap, caddr_t);
-	va_end(ap);
+    /* Fish out the argument */
+    va_start(ap, request);
+    argp = va_arg(ap, caddr_t);
+    va_end(ap);
 
-	if (d == pffd) {
-		switch (request) {
-			struct pfioc_table *iot;
-			struct pfr_table *table;
-			struct pfr_addr *address;
-			PFTableNode *tableNode;
-			PFAddressNode *addressNode;
-			int size;
+    if (d == pffd) {
+        switch (request) {
+            struct pfioc_table *iot;
+            struct pfr_table *table;
+            struct pfr_addr *address;
+            PFTableNode *tableNode;
+            PFAddressNode *addressNode;
+            int size;
 
-			case DIOCRGETTABLES:
-				iot = (struct pfioc_table *) argp;
+            case DIOCRGETTABLES:
+                iot = (struct pfioc_table *) argp;
 
-				/* Verify structure initialization */
-				assert(iot->pfrio_esize == sizeof(struct pfr_table));
+                /* Verify structure initialization */
+                assert(iot->pfrio_esize == sizeof(struct pfr_table));
 
-				/* Check our caller's buffer size */
-				size = sizeof(struct pfr_table) * pf_tables->nodeCount;
-				if (iot->pfrio_size < size) {
-					iot->pfrio_size = size;
-					return 0;
-				} else {
-					iot->pfrio_size = size;
-				}
+                /* Check our caller's buffer size */
+                size = sizeof(struct pfr_table) * pf_tables->nodeCount;
+                if (iot->pfrio_size < size) {
+                    iot->pfrio_size = size;
+                    return 0;
+                } else {
+                    iot->pfrio_size = size;
+                }
 
-				table = iot->pfrio_buffer;
-				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
-					memcpy(table, &tableNode->table, sizeof(struct pfr_table));
-					table++;
-				}
-				return 0;
+                table = iot->pfrio_buffer;
+                for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+                    memcpy(table, &tableNode->table, sizeof(struct pfr_table));
+                    table++;
+                }
+                return 0;
 
-			case DIOCRCLRADDRS:
-				iot = (struct pfioc_table *) argp;
+            case DIOCRCLRADDRS:
+                iot = (struct pfioc_table *) argp;
 
-				/* Verify structure initialization */
-				assert(iot->pfrio_esize == 0);
+                /* Verify structure initialization */
+                assert(iot->pfrio_esize == 0);
 
-				/* Find the table */
-				size = 0; /* Number of addresses cleared */
-				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
-					/* Check the name */
-					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
-						/* Matched. Clear out the address list */
-						while (tableNode->addrs.firstNode) {
-							remove_pfnode(&tableNode->addrs, tableNode->addrs.firstNode);
-							size++;
-						}
-						iot->pfrio_ndel = size;
-						return 0;
-					}
-				}
+                /* Find the table */
+                size = 0; /* Number of addresses cleared */
+                for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+                    /* Check the name */
+                    if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
+                        /* Matched. Clear out the address list */
+                        while (tableNode->addrs.firstNode) {
+                            remove_pfnode(&tableNode->addrs, tableNode->addrs.firstNode);
+                            size++;
+                        }
+                        iot->pfrio_ndel = size;
+                        return 0;
+                    }
+                }
 
-				/* If we fall through the table wasn't found */
-				errno = ESRCH;
-				return -1;
+                /* If we fall through the table wasn't found */
+                errno = ESRCH;
+                return -1;
 
-			case DIOCRADDADDRS:
-				iot = (struct pfioc_table *) argp;
+            case DIOCRADDADDRS:
+                iot = (struct pfioc_table *) argp;
 
-				/* Verify structure initialization */
-				assert(iot->pfrio_esize == sizeof(struct pfr_addr));
+                /* Verify structure initialization */
+                assert(iot->pfrio_esize == sizeof(struct pfr_addr));
 
-				/* Validate table */
-				assert(pfr_validate_table (&iot->pfrio_table));
+                /* Validate table */
+                assert(pfr_validate_table (&iot->pfrio_table));
 
-				/* Find the table */
-				size = 0; /* Number of addresses added */
-				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
-					int i, max;
-					/* Check the name */
-					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
-						/* Matched. Add the addresses */
-						address = iot->pfrio_buffer;
-						max = iot->pfrio_size;
-						for (i = 0; i < max; i++) {
-							assert(pfr_validate_addr(address));
+                /* Find the table */
+                size = 0; /* Number of addresses added */
+                for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+                    int i, max;
+                    /* Check the name */
+                    if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
+                        /* Matched. Add the addresses */
+                        address = iot->pfrio_buffer;
+                        max = iot->pfrio_size;
+                        for (i = 0; i < max; i++) {
+                            assert(pfr_validate_addr(address));
 
-							addressNode = malloc(sizeof(PFAddressNode));
-							init_pfnode((PFNode *) addressNode);
-							memcpy(&addressNode->addr, address, sizeof(addressNode->addr));
-							insert_pfnode(&tableNode->addrs, (PFNode *) addressNode, NULL);
+                            addressNode = malloc(sizeof(PFAddressNode));
+                            init_pfnode((PFNode *) addressNode);
+                            memcpy(&addressNode->addr, address, sizeof(addressNode->addr));
+                            insert_pfnode(&tableNode->addrs, (PFNode *) addressNode, NULL);
 
-							address++;
-							size++;
-						}
+                            address++;
+                            size++;
+                        }
 
-						/* Number of addresses added */
-						iot->pfrio_nadd = size;
-						return 0;
-					}
-				}
+                        /* Number of addresses added */
+                        iot->pfrio_nadd = size;
+                        return 0;
+                    }
+                }
 
-				/* If we fall through the table wasn't found */
-				errno = ESRCH;
-				return -1;
+                /* If we fall through the table wasn't found */
+                errno = ESRCH;
+                return -1;
 
-			case DIOCRDELADDRS:
-				iot = (struct pfioc_table *) argp;
+            case DIOCRDELADDRS:
+                iot = (struct pfioc_table *) argp;
 
-				/* Verify structure initialization */
-				assert(iot->pfrio_esize == sizeof(struct pfr_addr));
+                /* Verify structure initialization */
+                assert(iot->pfrio_esize == sizeof(struct pfr_addr));
 
-				/* Validate table */
-				pfr_validate_table (&iot->pfrio_table);
+                /* Validate table */
+                pfr_validate_table (&iot->pfrio_table);
 
-				/* Find the table */
-				size = 0; /* Number of addresses deleted */
-				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
-					int i, max;
-					/* Check the name */
-					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
-						/* Matched the table. Delete the addresses */
-						address = iot->pfrio_buffer;
-						max = iot->pfrio_size;
-						for (i = 0; i < max; i++) {
-							int addrMatch = 0;
-							assert(pfr_validate_addr(address));
+                /* Find the table */
+                size = 0; /* Number of addresses deleted */
+                for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+                    int i, max;
+                    /* Check the name */
+                    if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
+                        /* Matched the table. Delete the addresses */
+                        address = iot->pfrio_buffer;
+                        max = iot->pfrio_size;
+                        for (i = 0; i < max; i++) {
+                            int addrMatch = 0;
+                            assert(pfr_validate_addr(address));
 
-							for (addressNode = (PFAddressNode *) tableNode->addrs.firstNode; addressNode != NULL; addressNode = addressNode->next) {
-								if (memcmp(&addressNode->addr, address, sizeof(addressNode->addr)) == 0) {
-									/* Matched the address */
-									addrMatch = 1;
-									remove_pfnode(&tableNode->addrs, (PFNode *) addressNode);
-									size++;
-									break;
-								}
+                            for (addressNode = (PFAddressNode *) tableNode->addrs.firstNode; addressNode != NULL; addressNode = addressNode->next) {
+                                if (memcmp(&addressNode->addr, address, sizeof(addressNode->addr)) == 0) {
+                                    /* Matched the address */
+                                    addrMatch = 1;
+                                    remove_pfnode(&tableNode->addrs, (PFNode *) addressNode);
+                                    size++;
+                                    break;
+                                }
 
-							}
-							address++;
-						}
+                            }
+                            address++;
+                        }
 
-						/* Number of addresses deleted */
-						iot->pfrio_ndel = size;
-						return 0;
-					}
-				}
+                        /* Number of addresses deleted */
+                        iot->pfrio_ndel = size;
+                        return 0;
+                    }
+                }
 
-				/* If we fall through the table wasn't found */
-				errno = ESRCH;
-				return -1;
+                /* If we fall through the table wasn't found */
+                errno = ESRCH;
+                return -1;
 
 
-			case DIOCRGETADDRS:
-				iot = (struct pfioc_table *) argp;
+            case DIOCRGETADDRS:
+                iot = (struct pfioc_table *) argp;
 
-				/* Verify structure initialization */
-				assert(iot->pfrio_esize == sizeof(struct pfr_addr));
+                /* Verify structure initialization */
+                assert(iot->pfrio_esize == sizeof(struct pfr_addr));
 
-				/* Find the table */
-				for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
-					/* Check the name */
-					if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
-						/* Matched. Check our caller's buffer size */
-						size = tableNode->addrs.nodeCount;
-						if (iot->pfrio_size < size) {
-							iot->pfrio_size = size;
-							return 0;
-						} else {
-							iot->pfrio_size = size;
-						}
+                /* Find the table */
+                for (tableNode = (PFTableNode *) pf_tables->firstNode; tableNode != NULL; tableNode = tableNode->next) {
+                    /* Check the name */
+                    if (strcmp(iot->pfrio_table.pfrt_name, tableNode->table.pfrt_name) == 0) {
+                        /* Matched. Check our caller's buffer size */
+                        size = tableNode->addrs.nodeCount;
+                        if (iot->pfrio_size < size) {
+                            iot->pfrio_size = size;
+                            return 0;
+                        } else {
+                            iot->pfrio_size = size;
+                        }
 
-						address = iot->pfrio_buffer;
-						for (addressNode = (PFAddressNode *) tableNode->addrs.firstNode; addressNode != NULL; addressNode = addressNode->next) {
-							memcpy(address, &addressNode->addr, sizeof(struct pfr_addr));
-							address++;
-						}
-						return 0;
-					}
-				}
+                        address = iot->pfrio_buffer;
+                        for (addressNode = (PFAddressNode *) tableNode->addrs.firstNode; addressNode != NULL; addressNode = addressNode->next) {
+                            memcpy(address, &addressNode->addr, sizeof(struct pfr_addr));
+                            address++;
+                        }
+                        return 0;
+                    }
+                }
 
-				/* If we fall through the table wasn't found */
-				errno = ESRCH;
-				return -1;
+                /* If we fall through the table wasn't found */
+                errno = ESRCH;
+                return -1;
 
-			default:
-				errno = EINVAL;
-				return -1;
-		}
-	}
+            default:
+                errno = EINVAL;
+                return -1;
+        }
+    }
 
-	/* Call the real ioctl */
-	return (_real_ioctl(d, request, argp));
+    /* Call the real ioctl */
+    return (_real_ioctl(d, request, argp));
 }
 
 #endif /* HAVE_PF */

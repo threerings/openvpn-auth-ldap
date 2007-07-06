@@ -1,10 +1,10 @@
 /*
- * TRLocalPacketFilter.h
+ * TRLocalPacketFilter.h vi:ts=4:sw=4:expandtab:
  * Interface to OpenBSD pf
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,8 +56,8 @@
 
 @interface TRLocalPacketFilter : TRObject {
 @private
-	/** Cached reference to /dev/pf. */
-	int _fd;
+    /** Cached reference to /dev/pf. */
+    int _fd;
 }
 
 + (const char *) strerror: (int) pferrno;

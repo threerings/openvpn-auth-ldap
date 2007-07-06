@@ -1,10 +1,10 @@
 /*
- * TRLDAPGroupConfig.h
+ * TRLDAPGroupConfig.m vi:ts=4:sw=4:expandtab:
  * LDAP Group Configuration
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,57 +38,60 @@
 
 @implementation TRLDAPGroupConfig
 - (void) dealloc {
-	if (_baseDN)
-		[_baseDN release];
-	if (_searchFilter)
-		[_searchFilter release];
-	if (_memberAttribute)
-		[_memberAttribute release];
-	if (_pfTable)
-		[_pfTable release];
+    if (_baseDN)
+        [_baseDN release];
 
-	[super dealloc];
+    if (_searchFilter)
+        [_searchFilter release];
+
+    if (_memberAttribute)
+        [_memberAttribute release];
+
+    if (_pfTable)
+        [_pfTable release];
+
+    [super dealloc];
 }
 
 
 - (TRString *) baseDN {
-	return (_baseDN);
+    return (_baseDN);
 }
 
 - (void) setBaseDN: (TRString *) baseDN {
-	if (_baseDN)
-		[_baseDN release];
-	_baseDN = [baseDN retain];
+    if (_baseDN)
+        [_baseDN release];
+    _baseDN = [baseDN retain];
 }
 
 - (TRString *) searchFilter {
-	return (_searchFilter);
+    return (_searchFilter);
 }
 
 - (void) setSearchFilter: (TRString *) searchFilter {
-	if (_searchFilter)
-		[_searchFilter release];
-	_searchFilter = [searchFilter retain];
+    if (_searchFilter)
+        [_searchFilter release];
+    _searchFilter = [searchFilter retain];
 }
 
 - (TRString *) memberAttribute {
-	return (_memberAttribute);
+    return (_memberAttribute);
 }
 
 - (void) setMemberAttribute: (TRString *) memberAttribute {
-	if (_memberAttribute)
-		[_memberAttribute release];
-	_memberAttribute = [memberAttribute retain];
+    if (_memberAttribute)
+        [_memberAttribute release];
+    _memberAttribute = [memberAttribute retain];
 }
 
 - (void) setPFTable: (TRString *) tableName {
-	if (_pfTable)
-		[_pfTable release];
-	_pfTable = [tableName retain];
+    if (_pfTable)
+        [_pfTable release];
+    _pfTable = [tableName retain];
 }
 
 - (TRString *) pfTable {
-	return (_pfTable);
+    return (_pfTable);
 }
 
 @end

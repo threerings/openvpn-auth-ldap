@@ -1,5 +1,5 @@
 /*
- * TRHash.m
+ * TRHash.m vi:ts=4:sw=4:expandtab:
  * Hash Table
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -40,9 +40,9 @@
  * Hash key enumerator.
  */
 @interface TRHashKeyEnumerator : TREnumerator <TREnumerator> {
-	TRHash *_hash;
-	hscan_t _scan;
-	hash_t *_hashContext;
+    TRHash *_hash;
+    hscan_t _scan;
+    hash_t *_hashContext;
 }
 
 - (id) initWithHash: (TRHash *) hash;
@@ -66,41 +66,41 @@
  * Supporting functions
  */
 static hash_val_t hash_function(const void *key) {
-	return [(TRString *) key hash];
+    return [(TRString *) key hash];
 }
 
 static int hash_key_compare(const void *firstValue, const void *secondValue) {
-	return strcmp([(TRString *) firstValue cString], [(TRString *) secondValue cString]);
+    return strcmp([(TRString *) firstValue cString], [(TRString *) secondValue cString]);
 }
 
 - (void) dealloc {
-	hscan_t scan;
-	hnode_t *node;
+    hscan_t scan;
+    hnode_t *node;
 
-	/* Release every member of the hash */
-	hash_scan_begin(&scan, _hash);
-	while ((node = hash_scan_next(&scan)) != NULL) {
-		/* Remove the node from the hash table */
-		hash_scan_delete(_hash, node);
+    /* Release every member of the hash */
+    hash_scan_begin(&scan, _hash);
+    while ((node = hash_scan_next(&scan)) != NULL) {
+        /* Remove the node from the hash table */
+        hash_scan_delete(_hash, node);
 
-		/* Release the data */
-		id obj;
-		obj = (id) hnode_get(node);
-		[obj release];
+        /* Release the data */
+        id obj;
+        obj = (id) hnode_get(node);
+        [obj release];
 
-		/* Release the key */
-		obj = (id) hnode_getkey(node);
-		[obj release];
+        /* Release the key */
+        obj = (id) hnode_getkey(node);
+        [obj release];
 
-		/* Destroy the node */
-		hnode_destroy(node);
-	}
+        /* Destroy the node */
+        hnode_destroy(node);
+    }
 
-	/* Deallocate the hash table */
-	hash_destroy(_hash);
+    /* Deallocate the hash table */
+    hash_destroy(_hash);
 
-	/* Pass control on to our superclass */
-	[super dealloc];
+    /* Pass control on to our superclass */
+    [super dealloc];
 }
 
 /**
@@ -108,14 +108,14 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
  * numItems.
  */
 - (id) initWithCapacity: (unsigned long) numItems {
-	self = [self init];
-	if (!self)
-		return nil;
+    self = [self init];
+    if (!self)
+        return nil;
 
-	/* Initialize our hash table */
-	_hash = hash_create(numItems, &hash_key_compare, &hash_function);
+    /* Initialize our hash table */
+    _hash = hash_create(numItems, &hash_key_compare, &hash_function);
 
-	return self;
+    return self;
 }
 
 /**
@@ -123,52 +123,52 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
  * Attempting to add an item to a full hash will trigger an assertion.
  */
 - (BOOL) isFull {
-	if (hash_isfull(_hash))
-		return YES;
-	else
-		return NO;
+    if (hash_isfull(_hash))
+        return YES;
+    else
+        return NO;
 }
 
 /**
  * Remove the key and associated value from the hash table.
  */
 - (void) removeObjectForKey: (TRString *) key {
-	hnode_t *node;
-	id obj;
+    hnode_t *node;
+    id obj;
 
-	/* Look for an existing key */
-	node = hash_lookup(_hash, key);
-	if (!node)
-		return;
+    /* Look for an existing key */
+    node = hash_lookup(_hash, key);
+    if (!node)
+        return;
 
-	/* Remove the node */
-	tr_hash_delete(_hash, node);
+    /* Remove the node */
+    tr_hash_delete(_hash, node);
 
-	/* Drop the old value */
-	obj = (id) hnode_get(node);
-	[obj release];
+    /* Drop the old value */
+    obj = (id) hnode_get(node);
+    [obj release];
 
-	/* Drop the old key */
-	obj = (id) hnode_getkey(node);
-	[obj release];
+    /* Drop the old key */
+    obj = (id) hnode_getkey(node);
+    [obj release];
 
-	/* Destroy the node */
-	hnode_destroy(node);
+    /* Destroy the node */
+    hnode_destroy(node);
 }
 
 /**
  * Returns the associated value for a given key.
  */
 - (id) valueForKey: (TRString *) key {
-	hnode_t *node;
+    hnode_t *node;
 
-	/* Look up the key */
-	node = hash_lookup(_hash, key);
-	if (!node)
-		return nil;
+    /* Look up the key */
+    node = hash_lookup(_hash, key);
+    if (!node)
+        return nil;
 
-	/* Return associated value */
-	return (id) hnode_get(node);
+    /* Return associated value */
+    return (id) hnode_get(node);
 }
 
 
@@ -177,25 +177,25 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
  * Both the key and value are retained.
  */
 - (void) setObject: (id) anObject forKey: (TRString *) key {
-	hnode_t *node;
+    hnode_t *node;
 
-	/* Remove the key, if it exists */
-	[self removeObjectForKey: key];
+    /* Remove the key, if it exists */
+    [self removeObjectForKey: key];
 
-	/* Are we at capacity? Programmer error! */
-	assert(hash_isfull(_hash) == 0);
+    /* Are we at capacity? Programmer error! */
+    assert(hash_isfull(_hash) == 0);
 
-	/* Retain our key and value */
-	[anObject retain];
-	[key retain];
+    /* Retain our key and value */
+    [anObject retain];
+    [key retain];
 
-	/* Insert them into the hash table */
-	node = hnode_create(anObject);
-	hash_insert(_hash, node, key);
+    /* Insert them into the hash table */
+    node = hnode_create(anObject);
+    hash_insert(_hash, node, key);
 }
 
 - (hash_t *) _privateHashContext {
-	return _hash;
+    return _hash;
 }
 
 /**
@@ -205,7 +205,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
  * the returned value.
  */
 - (TREnumerator *) keyEnumerator {
-	return [[[TRHashKeyEnumerator alloc] initWithHash: self] autorelease];
+    return [[[TRHashKeyEnumerator alloc] initWithHash: self] autorelease];
 }
 
 @end /* TRHash */
@@ -213,30 +213,30 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 @implementation TRHashKeyEnumerator
 
 - (void) dealloc {
-	[_hash release];
-	[super dealloc];
+    [_hash release];
+    [super dealloc];
 }
 
 - (id) initWithHash: (TRHash *) hash {
-	self = [super init];
-	if (!self)
-		return self;
+    self = [super init];
+    if (!self)
+        return self;
 
-	_hash = [hash retain];
-	_hashContext = [hash _privateHashContext];
-	hash_scan_begin(&_scan, _hashContext);
+    _hash = [hash retain];
+    _hashContext = [hash _privateHashContext];
+    hash_scan_begin(&_scan, _hashContext);
 
-	return self;
+    return self;
 }
 
 - (id) nextObject {
-	hnode_t *node;
+    hnode_t *node;
 
-	node = hash_scan_next(&_scan);
-	if (!node)
-		return nil;
+    node = hash_scan_next(&_scan);
+    if (!node)
+        return nil;
 
-	return (id) hnode_getkey(node);
+    return (id) hnode_getkey(node);
 }
 
 @end /* TRHashKeyEnumerator */
