@@ -91,6 +91,7 @@ static TRString *quoteForSearch(const char *string)
 	const char specialChars[] = "*()\\"; /* RFC 2254. We don't care about NULL */
 	TRString *result = [[TRString alloc] init];
 	TRString *unquotedString, *part;
+	TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
 
 	/* Make a copy of the string */
 	unquotedString = [[TRString alloc] initWithCString: string];
@@ -114,13 +115,12 @@ static TRString *quoteForSearch(const char *string)
 		index = [unquotedString indexToCharset: specialChars];
 		temp = [unquotedString substringFromIndex: index];
 		c = [temp charAtIndex: 0];
-		[temp release];
 
 		/* Append it, too! */
 		[result appendChar: c];
 
 		/* Move unquotedString past the special character */
-		temp = [unquotedString substringFromCharset: specialChars];
+		temp = [[unquotedString substringFromCharset: specialChars] retain];
 
 		[unquotedString release];
 		unquotedString = temp;
@@ -131,6 +131,8 @@ static TRString *quoteForSearch(const char *string)
 		[result appendString: unquotedString];
 		[unquotedString release];
 	}
+
+	[pool release];
 
 	return (result);
 }
