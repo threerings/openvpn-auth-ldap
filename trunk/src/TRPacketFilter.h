@@ -47,8 +47,8 @@
 #include <net/pfvar.h>
 
 #include "TRObject.h"
-#include "LFString.h"
-#include "TRArray.h"
+#include "util/TRString.h"
+#include "util/TRArray.h"
 #include "TRPFAddress.h"
 
 /* Forward Declarations */
@@ -63,10 +63,10 @@
 + (const char *) strerror: (int) pferrno;
 
 - (TRArray *) tables;
-- (BOOL) flushTable: (LFString *) tableName;
-- (BOOL) addAddress: (TRPFAddress *) address toTable: (LFString *) tableName;
-- (BOOL) deleteAddress: (TRPFAddress *) address fromTable: (LFString *) tableName;
-- (TRArray *) addressesFromTable: (LFString *) tableName;
+- (BOOL) flushTable: (TRString *) tableName;
+- (BOOL) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName;
+- (BOOL) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName;
+- (TRArray *) addressesFromTable: (TRString *) tableName;
 
 @end
 

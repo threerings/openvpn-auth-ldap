@@ -4,7 +4,8 @@ top_builddir=   @top_builddir@
 VPATH=          @srcdir@
 
 SUBDIR=		config \
-		ldap
+		ldap \
+		util
 
 include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
@@ -13,9 +14,6 @@ include ${top_builddir}/Mk/subdir.mk
 
 TEST_OBJS=	tests.o \
 		mockpf.o \
-		LFString.o \
-		TRArray.o \
-		TRHash.o \
 		TRObject.o \
 		TRPacketFilter.o \
 		TRPFAddress.o \
@@ -27,12 +25,14 @@ CFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 
 MODULES=	-Lconfig -lauth-ldap-test-config \
-		-Lldap -lauth-ldap-test-ldap
+		-Lldap -lauth-ldap-test-ldap \
+		-Lutil -lauth-ldap-test-util
 
 LIBS+=		$(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@ $(MODULES) \
 		-L${top_builddir}/src -lauth-ldap-testing \
+		-L${top_builddir}/src/config -lauth-ldap-config \
 		-L${top_builddir}/src/ldap -lauth-ldap-ldap \
-		-L${top_builddir}/src/config -lauth-ldap-config
+		-L${top_builddir}/src/util -lauth-ldap-util
 
 LDFLAGS+=	 $(LIBS)
 

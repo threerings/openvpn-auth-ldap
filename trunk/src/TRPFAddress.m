@@ -45,7 +45,7 @@
 #include <arpa/inet.h>
 
 #include "TRPFAddress.h"
-#include "LFString.h"
+#include "util/TRString.h"
 
 /**
  * Represents a single IPv4 or IPv6 address, for use with PF.
@@ -67,7 +67,7 @@
  * Initialize with an IPv4 or IPv6 address string.
  * @param address An IPv4 or IPv6 address in human-readable format (eg 127.0.0.1 or ::1)
  */
-- (id) initWithPresentationAddress: (LFString *) address {
+- (id) initWithPresentationAddress: (TRString *) address {
 	if (![self init])
 		return nil;
 

@@ -35,7 +35,7 @@
 #include <ldap.h>
 
 #include "TRObject.h"
-#include "LFString.h"
+#include "util/TRString.h"
 
 #include "TRConfig.h"
 

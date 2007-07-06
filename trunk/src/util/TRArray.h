@@ -1,5 +1,5 @@
 /*
- * TRArray.h
+ * util/TRArray.h
  * Simple linked list
  *
  * Author: Landon Fuller <landonf@threerings.net>

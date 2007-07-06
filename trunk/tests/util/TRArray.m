@@ -38,14 +38,14 @@
 
 #include <check.h>
 
-#include <TRArray.h>
-#include <LFString.h>
+#include <util/TRArray.h>
+#include <util/TRString.h>
 
 START_TEST (test_addObject) {
 	TRArray *array = [[TRArray alloc] init];
-	LFString *string1 = [[LFString alloc] initWithCString: "String 1"];
-	LFString *string2 = [[LFString alloc] initWithCString: "String 2"];
-	LFString *string3 = [[LFString alloc] initWithCString: "String 3"];
+	TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
+	TRString *string2 = [[TRString alloc] initWithCString: "String 2"];
+	TRString *string3 = [[TRString alloc] initWithCString: "String 3"];
 
 	/* Add 3 items to the array */
 	[array addObject: string1];
@@ -77,8 +77,8 @@ END_TEST
 
 START_TEST (test_removeObject) {
 	TRArray *array = [[TRArray alloc] init];
-	LFString *string1 = [[LFString alloc] initWithCString: "String 1"];
-	LFString *string2 = [[LFString alloc] initWithCString: "String 2"];
+	TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
+	TRString *string2 = [[TRString alloc] initWithCString: "String 2"];
 
 	/* Fill our array */
 	[array addObject: string1];
@@ -99,7 +99,7 @@ END_TEST
 
 START_TEST (test_containsObject) {
 	TRArray *array = [[TRArray alloc] init];
-	LFString *string1 = [[LFString alloc] initWithCString: "String 1"];
+	TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
 
 	/* Fill our array */
 	[array addObject: string1];
@@ -117,7 +117,7 @@ END_TEST
 
 START_TEST(test_count) {
 	TRArray *array = [[TRArray alloc] init];
-	LFString *string1 = [[LFString alloc] initWithCString: "String 1"];
+	TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
 
 	/* Fill our array */
 	[array addObject: string1];
@@ -133,8 +133,8 @@ END_TEST
 
 START_TEST(test_objectEnumerator) {
 	TRArray *array = [[TRArray alloc] init];
-	LFString *string1 = [[LFString alloc] initWithCString: "String 1"];
-	LFString *string2 = [[LFString alloc] initWithCString: "String 2"];
+	TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
+	TRString *string2 = [[TRString alloc] initWithCString: "String 2"];
 	TREnumerator *iter;
 	id obj;
 

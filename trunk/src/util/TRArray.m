@@ -34,8 +34,8 @@
 
 #include <stdlib.h>
 
-#include "TRArray.h"
-#include "xmalloc.h"
+#include "util/TRArray.h"
+#include "util/xmalloc.h"
 
 typedef struct _TRArrayStack {
 	id object;

@@ -1,5 +1,5 @@
 /*
- * LFString.m
+ * TRString.m
  * Brain-dead Dynamic Strings
  *
  * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
@@ -38,16 +38,16 @@
 #include <string.h>
 #include <limits.h>
 
-#include "strlcpy.h"
+#include "util/strlcpy.h"
 
-#include "LFString.h"
+#include "util/TRString.h"
 
-#include "xmalloc.h"
+#include "util/xmalloc.h"
 
 /**
  * OO String wrapper.
  */
-@implementation LFString
+@implementation TRString
 
 - (void) dealloc {
 	free(bytes);
@@ -68,9 +68,9 @@
 }
 
 /**
- * Initialize with a copy of the provided LFString.
+ * Initialize with a copy of the provided TRString.
  */
-- (id) initWithString: (LFString *) string {
+- (id) initWithString: (TRString *) string {
 	self = [self init];
 	if (self != NULL) {
 		numBytes = [string length];
@@ -192,7 +192,7 @@
 /**
  * Append string.
  */
-- (void) appendString: (LFString *) string {
+- (void) appendString: (TRString *) string {
 	size_t len;
 
 	if (numBytes == 0) {
@@ -310,15 +310,15 @@
 	return (*(bytes + index));
 }
 
-- (LFString *) substringToIndex: (size_t) index {
-	LFString *string;
+- (TRString *) substringToIndex: (size_t) index {
+	TRString *string;
 	char *cString;
 
 	if (*(bytes + index) == '\0') {
 		return (NULL);
 	}
 
-	string = [LFString alloc];
+	string = [TRString alloc];
 	cString = xmalloc(index + 1);
 
 	strlcpy(cString, bytes, index + 1);
@@ -327,15 +327,15 @@
 	return (string);
 }
 
-- (LFString *) substringFromIndex: (size_t) index {
-	LFString *string;
+- (TRString *) substringFromIndex: (size_t) index {
+	TRString *string;
 	char *cString;
 
 	if (*(bytes + index) == '\0') {
 		return (NULL);
 	}
 
-	string = [LFString alloc];
+	string = [TRString alloc];
 	cString = xmalloc(numBytes - index);
 	strlcpy(cString, bytes + index, numBytes - index);
 
@@ -344,19 +344,19 @@
 	return (string);
 }
 
-- (LFString *) substringToCString: (const char *) cString {
+- (TRString *) substringToCString: (const char *) cString {
 	return ([self substringToIndex: [self indexToCString: cString]]);
 }
 
-- (LFString *) substringFromCString: (const char *) cString {
+- (TRString *) substringFromCString: (const char *) cString {
 	return ([self substringFromIndex: [self indexFromCString: cString]]);
 }
 
-- (LFString *) substringToCharset: (const char *) cString {
+- (TRString *) substringToCharset: (const char *) cString {
 	return ([self substringToIndex: [self indexToCharset: cString]]);
 }
 
-- (LFString *) substringFromCharset: (const char *) cString {
+- (TRString *) substringFromCharset: (const char *) cString {
 	return ([self substringFromIndex: [self indexFromCharset: cString]]);
 }
 

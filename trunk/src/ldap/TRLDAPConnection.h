@@ -36,9 +36,9 @@
 #include <ldap.h>
 
 #include "TRObject.h"
-#include "TRArray.h"
-#include "TRHash.h"
-#include "LFString.h"
+#include "util/TRArray.h"
+#include "util/TRHash.h"
+#include "util/TRString.h"
 
 #include "ldap/TRLDAPEntry.h"
 
@@ -48,22 +48,22 @@
 	int _timeout;
 }
 
-- (id) initWithURL: (LFString *) url timeout: (int) timeout;
+- (id) initWithURL: (TRString *) url timeout: (int) timeout;
 - (BOOL) startTLS;
 
-- (BOOL) bindWithDN: (LFString *) bindDN password: (LFString *) password;
+- (BOOL) bindWithDN: (TRString *) bindDN password: (TRString *) password;
 
-- (TRArray *) searchWithFilter: (LFString *) filter
+- (TRArray *) searchWithFilter: (TRString *) filter
 			 scope: (int) scope
-			baseDN: (LFString *) base
+			baseDN: (TRString *) base
 		    attributes: (TRArray *) attributes;
-- (BOOL) compareDN: (LFString *) dn withAttribute: (LFString *) attribute value: (LFString *) value;
+- (BOOL) compareDN: (TRString *) dn withAttribute: (TRString *) attribute value: (TRString *) value;
 
 - (BOOL) setReferralEnabled: (BOOL) enabled;
-- (BOOL) setTLSCACertFile: (LFString *) fileName;
-- (BOOL) setTLSCACertDir: (LFString *) directory;
-- (BOOL) setTLSClientCert: (LFString *) certFile keyFile: (LFString *) keyFile;
-- (BOOL) setTLSCipherSuite: (LFString *) cipherSuite;
+- (BOOL) setTLSCACertFile: (TRString *) fileName;
+- (BOOL) setTLSCACertDir: (TRString *) directory;
+- (BOOL) setTLSClientCert: (TRString *) certFile keyFile: (TRString *) keyFile;
+- (BOOL) setTLSCipherSuite: (TRString *) cipherSuite;
 
 @end
 

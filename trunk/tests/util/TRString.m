@@ -1,6 +1,6 @@
 /*
- * LFString.m
- * LFString Unit Tests
+ * TRString.m
+ * TRString Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,7 +36,7 @@
 #include <config.h>
 #endif
 
-#include <LFString.h>
+#include <util/TRString.h>
 
 #include <check.h>
 #include <string.h>
@@ -46,25 +46,25 @@
 
 START_TEST (test_initWithCString) {
 	const char *cString = TEST_STRING;
-	LFString *str;
+	TRString *str;
 
-	str = [[LFString alloc] initWithCString: cString];
-	fail_if(str == NULL, "-[[LFString alloc] initWithCString:] returned NULL");
+	str = [[TRString alloc] initWithCString: cString];
+	fail_if(str == NULL, "-[[TRString alloc] initWithCString:] returned NULL");
 	cString = [str cString];
-	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 	[str release];
 }
 END_TEST
 
 START_TEST (test_initWithString) {
 	const char *cString = TEST_STRING;
-	LFString *srcString = [[LFString alloc] initWithCString: cString];
-	LFString *str;
+	TRString *srcString = [[TRString alloc] initWithCString: cString];
+	TRString *str;
 
-	str = [[LFString alloc] initWithString: srcString];
-	fail_if(str == NULL, "-[[LFString alloc] initWithString:] returned NULL");
+	str = [[TRString alloc] initWithString: srcString];
+	fail_if(str == NULL, "-[[TRString alloc] initWithString:] returned NULL");
 	cString = [str cString];
-	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
 	[srcString release];
 	[str release];
@@ -74,65 +74,65 @@ END_TEST
 START_TEST (test_initWithBytes) {
 	const char *data = TEST_STRING;
 	const char *cString;
-	LFString *str;
+	TRString *str;
 
 	/* Test with non-NULL terminated data */
-	str = [[LFString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING) - 1];
-	fail_if(str == NULL, "-[[LFString alloc] initWithBytes:] returned NULL");
+	str = [[TRString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING) - 1];
+	fail_if(str == NULL, "-[[TRString alloc] initWithBytes:] returned NULL");
 	cString = [str cString];
-	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
 	[str release];
 
 	/* Test with NULL terminated data */
-	str = [[LFString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING)];
-	fail_if(str == NULL, "-[[LFString alloc] initWithBytes:] returned NULL");
+	str = [[TRString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING)];
+	fail_if(str == NULL, "-[[TRString alloc] initWithBytes:] returned NULL");
 	cString = [str cString];
-	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[LFString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
 	[str release];
 }
 END_TEST
 
 START_TEST (test_length) {
-	LFString *str = [[LFString alloc] initWithCString: TEST_STRING];
+	TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
 	size_t length = [str length];
 
-	fail_unless(length == sizeof(TEST_STRING), "-[LFString length] returned incorrect value. (Expected %u, got %u)", sizeof(TEST_STRING), length);
+	fail_unless(length == sizeof(TEST_STRING), "-[TRString length] returned incorrect value. (Expected %u, got %u)", sizeof(TEST_STRING), length);
 	[str release];
 }
 END_TEST
 
 START_TEST (test_intValue) {
-	LFString *str;
+	TRString *str;
 	int i;
 	bool success;
 
 	/* Test with integer */
-	str = [[LFString alloc] initWithCString: "20"];
+	str = [[TRString alloc] initWithCString: "20"];
 	success = [str intValue: &i];
-	fail_unless(success, "-[LFString intValue:] returned false");
-	fail_unless(i == 20, "-[LFString intValue:] returned incorrect value. (Expected %d, got %d)", 20, i);
+	fail_unless(success, "-[TRString intValue:] returned false");
+	fail_unless(i == 20, "-[TRString intValue:] returned incorrect value. (Expected %d, got %d)", 20, i);
 	[str release];
 
 	/* Test with INT_MAX */
-	str = [[LFString alloc] initWithCString: "2147483647"];
+	str = [[TRString alloc] initWithCString: "2147483647"];
 	success = [str intValue: &i];
 	fail_if(success, "-[LFstring intValue:] returned true for INT_MAX.");
-	fail_unless(i == INT_MAX, "-[LFString intValue: returned incorrect value for INT_MAX. (Expected %d, got %d)", INT_MAX, i);
+	fail_unless(i == INT_MAX, "-[TRString intValue: returned incorrect value for INT_MAX. (Expected %d, got %d)", INT_MAX, i);
 	[str release];
 
 	/* Test with INT_MIN */
-	str = [[LFString alloc] initWithCString: "-2147483648"];
+	str = [[TRString alloc] initWithCString: "-2147483648"];
 	success = [str intValue: &i];
 	fail_if(success, "-[LFstring intValue:] returned true for INT_MIN.");
-	fail_unless(i == INT_MIN, "-[LFString intValue: returned incorrect value for INT_MIN. (Expected %d, got %d)", INT_MIN, i);
+	fail_unless(i == INT_MIN, "-[TRString intValue: returned incorrect value for INT_MIN. (Expected %d, got %d)", INT_MIN, i);
 	[str release];
 }
 END_TEST
 
 START_TEST (test_hash) {
-	LFString *str = [[LFString alloc] initWithCString: TEST_STRING];
+	TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
 	int hash = [str hash];
 
 	fail_if(hash == 0);
@@ -141,8 +141,8 @@ START_TEST (test_hash) {
 END_TEST
 
 
-Suite *LFString_suite(void) {
-	Suite *s = suite_create("LFString");
+Suite *TRString_suite(void) {
+	Suite *s = suite_create("TRString");
 
 	TCase *tc_string = tcase_create("String Handling");
 	suite_add_tcase(s, tc_string);

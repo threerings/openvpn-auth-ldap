@@ -57,7 +57,7 @@
  * Unit Tests
  */
 
-Suite *LFString_suite(void);
+Suite *TRString_suite(void);
 Suite *TRAuthLDAPConfig_suite(void);
 Suite *TRLDAPConnection_suite(void);
 Suite *TRLDAPEntry_suite(void);

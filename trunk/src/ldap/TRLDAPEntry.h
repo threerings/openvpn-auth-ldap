@@ -36,16 +36,16 @@
 #define TRLDAPENTRY_H
 
 #include "TRObject.h"
-#include "TRHash.h"
+#include "util/TRHash.h"
 
 @interface TRLDAPEntry : TRObject {
 @private
-	LFString *_dn;
+	TRString *_dn;
 	TRHash *_attributes;
 }
 
-- (id) initWithDN: (LFString *) dn attributes: (TRHash *) attributes;
-- (LFString *) dn;
+- (id) initWithDN: (TRString *) dn attributes: (TRHash *) attributes;
+- (TRString *) dn;
 - (TRHash *) attributes;
 
 @end

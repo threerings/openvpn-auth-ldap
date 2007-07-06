@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TRHash.h"
+#include "util/TRHash.h"
 #include <string.h>
 #include <assert.h>
 
@@ -66,11 +66,11 @@
  * Supporting functions
  */
 static hash_val_t hash_function(const void *key) {
-	return [(LFString *) key hash];
+	return [(TRString *) key hash];
 }
 
 static int hash_key_compare(const void *firstValue, const void *secondValue) {
-	return strcmp([(LFString *) firstValue cString], [(LFString *) secondValue cString]);
+	return strcmp([(TRString *) firstValue cString], [(TRString *) secondValue cString]);
 }
 
 - (void) dealloc {
@@ -132,7 +132,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 /**
  * Remove the key and associated value from the hash table.
  */
-- (void) removeObjectForKey: (LFString *) key {
+- (void) removeObjectForKey: (TRString *) key {
 	hnode_t *node;
 	id obj;
 
@@ -159,7 +159,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
 /**
  * Returns the associated value for a given key.
  */
-- (id) valueForKey: (LFString *) key {
+- (id) valueForKey: (TRString *) key {
 	hnode_t *node;
 
 	/* Look up the key */
@@ -176,7 +176,7 @@ static int hash_key_compare(const void *firstValue, const void *secondValue) {
  * Add anObject to the hash table with key.
  * Both the key and value are retained.
  */
-- (void) setObject: (id) anObject forKey: (LFString *) key {
+- (void) setObject: (id) anObject forKey: (TRString *) key {
 	hnode_t *node;
 
 	/* Remove the key, if it exists */

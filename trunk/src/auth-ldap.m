@@ -40,7 +40,7 @@
 
 #include <openvpn-plugin.h>
 
-#include <LFString.h>
+#include <util/TRString.h>
 
 #include <config/TRAuthLDAPConfig.h>
 #include <config/TRLDAPGroupConfig.h>
@@ -52,7 +52,7 @@
 #include <TRPFAddress.h>
 #include <TRLog.h>
 
-#include <xmalloc.h>
+#include <util/xmalloc.h>
 
 /* Plugin Context */
 typedef struct ldap_ctx {
@@ -85,21 +85,21 @@ static const char *get_env(const char *key, const char *env[]) {
 	return (NULL);
 }
 
-static LFString *quoteForSearch(const char *string)
+static TRString *quoteForSearch(const char *string)
 {
 	const char specialChars[] = "*()\\"; /* RFC 2254. We don't care about NULL */
-	LFString *result = [[LFString alloc] init];
-	LFString *unquotedString, *part;
+	TRString *result = [[TRString alloc] init];
+	TRString *unquotedString, *part;
 
 	/* Make a copy of the string */
-	unquotedString = [[LFString alloc] initWithCString: string];
+	unquotedString = [[TRString alloc] initWithCString: string];
 
 	/* Initialize the result */
-	result = [[LFString alloc] init];
+	result = [[TRString alloc] init];
 
 	/* Quote all occurrences of the special characters */
 	while ((part = [unquotedString substringToCharset: specialChars]) != NULL) {
-		LFString *temp;
+		TRString *temp;
 		int index;
 		char c;
 
@@ -134,23 +134,23 @@ static LFString *quoteForSearch(const char *string)
 	return (result);
 }
 
-static LFString *createSearchFilter(LFString *template, const char *username) {
-	LFString *templateString;
-	LFString *result, *part;
-	LFString *quotedName;
+static TRString *createSearchFilter(TRString *template, const char *username) {
+	TRString *templateString;
+	TRString *result, *part;
+	TRString *quotedName;
 	const char userFormat[] = "%u";
 
 	/* Copy the template */
-	templateString = [[LFString alloc] initWithString: template];
+	templateString = [[TRString alloc] initWithString: template];
 
 	/* Initialize the result */
-	result = [[LFString alloc] init];
+	result = [[TRString alloc] init];
 
 	/* Quote the username */
 	quotedName = quoteForSearch(username);
 
 	while ((part = [templateString substringToCString: userFormat]) != NULL) {
-		LFString *temp;
+		TRString *temp;
 
 		/* Append everything until the first %u */
 		[result appendString: part];
@@ -178,7 +178,7 @@ static LFString *createSearchFilter(LFString *template, const char *username) {
 
 #ifdef HAVE_PF
 static BOOL pf_open(struct ldap_ctx *ctx) {
-	LFString *tableName;
+	TRString *tableName;
 	TRLDAPGroupConfig *groupConfig;
 	TREnumerator *groupIter;
 
@@ -264,7 +264,7 @@ openvpn_plugin_close_v1(openvpn_plugin_handle_t handle)
 
 TRLDAPConnection *connect_ldap(TRAuthLDAPConfig *config) {
 	TRLDAPConnection *ldap;
-	LFString *value;
+	TRString *value;
 
 	/* Initialize our LDAP Connection */
 	ldap = [[TRLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
@@ -323,7 +323,7 @@ error:
 }
 
 static TRLDAPEntry *find_ldap_user (TRLDAPConnection *ldap, TRAuthLDAPConfig *config, const char *username) {
-	LFString		*searchFilter;
+	TRString		*searchFilter;
 	TRArray			*ldapEntries;
 	TRLDAPEntry		*result = nil;
 
@@ -355,7 +355,7 @@ static TRLDAPEntry *find_ldap_user (TRLDAPConnection *ldap, TRAuthLDAPConfig *co
 
 static BOOL auth_ldap_user(TRLDAPConnection *ldap, TRAuthLDAPConfig *config, TRLDAPEntry *ldapUser, const char *password) {
 	TRLDAPConnection *authConn;
-	LFString *passwordString;
+	TRString *passwordString;
 	BOOL result = NO;
 
 	/* Create a second connection for binding */
@@ -365,7 +365,7 @@ static BOOL auth_ldap_user(TRLDAPConnection *ldap, TRAuthLDAPConfig *config, TRL
 	}
 
 	/* Allocate the string to pass to bindWithDN */
-	passwordString = [[LFString alloc] initWithCString: password];
+	passwordString = [[TRString alloc] initWithCString: password];
 
 	if ([authConn bindWithDN: [ldapUser dn] password: passwordString]) {
 		result = YES;
@@ -451,11 +451,11 @@ static int handle_auth_user_pass_verify(ldap_ctx *ctx, TRLDAPConnection *ldap, T
 
 #ifdef HAVE_PF
 /* Add (or remove) the remote address */
-static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, LFString *tableName, const char *remoteAddress, BOOL connecting) {
-	LFString *addressString;
+static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, TRString *tableName, const char *remoteAddress, BOOL connecting) {
+	TRString *addressString;
 	TRPFAddress *address;
 
-	addressString = [[LFString alloc] initWithCString: remoteAddress];
+	addressString = [[TRString alloc] initWithCString: remoteAddress];
 	address = [[TRPFAddress alloc] initWithPresentationAddress: addressString];
 	[addressString release];
 	if (connecting) {
@@ -486,7 +486,7 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, LFString *tableNa
 static int handle_client_connect_disconnect(ldap_ctx *ctx, TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *remoteAddress, BOOL connecting) {
 	TRLDAPGroupConfig *groupConfig = nil;
 #ifdef HAVE_PF
-	LFString *tableName = nil;
+	TRString *tableName = nil;
 #endif
 
 	/* Locate the group (config), if any */

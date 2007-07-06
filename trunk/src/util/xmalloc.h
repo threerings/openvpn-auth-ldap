@@ -1,5 +1,5 @@
 /*
- * xmalloc.h
+ * util/xmalloc.h
  *
  * "Safe" malloc routines -- and by safe, I mean "fail deterministically"
  *

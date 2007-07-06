@@ -40,11 +40,11 @@
 
 #include "TRAuthLDAPConfig.h"
 #include "TRLDAPGroupConfig.h"
-#include "LFString.h"
-#include "TRHash.h"
+#include "util/TRString.h"
+#include "util/TRHash.h"
 #include "TRLog.h"
 
-#include "xmalloc.h"
+#include "util/xmalloc.h"
 
 /* All Variables and Section Types */
 typedef enum {
@@ -325,7 +325,7 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable *tables[])
 	[section release];
 
 	/* Open our configuration file */
-	_configFileName = [[LFString alloc] initWithCString: fileName];
+	_configFileName = [[TRString alloc] initWithCString: fileName];
 	configFD = open(fileName, O_RDONLY);
 	if (configFD == -1) {
 		[TRLog error: "Failed to open \"%s\" for reading", [_configFileName cString]];
@@ -472,7 +472,7 @@ error:
 		table = *p;
 		for (i = 0; table[i].name; i++) {
 			if (table[i].required) {
-				LFString *key = [[LFString alloc] initWithCString: table[i].name];
+				TRString *key = [[TRString alloc] initWithCString: table[i].name];
 				if ([[self currentSectionHashTable] valueForKey: key] == nil) {
 					[TRLog error: "Auth-LDAP Configuration Error: Section %s is a missing required key '%s' (%s:%u).",
 						string_for_opcode([self currentSectionOpcode], Sections), table[i].name, [_configFileName cString], [section lineNumber]];
@@ -804,47 +804,47 @@ error:
 	_tlsEnabled = newTLSSetting;
 }
 
-- (LFString *) url {
+- (TRString *) url {
 	return (_url);
 }
 
-- (LFString *) bindDN {
+- (TRString *) bindDN {
 	return (_bindDN);
 }
 
-- (void) setBindDN: (LFString *) bindDN {
+- (void) setBindDN: (TRString *) bindDN {
 	if (_bindDN)
 		[_bindDN release];
 	_bindDN = [bindDN retain];
 }
 
-- (LFString *) bindPassword {
+- (TRString *) bindPassword {
 	return (_bindPassword);
 }
 
-- (void) setBindPassword: (LFString *) bindPassword {
+- (void) setBindPassword: (TRString *) bindPassword {
 	if (_bindPassword)
 		[_bindPassword release];
 	_bindPassword = [bindPassword retain];
 }
 
-- (void) setURL: (LFString *) newURL {
+- (void) setURL: (TRString *) newURL {
 	if (_url)
 		[_url release];
 	_url = [newURL retain];
 }
 
-- (LFString *) baseDN {
+- (TRString *) baseDN {
 	return (_baseDN);
 }
 
-- (void) setBaseDN: (LFString *) baseDN {
+- (void) setBaseDN: (TRString *) baseDN {
 	if (_baseDN)
 		[_baseDN release];
 	_baseDN = [baseDN retain];
 }
 
-- (LFString *) searchFilter {
+- (TRString *) searchFilter {
 	return (_searchFilter);
 }
 
@@ -856,7 +856,7 @@ error:
 	_requireGroup = requireGroup;
 }
 
-- (void) setSearchFilter: (LFString *) searchFilter {
+- (void) setSearchFilter: (TRString *) searchFilter {
 	if (_searchFilter)
 		[_searchFilter release];
 	_searchFilter = [searchFilter retain];
@@ -878,63 +878,63 @@ error:
 	_timeout = newTimeout;
 }
 
-- (LFString *) tlsCACertFile {
+- (TRString *) tlsCACertFile {
 	return (_tlsCACertFile);
 }
 
-- (void) setTLSCACertFile: (LFString *) fileName {
+- (void) setTLSCACertFile: (TRString *) fileName {
 	if (_tlsCACertFile)
 		[_tlsCACertFile release];
 	_tlsCACertFile = [fileName retain];
 }
 
-- (LFString *) tlsCACertDir {
+- (TRString *) tlsCACertDir {
 	return (_tlsCACertDir);
 }
 
-- (void) setTLSCACertDir: (LFString *) directoryName {
+- (void) setTLSCACertDir: (TRString *) directoryName {
 	if (_tlsCACertDir)
 		[_tlsCACertDir release];
 	_tlsCACertDir = [directoryName retain];
 }
 
-- (LFString *) tlsCertFile {
+- (TRString *) tlsCertFile {
 	return (_tlsCertFile);
 }
 
-- (void) setTLSCertFile: (LFString *) fileName {
+- (void) setTLSCertFile: (TRString *) fileName {
 	if (_tlsCertFile)
 		[_tlsCertFile release];
 	_tlsCertFile = [fileName retain];
 }
 
-- (LFString *) tlsKeyFile {
+- (TRString *) tlsKeyFile {
 	return (_tlsKeyFile);
 }
 
-- (void) setTLSKeyFile: (LFString *) fileName {
+- (void) setTLSKeyFile: (TRString *) fileName {
 	if (_tlsKeyFile)
 		[_tlsKeyFile release];
 	_tlsKeyFile = [fileName retain];
 }
 
-- (LFString *) tlsCipherSuite {
+- (TRString *) tlsCipherSuite {
 	return (_tlsCipherSuite);
 }
 
-- (void) setTLSCipherSuite: (LFString *) cipherSuite {
+- (void) setTLSCipherSuite: (TRString *) cipherSuite {
 	if (_tlsCipherSuite)
 		[_tlsCipherSuite release];
 	_tlsCipherSuite = [cipherSuite retain];
 }
 
-- (void) setPFTable: (LFString *) tableName {
+- (void) setPFTable: (TRString *) tableName {
 	if (_pfTable)
 		[_pfTable release];
 	_pfTable = [tableName retain];
 }
 
-- (LFString *) pfTable {
+- (TRString *) pfTable {
 	return (_pfTable);
 }
 
