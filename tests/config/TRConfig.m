@@ -1,6 +1,6 @@
 /*
- * TRConfigLexer.m
- * TRConfigLexer Unit Tests
+ * TRConfig.m
+ * TRConfig Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,59 +36,78 @@
 #include <config.h>
 #endif
 
-#include <TRConfigLexer.h>
-#include <TRConfigParser.h>
-
 #include <check.h>
-#include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
+#include <unistd.h>
 
-/* Data Constants */
+#include "tests.h"
+
+#include <config/TRConfig.h>
+
 /* Path Constants */
-#define DATA_PATH(relative)	TEST_DATA "/" relative
-#define TEST_CONF		DATA_PATH("test-lineNumbers.conf")
+#define TEST_CONF		DATA_PATH("TRConfig.conf")
 
-START_TEST (test_parse) {
-	TRConfigLexer *lexer;
-	TRConfigToken *token;
+/*
+ * Mock configuration delegate
+ */
+@interface MockConfigDelegate : TRObject <TRConfigDelegate>
+- (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value;
+- (void) startSection: (TRConfigToken *) type sectionName: (TRConfigToken *) name;
+- (void) endSection: (TRConfigToken *) sectionEnd;
+- (void) parseError: (TRConfigToken *) badToken;
+@end
+
+@implementation MockConfigDelegate
+- (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
+	/* Do nothing */
+	return;
+}
+
+- (void) startSection: (TRConfigToken *) type sectionName: (TRConfigToken *) name {
+	/* Do nothing */
+	return;
+}
+
+- (void) endSection: (TRConfigToken *) sectionEnd {
+	/* Do nothing */
+	return;
+}
+
+- (void) parseError: (TRConfigToken *) badToken {
+	/* Do nothing */
+	return;
+}
+@end
+
+START_TEST (test_initWithFD) {
+	TRConfig *config;
+	MockConfigDelegate *delegate;
 	int configFD;
 
 	/* Open our configuration file */
 	configFD = open(TEST_CONF, O_RDONLY);
 	fail_if(configFD == -1, "open() returned -1");
 
-	lexer = [[TRConfigLexer alloc] initWithFD: configFD];
-	fail_if(lexer == NULL, "-[[TRConfigLexer alloc] initWithFD:] returned NULL");
+	/* Initialize the configuration parser */
+	delegate = [[MockConfigDelegate alloc] init];
+	config = [[TRConfig alloc] initWithFD: configFD configDelegate: delegate];
+	fail_if(config == NULL, "-[[TRConfig alloc] initWithFD:] returned NULL");
 
-	while ((token = [lexer scan]) != NULL) {
-		/* The configuration file was assembled so that all values match the,
-		 * current line number -- that is to say, for any given key/value pair,
-		 * the value is set to the current line number of that pair. */
-		if ([token tokenID] == TOKEN_VALUE || [token tokenID] == TOKEN_SECTION_NAME || [token tokenID] == TOKEN_SECTION_START) {
-			int value;
+	/* Parse the configuration file */
+	fail_unless([config parseConfig], "-[TRConfig parse] returned NULL");
 
-			/* Get the integer representation */
-			fail_unless([token intValue: &value], "-[TRConfigToken getIntValue:] returned false. (String Value: %s)", [token cString]);
-
-			/* Verify that the line number is correct */
-			fail_unless(value == [token lineNumber], "-[TRConfigToken getLineNumber] out of sync. (Expected %d, got %d)", value, [token lineNumber]);
-		}
-		[token dealloc];
-	}
-
+	/* Clean up */
+	[delegate release];
 	close(configFD);
-	[lexer dealloc];
 }
 END_TEST
 
+Suite *TRConfig_suite(void) {
+	Suite *s = suite_create("TRConfig");
 
-Suite *TRConfigLexer_suite(void) {
-	Suite *s = suite_create("TRConfigLexer");
-
-	TCase *tc_lex = tcase_create("Lexificate File");
+	TCase *tc_lex = tcase_create("Parse Configuration");
 	suite_add_tcase(s, tc_lex);
-	tcase_add_test(tc_lex, test_parse);
+	tcase_add_test(tc_lex, test_initWithFD);
 
 	return s;
 }

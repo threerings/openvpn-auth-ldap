@@ -39,7 +39,8 @@
 /*
  * Useful Paths
  */
-#define DATA_PATH(relative)	"@TEST_DATA@/" relative
+#define TEST_DATA		"@TEST_DATA@"
+#define DATA_PATH(relative)	TEST_DATA "/" relative
 
 #ifndef HAVE_PF
 #define AUTH_LDAP_CONF		DATA_PATH("auth-ldap.conf")
@@ -57,7 +58,7 @@
  */
 
 Suite *LFString_suite(void);
-Suite *LFAuthLDAPConfig_suite(void);
+Suite *TRAuthLDAPConfig_suite(void);
 Suite *TRLDAPConnection_suite(void);
 Suite *TRLDAPEntry_suite(void);
 Suite *TRObject_suite(void);

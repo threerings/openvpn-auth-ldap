@@ -1,6 +1,6 @@
 /*
- * LFAuthLDAPConfig.m
- * LFAuthLDAPConfig Unit Tests
+ * TRAuthLDAPConfig.m
+ * TRAuthLDAPConfig Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,7 +36,7 @@
 #include <config.h>
 #endif
 
-#include <LFAuthLDAPConfig.h>
+#include <config/TRAuthLDAPConfig.h>
 
 #include <check.h>
 #include <string.h>
@@ -48,16 +48,16 @@
 #define TEST_LDAP_TIMEOUT	15
 
 START_TEST (test_initWithConfigFile) {
-	LFAuthLDAPConfig *config;
+	TRAuthLDAPConfig *config;
 	LFString *string;
 
-	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
-	fail_if(config == NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
+	config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
+	fail_if(config == NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
 
 	/* Validate the parsed settings */
 	string = [config url];
-	fail_if(!string, "-[LFAuthLDAPConfig url] returned NULL");
-	fail_unless(strcmp([string cString], TEST_LDAP_URL) == 0, "-[LFAuthLDAPConfig url] returned incorrect value. (Expected %s, Got %s)", TEST_LDAP_URL, [string cString]);
+	fail_if(!string, "-[TRAuthLDAPConfig url] returned NULL");
+	fail_unless(strcmp([string cString], TEST_LDAP_URL) == 0, "-[TRAuthLDAPConfig url] returned incorrect value. (Expected %s, Got %s)", TEST_LDAP_URL, [string cString]);
 
 	fail_unless([config timeout] == TEST_LDAP_TIMEOUT);
 
@@ -75,47 +75,47 @@ START_TEST (test_initWithConfigFile) {
 END_TEST
 
 START_TEST (test_initWithIncorrectlyNamedSection) {
-	LFAuthLDAPConfig *config;
+	TRAuthLDAPConfig *config;
 
-	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_NAMED];
-	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted a named LDAP section.");
+	config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_NAMED];
+	fail_if(config != NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] accepted a named LDAP section.");
 
 	[config release];
 }
 END_TEST
 
 START_TEST (test_initWithMismatchedSection) {
-	LFAuthLDAPConfig *config;
+	TRAuthLDAPConfig *config;
 
-	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MISMATCHED];
-	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted a mismatched section closure.");
+	config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MISMATCHED];
+	fail_if(config != NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] accepted a mismatched section closure.");
 
 	[config release];
 }
 END_TEST
 
 START_TEST (test_initWithDuplicateKeys) {
-	LFAuthLDAPConfig *config;
+	TRAuthLDAPConfig *config;
 
-	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MULTIKEY];
-	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted duplicate keys.");
+	config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MULTIKEY];
+	fail_if(config != NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] accepted duplicate keys.");
 
 	[config release];
 }
 END_TEST
 
 START_TEST (test_initWithMissingKey) {
-	LFAuthLDAPConfig *config;
+	TRAuthLDAPConfig *config;
 
-	config = [[LFAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_REQUIRED];
-	fail_if(config != NULL, "-[[LFAuthLDAPConfig alloc] initWithConfigFile:] accepted a missing required key.");
+	config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_REQUIRED];
+	fail_if(config != NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] accepted a missing required key.");
 
 	[config release];
 }
 END_TEST
 
-Suite *LFAuthLDAPConfig_suite(void) {
-	Suite *s = suite_create("LFAuthLDAPConfig");
+Suite *TRAuthLDAPConfig_suite(void) {
+	Suite *s = suite_create("TRAuthLDAPConfig");
 
 	TCase *tc_parse = tcase_create("Parse Configuration");
 	suite_add_tcase(s, tc_parse);

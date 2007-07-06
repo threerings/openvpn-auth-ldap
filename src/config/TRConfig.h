@@ -1,6 +1,6 @@
 /*
- * TRLDAPConnection.m
- * TRLDAPConnection Unit Tests
+ * TRConfig.h
+ * Generic Configuration Parser
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -15,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Landon Fuller nor the names of any contributors
+ * 3. Neither the name of the copyright holder nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,62 +32,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef TRCONFIG_H
+#define TRCONFIG_H
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include <config/TRAuthLDAPConfig.h>
-#include <ldap/TRLDAPConnection.h>
+#include "TRObject.h"
 
-#include <check.h>
-#include <string.h>
+/* A complex set of TRConfig* header dependencies dictates the following order
+ * of declarations and includes */
 
-#include "tests.h"
+/**
+ * Object Data Types.
+ * Tokens are always strings (TOKEN_DATATYPE_STRING),
+ * but sometimes they can also be integers and booleans.
+ * In other words, the integer and boolean datatypes should
+ * be considered to provide a superset of functionality to the
+ * string data type.
+ */
+typedef enum {
+	TOKEN_DATATYPE_STRING,
+	TOKEN_DATATYPE_INT,
+	TOKEN_DATATYPE_BOOL
+} TRConfigDataType;
 
-/* Data Constants */
-#define TEST_LDAP_URL	"ldap://ldap1.example.org"
-#define TEST_LDAP_TIMEOUT	15
+#include "config/TRConfigToken.h"
+#include "config/TRConfigLexer.h"
 
-START_TEST(test_init) {
-	TRAuthLDAPConfig *config;
-	TRLDAPConnection *conn;
-	LFString *value;
+@protocol TRConfigDelegate
+- (void) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
+- (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
+- (void) endSection: (TRConfigToken *) sectionEnd;
+- (void) parseError: (TRConfigToken *) badToken;
+@end
 
-	config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
-	fail_if(config == NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] returned NULL");
+#include "config/TRConfigParser.h"
 
-	conn = [[TRLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
-
-	/* Referrals */
-	fail_unless([conn setReferralEnabled: [config referralEnabled]]);
-
-	/* Certificate file */
-	if ((value = [config tlsCACertFile]))
-		fail_unless([conn setTLSCACertFile: value]);
-
-	/* Certificate directory */
-	if ((value = [config tlsCACertDir]))
-		fail_unless([conn setTLSCACertDir: value]);
-
-	/* Client Certificate Pair */
-	if ([config tlsCertFile] && [config tlsKeyFile])
-		fail_unless([conn setTLSClientCert: [config tlsCertFile] keyFile: [config tlsKeyFile]]);
-
-	/* Cipher suite */
-	if ((value = [config tlsCipherSuite]))
-		fail_unless([conn setTLSCipherSuite: value]);
-
-	[config release];
-	[conn release];
+@interface TRConfig : TRObject {
+@private
+	int _fd;
+	BOOL _error;
+	id <TRConfigDelegate> _delegate;
 }
-END_TEST
 
-Suite *TRLDAPConnection_suite(void) {
-	Suite *s = suite_create("TRLDAPConnection");
+- (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate;
+- (BOOL) parseConfig;
+/* Callback used to stop the running parser */
+- (void) errorStop;
 
-	TCase *tc_ldap = tcase_create("LDAP");
-	suite_add_tcase(s, tc_ldap);
-	tcase_add_test(tc_ldap, test_init);
+@end
 
-	return s;
-}
+#endif /* TRCONFIG_H */

@@ -1,5 +1,5 @@
 /*
- * LFAuthLDAPConfig.h
+ * TRAuthLDAPConfig.h
  * Simple Configuration
  *
  * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
@@ -37,7 +37,7 @@
 #include "TRArray.h"
 #include "TRConfig.h"
 
-@interface LFAuthLDAPConfig : TRObject <TRConfigDelegate> {
+@interface TRAuthLDAPConfig : TRObject <TRConfigDelegate> {
 @private
 	/* LDAP Settings */
 	LFString *_url;

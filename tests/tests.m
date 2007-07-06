@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 	/* Load all test suites */
 	s = LFString_suite();
 	sr = srunner_create(s);
-	srunner_add_suite(sr, LFAuthLDAPConfig_suite());
+	srunner_add_suite(sr, TRAuthLDAPConfig_suite());
 	srunner_add_suite(sr, TRLDAPConnection_suite());
 	srunner_add_suite(sr, TRLDAPEntry_suite());
 	srunner_add_suite(sr, TRObject_suite());
