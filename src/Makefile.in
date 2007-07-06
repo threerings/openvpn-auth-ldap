@@ -5,6 +5,7 @@ VPATH=          @srcdir@
 
 SUBDIR=		config \
 		ldap \
+		pf \
 		util
 
 include ${top_builddir}/Mk/autoconf.mk
@@ -15,9 +16,7 @@ PLUGIN_NAME=	openvpn-auth-ldap
 PLUGIN_OBJS=	auth-ldap.o \
 		TRObject.o \
 		TRLog.o \
-		TRPacketFilter.o \
-		TRPFAddress.o \
-		TRVPNSession.o \
+		TRVPNSession.o
 
 
 TEST_LIB=	libauth-ldap-testing.a
@@ -28,6 +27,7 @@ OBJCFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
 LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS) \
 		-Lconfig -lauth-ldap-config \
 		-Lldap -lauth-ldap-ldap \
+		-Lpf -lauth-ldap-pf \
 		-Lutil -lauth-ldap-util
 
 

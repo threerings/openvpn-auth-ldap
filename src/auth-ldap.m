@@ -40,19 +40,19 @@
 
 #include <openvpn-plugin.h>
 
-#include <util/TRString.h>
-
 #include <config/TRAuthLDAPConfig.h>
 #include <config/TRLDAPGroupConfig.h>
 
 #include <ldap/TRLDAPEntry.h>
 #include <ldap/TRLDAPConnection.h>
 
-#include <TRPacketFilter.h>
-#include <TRPFAddress.h>
-#include <TRLog.h>
+#include <pf/TRPacketFilter.h>
+#include <pf/TRPFAddress.h>
 
+#include <util/TRString.h>
 #include <util/xmalloc.h>
+
+#include <TRLog.h>
 
 /* Plugin Context */
 typedef struct ldap_ctx {
