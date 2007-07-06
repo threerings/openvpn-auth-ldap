@@ -1,5 +1,5 @@
 /*
- * TRObject.m
+ * TRObject.m vi:ts=4:sw=4:expandtab:
  * Project Root Class
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -64,46 +64,46 @@
 @implementation TRObject
 
 - (id) init {
-	self = [super init];
-	if (!self)
-		return self;
+    self = [super init];
+    if (!self)
+        return self;
 
-	_refCount = 1;
-	return self;
+    _refCount = 1;
+    return self;
 }
 
 - (void) dealloc {
-	[super free];
+    [super free];
 
-	/* Make Apple's objc compiler be quiet */
-	if (false)
-		[super dealloc];
+    /* Make Apple's objc compiler be quiet */
+    if (false)
+        [super dealloc];
 }
 
 - (unsigned int) refCount {
-	return _refCount;
+    return _refCount;
 }
 
 - (id) retain {
-	_refCount++;
-	return self;
+    _refCount++;
+    return self;
 }
 
 - (BOOL) isEqual: (id) anObject {
-	if (self == anObject)
-		return YES;
-	else
-		return NO;
+    if (self == anObject)
+        return YES;
+    else
+        return NO;
 }
 
 - (void) release {
-	/* This must never occur */
-	assert(_refCount >= 1);
+    /* This must never occur */
+    assert(_refCount >= 1);
 
-	/* Decrement refcount, if zero, dealloc */
-	_refCount--;
-	if (!_refCount)
-		[self dealloc];
+    /* Decrement refcount, if zero, dealloc */
+    _refCount--;
+    if (!_refCount)
+        [self dealloc];
 }
 
 /*!

@@ -1,5 +1,5 @@
 /*
- * TRString.m
+ * TRString.m vi:ts=4:sw=4:expandtab:
  * TRString Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -45,113 +45,113 @@
 #define TEST_STRING "Hello, World!"
 
 START_TEST (test_initWithCString) {
-	const char *cString = TEST_STRING;
-	TRString *str;
+    const char *cString = TEST_STRING;
+    TRString *str;
 
-	str = [[TRString alloc] initWithCString: cString];
-	fail_if(str == NULL, "-[[TRString alloc] initWithCString:] returned NULL");
-	cString = [str cString];
-	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
-	[str release];
+    str = [[TRString alloc] initWithCString: cString];
+    fail_if(str == NULL, "-[[TRString alloc] initWithCString:] returned NULL");
+    cString = [str cString];
+    fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+    [str release];
 }
 END_TEST
 
 START_TEST (test_initWithString) {
-	const char *cString = TEST_STRING;
-	TRString *srcString = [[TRString alloc] initWithCString: cString];
-	TRString *str;
+    const char *cString = TEST_STRING;
+    TRString *srcString = [[TRString alloc] initWithCString: cString];
+    TRString *str;
 
-	str = [[TRString alloc] initWithString: srcString];
-	fail_if(str == NULL, "-[[TRString alloc] initWithString:] returned NULL");
-	cString = [str cString];
-	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+    str = [[TRString alloc] initWithString: srcString];
+    fail_if(str == NULL, "-[[TRString alloc] initWithString:] returned NULL");
+    cString = [str cString];
+    fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
-	[srcString release];
-	[str release];
+    [srcString release];
+    [str release];
 }
 END_TEST
 
 START_TEST (test_initWithBytes) {
-	const char *data = TEST_STRING;
-	const char *cString;
-	TRString *str;
+    const char *data = TEST_STRING;
+    const char *cString;
+    TRString *str;
 
-	/* Test with non-NULL terminated data */
-	str = [[TRString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING) - 1];
-	fail_if(str == NULL, "-[[TRString alloc] initWithBytes:] returned NULL");
-	cString = [str cString];
-	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+    /* Test with non-NULL terminated data */
+    str = [[TRString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING) - 1];
+    fail_if(str == NULL, "-[[TRString alloc] initWithBytes:] returned NULL");
+    cString = [str cString];
+    fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
-	[str release];
+    [str release];
 
-	/* Test with NULL terminated data */
-	str = [[TRString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING)];
-	fail_if(str == NULL, "-[[TRString alloc] initWithBytes:] returned NULL");
-	cString = [str cString];
-	fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
+    /* Test with NULL terminated data */
+    str = [[TRString alloc] initWithBytes: data numBytes: sizeof(TEST_STRING)];
+    fail_if(str == NULL, "-[[TRString alloc] initWithBytes:] returned NULL");
+    cString = [str cString];
+    fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
-	[str release];
+    [str release];
 }
 END_TEST
 
 START_TEST (test_length) {
-	TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
-	size_t length = [str length];
+    TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
+    size_t length = [str length];
 
-	fail_unless(length == sizeof(TEST_STRING), "-[TRString length] returned incorrect value. (Expected %u, got %u)", sizeof(TEST_STRING), length);
-	[str release];
+    fail_unless(length == sizeof(TEST_STRING), "-[TRString length] returned incorrect value. (Expected %u, got %u)", sizeof(TEST_STRING), length);
+    [str release];
 }
 END_TEST
 
 START_TEST (test_intValue) {
-	TRString *str;
-	int i;
-	bool success;
+    TRString *str;
+    int i;
+    bool success;
 
-	/* Test with integer */
-	str = [[TRString alloc] initWithCString: "20"];
-	success = [str intValue: &i];
-	fail_unless(success, "-[TRString intValue:] returned false");
-	fail_unless(i == 20, "-[TRString intValue:] returned incorrect value. (Expected %d, got %d)", 20, i);
-	[str release];
+    /* Test with integer */
+    str = [[TRString alloc] initWithCString: "20"];
+    success = [str intValue: &i];
+    fail_unless(success, "-[TRString intValue:] returned false");
+    fail_unless(i == 20, "-[TRString intValue:] returned incorrect value. (Expected %d, got %d)", 20, i);
+    [str release];
 
-	/* Test with INT_MAX */
-	str = [[TRString alloc] initWithCString: "2147483647"];
-	success = [str intValue: &i];
-	fail_if(success, "-[LFstring intValue:] returned true for INT_MAX.");
-	fail_unless(i == INT_MAX, "-[TRString intValue: returned incorrect value for INT_MAX. (Expected %d, got %d)", INT_MAX, i);
-	[str release];
+    /* Test with INT_MAX */
+    str = [[TRString alloc] initWithCString: "2147483647"];
+    success = [str intValue: &i];
+    fail_if(success, "-[LFstring intValue:] returned true for INT_MAX.");
+    fail_unless(i == INT_MAX, "-[TRString intValue: returned incorrect value for INT_MAX. (Expected %d, got %d)", INT_MAX, i);
+    [str release];
 
-	/* Test with INT_MIN */
-	str = [[TRString alloc] initWithCString: "-2147483648"];
-	success = [str intValue: &i];
-	fail_if(success, "-[LFstring intValue:] returned true for INT_MIN.");
-	fail_unless(i == INT_MIN, "-[TRString intValue: returned incorrect value for INT_MIN. (Expected %d, got %d)", INT_MIN, i);
-	[str release];
+    /* Test with INT_MIN */
+    str = [[TRString alloc] initWithCString: "-2147483648"];
+    success = [str intValue: &i];
+    fail_if(success, "-[LFstring intValue:] returned true for INT_MIN.");
+    fail_unless(i == INT_MIN, "-[TRString intValue: returned incorrect value for INT_MIN. (Expected %d, got %d)", INT_MIN, i);
+    [str release];
 }
 END_TEST
 
 START_TEST (test_hash) {
-	TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
-	int hash = [str hash];
+    TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
+    int hash = [str hash];
 
-	fail_if(hash == 0);
-	[str release];
+    fail_if(hash == 0);
+    [str release];
 }
 END_TEST
 
 
 Suite *TRString_suite(void) {
-	Suite *s = suite_create("TRString");
+    Suite *s = suite_create("TRString");
 
-	TCase *tc_string = tcase_create("String Handling");
-	suite_add_tcase(s, tc_string);
-	tcase_add_test(tc_string, test_initWithCString);
-	tcase_add_test(tc_string, test_initWithString);
-	tcase_add_test(tc_string, test_initWithBytes);
-	tcase_add_test(tc_string, test_length);
-	tcase_add_test(tc_string, test_intValue);
-	tcase_add_test(tc_string, test_hash);
+    TCase *tc_string = tcase_create("String Handling");
+    suite_add_tcase(s, tc_string);
+    tcase_add_test(tc_string, test_initWithCString);
+    tcase_add_test(tc_string, test_initWithString);
+    tcase_add_test(tc_string, test_initWithBytes);
+    tcase_add_test(tc_string, test_length);
+    tcase_add_test(tc_string, test_intValue);
+    tcase_add_test(tc_string, test_hash);
 
-	return s;
+    return s;
 }

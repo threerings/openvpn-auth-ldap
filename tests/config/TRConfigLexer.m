@@ -1,5 +1,5 @@
 /*
- * TRConfigLexer.m
+ * TRConfigLexer.m vi:ts=4:sw=4:expandtab:
  * TRConfigLexer Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -47,48 +47,48 @@
 #include "tests.h"
 
 /* Path Constants */
-#define TEST_CONF		DATA_PATH("test-lineNumbers.conf")
+#define TEST_CONF        DATA_PATH("test-lineNumbers.conf")
 
 START_TEST (test_parse) {
-	TRConfigLexer *lexer;
-	TRConfigToken *token;
-	int configFD;
+    TRConfigLexer *lexer;
+    TRConfigToken *token;
+    int configFD;
 
-	/* Open our configuration file */
-	configFD = open(TEST_CONF, O_RDONLY);
-	fail_if(configFD == -1, "open() returned -1");
+    /* Open our configuration file */
+    configFD = open(TEST_CONF, O_RDONLY);
+    fail_if(configFD == -1, "open() returned -1");
 
-	lexer = [[TRConfigLexer alloc] initWithFD: configFD];
-	fail_if(lexer == NULL, "-[[TRConfigLexer alloc] initWithFD:] returned NULL");
+    lexer = [[TRConfigLexer alloc] initWithFD: configFD];
+    fail_if(lexer == NULL, "-[[TRConfigLexer alloc] initWithFD:] returned NULL");
 
-	while ((token = [lexer scan]) != NULL) {
-		/* The configuration file was assembled so that all values match the,
-		 * current line number -- that is to say, for any given key/value pair,
-		 * the value is set to the current line number of that pair. */
-		if ([token tokenID] == TOKEN_VALUE || [token tokenID] == TOKEN_SECTION_NAME || [token tokenID] == TOKEN_SECTION_START) {
-			int value;
+    while ((token = [lexer scan]) != NULL) {
+        /* The configuration file was assembled so that all values match the,
+         * current line number -- that is to say, for any given key/value pair,
+         * the value is set to the current line number of that pair. */
+        if ([token tokenID] == TOKEN_VALUE || [token tokenID] == TOKEN_SECTION_NAME || [token tokenID] == TOKEN_SECTION_START) {
+            int value;
 
-			/* Get the integer representation */
-			fail_unless([token intValue: &value], "-[TRConfigToken getIntValue:] returned false. (String Value: %s)", [token cString]);
+            /* Get the integer representation */
+            fail_unless([token intValue: &value], "-[TRConfigToken getIntValue:] returned false. (String Value: %s)", [token cString]);
 
-			/* Verify that the line number is correct */
-			fail_unless(value == [token lineNumber], "-[TRConfigToken getLineNumber] out of sync. (Expected %d, got %d)", value, [token lineNumber]);
-		}
-		[token dealloc];
-	}
+            /* Verify that the line number is correct */
+            fail_unless(value == [token lineNumber], "-[TRConfigToken getLineNumber] out of sync. (Expected %d, got %d)", value, [token lineNumber]);
+        }
+        [token dealloc];
+    }
 
-	close(configFD);
-	[lexer dealloc];
+    close(configFD);
+    [lexer dealloc];
 }
 END_TEST
 
 
 Suite *TRConfigLexer_suite(void) {
-	Suite *s = suite_create("TRConfigLexer");
+    Suite *s = suite_create("TRConfigLexer");
 
-	TCase *tc_lex = tcase_create("Lexificate File");
-	suite_add_tcase(s, tc_lex);
-	tcase_add_test(tc_lex, test_parse);
+    TCase *tc_lex = tcase_create("Lexificate File");
+    suite_add_tcase(s, tc_lex);
+    tcase_add_test(tc_lex, test_parse);
 
-	return s;
+    return s;
 }

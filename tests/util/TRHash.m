@@ -1,5 +1,5 @@
 /*
- * TRHash.m
+ * TRHash.m vi:ts=4:sw=4:expandtab:
  * TRHash Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -41,37 +41,37 @@
 #include <util/TRHash.h>
 
 START_TEST(test_initWithCapacity) {
-	TRHash *hash = [[TRHash alloc] initWithCapacity: 42];
-	[hash release];
+    TRHash *hash = [[TRHash alloc] initWithCapacity: 42];
+    [hash release];
 }
 END_TEST
 
 START_TEST(test_isFull) {
-	TRHash *hash = [[TRHash alloc] initWithCapacity: 0];
-	fail_unless([hash isFull]);
-	[hash release];
+    TRHash *hash = [[TRHash alloc] initWithCapacity: 0];
+    fail_unless([hash isFull]);
+    [hash release];
 }
 END_TEST
 
 START_TEST(test_setObjectForKey) {
-	TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
-	TRString *string = [[TRString alloc] initWithCString: "Hello, World"];
-	unsigned int refCount = [string refCount];
+    TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
+    TRString *string = [[TRString alloc] initWithCString: "Hello, World"];
+    unsigned int refCount = [string refCount];
 
-	[hash setObject: string forKey: string];
-	/* Verify that the object has been retained twice:
-	 * - Once as the value
-	 * - Once as the key
-	 */
-	fail_unless([string refCount] == refCount + 2);
+    [hash setObject: string forKey: string];
+    /* Verify that the object has been retained twice:
+     * - Once as the value
+     * - Once as the key
+     */
+    fail_unless([string refCount] == refCount + 2);
 
-	/* Release our hash table */
-	[hash release];
+    /* Release our hash table */
+    [hash release];
 
-	/* Verify that the object has been released */
-	fail_unless([string refCount] == refCount);
+    /* Verify that the object has been released */
+    fail_unless([string refCount] == refCount);
 
-	[string release];
+    [string release];
 }
 END_TEST
 
@@ -79,112 +79,112 @@ END_TEST
  * Verifies that replacing a key correctly releases key and associated value
  */
 START_TEST(test_setObjectForKey_replacement) {
-	TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
-	TRString *key = [[TRString alloc] initWithCString: "Key"];
-	TRString *value1 = [[TRString alloc] initWithCString: "Hello, World"];
-	TRString *value2 = [[TRString alloc] initWithCString: "Goodbye, World"];
-	unsigned int refCount = [key refCount];
+    TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
+    TRString *key = [[TRString alloc] initWithCString: "Key"];
+    TRString *value1 = [[TRString alloc] initWithCString: "Hello, World"];
+    TRString *value2 = [[TRString alloc] initWithCString: "Goodbye, World"];
+    unsigned int refCount = [key refCount];
 
-	/* Insert value1 */
-	[hash setObject: value1 forKey: key];
-	fail_unless([key refCount] == refCount + 1);
+    /* Insert value1 */
+    [hash setObject: value1 forKey: key];
+    fail_unless([key refCount] == refCount + 1);
 
-	/* Replace the node */
-	[hash setObject: value2 forKey: key];
-	fail_unless([key refCount] == refCount + 1);
-	fail_unless([value1 refCount] == refCount);
+    /* Replace the node */
+    [hash setObject: value2 forKey: key];
+    fail_unless([key refCount] == refCount + 1);
+    fail_unless([value1 refCount] == refCount);
 
-	[hash release];
-	/* Verify that the objects have been released */
-	fail_unless([key refCount] == refCount);
-	fail_unless([value1 refCount] == refCount);
-	fail_unless([value2 refCount] == refCount);
+    [hash release];
+    /* Verify that the objects have been released */
+    fail_unless([key refCount] == refCount);
+    fail_unless([value1 refCount] == refCount);
+    fail_unless([value2 refCount] == refCount);
 
-	[key release];
-	[value1 release];
-	[value2 release];
+    [key release];
+    [value1 release];
+    [value2 release];
 }
 END_TEST
 
 START_TEST(test_removeObjectForKey) {
-	TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
-	TRString *key = [[TRString alloc] initWithCString: "Key"];
-	TRString *value = [[TRString alloc] initWithCString: "Value"];
-	unsigned int refCount = [key refCount];
+    TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
+    TRString *key = [[TRString alloc] initWithCString: "Key"];
+    TRString *value = [[TRString alloc] initWithCString: "Value"];
+    unsigned int refCount = [key refCount];
 
-	/* Insert */
-	[hash setObject: value forKey: key];
+    /* Insert */
+    [hash setObject: value forKey: key];
 
-	/* Remove */
-	[hash removeObjectForKey: key];
+    /* Remove */
+    [hash removeObjectForKey: key];
 
-	/* Validate refCounts */
-	fail_unless([key refCount] == refCount);
-	fail_unless([value refCount] == refCount);
+    /* Validate refCounts */
+    fail_unless([key refCount] == refCount);
+    fail_unless([value refCount] == refCount);
 
-	/* Clean up */
-	[key release];
-	[value release];
-	[hash release];
+    /* Clean up */
+    [key release];
+    [value release];
+    [hash release];
 }
 END_TEST
 
 START_TEST(test_valueForKey) {
-	TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
-	TRString *key = [[TRString alloc] initWithCString: "Key"];
-	TRString *value = [[TRString alloc] initWithCString: "Value"];
+    TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
+    TRString *key = [[TRString alloc] initWithCString: "Key"];
+    TRString *value = [[TRString alloc] initWithCString: "Value"];
 
-	/* Insert */
-	[hash setObject: value forKey: key];
+    /* Insert */
+    [hash setObject: value forKey: key];
 
-	/* Get value */
-	fail_unless([hash valueForKey: key] == value);
+    /* Get value */
+    fail_unless([hash valueForKey: key] == value);
 
-	/* Clean up */
-	[hash release];
-	[key release];
-	[value release];
+    /* Clean up */
+    [hash release];
+    [key release];
+    [value release];
 }
 END_TEST
 
 START_TEST(test_keyEnumerator) {
-	TRHash *hash = [[TRHash alloc] initWithCapacity: HASHCOUNT_T_MAX];
-	TRString *key = [[TRString alloc] initWithCString: "Key"];
-	TRString *value = [[TRString alloc] initWithCString: "Value"];
-	TREnumerator *iter;
-	id obj;
+    TRHash *hash = [[TRHash alloc] initWithCapacity: HASHCOUNT_T_MAX];
+    TRString *key = [[TRString alloc] initWithCString: "Key"];
+    TRString *value = [[TRString alloc] initWithCString: "Value"];
+    TREnumerator *iter;
+    id obj;
 
-	/* Insert */
-	[hash setObject: value forKey: key];
-	[hash setObject: key forKey: value];
+    /* Insert */
+    [hash setObject: value forKey: key];
+    [hash setObject: key forKey: value];
 
-	/* Grab an enumerator */
-	iter = [hash keyEnumerator];
-	obj = [iter nextObject];
-	fail_unless(obj == value || obj == key);
-	obj = [iter nextObject];
-	fail_unless(obj == value || obj == key);
+    /* Grab an enumerator */
+    iter = [hash keyEnumerator];
+    obj = [iter nextObject];
+    fail_unless(obj == value || obj == key);
+    obj = [iter nextObject];
+    fail_unless(obj == value || obj == key);
 
-	/* Clean up */
-	[hash release];
-	[key release];
-	[value release];
+    /* Clean up */
+    [hash release];
+    [key release];
+    [value release];
 }
 END_TEST
 
 
 Suite *TRHash_suite(void) {
-	Suite *s = suite_create("TRHash");
+    Suite *s = suite_create("TRHash");
 
-	TCase *tc_hash = tcase_create("Hash");
-	suite_add_tcase(s, tc_hash);
-	tcase_add_test(tc_hash, test_initWithCapacity);
-	tcase_add_test(tc_hash, test_isFull);
-	tcase_add_test(tc_hash, test_setObjectForKey);
-	tcase_add_test(tc_hash, test_setObjectForKey_replacement);
-	tcase_add_test(tc_hash, test_removeObjectForKey);
-	tcase_add_test(tc_hash, test_valueForKey);
-	tcase_add_test(tc_hash, test_keyEnumerator);
+    TCase *tc_hash = tcase_create("Hash");
+    suite_add_tcase(s, tc_hash);
+    tcase_add_test(tc_hash, test_initWithCapacity);
+    tcase_add_test(tc_hash, test_isFull);
+    tcase_add_test(tc_hash, test_setObjectForKey);
+    tcase_add_test(tc_hash, test_setObjectForKey_replacement);
+    tcase_add_test(tc_hash, test_removeObjectForKey);
+    tcase_add_test(tc_hash, test_valueForKey);
+    tcase_add_test(tc_hash, test_keyEnumerator);
 
-	return s;
+    return s;
 }

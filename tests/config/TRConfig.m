@@ -1,5 +1,5 @@
 /*
- * TRConfig.m
+ * TRConfig.m vi:ts=4:sw=4:expandtab:
  * TRConfig Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -45,7 +45,7 @@
 #include <config/TRConfig.h>
 
 /* Path Constants */
-#define TEST_CONF		DATA_PATH("TRConfig.conf")
+#define TEST_CONF        DATA_PATH("TRConfig.conf")
 
 /*
  * Mock configuration delegate
@@ -59,55 +59,55 @@
 
 @implementation MockConfigDelegate
 - (void) setKey: (TRConfigToken *) key value: (TRConfigToken *) value {
-	/* Do nothing */
-	return;
+    /* Do nothing */
+    return;
 }
 
 - (void) startSection: (TRConfigToken *) type sectionName: (TRConfigToken *) name {
-	/* Do nothing */
-	return;
+    /* Do nothing */
+    return;
 }
 
 - (void) endSection: (TRConfigToken *) sectionEnd {
-	/* Do nothing */
-	return;
+    /* Do nothing */
+    return;
 }
 
 - (void) parseError: (TRConfigToken *) badToken {
-	/* Do nothing */
-	return;
+    /* Do nothing */
+    return;
 }
 @end
 
 START_TEST (test_initWithFD) {
-	TRConfig *config;
-	MockConfigDelegate *delegate;
-	int configFD;
+    TRConfig *config;
+    MockConfigDelegate *delegate;
+    int configFD;
 
-	/* Open our configuration file */
-	configFD = open(TEST_CONF, O_RDONLY);
-	fail_if(configFD == -1, "open() returned -1");
+    /* Open our configuration file */
+    configFD = open(TEST_CONF, O_RDONLY);
+    fail_if(configFD == -1, "open() returned -1");
 
-	/* Initialize the configuration parser */
-	delegate = [[MockConfigDelegate alloc] init];
-	config = [[TRConfig alloc] initWithFD: configFD configDelegate: delegate];
-	fail_if(config == NULL, "-[[TRConfig alloc] initWithFD:] returned NULL");
+    /* Initialize the configuration parser */
+    delegate = [[MockConfigDelegate alloc] init];
+    config = [[TRConfig alloc] initWithFD: configFD configDelegate: delegate];
+    fail_if(config == NULL, "-[[TRConfig alloc] initWithFD:] returned NULL");
 
-	/* Parse the configuration file */
-	fail_unless([config parseConfig], "-[TRConfig parse] returned NULL");
+    /* Parse the configuration file */
+    fail_unless([config parseConfig], "-[TRConfig parse] returned NULL");
 
-	/* Clean up */
-	[delegate release];
-	close(configFD);
+    /* Clean up */
+    [delegate release];
+    close(configFD);
 }
 END_TEST
 
 Suite *TRConfig_suite(void) {
-	Suite *s = suite_create("TRConfig");
+    Suite *s = suite_create("TRConfig");
 
-	TCase *tc_lex = tcase_create("Parse Configuration");
-	suite_add_tcase(s, tc_lex);
-	tcase_add_test(tc_lex, test_initWithFD);
+    TCase *tc_lex = tcase_create("Parse Configuration");
+    suite_add_tcase(s, tc_lex);
+    tcase_add_test(tc_lex, test_initWithFD);
 
-	return s;
+    return s;
 }

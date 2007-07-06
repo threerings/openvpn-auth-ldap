@@ -1,10 +1,10 @@
 /*
- * TRLDAPEntry.m
+ * TRLDAPEntry.m vi:ts=4:sw=4:expandtab:
  * LDAP Entry
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,34 +40,34 @@
 @implementation TRLDAPEntry
 
 - (id) initWithDN: (TRString *) dn attributes: (TRHash *) attributes {
-	self = [self init];
-	if (!self)
-		return self;
+    self = [self init];
+    if (!self)
+        return self;
 
-	_dn = [dn retain];
-	_attributes = [attributes retain];
+    _dn = [dn retain];
+    _attributes = [attributes retain];
 
-	return self;
+    return self;
 }
 
 - (void) dealloc {
-	[_dn release];
-	[_attributes release];
-	[super dealloc];
+    [_dn release];
+    [_attributes release];
+    [super dealloc];
 }
 
 /**
  * Returns the entry's distinguished name.
  */
 - (TRString *) dn {
-	return _dn;
+    return _dn;
 }
 
 /**
  * Return the entries' attributes as a dictionary.
  */
 - (TRHash *) attributes {
-	return _attributes;
+    return _attributes;
 }
 
 @end

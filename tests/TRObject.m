@@ -1,10 +1,11 @@
 /*
- * TRObject.m
+ * TRObject.m vi:ts=4:sw=4:expandtab:
  * TRObject Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
+ * Copyright (c) 2007 Landon Fuller <landonf@threerings.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,50 +42,50 @@
 #include <TRObject.h>
 
 START_TEST (test_retainRelease) {
-	TRObject *obj;
+    TRObject *obj;
 
-	/* Initialize the object */
-	obj = [[TRObject alloc] init];
-	fail_unless([obj refCount] == 1, "Newly initialized TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
+    /* Initialize the object */
+    obj = [[TRObject alloc] init];
+    fail_unless([obj refCount] == 1, "Newly initialized TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
 
-	/* Increment the refcount */
-	[obj retain];
-	fail_unless([obj refCount] == 2, "Retained TRObject has unexpected reference count (Expected 2, got %d)", [obj refCount]);
+    /* Increment the refcount */
+    [obj retain];
+    fail_unless([obj refCount] == 2, "Retained TRObject has unexpected reference count (Expected 2, got %d)", [obj refCount]);
 
-	/* Decrement the refcount */
-	[obj release];
-	fail_unless([obj refCount] == 1, "Released TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
+    /* Decrement the refcount */
+    [obj release];
+    fail_unless([obj refCount] == 1, "Released TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
 
-	/* Deallocate the object */
-	[obj release];
+    /* Deallocate the object */
+    [obj release];
 }
 END_TEST
 
 START_TEST (test_isEqual) {
-	TRObject *obj;
+    TRObject *obj;
 
-	/* Initialize the object */
-	obj = [[TRObject alloc] init];
+    /* Initialize the object */
+    obj = [[TRObject alloc] init];
 
-	fail_unless([obj isEqual: obj]);
+    fail_unless([obj isEqual: obj]);
 
-	/* Deallocate the object */
-	[obj release];
+    /* Deallocate the object */
+    [obj release];
 }
 END_TEST
 
 
 Suite *TRObject_suite(void) {
-	Suite *s = suite_create("TRObject");
+    Suite *s = suite_create("TRObject");
 
-	TCase *tc_general = tcase_create("General");
-	suite_add_tcase(s, tc_general);
-	tcase_add_test(tc_general, test_isEqual);
+    TCase *tc_general = tcase_create("General");
+    suite_add_tcase(s, tc_general);
+    tcase_add_test(tc_general, test_isEqual);
 
-	TCase *tc_refcount = tcase_create("Reference Counting");
-	suite_add_tcase(s, tc_refcount);
-	tcase_add_test(tc_refcount, test_retainRelease);
+    TCase *tc_refcount = tcase_create("Reference Counting");
+    suite_add_tcase(s, tc_refcount);
+    tcase_add_test(tc_refcount, test_retainRelease);
 
 
-	return s;
+    return s;
 }

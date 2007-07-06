@@ -1,10 +1,10 @@
 /*
- * TRConfig.h
+ * TRConfig.h vi:ts=4:sw=4:expandtab:
  * Generic Configuration Parser
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,9 +53,9 @@
  * string data type.
  */
 typedef enum {
-	TOKEN_DATATYPE_STRING,
-	TOKEN_DATATYPE_INT,
-	TOKEN_DATATYPE_BOOL
+    TOKEN_DATATYPE_STRING,
+    TOKEN_DATATYPE_INT,
+    TOKEN_DATATYPE_BOOL
 } TRConfigDataType;
 
 #include "config/TRConfigToken.h"
@@ -72,9 +72,9 @@ typedef enum {
 
 @interface TRConfig : TRObject {
 @private
-	int _fd;
-	BOOL _error;
-	id <TRConfigDelegate> _delegate;
+    int _fd;
+    BOOL _error;
+    id <TRConfigDelegate> _delegate;
 }
 
 - (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate;

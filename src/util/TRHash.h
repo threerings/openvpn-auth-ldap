@@ -1,10 +1,10 @@
 /*
- * util/TRHash.h
+ * TRHash.h vi:ts=4:sw=4:expandtab:
  * Hash table
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@
 
 @interface TRHash : TRObject {
 @private
-	hash_t *_hash;
+    hash_t *_hash;
 }
 
 - (id) initWithCapacity: (unsigned long) numItems;

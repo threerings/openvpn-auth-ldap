@@ -1,10 +1,10 @@
 /*
- * TRConfigToken.h
+ * TRConfigToken.h vi:ts=4:sw=4:expandtab:
  * Configuration Lexer Tokens
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,23 +49,23 @@
 
 @interface TRConfigToken : TRObject {
 @private
-	/* Parser's token identifier */
-	int _tokenID;
+    /* Parser's token identifier */
+    int _tokenID;
 
-	/* Token's line origin */
-	unsigned int _lineNumber;
+    /* Token's line origin */
+    unsigned int _lineNumber;
 
-	/* String value */
-	TRString *_string;
+    /* String value */
+    TRString *_string;
 
-	/* Current data type */
-	TRConfigDataType _dataType;
+    /* Current data type */
+    TRConfigDataType _dataType;
 
-	/* Union of internal representations */
-	union {
-		int _intValue;
-		BOOL _boolValue;
-	} _internalRep;
+    /* Union of internal representations */
+    union {
+        int _intValue;
+        BOOL _boolValue;
+    } _internalRep;
 }
 
 - (id) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID;

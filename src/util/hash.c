@@ -1,5 +1,5 @@
 /*
- * Hash Table Data Type
+ * Hash Table Data Type vi:ts=4:sw=4:expandtab:
  * Copyright (C) 1997 Kaz Kylheku <kaz@ashi.footprints.net>
  *
  * Free Software License:

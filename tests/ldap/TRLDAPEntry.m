@@ -1,5 +1,5 @@
 /*
- * TRLDAPEntry.m
+ * TRLDAPEntry.m vi:ts=4:sw=4:expandtab:
  * TRLDAPEntry Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -41,32 +41,32 @@
 #include <ldap/TRLDAPEntry.h>
 
 START_TEST(test_initWithDN) {
-	TRLDAPEntry *entry;
-	TRString *dn;
-	TRHash *attributes;
+    TRLDAPEntry *entry;
+    TRString *dn;
+    TRHash *attributes;
 
-	dn = [[TRString alloc] initWithCString: "dc=foobar"];
-	/* Make something up for the attributes */
-	attributes = [[TRHash alloc] initWithCapacity: 1];
-	[attributes setObject: dn forKey: dn];
+    dn = [[TRString alloc] initWithCString: "dc=foobar"];
+    /* Make something up for the attributes */
+    attributes = [[TRHash alloc] initWithCapacity: 1];
+    [attributes setObject: dn forKey: dn];
 
-	entry = [[TRLDAPEntry alloc] initWithDN: dn attributes: attributes];
+    entry = [[TRLDAPEntry alloc] initWithDN: dn attributes: attributes];
 
-	fail_unless([entry attributes] == attributes);
-	fail_unless([entry dn] == dn);
+    fail_unless([entry attributes] == attributes);
+    fail_unless([entry dn] == dn);
 
-	[entry release];
-	[dn release];
-	[attributes release];
+    [entry release];
+    [dn release];
+    [attributes release];
 }
 END_TEST
 
 Suite *TRLDAPEntry_suite(void) {
-	Suite *s = suite_create("TRLDAPEntry");
+    Suite *s = suite_create("TRLDAPEntry");
 
-	TCase *tc_entry = tcase_create("LDAP Entry");
-	suite_add_tcase(s, tc_entry);
-	tcase_add_test(tc_entry, test_initWithDN);
+    TCase *tc_entry = tcase_create("LDAP Entry");
+    suite_add_tcase(s, tc_entry);
+    tcase_add_test(tc_entry, test_initWithDN);
 
-	return s;
+    return s;
 }

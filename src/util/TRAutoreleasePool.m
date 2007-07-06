@@ -1,7 +1,7 @@
 /* 
- * TRAutoreleasePool.m
+ * TRAutoreleasePool.m vi:ts=4:sw=4:expandtab:
  *
- * Copyright (C) 2007 Landon Fuller <landonf@opendarwin.org>
+ * Copyright (C) 2006 - 2007 Landon Fuller <landonf@opendarwin.org>
  * All rights reserved.
  *
  * Author: Landon Fuller <landonf@opendarwin.org
@@ -53,8 +53,8 @@
  * of TRAutoreleasePools.
  */
 typedef struct _TRAutoreleasePoolStack {
-	TRAutoreleasePool *pool;
-	struct _TRAutoreleasePoolStack *next;
+    TRAutoreleasePool *pool;
+    struct _TRAutoreleasePoolStack *next;
 } TRAutoreleasePoolStack;
 
 /*
@@ -62,20 +62,20 @@ typedef struct _TRAutoreleasePoolStack {
  * objects in a linked list of buckets.
  */
 struct _TRAutoreleasePoolBucket {
-	int count;
-	id objects[BUCKET_SIZE];
-	struct _TRAutoreleasePoolBucket *next;
+    int count;
+    id objects[BUCKET_SIZE];
+    struct _TRAutoreleasePoolBucket *next;
 };
 
 
 #ifdef HAVE_THREADLS
 static __thread TRAutoreleasePoolStack *autorelease_stack;
-# define CURTHREAD_GET_POOLSTACK()	autorelease_stack
-# define CURTHREAD_SET_POOLSTACK(x)	autorelease_stack = x
+# define CURTHREAD_GET_POOLSTACK()    autorelease_stack
+# define CURTHREAD_SET_POOLSTACK(x)    autorelease_stack = x
 #else
 static pthread_key_t autorelease_stack_key;
-# define CURTHREAD_GET_POOLSTACK()	(TRAutoreleasePoolStack *) pthread_getspecific(autorelease_stack_key)
-# define CURTHREAD_SET_POOLSTACK(x)	pthread_setspecific(autorelease_stack_key, (void *) x)
+# define CURTHREAD_GET_POOLSTACK()    (TRAutoreleasePoolStack *) pthread_getspecific(autorelease_stack_key)
+# define CURTHREAD_SET_POOLSTACK(x)    pthread_setspecific(autorelease_stack_key, (void *) x)
 #endif /* HAVE_THEADLS */
 
 /*
@@ -83,34 +83,34 @@ static pthread_key_t autorelease_stack_key;
  * supplied bucket.
  */
 static TRAutoreleasePoolBucket *bucket_add (TRAutoreleasePoolBucket *bucket) {
-	TRAutoreleasePoolBucket *new;
+    TRAutoreleasePoolBucket *new;
 
-	/* Allocate and initialize the bucket */
-	new = xmalloc(sizeof(TRAutoreleasePoolBucket));
-	new->count = 0;
-	new->next = bucket;
+    /* Allocate and initialize the bucket */
+    new = xmalloc(sizeof(TRAutoreleasePoolBucket));
+    new->count = 0;
+    new->next = bucket;
 
-	return new;
+    return new;
 }
 
 /*
  * Free the bucket stack, sending release messages to the contained objects.
  */
 static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
-	TRAutoreleasePoolBucket *next, *cur;
-	int i;
+    TRAutoreleasePoolBucket *next, *cur;
+    int i;
 
-	/* Free all buckets */
-	cur = bucket;
-	while (cur != NULL) {
-		/* Send release message to all objects in the bucket */
-		for (i = 0; i < cur->count; i++) {
-			[cur->objects[i] release];
-		}
-		next = cur->next;
-		free(cur);
-		cur = next;
-	}
+    /* Free all buckets */
+    cur = bucket;
+    while (cur != NULL) {
+        /* Send release message to all objects in the bucket */
+        for (i = 0; i < cur->count; i++) {
+            [cur->objects[i] release];
+        }
+        next = cur->next;
+        free(cur);
+        cur = next;
+    }
 }
 
 /*!
@@ -134,60 +134,60 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
 
 #ifndef HAVE_THREADLS
 + initialize {
-	if (self == [TRAutoreleasePool class]) {
-		/* Initialize our pthread key */
-		pthread_key_create(&autorelease_stack_key, NULL);
-	}
-	return self;
+    if (self == [TRAutoreleasePool class]) {
+        /* Initialize our pthread key */
+        pthread_key_create(&autorelease_stack_key, NULL);
+    }
+    return self;
 }
 #endif
 
 - (id) init {
-	TRAutoreleasePoolStack *stack, *threadStack;
-	
-	if ((self = [super init]) == nil) {
-		return self;
-	}
+    TRAutoreleasePoolStack *stack, *threadStack;
+    
+    if ((self = [super init]) == nil) {
+        return self;
+    }
 
-	/* Grab the thread-specific pool stack pointer */
-	threadStack = CURTHREAD_GET_POOLSTACK();
+    /* Grab the thread-specific pool stack pointer */
+    threadStack = CURTHREAD_GET_POOLSTACK();
 
-	/* Allocate our new stack */
-	stack = xmalloc(sizeof(TRAutoreleasePoolStack));
-	stack->pool = self;
+    /* Allocate our new stack */
+    stack = xmalloc(sizeof(TRAutoreleasePoolStack));
+    stack->pool = self;
 
-	/* If a current stack exists, append the new one,
-	 * otherwise, we're the first stack */
-	if (threadStack != NULL)
-		/* We are a sub-pool */
-		stack->next = threadStack;
-	else
-		/* We are the first pool */
-		stack->next = NULL;
+    /* If a current stack exists, append the new one,
+     * otherwise, we're the first stack */
+    if (threadStack != NULL)
+        /* We are a sub-pool */
+        stack->next = threadStack;
+    else
+        /* We are the first pool */
+        stack->next = NULL;
 
         /* Set new per-thread pool stack */
-	CURTHREAD_SET_POOLSTACK(stack);
+    CURTHREAD_SET_POOLSTACK(stack);
 
-	/* Allocate and initialize our bucket */
-	poolBucket = xmalloc(sizeof(TRAutoreleasePoolBucket));
-	poolBucket->count = 0;
-	poolBucket->next = NULL;
+    /* Allocate and initialize our bucket */
+    poolBucket = xmalloc(sizeof(TRAutoreleasePoolBucket));
+    poolBucket->count = 0;
+    poolBucket->next = NULL;
 
-	return self;
+    return self;
 }
 
 - (void) dealloc {
-	TRAutoreleasePoolStack *stack;
+    TRAutoreleasePoolStack *stack;
 
-	/* Free our buckets */
-	bucket_flush(poolBucket);
+    /* Free our buckets */
+    bucket_flush(poolBucket);
 
-	/* Pop our pool stack */
-	stack = CURTHREAD_GET_POOLSTACK();
-	CURTHREAD_SET_POOLSTACK(stack->next);
-	free(stack);
+    /* Pop our pool stack */
+    stack = CURTHREAD_GET_POOLSTACK();
+    CURTHREAD_SET_POOLSTACK(stack->next);
+    free(stack);
 
-	[super dealloc];
+    [super dealloc];
 }
 
 /*!
@@ -195,42 +195,42 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
  * active autorelease pool.
  */
 + (void) addObject:(id)anObject {
-	TRAutoreleasePoolStack *stack;
+    TRAutoreleasePoolStack *stack;
 
-	/* Get our per-thread stack */
-	stack = CURTHREAD_GET_POOLSTACK();
-	assert(stack != NULL);
+    /* Get our per-thread stack */
+    stack = CURTHREAD_GET_POOLSTACK();
+    assert(stack != NULL);
 
-	[stack->pool addObject: anObject];
+    [stack->pool addObject: anObject];
 }
 
 /*!
  * Add anObject to the receiver.
  */
 - (void) addObject:(id)anObject {
-	/* If the current bucket is full, create a new one */	
-	if (poolBucket->count == BUCKET_SIZE) {
-		poolBucket = bucket_add(poolBucket);
-	}
+    /* If the current bucket is full, create a new one */    
+    if (poolBucket->count == BUCKET_SIZE) {
+        poolBucket = bucket_add(poolBucket);
+    }
 
-	poolBucket->objects[poolBucket->count] = anObject;
-	poolBucket->count++;
+    poolBucket->objects[poolBucket->count] = anObject;
+    poolBucket->count++;
 }
 
 - (id) retain {
-	/* Can not retain an autorelease pool. */
-	abort();
+    /* Can not retain an autorelease pool. */
+    abort();
     
-	/* Not reached. */
-	return nil;
+    /* Not reached. */
+    return nil;
 }
 
 - (id) autorelease {
-	/* Can not autorelease an autorelease pool. */
-	abort();
+    /* Can not autorelease an autorelease pool. */
+    abort();
 
-	/* Not reached */
-	return nil;
+    /* Not reached */
+    return nil;
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- * TRArray.m
+ * TRArray.m vi:ts=4:sw=4:expandtab:
  * Simple linked list
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -38,17 +38,17 @@
 #include "util/xmalloc.h"
 
 typedef struct _TRArrayStack {
-	id object;
-	struct _TRArrayStack *prev;
-	struct _TRArrayStack *next;
+    id object;
+    struct _TRArrayStack *prev;
+    struct _TRArrayStack *next;
 } TRArrayStack;
 
 /**
  * Array enumerator.
  */
 @interface TRArrayObjectEnumerator : TREnumerator {
-	TRArray *_array;
-	TRArrayStack *_stack;
+    TRArray *_array;
+    TRArrayStack *_stack;
 }
 - (id) initWithArray: (TRArray *) array;
 @end
@@ -74,37 +74,37 @@ typedef struct _TRArrayStack {
 @implementation TRArray
 
 - (id) init {
-	self = [super init];
-	if (!self)
-		return self;
+    self = [super init];
+    if (!self)
+        return self;
 
-	_count = 0;
+    _count = 0;
 
-	/* Initialize our linked list */
-	_stack = xmalloc(sizeof(TRArrayStack));
-	_stack->object= nil;
-	_stack->next = NULL;
-	_stack->prev= NULL;
-	_stackBottom = _stack;
+    /* Initialize our linked list */
+    _stack = xmalloc(sizeof(TRArrayStack));
+    _stack->object= nil;
+    _stack->next = NULL;
+    _stack->prev= NULL;
+    _stackBottom = _stack;
 
-	return self;
+    return self;
 }
 
 - (void) dealloc {
-	TRArrayStack *node;
+    TRArrayStack *node;
 
-	/* Clean up our stack */
-	for (node = _stack; _stack; node = _stack) {
-		/* Release the associated object */
-		[node->object release];
-		_stack = node->next;
-		free(node);
-	}
-	[super dealloc];
+    /* Clean up our stack */
+    for (node = _stack; _stack; node = _stack) {
+        /* Release the associated object */
+        [node->object release];
+        _stack = node->next;
+        free(node);
+    }
+    [super dealloc];
 }
 
 - (unsigned int) count {
-	return _count;
+    return _count;
 }
 
 /**
@@ -112,34 +112,34 @@ typedef struct _TRArrayStack {
  * @param anObject: Object to add;
  */
 - (void) addObject: (id) anObject {
-	TRArrayStack *node;
+    TRArrayStack *node;
 
-	/* Allocate, initialize, and push the new node on to the stack */
-	node = xmalloc(sizeof(TRArrayStack));
-	node->object = [anObject retain];
-	node->prev = NULL;
-	node->next = _stack;
-	_stack->prev = node;
+    /* Allocate, initialize, and push the new node on to the stack */
+    node = xmalloc(sizeof(TRArrayStack));
+    node->object = [anObject retain];
+    node->prev = NULL;
+    node->next = _stack;
+    _stack->prev = node;
 
-	_stack = node;
-	_count++;
+    _stack = node;
+    _count++;
 }
 
 /**
  * Remove top-most object from the array (LIFO).
  */
 - (void) removeObject {
-	TRArrayStack *node;
+    TRArrayStack *node;
 
-	/* Pop the stack */
-	node = _stack;
-	_stack = _stack->next;
-	_stack->prev = NULL;
+    /* Pop the stack */
+    node = _stack;
+    _stack = _stack->next;
+    _stack->prev = NULL;
 
-	/* Dealloc the removed node */
-	[node->object release];
-	free(node);
-	_count--;
+    /* Dealloc the removed node */
+    [node->object release];
+    free(node);
+    _count--;
 }
 
 /**
@@ -147,8 +147,8 @@ typedef struct _TRArrayStack {
  * @return Last object added to the array.
  */
 - (id) lastObject {
-	/* Return the last object on the stack */
-	return _stack->object;
+    /* Return the last object on the stack */
+    return _stack->object;
 }
 
 /**
@@ -158,22 +158,22 @@ typedef struct _TRArrayStack {
  * @return YES if the array contains anObject, NO otherwise.
  */
 - (BOOL) containsObject: (id) anObject {
-	TRArrayStack *node;
+    TRArrayStack *node;
 
-	/* Anything claim to be equal with anObject? */
-	for (node = _stack; node; node = node->next) {
-		if ([node->object isEqual: anObject])
-			return YES;
-	}
+    /* Anything claim to be equal with anObject? */
+    for (node = _stack; node; node = node->next) {
+        if ([node->object isEqual: anObject])
+            return YES;
+    }
 
-	return NO;
+    return NO;
 }
 
 - (TRArrayStack *) _privateArrayContext: (BOOL) top {
-	if (top)
-		return _stack;
-	else
-		return _stackBottom;
+    if (top)
+        return _stack;
+    else
+        return _stackBottom;
 }
 
 /**
@@ -225,17 +225,17 @@ typedef struct _TRArrayStack {
 }
 
 - (id) nextObject {
-	TRArrayStack *next;
+    TRArrayStack *next;
 
-	if (!_stack)
-		return nil;
+    if (!_stack)
+        return nil;
 
-	/* Pop the next node from the stack */
-	next = _stack;
-	_stack = _stack->next;
+    /* Pop the next node from the stack */
+    next = _stack;
+    _stack = _stack->next;
 
-	/* Return the next node */
-	return (next->object);
+    /* Return the next node */
+    return (next->object);
 }
 
 @end /* TRArrayObjectEnumerator */
@@ -247,25 +247,25 @@ typedef struct _TRArrayStack {
         if (!self)
                 return self;
 
-    	/* We want the bottom-most element of the stack,
-    	 * skipping the NULL terminator */
+        /* We want the bottom-most element of the stack,
+         * skipping the NULL terminator */
         _stack = [array _privateArrayContext: NO]->prev;
 
         return self;
 }
 
 - (id) nextObject {
-	TRArrayStack *prev;
+    TRArrayStack *prev;
 
-	if (!_stack)
-		return nil;
+    if (!_stack)
+        return nil;
 
-	/* Walk the stack in reverse */
-	prev = _stack;
-	_stack = _stack->prev;
+    /* Walk the stack in reverse */
+    prev = _stack;
+    _stack = _stack->prev;
 
-	/* Return the previous node */
-	return (prev->object);
+    /* Return the previous node */
+    return (prev->object);
 }
 
 @end /* TRArrayObjectEnumerator */

@@ -1,5 +1,5 @@
 /*
- * TRLDAPGroupConfig.m
+ * TRLDAPGroupConfig.m vi:ts=4:sw=4:expandtab:
  * TRLDAPGroundConfig Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -41,15 +41,15 @@
 #include <check.h>
 
 /* Data Constants */
-#define TEST_LDAP_BASEDN	"ou=People,dc=example,dc=com"
-#define TEST_LDAP_ATTRIBUTE	"uniqueMember"
-#define TEST_LDAP_FILTER	"(|(cn=artists)(cn=engineers))"
+#define TEST_LDAP_BASEDN    "ou=People,dc=example,dc=com"
+#define TEST_LDAP_ATTRIBUTE    "uniqueMember"
+#define TEST_LDAP_FILTER    "(|(cn=artists)(cn=engineers))"
 
 Suite *TRLDAPGroupConfig_suite(void) {
-	Suite *s = suite_create("TRLDAPGroupConfig");
+    Suite *s = suite_create("TRLDAPGroupConfig");
 
-	TCase *tc_main = tcase_create("Main");
-	suite_add_tcase(s, tc_main);
+    TCase *tc_main = tcase_create("Main");
+    suite_add_tcase(s, tc_main);
 
-	return s;
+    return s;
 }

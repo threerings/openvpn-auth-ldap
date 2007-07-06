@@ -1,10 +1,11 @@
 /*
- * TRVPNSession.m
+ * TRVPNSession.m vi:ts=4:sw=4:expandtab:
  * TRVPNSession Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2005 - 2007 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,24 +42,24 @@
 #include <TRVPNSession.h>
 
 START_TEST(test_initWithUsername) {
-	TRVPNSession *session;
-	TRString *username = [[TRString alloc] initWithCString: "user"];
+    TRVPNSession *session;
+    TRString *username = [[TRString alloc] initWithCString: "user"];
 
-	session = [[TRVPNSession alloc] initWithUsername: username];
+    session = [[TRVPNSession alloc] initWithUsername: username];
 
-	fail_unless([session username] == username);
+    fail_unless([session username] == username);
 
-	[username release];
-	[session release];
+    [username release];
+    [session release];
 }
 END_TEST
 
 Suite *TRVPNSession_suite(void) {
-	Suite *s = suite_create("TRVPNSession");
+    Suite *s = suite_create("TRVPNSession");
 
-	TCase *tc_session = tcase_create("VPN Session");
-	suite_add_tcase(s, tc_session);
-	tcase_add_test(tc_session, test_initWithUsername);
+    TCase *tc_session = tcase_create("VPN Session");
+    suite_add_tcase(s, tc_session);
+    tcase_add_test(tc_session, test_initWithUsername);
 
-	return s;
+    return s;
 }

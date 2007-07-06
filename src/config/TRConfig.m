@@ -1,10 +1,10 @@
 /*
- * TRConfig.m
+ * TRConfig.m vi:ts=4:sw=4:expandtab:
  * Generic Configuration Parser
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,18 +46,18 @@
 /**
  * Initialize and return a TRConfig parser.
  * @param fd: A file descriptor open for reading. This file descriptor will be
- * 		mmap()ed, and thus must reference a file.
+ *         mmap()ed, and thus must reference a file.
  */
 - (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate {
-	self = [self init];
+    self = [self init];
 
-	if (self) {
-		_fd = fd;
-		_delegate = delegate;
-		_error = NO;
-	}
+    if (self) {
+        _fd = fd;
+        _delegate = delegate;
+        _error = NO;
+    }
 
-	return self;
+    return self;
 }
 
 /**
@@ -65,41 +65,41 @@
  * @result true on success, false on failure.
  */
 - (BOOL) parseConfig {
-	TRConfigLexer *lexer = NULL;
-	TRConfigToken *token;
-	void *parser;
+    TRConfigLexer *lexer = NULL;
+    TRConfigToken *token;
+    void *parser;
 
-	/* Initialize our lexer */
-	lexer = [[TRConfigLexer alloc] initWithFD: _fd];
-	if (lexer == NULL)
-		return false;
+    /* Initialize our lexer */
+    lexer = [[TRConfigLexer alloc] initWithFD: _fd];
+    if (lexer == NULL)
+        return false;
 
-	/* Initialize the parser */
-	parser = TRConfigParseAlloc(malloc);
+    /* Initialize the parser */
+    parser = TRConfigParseAlloc(malloc);
 
-	/* Scan in tokens and hand them off to the parser */
-	while ((token = [lexer scan]) != NULL) {
-		TRConfigParse(parser, [token tokenID], token, _delegate);
-		/* If we've been asked to stop, do so */
-		if (_error)
-			break;
-	}
-	/* Signal EOF and clean up */
-	TRConfigParse(parser, 0, NULL, _delegate);
-	TRConfigParseFree(parser, free);
-	[lexer release];
+    /* Scan in tokens and hand them off to the parser */
+    while ((token = [lexer scan]) != NULL) {
+        TRConfigParse(parser, [token tokenID], token, _delegate);
+        /* If we've been asked to stop, do so */
+        if (_error)
+            break;
+    }
+    /* Signal EOF and clean up */
+    TRConfigParse(parser, 0, NULL, _delegate);
+    TRConfigParseFree(parser, free);
+    [lexer release];
 
-	/* Did an error occur? */
-	if (_error)
-		return false;
+    /* Did an error occur? */
+    if (_error)
+        return false;
 
-	return true;
+    return true;
 }
 
 /* Re-entrant callback used to signal an error by the parser delegate, called
  * from within the bowels of TRConfigParse() */
 - (void) errorStop {
-	_error = YES;
+    _error = YES;
 }
 
 @end

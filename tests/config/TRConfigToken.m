@@ -1,5 +1,5 @@
 /*
- * TRConfigToken.m
+ * TRConfigToken.m vi:ts=4:sw=4:expandtab:
  * TRConfigToken Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
@@ -46,80 +46,80 @@
 #define TEST_LINE_NUMBER 42
 
 START_TEST (test_initWithBytes) {
-	int tokenID;
-	unsigned int lineNumber;
-	TRConfigToken *token;
+    int tokenID;
+    unsigned int lineNumber;
+    TRConfigToken *token;
 
-	token = [[TRConfigToken alloc] initWithBytes: TEST_STRING
-					    numBytes: sizeof(TEST_STRING)
-					  lineNumber: TEST_LINE_NUMBER
-					     tokenID: TOKEN_VALUE];
-	fail_if(token == NULL, "-[[TRConfigToken alloc] initWithBytes: numBytes: tokenID:] returned NULL");
+    token = [[TRConfigToken alloc] initWithBytes: TEST_STRING
+                        numBytes: sizeof(TEST_STRING)
+                      lineNumber: TEST_LINE_NUMBER
+                         tokenID: TOKEN_VALUE];
+    fail_if(token == NULL, "-[[TRConfigToken alloc] initWithBytes: numBytes: tokenID:] returned NULL");
 
-	tokenID = [token tokenID];
-	fail_unless(tokenID == TOKEN_VALUE, "-[TRConfigToken tokenID] returned incorrect value. (Expected %d, got %d)", tokenID, TOKEN_VALUE);
+    tokenID = [token tokenID];
+    fail_unless(tokenID == TOKEN_VALUE, "-[TRConfigToken tokenID] returned incorrect value. (Expected %d, got %d)", tokenID, TOKEN_VALUE);
 
-	lineNumber = [token lineNumber];
-	fail_unless(lineNumber == TEST_LINE_NUMBER, "-[TRConfigToken lineNumber] returned incorrect value. (Expected %d, got %d)", TEST_LINE_NUMBER, lineNumber);
+    lineNumber = [token lineNumber];
+    fail_unless(lineNumber == TEST_LINE_NUMBER, "-[TRConfigToken lineNumber] returned incorrect value. (Expected %d, got %d)", TEST_LINE_NUMBER, lineNumber);
 
-	[token release];
+    [token release];
 }
 END_TEST
 
 START_TEST (test_intValue) {
-	TRConfigToken *token;
-	int value;
+    TRConfigToken *token;
+    int value;
 
-	token = [[TRConfigToken alloc] initWithBytes: "24" 
-					    numBytes: sizeof("24")
-					  lineNumber: TEST_LINE_NUMBER
-					     tokenID: TOKEN_VALUE];
-	fail_if(token == NULL, "-[[TRConfigToken alloc] initWithBytes: numBytes: tokenID:] returned NULL");
+    token = [[TRConfigToken alloc] initWithBytes: "24" 
+                        numBytes: sizeof("24")
+                      lineNumber: TEST_LINE_NUMBER
+                         tokenID: TOKEN_VALUE];
+    fail_if(token == NULL, "-[[TRConfigToken alloc] initWithBytes: numBytes: tokenID:] returned NULL");
 
-	fail_unless([token intValue: &value], "-[TRConfigToken intValue:] returned NO");
-	fail_unless(value == 24, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", 24, value);
+    fail_unless([token intValue: &value], "-[TRConfigToken intValue:] returned NO");
+    fail_unless(value == 24, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", 24, value);
 
-	[token release];
+    [token release];
 }
 END_TEST
 
 START_TEST (test_boolValue) {
-	TRConfigToken *token;
-	BOOL value;
+    TRConfigToken *token;
+    BOOL value;
 
-	token = [[TRConfigToken alloc] initWithBytes: "yes" 
-					    numBytes: sizeof("yes")
-					  lineNumber: TEST_LINE_NUMBER
-					     tokenID: TOKEN_VALUE];
+    token = [[TRConfigToken alloc] initWithBytes: "yes" 
+                        numBytes: sizeof("yes")
+                      lineNumber: TEST_LINE_NUMBER
+                         tokenID: TOKEN_VALUE];
 
-	fail_unless([token boolValue: &value], "-[TRConfigToken boolValue:] returned NO");
+    fail_unless([token boolValue: &value], "-[TRConfigToken boolValue:] returned NO");
 
-	fail_unless(value == YES, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", YES, value);
+    fail_unless(value == YES, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", YES, value);
 
-	[token release];
+    [token release];
 
-	token = [[TRConfigToken alloc] initWithBytes: "no" 
-					    numBytes: sizeof("no")
-					  lineNumber: TEST_LINE_NUMBER
-					     tokenID: TOKEN_VALUE];
+    token = [[TRConfigToken alloc] initWithBytes: "no" 
+                        numBytes: sizeof("no")
+                      lineNumber: TEST_LINE_NUMBER
+                         tokenID: TOKEN_VALUE];
 
-	fail_unless([token boolValue: &value], "-[TRConfigToken boolValue:] returned NO");
+    fail_unless([token boolValue: &value], "-[TRConfigToken boolValue:] returned NO");
 
-	fail_unless(value == NO, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", NO, value);
+    fail_unless(value == NO, "-[TRConfigToken value] returned incorrect value. (Expected %d, got %d)", NO, value);
 
-	[token release];
+    [token release];
 }
 END_TEST
 
 
 Suite *TRConfigToken_suite(void) {
-	Suite *s = suite_create("TRConfigToken");
+    Suite *s = suite_create("TRConfigToken");
 
-	TCase *tc_token = tcase_create("Token Operations");
-	suite_add_tcase(s, tc_token);
-	tcase_add_test(tc_token, test_initWithBytes);
-	tcase_add_test(tc_token, test_intValue);
-	tcase_add_test(tc_token, test_boolValue);
+    TCase *tc_token = tcase_create("Token Operations");
+    suite_add_tcase(s, tc_token);
+    tcase_add_test(tc_token, test_initWithBytes);
+    tcase_add_test(tc_token, test_intValue);
+    tcase_add_test(tc_token, test_boolValue);
 
-	return s;
+    return s;
 }

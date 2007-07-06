@@ -1,9 +1,10 @@
 /*
- * tests.c
+ * tests.c vi:ts=4:sw=4:expandtab:
  * OpenVPN LDAP Authentication Plugin Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
+ * Copyright (c) 2005 Landon Fuller <landonf@threerings.net>
  * Copyright (c) 2006 Three Rings Design, Inc.
  * All rights reserved.
  *
@@ -45,57 +46,57 @@
 #include "util/TRAutoreleasePool.h"
 
 void print_usage(const char *name) {
-	printf("Usage: %s [filename]\n", name);
-	printf(" [filename]\tWrite XML log to <filename>\n");
+    printf("Usage: %s [filename]\n", name);
+    printf(" [filename]\tWrite XML log to <filename>\n");
 }
 
 int main(int argc, char *argv[]) {
-	Suite *s;
-	SRunner *sr;
-	int nf;
-	TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    Suite *s;
+    SRunner *sr;
+    int nf;
+    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
 
-	if (argc > 2) {
-		print_usage(argv[0]);
-		exit(1);
-	}
+    if (argc > 2) {
+        print_usage(argv[0]);
+        exit(1);
+    }
 
-	/* Load all test suites */
-	s = TRString_suite();
-	sr = srunner_create(s);
-	srunner_add_suite(sr, TRAuthLDAPConfig_suite());
-	srunner_add_suite(sr, TRAutoreleasePool_suite());
-	srunner_add_suite(sr, TRLDAPConnection_suite());
-	srunner_add_suite(sr, TRLDAPEntry_suite());
-	srunner_add_suite(sr, TRObject_suite());
-	srunner_add_suite(sr, TRArray_suite());
-	srunner_add_suite(sr, TRHash_suite());
-	srunner_add_suite(sr, TRConfigToken_suite());
-	srunner_add_suite(sr, TRConfigLexer_suite());
-	srunner_add_suite(sr, TRConfig_suite());
-	srunner_add_suite(sr, TRLDAPGroupConfig_suite());
-	srunner_add_suite(sr, TRVPNSession_suite());
+    /* Load all test suites */
+    s = TRString_suite();
+    sr = srunner_create(s);
+    srunner_add_suite(sr, TRAuthLDAPConfig_suite());
+    srunner_add_suite(sr, TRAutoreleasePool_suite());
+    srunner_add_suite(sr, TRLDAPConnection_suite());
+    srunner_add_suite(sr, TRLDAPEntry_suite());
+    srunner_add_suite(sr, TRObject_suite());
+    srunner_add_suite(sr, TRArray_suite());
+    srunner_add_suite(sr, TRHash_suite());
+    srunner_add_suite(sr, TRConfigToken_suite());
+    srunner_add_suite(sr, TRConfigLexer_suite());
+    srunner_add_suite(sr, TRConfig_suite());
+    srunner_add_suite(sr, TRLDAPGroupConfig_suite());
+    srunner_add_suite(sr, TRVPNSession_suite());
 #ifdef HAVE_PF
-	srunner_add_suite(sr, TRLocalPacketFilter_suite());
-	srunner_add_suite(sr, TRPFAddress_suite());
+    srunner_add_suite(sr, TRLocalPacketFilter_suite());
+    srunner_add_suite(sr, TRPFAddress_suite());
 #endif
 
-	/* Enable XML output */
-	if (argc == 2)
-		srunner_set_xml(sr, argv[1]);
+    /* Enable XML output */
+    if (argc == 2)
+        srunner_set_xml(sr, argv[1]);
 
-	/* Run tests */
-	[TRLog _quiesceLogging: YES];
-	srunner_run_all(sr, CK_NORMAL);
-	[TRLog _quiesceLogging: NO];
+    /* Run tests */
+    [TRLog _quiesceLogging: YES];
+    srunner_run_all(sr, CK_NORMAL);
+    [TRLog _quiesceLogging: NO];
 
-	nf = srunner_ntests_failed(sr);
-	srunner_free(sr);
-	[pool release];
+    nf = srunner_ntests_failed(sr);
+    srunner_free(sr);
+    [pool release];
 
 
-	if (nf == 0)
-		exit(EXIT_SUCCESS);
-	else
-		exit(EXIT_FAILURE);
+    if (nf == 0)
+        exit(EXIT_SUCCESS);
+    else
+        exit(EXIT_FAILURE);
 }
