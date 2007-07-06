@@ -7,24 +7,22 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-LIB_OBJS=	hash.o \
-		TRArray.o \
-		TRAutoreleasePool.o \
-		TRString.o \
-		TREnumerator.o \
-		TRHash.o \
-		strlcpy.o \
-		xmalloc.o
+OBJS=	TRArray.o \
+	TRAutoreleasePool.o \
+	TRHash.o \
+	TRString.o
+LIB=	libauth-ldap-test-util.a
 
-LIB=		libauth-ldap-util.a
+CFLAGS+=	@CHECK_CFLAGS@
+OBJCFLAGS+=	@CHECK_CFLAGS@
 
 all:: $(LIB)
 
-$(LIB): $(LIB_OBJS)
-	$(AR) -r $@ $(LIB_OBJS)
+$(LIB): $(OBJS)
+	$(AR) -r $@ $(OBJS)
 
 clean::
-	rm -f $(LIB_OBJS) $(LIB)
+	rm -f $(OBJS) $(LIB)
 
 distclean:: clean
 	rm -f Makefile

@@ -61,6 +61,7 @@
 - (unsigned int) refCount;
 - (id) retain;
 - (void) release;
+- (id) autorelease;
 - (BOOL) isEqual: (id) anObject;
 
 - (void) dealloc;
