@@ -76,7 +76,6 @@ START_TEST(test_tables) {
 	fail_unless(strcmp([[tableIter nextObject] cString], "ips_artist") == 0);
 	fail_unless(strcmp([[tableIter nextObject] cString], "ips_developer") == 0);
 
-	[tableIter release];
 	[tables release];
 }
 END_TEST
