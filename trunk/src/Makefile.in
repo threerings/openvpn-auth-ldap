@@ -22,8 +22,8 @@ PLUGIN_OBJS=	auth-ldap.o \
 TEST_LIB=	libauth-ldap-testing.a
 TEST_OBJS=	testplugin.o
 
-CFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
-OBJCFLAGS+=	-fPIC $(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
+CFLAGS+=	$(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
+OBJCFLAGS+=	$(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
 LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS) \
 		-Lconfig -lauth-ldap-config \
 		-Lldap -lauth-ldap-ldap \
@@ -43,7 +43,7 @@ $(TEST_LIB): $(GEN_SRCS) $(PLUGIN_OBJS)
 	$(AR) -r $@ $(PLUGIN_OBJS)
 
 testplugin:: $(TEST_OBJS) $(TEST_LIB)
-	$(CC) -o $@ ${TEST_OBJS} ${LDFLAGS} -L. ${LIBS} -lauth-ldap-testing
+	$(CC) -o $@ ${TEST_OBJS} ${LDFLAGS} -L. -lauth-ldap-testing ${LIBS}
 	
 install:: $(PLUGIN_FILE)
 	$(INSTALL_PLUGIN)

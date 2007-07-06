@@ -11,6 +11,9 @@ LIB_OBJS=	TRLDAPConnection.o \
 		TRLDAPEntry.o
 LIB=		libauth-ldap-ldap.a
 
+CFLAGS+=	$(LDAP_CFLAGS)
+OBJCFLAGS+=	$(LDAP_CFLAGS)
+
 all:: $(LIB)
 
 $(LIB): $(LIB_OBJS)
