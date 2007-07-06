@@ -20,6 +20,9 @@ GEN_SRCS=	TRConfigParser.m \
 
 LIB=	libauth-ldap-config.a
 
+CFLAGS+=	$(LDAP_CFLAGS)
+OBJCFLAGS+=	$(LDAP_CFLAGS)
+
 # Work-around for gnumake bug.
 # It fails to check if 'TRConfigParser.h' has been created
 # after lemon has been called, and goes looking for a

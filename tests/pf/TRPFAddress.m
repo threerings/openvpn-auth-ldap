@@ -40,7 +40,7 @@
 
 #include <check.h>
 
-#include <TRPFAddress.h>
+#include <pf/TRPFAddress.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
