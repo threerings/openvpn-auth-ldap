@@ -17,7 +17,6 @@ all:: $(LIB)
 
 $(LIB): $(LIB_OBJS)
 	$(AR) -r $@ $(LIB_OBJS)
-	# XXX remove once the library isn't empty on non-FreeBSD platforms
 	$(RANLIB) $@
 
 clean::

@@ -32,10 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TRLocalPacketFilter.h"
-#include "TRPFAddress.h"
+#include "TRPacketFilter.h"
 
-#include <util/TRString.h>
 #include <util/xmalloc.h>
 
 #include <fcntl.h>
@@ -46,9 +44,9 @@
 #include <assert.h>
 
 /**
- * Abstract Packet Filter Class
+ * Packet Filter Utility Class
  */
-@implementation TRPacketFilter
+@implementation TRPacketFilterUtil
 
 + (char *) stringForError: (pferror_t) error {
     switch (error) {

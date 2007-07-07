@@ -36,22 +36,36 @@
 #include <config.h>
 #endif
 
-#if !defined(TRPFADDRESS_H) && defined(HAVE_PF)
-#define TRPFADDRESS_H
+#ifndef __TRPFADDRESS_H__
+#define __TRPFADDRESS_H__
 
-#include "TRLocalPacketFilter.h"
-#include "util/TRString.h"
-#include "TRObject.h"
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#include <TRObject.h>
+#include <util/TRString.h>
+
+typedef struct {
+    sa_family_t family;
+    union {
+        struct in_addr ip4_addr;
+        struct in6_addr ip6_addr;
+    };
+    uint8_t netmask;
+} TRPortableAddress;
 
 @interface TRPFAddress : TRObject {
 @private
-    struct pfr_addr _addr;
+    TRPortableAddress _addr;
 }
 
 - (id) initWithPresentationAddress: (TRString *) address;
-- (id) initWithPFRAddr: (struct pfr_addr *) pfrAddr;
-- (struct pfr_addr *) pfrAddr;
+- (id) initWithPortableAddress: (TRPortableAddress *) address;
+- (void) address: (TRPortableAddress *) addr;
 
 @end
 
-#endif /* TRPFADDRESS_H && HAVE_PF */
+#endif /* __TRPFADDRESS_H__ */

@@ -57,7 +57,7 @@
 /* Forward Declarations */
 @class TRPFAddress;
 
-@interface TRLocalPacketFilter : TRPacketFilter {
+@interface TRLocalPacketFilter : TRObject <TRPacketFilter> {
 @private
     /** Cached reference to /dev/pf. */
     int _fd;
