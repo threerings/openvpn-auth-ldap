@@ -36,16 +36,10 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_PF
-
 #include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 #include "TRPFAddress.h"
-#include "util/TRString.h"
+#include <util/TRString.h>
 
 /**
  * Represents a single IPv4 or IPv6 address, for use with PF.
@@ -57,7 +51,7 @@
     if (!self)
         return self;
 
-    /* Initialize the pfr_addr structure */
+    /* Initialize the TRPortableAddress structure */
     memset(&_addr, 0, sizeof(_addr));
 
     return self;
@@ -72,13 +66,13 @@
         return nil;
 
     /* Try IPv4, then IPv6 */
-    if (inet_pton(AF_INET, [address cString], &_addr.pfra_ip4addr)) {
-        _addr.pfra_af = AF_INET;
-        _addr.pfra_net = 32;
+    if (inet_pton(AF_INET, [address cString], &_addr.ip4_addr)) {
+        _addr.family = AF_INET;
+        _addr.netmask = 32;
         return self;
-    } else if(inet_pton(AF_INET6, [address cString], &_addr.pfra_ip6addr)) {
-        _addr.pfra_af = AF_INET6;
-        _addr.pfra_net = 128;
+    } else if(inet_pton(AF_INET6, [address cString], &_addr.ip6_addr)) {
+        _addr.family = AF_INET6;
+        _addr.netmask = 128;
         return self;
     }
 
@@ -88,25 +82,23 @@
 }
 
 /**
- * Initialize with a copy of the provided pfr_addr structure.
+ * Initialize from the provided TRPortableAddress representation.
  */
-- (id) initWithPFRAddr: (struct pfr_addr *) pfrAddr {
+- (id) initWithPortableAddress: (TRPortableAddress *) address {
     if (![self init])
         return nil;
 
-    /* Copy the supplied pfr_addr structure */
-    memcpy(&_addr, pfrAddr, sizeof(_addr));
-
+    memcpy(&_addr, address, sizeof(_addr));
     return self;
 }
 
+
 /**
- * Returns a borrowed reference to the instance's pfr_addr representation.
+ * Copies the address' TRPortableAddress representation
+ * to the provided destination pointer.
  */
-- (struct pfr_addr *) pfrAddr {
-    return &_addr;
+- (void) address: (TRPortableAddress *) dest {
+    memcpy(dest, &_addr, sizeof(*dest));
 }
 
 @end
-
-#endif /* HAVE_PF */

@@ -44,9 +44,15 @@
 #include <objc/Object.h>
 
 @protocol TRObject
+/*  Initialization */
+- (id) init;
+
 /* Reference counting */
+- (unsigned int) refCount;
 - (id) retain;
 - (void) release;
+- (id) autorelease;
+- (void) dealloc;
 
 /* Equality */
 - (BOOL) isEqual: (id) anObject;

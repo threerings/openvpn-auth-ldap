@@ -36,52 +36,73 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_PF
-
 #include <check.h>
 
-#include <pf/TRPFAddress.h>
+#include <string.h>
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <pf/TRPFAddress.h>
 
 START_TEST(test_initWithPresentationAddress) {
     TRString *addrString;
     TRPFAddress *pfAddr;
     /* Independent verification */
-    struct pfr_addr *result;
-    struct in_addr addr4;
-    struct in6_addr addr6;
+    TRPortableAddress expected;
+    TRPortableAddress actual;
 
     /* Test with IPv4 */
     addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
-    fail_unless(inet_pton(AF_INET, "127.0.0.1", &addr4));
+    fail_unless(inet_pton(AF_INET, "127.0.0.1", &expected.ip4_addr));
 
     pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
     [addrString release];
 
     /* Verify conversion */
     fail_if(pfAddr == nil);
-    result = [pfAddr pfrAddr];
-    fail_unless(memcmp(&result->pfra_ip4addr, &addr4, sizeof(addr4)) == 0);
+    [pfAddr address: &actual];
+    fail_unless(memcmp(&actual.ip4_addr, &expected.ip4_addr, sizeof(expected.ip4_addr)) == 0);
 
     [pfAddr release];
 
     /* Test with IPv6 */
     addrString = [[TRString alloc] initWithCString: "::1"];
-    fail_unless(inet_pton(AF_INET6, "::1", &addr6));
+    fail_unless(inet_pton(AF_INET6, "::1", &expected.ip6_addr));
 
     pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
     [addrString release];
 
     /* Verify conversion */
     fail_if(pfAddr == nil);
-    result = [pfAddr pfrAddr];
-    fail_unless(memcmp(&result->pfra_ip6addr, &addr6, sizeof(addr6)) == 0);
+    [pfAddr address: &actual];
+    fail_unless(memcmp(&actual.ip6_addr, &expected.ip6_addr, sizeof(expected.ip6_addr)) == 0);
 
     [pfAddr release];
+}
+END_TEST
+
+START_TEST(test_initWithPortableAddress) {
+    TRString *addrString;
+    TRPFAddress *pfAddr;
+    TRPortableAddress expected;
+    TRPortableAddress actual;
+
+    /* Initialize the source (expected) */
+    addrString = [[TRString alloc] initWithCString: "127.0.0.1"];
+    pfAddr = [[TRPFAddress alloc] initWithPresentationAddress: addrString];
+    
+    fail_if(pfAddr == nil);
+    [pfAddr address: &expected];
+    
+    [addrString release];
+    [pfAddr release];
+
+    /* Initialize the dest (actual) */
+    pfAddr = [[TRPFAddress alloc] initWithPortableAddress: &expected];
+    fail_if(pfAddr == nil);
+    [pfAddr address: &actual];
+    [pfAddr release];
+
+    /* Verify */
+    fail_unless(memcmp(&actual, &expected, sizeof(expected)) == 0);
 }
 END_TEST
 
@@ -92,8 +113,7 @@ Suite *TRPFAddress_suite(void) {
     TCase *tc_addr = tcase_create("Address");
     suite_add_tcase(s, tc_addr);
     tcase_add_test(tc_addr, test_initWithPresentationAddress);
+    tcase_add_test(tc_addr, test_initWithPortableAddress);
 
     return s;
 }
-
-#endif /* HAVE_PF */

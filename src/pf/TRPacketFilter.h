@@ -36,10 +36,15 @@
 #include <config.h>
 #endif
 
-#include <TRObject.h>
-
 #ifndef __TRPACKETFILTER_H__
 #define __TRPACKETFILTER_H__
+
+#include <TRObject.h>
+
+#include <util/TRString.h>
+#include <util/TRArray.h>
+
+#include <pf/TRPFAddress.h>
 
 typedef enum {
     PF_SUCCESS                  = 0,    /* No error occured. */
@@ -53,9 +58,64 @@ typedef enum {
 } pferror_t;
 
 /**
- * Abstract Packet Filter Class
+ * Packet Filter Class Protocol.
  */
-@interface TRPacketFilter : TRObject
+@protocol TRPacketFilter <TRObject>
+
+/**
+ * Open a reference to the underlying packet filter implementation.
+ */
+- (pferror_t) open;
+
+/**
+ * Close any references to the underlying packet filter implementation,
+ * and free any associated resources.
+ */
+- (void) close;
+
+/**
+ * Return a list of packet filter tables in result.
+ * @param result A pointer in which a pointer to the result array will be placed. The array will be auto-released.
+ * @return A PF_SUCCESS on success, otherwise, a pferror_t failure code.
+ */
+- (pferror_t) tables: (TRArray **) result;
+
+/**
+ * Flush all addresses from the specified table.
+ * @param tableName The table to flush.
+ * @return A PF_SUCCESS on success, otherwise, a pferror_t failure code.
+ */
+- (pferror_t) flushTable: (TRString *) tableName;
+
+/**
+ * Add an address to the specified table.
+ * @param address The address to add.
+ * @param tableName The address will be added to this table.
+ * @return A PF_SUCCESS on success, otherwise, a pferror_t failure code.
+ */
+- (pferror_t) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName;
+
+/**
+ * Delete an address from the specified table.
+ * @param address The address to delete.
+ * @param tableName The address will be deleted to this table.
+ * @return A PF_SUCCESS on success, otherwise, a pferror_t failure code.
+ */
+- (pferror_t) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName;
+
+/**
+ * Return a list of packet filter tables in result.
+ * @param table The name from which to gather the list of addresses.
+ * @param result A pointer in which a pointer to the result array will be placed. The array will be auto-released.
+ * @return A PF_SUCCESS on success, otherwise, a pferror_t failure code.
+ */
+- (pferror_t) addressesFromTable: (TRString *) tableName withResult: (TRArray **) result;
+@end
+
+/**
+ * Packet Filter Utility Class
+ */
+@interface TRPacketFilterUtil : TRObject
 
 + (char *) stringForError: (pferror_t) error;
 

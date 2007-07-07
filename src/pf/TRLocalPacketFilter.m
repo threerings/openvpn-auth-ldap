@@ -35,6 +35,7 @@
 #include "TRLocalPacketFilter.h"
 #include "TRPFAddress.h"
 
+#include <TRLog.h>
 #include <util/TRString.h>
 #include <util/xmalloc.h>
 
@@ -47,47 +48,16 @@
 #include <errno.h>
 #include <assert.h>
 
-/**
- * Private Methods
- * @internal
- */
+
+/* Private Methods */
+
 @interface TRLocalPacketFilter (Private)
 + (pferror_t) mapErrno;
 - (int) ioctl: (unsigned long) request withArgp: (void *) argp;
+- (BOOL) pfFromAddress: (TRPFAddress *) source pfaddr: (struct pfr_addr *) dest;
+- (TRPFAddress *) addressFromPF: (struct pfr_addr *) pfaddr;
 @end
 
-@implementation TRLocalPacketFilter (Private)
-
-/**
- * Map PF errno values to pferror_t values
- */
-+ (pferror_t) mapErrno {
-    switch (errno) {
-        case ESRCH:
-            /* Returned when a table, etc, is not found.
-             * "No such process" doesn't make much sense here. */
-            return PF_ERROR_NOT_FOUND;
-
-        case EINVAL:
-            return PF_ERROR_INVALID_ARGUMENT;
-
-        case EPERM:
-            /* Returned when /dev/pf can't be opened, and? */
-            return PF_ERROR_PERMISSION;
-
-        default:
-            return PF_ERROR_UNKNOWN;
-            break;
-    }
-}
-
-/* ioctl() with an extra seat-belt. */
-- (int) ioctl: (unsigned long) request withArgp: (void *) argp {
-    assert(_fd >= 0);
-    return ioctl(_fd, request, argp);
-}
-
-@end
 
 /**
  * An interface to a local OpenBSD Packet Filter.
@@ -106,6 +76,7 @@
     return self;
 }
 
+
 /**
  * Open a reference to /dev/pf. Must be called before
  * any other PF methods.
@@ -118,6 +89,7 @@
         return PF_SUCCESS;
 }
 
+
 /**
  * Close and release any open references to /dev/pf.
  * This is called automatically when the object is released.
@@ -129,10 +101,12 @@
     }
 }
 
+
 - (void) dealloc {
     [self close];
     [super dealloc];
 }
+
 
 /** Return an array of table names */
 - (pferror_t) tables: (TRArray **) result {
@@ -189,7 +163,10 @@
     return PF_SUCCESS;
 }
 
-/** Clear all addreses from the specified table. */
+
+/**
+ * Clear all addreses from the specified table.
+ */
 - (pferror_t) flushTable: (TRString *) tableName {
     struct pfioc_table io;
 
@@ -211,9 +188,12 @@
     return PF_SUCCESS;
 }
 
-/** Add an address to the specified table. */
+/**
+ * Add an address to the specified table.
+ */
 - (pferror_t) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName {
     struct pfioc_table io;
+    struct pfr_addr addr;
 
     /* Validate name */
     if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
@@ -225,7 +205,11 @@
 
     /* Build the request */
     strcpy(io.pfrio_table.pfrt_name, [tableName cString]);
-    io.pfrio_buffer = [address pfrAddr];
+
+    if ([self pfFromAddress: address pfaddr: &addr] != true)
+        return PF_ERROR_INTERNAL;    
+    io.pfrio_buffer = &addr;
+
     io.pfrio_size = 1;
 
     /* Issue the ioctl */
@@ -240,9 +224,13 @@
     return PF_SUCCESS;
 }
 
-/** Delete an address from the specified table. */
+
+/**
+ * Delete an address from the specified table.
+ */
 - (pferror_t) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName {
     struct pfioc_table io;
+    struct pfr_addr addr;
 
     /* Validate name */
     if ([tableName length] > sizeof(io.pfrio_table.pfrt_name))
@@ -254,7 +242,11 @@
 
     /* Build the request */
     strcpy(io.pfrio_table.pfrt_name, [tableName cString]);
-    io.pfrio_buffer = [address pfrAddr];
+
+    if ([self pfFromAddress: address pfaddr: &addr] != true)
+        return PF_ERROR_INTERNAL;    
+
+    io.pfrio_buffer = &addr;
     io.pfrio_size = 1;
 
     /* Issue the ioctl */
@@ -270,8 +262,9 @@
 }
 
 
-
-/** Return an array of all addresses from the specified table. */
+/**
+ * Return an array of all addresses from the specified table.
+ */
 - (pferror_t) addressesFromTable: (TRString *) tableName withResult: (TRArray **) result {
     TRArray *addresses = nil;
     struct pfioc_table io;
@@ -323,7 +316,7 @@
 
     pfrAddr = (struct pfr_addr *) io.pfrio_buffer;
     for (i = 0; i < io.pfrio_size; i++) {
-        TRPFAddress *address = [[TRPFAddress alloc] initWithPFRAddr: pfrAddr];
+        TRPFAddress *address = [self addressFromPF: pfrAddr];
         [addresses addObject: address];
         [address release];
         pfrAddr++;
@@ -332,6 +325,101 @@
     free(io.pfrio_buffer);
     *result = [addresses autorelease];
     return PF_SUCCESS;
+}
+
+@end
+
+
+/**
+ * TRLocalPacketFilter Private Methods
+ * @internal
+ */
+@implementation TRLocalPacketFilter (Private)
+
+/**
+ * Map PF errno values to pferror_t values
+ */
++ (pferror_t) mapErrno {
+    switch (errno) {
+        case ESRCH:
+            /* Returned when a table, etc, is not found.
+             * "No such process" doesn't make much sense here. */
+            return PF_ERROR_NOT_FOUND;
+
+        case EINVAL:
+            return PF_ERROR_INVALID_ARGUMENT;
+
+        case EPERM:
+            /* Returned when /dev/pf can't be opened, and? */
+            return PF_ERROR_PERMISSION;
+
+        default:
+            return PF_ERROR_UNKNOWN;
+            break;
+    }
+}
+
+/* ioctl() with an extra seat-belt. */
+- (int) ioctl: (unsigned long) request withArgp: (void *) argp {
+    assert(_fd >= 0);
+    return ioctl(_fd, request, argp);
+}
+
+
+/**
+ * Create a new TRPFAddress address with the provided pfr_addr structure.
+ */
+- (TRPFAddress *) addressFromPF: (struct pfr_addr *) pfaddr {
+    TRPortableAddress addr;
+
+    /* Initialize the addr structure */
+    memset(&addr, 0, sizeof(addr));
+    addr.family = pfaddr->pfra_af;
+    addr.netmask = pfaddr->pfra_net;
+
+    switch (addr.family) {
+        case (AF_INET):
+            memcpy(&addr.ip4_addr, &pfaddr->pfra_ip4addr, sizeof(addr.ip4_addr));
+            break;
+        case (AF_INET6):
+            memcpy(&addr.ip6_addr, &pfaddr->pfra_ip6addr, sizeof(addr.ip6_addr));
+            break;
+        default:
+            [TRLog debug: "Unsupported address family: %d", addr.family];
+            return nil;
+    }
+
+    return [[TRPFAddress alloc] initWithPortableAddress: &addr];
+}
+
+
+/**
+ * Copies the address' struct pfr_addr representation
+ * to the provided destination pointer.
+ */
+- (BOOL) pfFromAddress: (TRPFAddress *) source pfaddr: (struct pfr_addr *) dest {
+    TRPortableAddress addr;
+
+    [source address: &addr];
+
+    memset(dest, 0, sizeof(*dest));
+    dest->pfra_af = addr.family;
+    dest->pfra_net = addr.netmask;
+
+    switch (addr.family) {
+        case (AF_INET):
+            memcpy(&dest->pfra_ip4addr, &addr.ip4_addr, sizeof(dest->pfra_ip4addr));
+            return true;
+        case (AF_INET6):
+            memcpy(&dest->pfra_ip6addr, &addr.ip6_addr, sizeof(dest->pfra_ip6addr));
+            return true;
+        default:
+            /* Should be unreachable, as long as we're */
+            [TRLog debug: "Unsupported address family: %d", addr.family];
+            return false;
+    }
+
+    return false;
 }
 
 @end
