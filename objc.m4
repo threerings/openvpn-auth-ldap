@@ -576,7 +576,7 @@ m4_expand_once([_AC_COMPILER_OBJEXT])[]dnl
 _AC_LANG_COMPILER_GNU
 GOBJC=`test $ac_compiler_gnu = yes && echo yes`
 dnl _AC_PROG_OBJC_G
-_AC_PROG_OBJC_X
+dnl _AC_PROG_OBJC_X
 AC_LANG_POP(Objective C)dnl
 ])# AC_PROG_OBJC
 
