@@ -13,7 +13,6 @@ all::
 clean::
 
 distclean::
-	rm -f config.log config.status configure.lineno config.cache config.h \
-	doxyfile
+	rm -f config.log config.status configure.lineno config.cache config.h
 	rm -rf autom4te.cache
 	rm -f Makefile Mk/autoconf.mk Mk/compile.mk Mk/subdir.mk
