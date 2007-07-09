@@ -73,7 +73,13 @@ AC_CACHE_SAVE
 # Output
 AC_CONFIG_FILES([
 	Makefile
-	tools/Makefile
+
+	docs/Makefile
+	docs/doxyfile
+
+	Mk/autoconf.mk
+	Mk/compile.mk
+	Mk/subdir.mk
 
 	src/Makefile
 	src/config/Makefile
@@ -87,9 +93,6 @@ AC_CONFIG_FILES([
 	tests/pf/Makefile
 	tests/util/Makefile
 
-	Mk/autoconf.mk
-	Mk/compile.mk
-	Mk/subdir.mk
-	doxyfile
+	tools/Makefile
 ])
 AC_OUTPUT

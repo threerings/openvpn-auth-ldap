@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<book>
+  <bookinfo>
+    <title>OpenVPN Auth-LDAP: Enterprise LDAP Authentication for OpenVPN</title>
+
+    <legalnotice>
+      <para>The content of this guide is the original work of Landon Fuller and Three Rings
+      Design, Inc. All rights reserved.</para>
+
+      <para>The XML and CSS used to generate this guide is based on the work
+      of Will Barton and Michael Maibaum, as contributed to the DarwinPorts
+      Project under the 3 clause BSD license. Their copyright remains.</para>
+    </legalnotice>
+
+    <copyright>
+      <year>2002</year>
+
+      <year>2003</year>
+
+      <year>2007</year>
+
+      <holder>Landon Fuller &gt;landonf@threerings.net&lt;</holder>
+    </copyright>
+
+    <copyright>
+      <year>2006</year>
+      
+      <year>2007</year>
+
+      <holder>Three Rings Design, Inc.</holder>
+    </copyright>
+
+    <copyright>
+      <year>2002</year>
+
+      <year>2003</year>
+
+      <year>2004</year>
+
+      <holder>The OpenDarwin Project</holder>
+    </copyright>
+  </bookinfo>
+
+  <preface>
+    <title>About Auth-LDAP</title>
+    <para></para>
+  </preface>
+</book>

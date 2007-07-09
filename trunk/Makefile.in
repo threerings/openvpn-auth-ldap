@@ -2,21 +2,15 @@ top_srcdir=	@top_srcdir@
 
 SUBDIR=		tools \
 		src \
-		@CHECK_DIRS@
+		@CHECK_DIRS@ \
+		docs
 
 include Mk/subdir.mk
 include Mk/autoconf.mk
 
-.PHONY: docs
-
 all::
 
-# The documentation depends on generated source code
-docs:: all
-	${DOXYGEN} doxyfile
-
 clean::
-	rm -rf docs
 
 distclean::
 	rm -f config.log config.status configure.lineno config.cache config.h \
