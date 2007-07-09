@@ -105,14 +105,14 @@ typedef enum {
 
 /**
  * Return a list of packet filter tables in result.
- * @param table The name from which to gather the list of addresses.
+ * @param tableName The name from which to gather the list of addresses.
  * @param result A pointer in which a pointer to the result array will be placed. The array will be auto-released.
  * @return A PF_SUCCESS on success, otherwise, a pferror_t failure code.
  */
 - (pferror_t) addressesFromTable: (TRString *) tableName withResult: (TRArray **) result;
 @end
 
-/**
+/*
  * Packet Filter Utility Class
  */
 @interface TRPacketFilterUtil : TRObject

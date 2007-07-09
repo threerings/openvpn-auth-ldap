@@ -1,0 +1,45 @@
+srcdir=         @srcdir@
+top_srcdir=     @top_srcdir@
+top_builddir=   @top_builddir@
+VPATH=          @srcdir@
+
+include ${top_builddir}/Mk/autoconf.mk
+include ${top_builddir}/Mk/compile.mk
+include ${top_builddir}/Mk/subdir.mk
+
+SOURCEDIR=		${srcdir}/xml
+XHTMLDIR=		xhtml
+
+STYLESHEET=	        http://docbook.sourceforge.net/release/xsl/current/html/chunk.xsl
+XSTYLESHEET=	        http://docbook.sourceforge.net/release/xsl/current/xhtml/chunk.xsl
+
+RESOURCES=		${srcdir}/resources/
+CSS_STYLESHEET=		docbook.css
+
+STRINGPARAMS=		--stringparam html.stylesheet ${CSS_STYLESHEET}
+
+.PHONY: all
+.PHONY: clean
+#.PHONY: install
+.PHONY: xhtml
+.PHONY: check
+.PHONY: tidy
+
+codedocs::
+	${DOXYGEN} doxyfile
+
+manual::
+	mkdir -p ${XHTMLDIR}
+	install ${RESOURCES}${CSS_STYLESHEET} ${XHTMLDIR}
+	xsltproc --xinclude ${STRINGPARAMS} -o "${XHTMLDIR}/" "${XSTYLESHEET}" "${SOURCEDIR}/auth-ldap.xml"
+
+docs:: codedocs manual
+
+check:
+	xmllint --xinclude --noout "${SOURCEDIR}/auth-ldap.xml"
+
+clean::
+	rm -rf ${HTMLDIR} ${XHTMLDIR} code
+
+distclean:: clean
+	rm -f Makefile

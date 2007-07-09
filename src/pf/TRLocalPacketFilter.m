@@ -330,9 +330,8 @@
 @end
 
 
-/**
+/*
  * TRLocalPacketFilter Private Methods
- * @internal
  */
 @implementation TRLocalPacketFilter (Private)
 

@@ -45,8 +45,9 @@
 
 /**
  * Initialize and return a TRConfig parser.
- * @param fd: A file descriptor open for reading. This file descriptor will be
+ * @param fd A file descriptor open for reading. This file descriptor will be
  *         mmap()ed, and thus must reference a file.
+ * @param delegate A configuration delegate conforming to the TRConfigDelegate protocol.
  */
 - (id) initWithFD: (int) fd configDelegate: (id <TRConfigDelegate>) delegate {
     self = [self init];
