@@ -165,7 +165,7 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
         /* We are the first pool */
         stack->next = NULL;
 
-        /* Set new per-thread pool stack */
+    /* Set new per-thread pool stack */
     CURTHREAD_SET_POOLSTACK(stack);
 
     /* Allocate and initialize our bucket */
