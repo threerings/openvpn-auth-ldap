@@ -39,6 +39,9 @@
 
 #include "util/xmalloc.h"
 
+/* Maximum number of unique attributes returned for a given entry. */
+#define MAX_ATTRIBUTES 2048
+
 static int ldap_get_errno(LDAP *ld) {
     int err;
     if (ldap_get_option(ld, LDAP_OPT_ERROR_NUMBER, &err) != LDAP_OPT_SUCCESS)
@@ -319,7 +322,7 @@ static int ldap_get_errno(LDAP *ld) {
         TRLDAPEntry *ldapEntry;
         TRHash *ldapAttributes;
         BerElement *ptr;
-        int maxCapacity = 2048;
+        int maxCapacity = MAX_ATTRIBUTES;
         TRString *dn;
         char *dnCString;
 
@@ -339,7 +342,7 @@ static int ldap_get_errno(LDAP *ld) {
 
             /* Don't exceed the maximum capacity of the hash table */
             if(--maxCapacity == 0) {
-                [TRLog error: "Over 2048 LDAP attributes returned for a single entry. Ignoring any remaining attributes."];
+                [TRLog error: "Over %d LDAP attributes returned for a single entry. Ignoring any remaining attributes.", MAX_ATTRIBUTES];
                 break;
             }
 
