@@ -338,8 +338,10 @@ static int ldap_get_errno(LDAP *ld) {
             int i;
 
             /* Don't exceed the maximum capacity of the hash table */
-            if(--maxCapacity == 0)
+            if(--maxCapacity == 0) {
+                [TRLog error: "Over 2048 LDAP attributes returned for a single entry. Ignoring any remaining attributes."];
                 break;
+            }
 
             attrName = [[TRString alloc] initWithCString: attr];
             attrValues = [[TRArray alloc] init];
