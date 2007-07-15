@@ -348,7 +348,6 @@ static TRLDAPEntry *find_ldap_user (TRLDAPConnection *ldap, TRAuthLDAPConfig *co
     if (!ldapEntries)
         return nil;
     if ([ldapEntries count] < 1) {
-        [ldapEntries release];
         return nil;
     }
 
