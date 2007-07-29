@@ -32,19 +32,30 @@
 package com.threerings.authldap.test.ldapd;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Set;
 
+import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
+import javax.naming.ldap.InitialLdapContext;
+import javax.naming.ldap.LdapContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.directory.server.configuration.MutableServerStartupConfiguration;
 import org.apache.directory.server.core.configuration.MutablePartitionConfiguration;
+import org.apache.directory.server.jndi.ServerContextFactory;
+import org.apache.directory.shared.ldap.ldif.Entry;
+import org.apache.directory.shared.ldap.ldif.LdifReader;
+import org.apache.directory.shared.ldap.name.LdapDN;
 import org.apache.mina.util.AvailablePortFinder;
 
 /**
@@ -69,10 +80,12 @@ public class LDAPServer {
 
         } catch (final IOException e) {
             System.err.println("IO error instantiating server: " + e.getMessage());
+            e.printStackTrace();
             Runtime.getRuntime().exit(1);
 
         } catch (final NamingException e) {
             System.err.println("LDAP instantiation error: " + e.getMessage());
+            e.printStackTrace();
             Runtime.getRuntime().exit(1);
 
         }
@@ -96,45 +109,23 @@ public class LDAPServer {
         /* Find an available TCP port */
         final int port = AvailablePortFinder.getNextAvailable(1024);
 
-        /* Configure the LDAP daemon */
+        /* Instantiate our configuration */
         _config = new MutableServerStartupConfiguration();
         _config.setWorkingDirectory(dataDir);
-        _config.setEnableNetworking(true);
-        _config.setLdapPort(port);
         _config.setShutdownHookEnabled(false);
 
-        /* Set up a test partition */
-        final MutablePartitionConfiguration pcfg = new MutablePartitionConfiguration();
-        pcfg.setName("test");
-        pcfg.setSuffix(BASEDN);
+        /* Configure networking  */
+        _config.setEnableNetworking(true);
+        _config.setLdapPort(port);
 
-        // Partition indices
-        final Set<String> indices = new HashSet<String>();
-        indices.add("objectClass");
-        pcfg.setIndexedAttributes(indices);
+        /* Set up all test partitions */
+        createTestPartitions();
 
-        // Create the partition's base entry (o=test)
-        final Attributes attrs = new BasicAttributes(true);
-        Attribute attr;
+        /* Set up root context */
+        _rootDSE = new InitialLdapContext(createContext(""), null);
 
-        // objectClass attribute
-        attr = new BasicAttribute("objectClass");
-        attr.add("top");
-        attr.add("o");
-        attrs.put(attr);
-
-        // organization attribute
-        attr = new BasicAttribute("o");
-        attr.add("test");
-        attrs.put(attr);
-
-        // Set the partition root entry
-        pcfg.setContextEntry(attrs);
-
-        /* Add the partition to our configuration */
-        final Set<MutablePartitionConfiguration> pcfgs = new HashSet<MutablePartitionConfiguration>();
-        pcfgs.add(pcfg);
-        _config.setContextPartitionConfigurations(pcfgs);
+        /* Import our LDIF */
+        importLdif(new FileInputStream(ldif));
     }
 
     /** Return the test partition base DN */
@@ -142,7 +133,85 @@ public class LDAPServer {
         return BASEDN;
     }
 
+    /**
+     * Create the partitions we'll be using for testing.
+     *
+     * @throws NamingException
+     */
+    private void createTestPartitions ()
+        throws NamingException
+    {
+        final MutablePartitionConfiguration pcfg = new MutablePartitionConfiguration();
+        pcfg.setName("test");
+        pcfg.setSuffix("o=test");
+
+        /* Partition indices */
+        final Set<String> indices = new HashSet<String>();
+        indices.add("objectClass");
+        indices.add("o");
+        pcfg.setIndexedAttributes(indices);
+
+        /* Create the partition's base entry (o=test) */
+        final Attributes basedn = new BasicAttributes(true);
+        Attribute attr;
+
+        /* objectClass attribute */
+        attr = new BasicAttribute("objectClass");
+        attr.add("top");
+        attr.add("organization");
+        basedn.put(attr);
+
+        /* organization attribute */
+        attr = new BasicAttribute("o");
+        attr.add("test");
+        basedn.put(attr);
+
+        /* Set the partition root entry */
+        pcfg.setContextEntry(basedn);
+
+        /* Add the partition to our configuration */
+        final Set<MutablePartitionConfiguration> pcfgs = new HashSet<MutablePartitionConfiguration>();
+        pcfgs.add(pcfg);
+        _config.setContextPartitionConfigurations(pcfgs);
+    }
+
+    private Hashtable<Object,Object> createContext (final String partition)
+    {
+        @SuppressWarnings("unchecked")
+        final Hashtable<Object,Object> env = new Hashtable<Object,Object>(_config.toJndiEnvironment());
+        env.put(Context.SECURITY_PRINCIPAL, "uid=admin,ou=system");
+        env.put(Context.SECURITY_CREDENTIALS, "secret");
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.INITIAL_CONTEXT_FACTORY, ServerContextFactory.class.getName());
+        env.put(Context.PROVIDER_URL, partition);
+        return env;
+    }
+
+    /**
+     * Load records from LDIF into the root DSE.
+     *
+     * @param in LDIF input stream
+     * @throws NamingException
+     */
+    private void importLdif(final InputStream in)
+        throws NamingException
+    {
+        @SuppressWarnings("unchecked")
+        final Iterator<Entry> entries = new LdifReader(in).iterator();
+
+        while (entries.hasNext()) {
+            final Entry entry = entries.next();
+            final LdapDN dn = new LdapDN(entry.getDn());
+            _rootDSE.createSubcontext(dn, entry.getAttributes());
+        }
+    }
+
+
+    /** Default base DN */
     private static final String BASEDN = "o=test";
+
+    /** Our root DSE */
+    private final LdapContext _rootDSE;
 
     /** LDAP server configuration */
     private final MutableServerStartupConfiguration _config;
