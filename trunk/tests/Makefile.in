@@ -3,7 +3,8 @@ top_srcdir=     @top_srcdir@
 top_builddir=   @top_builddir@
 VPATH=          @srcdir@
 
-SUBDIR=		config \
+SUBDIR=		apacheds \
+		config \
 		ldap \
 		pf \
 		util

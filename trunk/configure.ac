@@ -37,6 +37,8 @@ else
 fi
 AC_SUBST([DOTDIR])
 
+TR_BUILD_APACHEDS
+
 AC_CACHE_SAVE
 
 # Headers
@@ -88,6 +90,7 @@ AC_CONFIG_FILES([
 	src/util/Makefile
 
 	tests/Makefile
+	tests/apacheds/Makefile
 	tests/config/Makefile
 	tests/ldap/Makefile
 	tests/pf/Makefile

@@ -1,0 +1,24 @@
+srcdir=         @srcdir@
+builddir=	@abs_builddir@
+top_srcdir=     @top_srcdir@
+top_builddir=   @top_builddir@
+VPATH=          @srcdir@
+
+include ${top_builddir}/Mk/autoconf.mk
+include ${top_builddir}/Mk/compile.mk
+include ${top_builddir}/Mk/subdir.mk
+
+DEPLOY_DIR=	${builddir}/dist
+
+# Recompile the tests every time
+all::
+	@if test "${ANT}" != ""; then \
+		echo "Building ldapd.jar embedded LDAP server using ${ANT}"; \
+		cd ${srcdir} && ${ANT} -quiet -Ddeploy.dir=${DEPLOY_DIR} -f build.xml; \
+	fi
+
+clean::
+	rm -rf dist
+
+distclean:: clean
+	rm -f Makefile
