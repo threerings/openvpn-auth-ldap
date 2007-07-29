@@ -82,3 +82,38 @@ AC_DEFUN(OD_LIBCHECK, [
 	AC_SUBST(CHECK_LIBS)
 	AC_SUBST(CHECK_DIRS)
 ])
+
+#------------------------------------------------------------------------
+# TR_BUILD_APACHEDS --
+#
+#       Locate Java and Ant, for building ApacheDS
+#
+# Arguments:
+#       None.
+#
+# Requires:
+#       None.
+#
+# Depends:
+#	None
+#
+# Results:
+#
+#	Defines and substitutes the following vars:
+#		JAVA
+#               ANT
+#
+#------------------------------------------------------------------------
+
+AC_DEFUN(TR_BUILD_APACHEDS, [
+	AC_PATH_PROG([JAVA], [java], [])
+	AC_PATH_PROG([ANT], [ant], [])
+
+	if test "$JAVA" != "" && test "$ANT" != ""; then
+		AC_MSG_NOTICE([Enabling LDAP-backed unit tests.])
+		AC_DEFINE([HAVE_TLDAP_DAEMON], [1], [Define to enable embedded LDAP server for unit testing.])
+	fi
+
+	AC_SUBST([JAVA])
+	AC_SUBST([ANT])
+])
