@@ -62,8 +62,6 @@ import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.WriterAppender;
 import org.apache.mina.util.AvailablePortFinder;
 
-import org.apache.directory.server.core.DirectoryService;
-
 /**
  * Manages an LDAP server for automated testing
  */
