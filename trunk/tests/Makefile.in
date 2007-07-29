@@ -3,11 +3,11 @@ top_srcdir=     @top_srcdir@
 top_builddir=   @top_builddir@
 VPATH=          @srcdir@
 
-SUBDIR=		apacheds \
-		config \
+SUBDIR=		config \
 		ldap \
 		pf \
-		util
+		util \
+		@APACHEDS_DIR@
 
 include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
