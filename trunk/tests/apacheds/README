@@ -1,0 +1,2 @@
+The Apache Directory Server (http://directory.apache.org/) is used to provide
+an embedded LDAP server for the purposes of integration/unit testing.
