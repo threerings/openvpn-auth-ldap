@@ -10,12 +10,17 @@ include ${top_builddir}/Mk/subdir.mk
 
 DEPLOY_DIR=	${builddir}/dist
 
-# Recompile the tests every time
-all::
+# Unfortunately, SRCS needs to be kept in sync with ant's build file,
+# if any new source files are added.
+SRCS=	src/java/com/threerings/authldap/test/ldapd/LDAPServer.java
+
+${DEPLOY_DIR}/ldapd.jar: build.xml
 	@if test "${ANT}" != ""; then \
 		echo "Building ldapd.jar embedded LDAP server using ${ANT}"; \
-		cd ${srcdir} && ${ANT} -quiet -Ddeploy.dir=${DEPLOY_DIR} -f build.xml; \
+		cd ${srcdir} && ${ANT} -quiet -Ddeploy.dir=${DEPLOY_DIR} -f build.xml dist; \
 	fi
+
+all:: ${DEPLOY_DIR}/ldapd.jar
 
 clean::
 	rm -rf dist
