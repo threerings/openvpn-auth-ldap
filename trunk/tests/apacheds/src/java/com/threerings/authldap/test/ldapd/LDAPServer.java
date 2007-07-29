@@ -56,7 +56,13 @@ import org.apache.directory.server.jndi.ServerContextFactory;
 import org.apache.directory.shared.ldap.ldif.Entry;
 import org.apache.directory.shared.ldap.ldif.LdifReader;
 import org.apache.directory.shared.ldap.name.LdapDN;
+import org.apache.log4j.Appender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
+import org.apache.log4j.WriterAppender;
 import org.apache.mina.util.AvailablePortFinder;
+
+import org.apache.directory.server.core.DirectoryService;
 
 /**
  * Manages an LDAP server for automated testing
@@ -75,20 +81,30 @@ public class LDAPServer {
         final File dataDir = new File(args[0]);
         final File ldif = new File(args[1]);
 
-        try {
-            final LDAPServer server = new LDAPServer(dataDir, ldif);
+        /* Set up logging to stderr */
+        final Logger logger = Logger.getRootLogger();
+        final Appender stderrOutput = new WriterAppender(new SimpleLayout(), System.err);
+        logger.addAppender(stderrOutput);
 
+        /* Kick off the server */
+        final LDAPServer server;
+        try {
+            server = new LDAPServer(dataDir, ldif);
         } catch (final IOException e) {
             System.err.println("IO error instantiating server: " + e.getMessage());
             e.printStackTrace();
             Runtime.getRuntime().exit(1);
+            return;
 
         } catch (final NamingException e) {
             System.err.println("LDAP instantiation error: " + e.getMessage());
             e.printStackTrace();
             Runtime.getRuntime().exit(1);
-
+            return;
         }
+
+        /* Print out the vitals to our waiting caller */
+        System.out.println(server.getLdapURL());
     }
 
     /**
@@ -131,6 +147,16 @@ public class LDAPServer {
     /** Return the test partition base DN */
     public String getBaseDN () {
         return BASEDN;
+    }
+
+    /** Return the server's LDAP URL */
+    public String getLdapURL () {
+        return "ldap://localhost:" + getLdapPort();
+    }
+
+    /** Return the server's LDAP port */
+    public int getLdapPort () {
+        return _config.getLdapPort();
     }
 
     /**
