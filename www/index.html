@@ -95,7 +95,7 @@
 		<h4>Please report all security issues to dpw@threerings.net.</h4>
 		<p>Through the use of extensive unit testing, valgrind, and regression testing, we are very confident in the overall code quality of the plugin. There has been one security vulnerability to date, due to misinterpretation of LDAP RFCs.</p>
 		<ul>
-			<li>2006-12-02: OpenVPN Auth-LDAP would accept empty passwords when validating against Novell Directory Server. This is known to not affect default installs OpenLDAP (our test platform). Strict implementation of the LDAP RFCs requires that a directory server treat a bind with a valid DN and an empty password as an "anonymous" bind. If anonymous binds are enabled, this could lead to password bypass. This confusing RFC requirement has previously led to vulnerabilities in everything from Novell Groupwise to PAM LDAP.</li>
+			<li>2006-12-02: OpenVPN Auth-LDAP would accept empty passwords when validating against Novell Directory Server. This is known to not affect default installs OpenLDAP (our test platform). Strict implementation of the LDAP RFCs requires that a directory server treat a bind with a valid DN and an empty password as an "anonymous" bind. If anonymous binds are enabled, this could lead to password bypass.</li>
 		</ul>
 	</body>
 </html>	
