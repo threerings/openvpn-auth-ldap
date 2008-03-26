@@ -36,6 +36,7 @@ else
 	DOTDIR=`AS_DIRNAME([$DOT])`
 fi
 AC_SUBST([DOTDIR])
+
 AC_CACHE_SAVE
 
 # Headers
@@ -57,12 +58,9 @@ AC_CACHE_SAVE
 
 # Libraries
 OD_OPENLDAP
+OD_LIBCHECK
 TR_OPENSSL
 AC_CACHE_SAVE
-
-# Unit Testing
-OD_LIBCHECK
-TR_BUILD_APACHEDS
 
 # OpenVPN
 OD_OPENVPN_HEADER
@@ -90,7 +88,6 @@ AC_CONFIG_FILES([
 	src/util/Makefile
 
 	tests/Makefile
-	tests/apacheds/Makefile
 	tests/config/Makefile
 	tests/ldap/Makefile
 	tests/pf/Makefile

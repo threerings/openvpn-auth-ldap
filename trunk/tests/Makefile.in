@@ -6,8 +6,7 @@ VPATH=          @srcdir@
 SUBDIR=		config \
 		ldap \
 		pf \
-		util \
-		@APACHEDS_DIR@
+		util
 
 include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
