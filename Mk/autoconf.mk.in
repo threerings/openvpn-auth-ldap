@@ -44,9 +44,6 @@ LN_S                    = @LN_S@
 RE2C			= @RE2C@
 DOXYGEN			= @DOXYGEN@
 
-JAVA			= @JAVA@
-ANT			= @ANT@
-
 prefix			= @prefix@
 sysconfdir		= @sysconfdir@
 exec_prefix		= @exec_prefix@
