@@ -37,6 +37,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <stdio.h>
+#include <assert.h>
 
 #include "util/strlcpy.h"
 
@@ -52,6 +54,27 @@
 - (void) dealloc {
     free(bytes);
     [super dealloc];
+}
+
+
+/**
+ * Create a new string using the provided printf-style format
+ * string and arguments.
+ */
++ (TRString *) stringWithFormat: (const char *) format, ... {
+    va_list ap;
+    char *output;
+    TRString *ret;
+
+    va_start(ap, format);
+    vasprintf(&output, format, ap);
+    va_end(ap);
+
+    assert(output != NULL);
+    ret = [[[TRString alloc] initWithCString: output] autorelease];
+    free(output);
+
+    return ret;
 }
 
 /**

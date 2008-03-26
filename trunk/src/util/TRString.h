@@ -48,6 +48,8 @@
     size_t numBytes;
 }
 
++ (TRString *) stringWithFormat: (const char *) format, ...;
+
 - (id) initWithCString: (const char *) cString;
 - (id) initWithString: (TRString *) string;
 - (id) initWithBytes: (const char *) data numBytes: (size_t) length;

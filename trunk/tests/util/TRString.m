@@ -37,6 +37,7 @@
 #endif
 
 #include <util/TRString.h>
+#include <util/TRAutoreleasePool.h>
 
 #include <check.h>
 #include <string.h>
@@ -91,6 +92,18 @@ START_TEST (test_initWithBytes) {
     fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
 
     [str release];
+}
+END_TEST
+
+START_TEST (test_stringWithFormat) {
+    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    TRString *str;
+    
+    str = [TRString stringWithFormat: "%s %s", "Hello", "World"];
+    fail_unless(strcmp([str cString], "Hello World") == 0,
+        "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", "Hello, World", [str cString]);
+
+    [pool release];
 }
 END_TEST
 
@@ -149,6 +162,7 @@ Suite *TRString_suite(void) {
     tcase_add_test(tc_string, test_initWithCString);
     tcase_add_test(tc_string, test_initWithString);
     tcase_add_test(tc_string, test_initWithBytes);
+    tcase_add_test(tc_string, test_stringWithFormat);
     tcase_add_test(tc_string, test_length);
     tcase_add_test(tc_string, test_intValue);
     tcase_add_test(tc_string, test_hash);
