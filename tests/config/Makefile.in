@@ -7,11 +7,11 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-OBJS=	TRAuthLDAPConfig.o \
-	TRConfig.o \
-	TRConfigLexer.o \
-	TRConfigToken.o \
-	TRLDAPGroupConfig.o
+OBJS=	TRAuthLDAPConfigTests.o \
+	TRConfigTests.o \
+	TRConfigLexerTests.o \
+	TRConfigTokenTests.o \
+	TRLDAPGroupConfigTests.o
 LIB=	libauth-ldap-test-config.a
 
 CFLAGS+=	@CHECK_CFLAGS@

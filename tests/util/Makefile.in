@@ -7,10 +7,10 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-OBJS=	TRArray.o \
-	TRAutoreleasePool.o \
-	TRHash.o \
-	TRString.o
+OBJS=	TRArrayTests.o \
+	TRAutoreleasePoolTests.o \
+	TRHashTests.o \
+	TRStringTests.o
 LIB=	libauth-ldap-test-util.a
 
 CFLAGS+=	@CHECK_CFLAGS@

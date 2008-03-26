@@ -14,8 +14,8 @@ include ${top_builddir}/Mk/subdir.mk
 
 
 TEST_OBJS=	tests.o \
-		TRObject.o \
-		TRVPNSession.o
+		TRObjectTests.o \
+		TRVPNSessionTests.o
 
 TEST_GEN=	tests.h
 

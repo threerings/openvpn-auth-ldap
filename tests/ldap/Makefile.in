@@ -7,8 +7,8 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-OBJS=	TRLDAPConnection.o \
-	TRLDAPEntry.o
+OBJS=	TRLDAPConnectionTests.o \
+	TRLDAPEntryTests.o
 LIB=	libauth-ldap-test-ldap.a
 
 CFLAGS+=	@CHECK_CFLAGS@
