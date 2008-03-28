@@ -163,7 +163,7 @@
 
     [pool release];
 
-    return (result);
+    return [result autorelease];
 }
 
 @end
