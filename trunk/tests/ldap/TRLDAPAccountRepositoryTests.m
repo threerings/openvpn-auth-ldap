@@ -56,7 +56,10 @@ START_TEST(test_initWithLDAPConnection) {
     conn = [[TRLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
 
     /* Initialize a TRLDAPAccountRepository */
-    accounts = [[TRLDAPAccountRepository alloc] initWithLDAPConnection: conn];
+    TRLDAPSearchFilter *userFilter = [[[TRLDAPSearchFilter alloc] initWithFormat: [TRString stringWithCString: "%s"]] autorelease];
+    TRLDAPSearchFilter *groupFilter = [[[TRLDAPSearchFilter alloc] initWithFormat: [TRString stringWithCString: "%s"]] autorelease];
+    
+    accounts = [[TRLDAPAccountRepository alloc] initWithLDAPConnection: conn userSearchFilter: userFilter groupSearchFilter: groupFilter];
     fail_if(accounts == nil, "-[[TRLDAPAccountRepository alloc] initWithLDAPConnection:] returned nil");
     
     [accounts release];
