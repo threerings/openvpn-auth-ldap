@@ -39,6 +39,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stdarg.h>
 
 #include "util/strlcpy.h"
 
