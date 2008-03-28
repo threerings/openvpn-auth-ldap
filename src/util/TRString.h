@@ -49,6 +49,7 @@
 }
 
 + (TRString *) stringWithFormat: (const char *) format, ...;
++ (TRString *) stringWithCString: (const char *) cString;
 
 - (id) initWithCString: (const char *) cString;
 - (id) initWithString: (TRString *) string;

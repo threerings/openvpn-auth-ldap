@@ -78,6 +78,13 @@
 }
 
 /**
+ * Create a new string using the provided C string.
+ */
++ (TRString *) stringWithCString: (const char *) cString {
+    return [[[TRString alloc] initWithCString: cString] autorelease];
+}
+
+/**
  * Initialize with a copy of the given C string.
  */
 - (id) initWithCString: (const char *) cString {
