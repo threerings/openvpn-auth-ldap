@@ -39,7 +39,10 @@
  * Initialize a new TRLDAPAccountRepository instance with the provided
  * TRLDAPConnection.
  */
-- (id) initWithLDAPConnection: (TRLDAPConnection *) ldap {
+- (id) initWithLDAPConnection: (TRLDAPConnection *) ldap
+             userSearchFilter: (TRLDAPSearchFilter *) userFilter
+            groupSearchFilter: (TRLDAPSearchFilter *) groupFilter
+{
     /* Initialize our superclass */
     self = [super init];
     if (self == nil)
@@ -47,6 +50,8 @@
 
     /* Save a reference to the LDAP connection */
     _ldap = [ldap retain];
+    _userFilter = [userFilter retain];
+    _groupFilter = [groupFilter retain];
 
     return self;
 }
@@ -54,6 +59,12 @@
 - (void) dealloc {
     /* Release our LDAP connection. */
     [_ldap release];
+    
+    /* User filter. */
+    [_userFilter release];
+    
+    /* Group filter. */
+    [_groupFilter release];
 
     /* Deallocate the superclass */
     [super dealloc];

@@ -36,6 +36,8 @@
 
 #include "TRObject.h"
 #include "TRLDAPConnection.h"
+#include "TRLDAPSearchFilter.h"
+
 #include "TRAccountRepository.h"
 
 #include "util/TRString.h"
@@ -46,10 +48,14 @@
 @interface TRLDAPAccountRepository : TRObject <TRAccountRepository> {
 @private
     TRLDAPConnection *_ldap;
+    TRLDAPSearchFilter *_userFilter;
+    TRLDAPSearchFilter *_groupFilter;
 }
 
-- (id) initWithLDAPConnection: (TRLDAPConnection *) ldap;
-
+- (id) initWithLDAPConnection: (TRLDAPConnection *) ldap
+             userSearchFilter: (TRLDAPSearchFilter *) userFilter
+            groupSearchFilter: (TRLDAPSearchFilter *) groupFilter;
+             
 - (BOOL) authenticateUser: (TRString *) username withPassword: (TRString *) password;
 - (BOOL) checkGroupMember: (TRString *) username withGroup: (TRString *) groupname;
 @end
