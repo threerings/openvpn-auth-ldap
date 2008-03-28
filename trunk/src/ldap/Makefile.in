@@ -9,7 +9,8 @@ include ${top_builddir}/Mk/subdir.mk
 
 LIB_OBJS=	TRLDAPAccountRepository.o \
 		TRLDAPConnection.o \
-		TRLDAPEntry.o
+		TRLDAPEntry.o \
+		TRLDAPSearchFilter.o
 LIB=		libauth-ldap-ldap.a
 
 CFLAGS+=	$(LDAP_CFLAGS)

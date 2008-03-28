@@ -1,10 +1,10 @@
 /*
- * tests.h vi:ts=4:sw=4:expandtab:
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRLDAPSearchFilter.h vi:ts=4:sw=4:expandtab:
+ * LDAP Search Filter Generator
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Landon Fuller nor the names of any contributors
+ * 3. Neither the name of the copyright holder nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -32,45 +32,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#ifndef TRLDAPSEARCHFILTER_H
+#define TRLDAPSEARCHFILTER_H
 
-/*
- * Useful Paths
- */
-#define TEST_DATA               "@TEST_DATA@"
-#define DATA_PATH(relative)     TEST_DATA "/" relative
+#include <TRObject.h>
+#include <util/TRString.h>
 
-#ifndef HAVE_PF
-#define AUTH_LDAP_CONF          DATA_PATH("auth-ldap.conf")
-#else
-#define AUTH_LDAP_CONF          DATA_PATH("auth-ldap-pf.conf")
-#endif /* HAVE_PF */
+@interface TRLDAPSearchFilter : TRObject {
+@private
+    TRString *_format;
+}
 
-#define AUTH_LDAP_CONF_NAMED    DATA_PATH("auth-ldap-named.conf")
-#define AUTH_LDAP_CONF_MISMATCHED   DATA_PATH("auth-ldap-mismatched.conf")
-#define AUTH_LDAP_CONF_MULTIKEY     DATA_PATH("auth-ldap-multikey.conf")
-#define AUTH_LDAP_CONF_REQUIRED DATA_PATH("auth-ldap-required.conf")
+- (id) initWithFormat: (TRString *) format;
 
-/*
- * Unit Tests
- */
+@end
 
-Suite *TRString_suite(void);
-Suite *TRAuthLDAPConfig_suite(void);
-Suite *TRAutoreleasePool_suite(void);
-Suite *TRLDAPAccountRepository_suite(void);
-Suite *TRLDAPConnection_suite(void);
-Suite *TRLDAPEntry_suite(void);
-Suite *TRLDAPSearchFilter_suite(void);
-Suite *TRObject_suite(void);
-Suite *TRArray_suite(void);
-Suite *TRHash_suite(void);
-Suite *TRConfigToken_suite(void);
-Suite *TRConfigLexer_suite(void);
-Suite *TRConfig_suite(void);
-Suite *TRLDAPGroupConfig_suite(void);
-Suite *TRLocalPacketFilter_suite(void);
-Suite *TRPFAddress_suite(void);
-Suite *TRVPNSession_suite(void);
+#endif /* TRLDAPSEARCHFILTER_H */
