@@ -41,11 +41,9 @@
 #include <ldap/TRLDAPSearchFilter.h>
 
 START_TEST(test_initWithFormat) {
-    TRString *format = [[TRString alloc] initWithCString: "%s foo"];
-    TRLDAPSearchFilter *filter = [[TRLDAPSearchFilter alloc] initWithFormat: format];
+    TRLDAPSearchFilter *filter = [[TRLDAPSearchFilter alloc] initWithFormat: [TRString stringWithCString: "%s foo"]];
 
     [filter release];
-    [format release];
 }
 END_TEST
 
