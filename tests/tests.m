@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
     srunner_add_suite(sr, TRLDAPAccountRepository_suite());
     srunner_add_suite(sr, TRLDAPConnection_suite());
     srunner_add_suite(sr, TRLDAPEntry_suite());
+    srunner_add_suite(sr, TRLDAPSearchFilter_suite());
     srunner_add_suite(sr, TRObject_suite());
     srunner_add_suite(sr, TRArray_suite());
     srunner_add_suite(sr, TRHash_suite());

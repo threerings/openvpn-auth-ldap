@@ -9,7 +9,8 @@ include ${top_builddir}/Mk/subdir.mk
 
 OBJS=	TRLDAPAccountRepositoryTests.o \
 	TRLDAPConnectionTests.o \
-	TRLDAPEntryTests.o
+	TRLDAPEntryTests.o \
+	TRLDAPSearchFilterTests.o
 LIB=	libauth-ldap-test-ldap.a
 
 CFLAGS+=	@CHECK_CFLAGS@

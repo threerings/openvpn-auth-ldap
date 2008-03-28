@@ -1,6 +1,6 @@
 /*
- * tests.h vi:ts=4:sw=4:expandtab:
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRLDAPSearchFilter.m vi:ts=4:sw=4:expandtab:
+ * TRLDAPSearchFilter Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,41 +36,25 @@
 #include <config.h>
 #endif
 
-/*
- * Useful Paths
- */
-#define TEST_DATA               "@TEST_DATA@"
-#define DATA_PATH(relative)     TEST_DATA "/" relative
+#include <check.h>
 
-#ifndef HAVE_PF
-#define AUTH_LDAP_CONF          DATA_PATH("auth-ldap.conf")
-#else
-#define AUTH_LDAP_CONF          DATA_PATH("auth-ldap-pf.conf")
-#endif /* HAVE_PF */
+#include <ldap/TRLDAPSearchFilter.h>
 
-#define AUTH_LDAP_CONF_NAMED    DATA_PATH("auth-ldap-named.conf")
-#define AUTH_LDAP_CONF_MISMATCHED   DATA_PATH("auth-ldap-mismatched.conf")
-#define AUTH_LDAP_CONF_MULTIKEY     DATA_PATH("auth-ldap-multikey.conf")
-#define AUTH_LDAP_CONF_REQUIRED DATA_PATH("auth-ldap-required.conf")
+START_TEST(test_initWithFormat) {
+    TRString *format = [[TRString alloc] initWithCString: "%s foo"];
+    TRLDAPSearchFilter *filter = [[TRLDAPSearchFilter alloc] initWithFormat: format];
 
-/*
- * Unit Tests
- */
+    [filter release];
+    [format release];
+}
+END_TEST
 
-Suite *TRString_suite(void);
-Suite *TRAuthLDAPConfig_suite(void);
-Suite *TRAutoreleasePool_suite(void);
-Suite *TRLDAPAccountRepository_suite(void);
-Suite *TRLDAPConnection_suite(void);
-Suite *TRLDAPEntry_suite(void);
-Suite *TRLDAPSearchFilter_suite(void);
-Suite *TRObject_suite(void);
-Suite *TRArray_suite(void);
-Suite *TRHash_suite(void);
-Suite *TRConfigToken_suite(void);
-Suite *TRConfigLexer_suite(void);
-Suite *TRConfig_suite(void);
-Suite *TRLDAPGroupConfig_suite(void);
-Suite *TRLocalPacketFilter_suite(void);
-Suite *TRPFAddress_suite(void);
-Suite *TRVPNSession_suite(void);
+Suite *TRLDAPSearchFilter_suite(void) {
+    Suite *s = suite_create("TRLDAPSearchFilter");
+
+    TCase *tc_filter = tcase_create("LDAP Search Filter");
+    suite_add_tcase(s, tc_filter);
+    tcase_add_test(tc_filter, test_initWithFormat);
+
+    return s;
+}
