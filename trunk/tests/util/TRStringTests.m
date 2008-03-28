@@ -107,6 +107,18 @@ START_TEST (test_stringWithFormat) {
 }
 END_TEST
 
+START_TEST (test_stringWithCString) {
+    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    TRString *str;
+    
+    str = [TRString stringWithCString: "Hello World"];
+    fail_unless(strcmp([str cString], "Hello World") == 0,
+        "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", "Hello, World", [str cString]);
+
+    [pool release];
+}
+END_TEST
+
 START_TEST (test_length) {
     TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
     size_t length = [str length];
@@ -163,6 +175,7 @@ Suite *TRString_suite(void) {
     tcase_add_test(tc_string, test_initWithString);
     tcase_add_test(tc_string, test_initWithBytes);
     tcase_add_test(tc_string, test_stringWithFormat);
+    tcase_add_test(tc_string, test_stringWithCString);
     tcase_add_test(tc_string, test_length);
     tcase_add_test(tc_string, test_intValue);
     tcase_add_test(tc_string, test_hash);
