@@ -37,11 +37,38 @@
 #endif
 
 #include <check.h>
+#include <string.h>
 
 #include <ldap/TRLDAPSearchFilter.h>
 
 START_TEST(test_initWithFormat) {
     TRLDAPSearchFilter *filter = [[TRLDAPSearchFilter alloc] initWithFormat: [TRString stringWithCString: "%s foo"]];
+
+    [filter release];
+}
+END_TEST
+
+START_TEST(test_getFilter) {
+    TRLDAPSearchFilter *filter = [[TRLDAPSearchFilter alloc] initWithFormat: [TRString stringWithCString: "(&(uid=%s)(cn=%s))"]];
+    const char *expected = "(&(uid=fred)(cn=fred))";
+    TRString *result = [filter getFilter: [TRString stringWithCString: "fred"]];
+
+    fail_unless(strcmp([result cString], expected) == 0,
+        "-[TRLDAPSearchFilter createFilter:] returned incorrect string. (Expected %s, got %s)", expected, [result cString]);
+
+    [filter release];
+}
+END_TEST
+
+START_TEST(test_ldapEscaping) {
+    TRLDAPSearchFilter *filter = [[TRLDAPSearchFilter alloc] initWithFormat: [TRString stringWithCString: "(%s)"]];
+    const char *expected = "(\\(foo\\*\\)\\\\)";
+    
+    /* Pass in something containing all the special characters */
+    TRString *result = [filter getFilter: [TRString stringWithCString: "(foo*)\\"]];
+
+    fail_unless(strcmp([result cString], expected) == 0,
+        "-[TRLDAPSearchFilter createFilter:] returned incorrect string. (Expected %s, got %s)", expected, [result cString]);
 
     [filter release];
 }
@@ -53,6 +80,8 @@ Suite *TRLDAPSearchFilter_suite(void) {
     TCase *tc_filter = tcase_create("LDAP Search Filter");
     suite_add_tcase(s, tc_filter);
     tcase_add_test(tc_filter, test_initWithFormat);
+    tcase_add_test(tc_filter, test_getFilter);
+    tcase_add_test(tc_filter, test_ldapEscaping);
 
     return s;
 }
