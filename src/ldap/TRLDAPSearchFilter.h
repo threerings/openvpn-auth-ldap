@@ -44,6 +44,7 @@
 }
 
 - (id) initWithFormat: (TRString *) format;
+- (TRString *) getFilter: (TRString *) subString;
 
 @end
 
