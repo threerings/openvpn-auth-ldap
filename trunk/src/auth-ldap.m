@@ -54,6 +54,7 @@
 #include <util/TRString.h>
 #include <util/xmalloc.h>
 
+#include <TRAccountRepository.h>
 #include <TRLog.h>
 
 /* Plugin Context */

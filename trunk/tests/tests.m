@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
     sr = srunner_create(s);
     srunner_add_suite(sr, TRAuthLDAPConfig_suite());
     srunner_add_suite(sr, TRAutoreleasePool_suite());
+    srunner_add_suite(sr, TRLDAPAccountRepository_suite());
     srunner_add_suite(sr, TRLDAPConnection_suite());
     srunner_add_suite(sr, TRLDAPEntry_suite());
     srunner_add_suite(sr, TRObject_suite());

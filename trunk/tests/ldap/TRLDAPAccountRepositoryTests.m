@@ -1,6 +1,6 @@
 /*
- * tests.h vi:ts=4:sw=4:expandtab:
- * OpenVPN LDAP Authentication Plugin Unit Tests
+ * TRLDAPAccountRepositoryTests.m vi:ts=4:sw=4:expandtab:
+ * TRLDAPAccountRepository Unit Tests
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,40 +36,41 @@
 #include <config.h>
 #endif
 
-/*
- * Useful Paths
- */
-#define TEST_DATA               "@TEST_DATA@"
-#define DATA_PATH(relative)     TEST_DATA "/" relative
+#include <config/TRAuthLDAPConfig.h>
+#include <ldap/TRLDAPConnection.h>
+#include <ldap/TRLDAPAccountRepository.h>
 
-#ifndef HAVE_PF
-#define AUTH_LDAP_CONF          DATA_PATH("auth-ldap.conf")
-#else
-#define AUTH_LDAP_CONF          DATA_PATH("auth-ldap-pf.conf")
-#endif /* HAVE_PF */
+#include <check.h>
 
-#define AUTH_LDAP_CONF_NAMED    DATA_PATH("auth-ldap-named.conf")
-#define AUTH_LDAP_CONF_MISMATCHED   DATA_PATH("auth-ldap-mismatched.conf")
-#define AUTH_LDAP_CONF_MULTIKEY     DATA_PATH("auth-ldap-multikey.conf")
-#define AUTH_LDAP_CONF_REQUIRED DATA_PATH("auth-ldap-required.conf")
+#include "tests.h"
 
-/*
- * Unit Tests
- */
+START_TEST(test_initWithLDAPConnection) {
+    TRLDAPAccountRepository *accounts;
+    TRAuthLDAPConfig *config;
+    TRLDAPConnection *conn;
 
-Suite *TRString_suite(void);
-Suite *TRAuthLDAPConfig_suite(void);
-Suite *TRAutoreleasePool_suite(void);
-Suite *TRLDAPAccountRepository_suite(void);
-Suite *TRLDAPConnection_suite(void);
-Suite *TRLDAPEntry_suite(void);
-Suite *TRObject_suite(void);
-Suite *TRArray_suite(void);
-Suite *TRHash_suite(void);
-Suite *TRConfigToken_suite(void);
-Suite *TRConfigLexer_suite(void);
-Suite *TRConfig_suite(void);
-Suite *TRLDAPGroupConfig_suite(void);
-Suite *TRLocalPacketFilter_suite(void);
-Suite *TRPFAddress_suite(void);
-Suite *TRVPNSession_suite(void);
+    /* Set up a TRLDAPConnection */
+    config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF];
+    fail_if(config == nil, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] returned nil");
+
+    conn = [[TRLDAPConnection alloc] initWithURL: [config url] timeout: [config timeout]];
+
+    /* Initialize a TRLDAPAccountRepository */
+    accounts = [[TRLDAPAccountRepository alloc] initWithLDAPConnection: conn];
+    fail_if(accounts == nil, "-[[TRLDAPAccountRepository alloc] initWithLDAPConnection:] returned nil");
+    
+    [accounts release];
+    [config release];
+    [conn release];
+}
+END_TEST
+
+Suite *TRLDAPAccountRepository_suite(void) {
+    Suite *s = suite_create("TRLDAPAccountRepository");
+
+    TCase *tc_entry = tcase_create("LDAP Account Repository");
+    suite_add_tcase(s, tc_entry);
+    tcase_add_test(tc_entry, test_initWithLDAPConnection);
+
+    return s;
+}

@@ -7,7 +7,8 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-LIB_OBJS=	TRLDAPConnection.o \
+LIB_OBJS=	TRLDAPAccountRepository.o \
+		TRLDAPConnection.o \
 		TRLDAPEntry.o
 LIB=		libauth-ldap-ldap.a
 
