@@ -36,7 +36,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "TRLog.h"
+#include <TRVPNPlugin.h>
 
 static BOOL _quiesce = NO;
 

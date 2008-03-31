@@ -1,9 +1,10 @@
 /*
- * TRHash.h vi:ts=4:sw=4:expandtab:
- * Hash table
+ * TRVPNPlugin.h vi:ts=4:sw=4:expandtab:
+ * Base Include File
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
+ * Copyright (c) 2007 Landon Fuller <landonf@threerings.net>
  * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
@@ -32,23 +33,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRHASH_H
-#define TRHASH_H
+#ifndef TRVPNPLUGIN_H
+#define TRVPNPLUGIN_H
 
-#include "hash.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-@interface TRHash : TRObject {
-@private
-    hash_t *_hash;
-}
+#include "TRObject.h"
+#include "TRLog.h"
 
-- (id) initWithCapacity: (unsigned long) numItems;
-- (BOOL) isFull;
-- (id) valueForKey: (TRString *) key;
-- (void) setObject: (id) anObject forKey: (TRString *) key;
-- (void) removeObjectForKey: (TRString *) key;
-- (TREnumerator *) keyEnumerator;
+#include "util/TRString.h"
+#include "util/TREnumerator.h"
+#include "util/TRArray.h"
+#include "util/TRAutoreleasePool.h"
+#include "util/TRHash.h"
+#include "util/xmalloc.h"
 
-@end
+#include "TRAccountRepository.h"
+#include "TRVPNSession.h"
 
-#endif /* TRHASH_H */
+#include "config/TRConfigToken.h"
+#include "config/TRConfig.h"
+#include "config/TRConfigParser.h"
+#include "config/TRAuthLDAPConfig.h"
+#include "config/TRConfigLexer.h"
+#include "config/TRLDAPGroupConfig.h"
+
+#include "ldap/TRLDAPConnection.h"
+#include "ldap/TRLDAPEntry.h"
+#include "ldap/TRLDAPSearchFilter.h"
+#include "ldap/TRLDAPAccountRepository.h"
+
+#include "pf/TRPFAddress.h"
+#include "pf/TRPacketFilter.h"
+#include "pf/TRLocalPacketFilter.h"
+
+#endif /* TRVPNPLUGIN_H */

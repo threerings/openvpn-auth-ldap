@@ -38,13 +38,7 @@
 #include <errno.h>
 #include <assert.h>
 
-#include "TRAuthLDAPConfig.h"
-#include "TRLDAPGroupConfig.h"
-#include "util/TRString.h"
-#include "util/TRHash.h"
-#include "TRLog.h"
-
-#include "util/xmalloc.h"
+#include <TRVPNPlugin.h>
 
 /* All Variables and Section Types */
 typedef enum {

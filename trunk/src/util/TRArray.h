@@ -35,9 +35,6 @@
 #ifndef TRARRAY_H
 #define TRARRAY_H
 
-#include "TRObject.h"
-#include "TREnumerator.h"
-
 @interface TRArray : TRObject {
 @private
     unsigned int _count;

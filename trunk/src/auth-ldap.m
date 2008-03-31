@@ -41,21 +41,7 @@
 
 #include <openvpn-plugin.h>
 
-#include <config/TRAuthLDAPConfig.h>
-#include <config/TRLDAPGroupConfig.h>
-
-#include <ldap/TRLDAPEntry.h>
-#include <ldap/TRLDAPConnection.h>
-
-#include <pf/TRLocalPacketFilter.h>
-#include <pf/TRPFAddress.h>
-
-#include <util/TRAutoreleasePool.h>
-#include <util/TRString.h>
-#include <util/xmalloc.h>
-
-#include <TRAccountRepository.h>
-#include <TRLog.h>
+#include <TRVPNPlugin.h>
 
 /* Plugin Context */
 typedef struct ldap_ctx {

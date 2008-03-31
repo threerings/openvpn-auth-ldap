@@ -35,40 +35,12 @@
 #ifndef TRCONFIG_H
 #define TRCONFIG_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "TRObject.h"
-
-/* A complex set of TRConfig* header dependencies dictates the following order
- * of declarations and includes */
-
-/**
- * Object Data Types.
- * Tokens are always strings (TOKEN_DATATYPE_STRING),
- * but sometimes they can also be integers and booleans.
- * In other words, the integer and boolean datatypes should
- * be considered to provide a superset of functionality to the
- * string data type.
- */
-typedef enum {
-    TOKEN_DATATYPE_STRING,
-    TOKEN_DATATYPE_INT,
-    TOKEN_DATATYPE_BOOL
-} TRConfigDataType;
-
-#include "config/TRConfigToken.h"
-#include "config/TRConfigLexer.h"
-
 @protocol TRConfigDelegate
 - (void) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
 - (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
 - (void) endSection: (TRConfigToken *) sectionEnd;
 - (void) parseError: (TRConfigToken *) badToken;
 @end
-
-#include "config/TRConfigParser.h"
 
 @interface TRConfig : TRObject {
 @private

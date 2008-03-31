@@ -37,7 +37,7 @@
 #include <config.h>
 #endif
 
-#include "TRConfig.h"
+#include <TRVPNPlugin.h>
 
 #include <stdio.h>
 }

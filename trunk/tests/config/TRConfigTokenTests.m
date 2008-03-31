@@ -36,8 +36,7 @@
 #include <config.h>
 #endif
 
-#include <config/TRConfigToken.h>
-#include <config/TRConfigParser.h>
+#include <TRVPNPlugin.h>
 
 #include <check.h>
 #include <string.h>

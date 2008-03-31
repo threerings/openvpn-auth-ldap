@@ -32,12 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TRLocalPacketFilter.h"
-#include "TRPFAddress.h"
-
-#include <TRLog.h>
-#include <util/TRString.h>
-#include <util/xmalloc.h>
+#include <TRVPNPlugin.h>
 
 #ifdef HAVE_PF
 

@@ -41,8 +41,7 @@
 #include <pthread.h>
 #include <assert.h>
 
-#include "TRAutoreleasePool.h"
-#include "xmalloc.h"
+#include <TRVPNPlugin.h>
 
 /* Number of objects to store in each pool bucket.
  * Selected arbitrarily. */

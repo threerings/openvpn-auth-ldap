@@ -40,7 +40,7 @@
 
 #include <string.h>
 
-#include <pf/TRPFAddress.h>
+#include <TRVPNPlugin.h>
 
 START_TEST(test_initWithPresentationAddress) {
     TRString *addrString;

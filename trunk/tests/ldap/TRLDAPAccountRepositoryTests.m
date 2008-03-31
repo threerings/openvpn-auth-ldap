@@ -36,9 +36,7 @@
 #include <config.h>
 #endif
 
-#include <config/TRAuthLDAPConfig.h>
-#include <ldap/TRLDAPConnection.h>
-#include <ldap/TRLDAPAccountRepository.h>
+#include <TRVPNPlugin.h>
 
 #include <check.h>
 

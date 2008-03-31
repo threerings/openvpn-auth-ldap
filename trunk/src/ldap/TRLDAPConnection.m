@@ -34,10 +34,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-#include "ldap/TRLDAPConnection.h"
-#include "TRLog.h"
-
-#include "util/xmalloc.h"
+#include "TRVPNPlugin.h"
 
 /* Maximum number of unique attributes returned for a given entry. */
 #define MAX_ATTRIBUTES 2048

@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ldap/TRLDAPEntry.h"
+#include "TRVPNPlugin.h"
 
 /**
  * An LDAP entry.

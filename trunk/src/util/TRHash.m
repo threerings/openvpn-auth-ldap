@@ -32,9 +32,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "util/TRHash.h"
 #include <string.h>
 #include <assert.h>
+
+#include <TRVPNPlugin.h>
 
 /**
  * Hash key enumerator.

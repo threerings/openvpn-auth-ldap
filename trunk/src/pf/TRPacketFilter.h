@@ -32,19 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #ifndef __TRPACKETFILTER_H__
 #define __TRPACKETFILTER_H__
-
-#include <TRObject.h>
-
-#include <util/TRString.h>
-#include <util/TRArray.h>
-
-#include <pf/TRPFAddress.h>
 
 typedef enum {
     PF_SUCCESS                  = 0,    /* No error occured. */

@@ -36,10 +36,10 @@
 #include <config.h>
 #endif
 
-#include <config/TRAuthLDAPConfig.h>
-
 #include <check.h>
 #include <string.h>
+
+#include <TRVPNPlugin.h>
 
 #include "tests.h"
 

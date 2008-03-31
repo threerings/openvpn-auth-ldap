@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TRVPNSession.h"
+#include <TRVPNPlugin.h>
 
 /**
  * VPN session state.

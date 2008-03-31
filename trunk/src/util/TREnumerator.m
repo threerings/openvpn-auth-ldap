@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TREnumerator.h"
+#include <TRVPNPlugin.h>
 
 /**
  * Abstract enumerator superclass.

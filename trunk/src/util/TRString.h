@@ -39,8 +39,7 @@
 
 #include <stdlib.h>
 
-#include "TRObject.h"
-#include "util/strlcpy.h"
+#include <TRVPNPlugin.h>
 
 @interface TRString : TRObject {
 @private

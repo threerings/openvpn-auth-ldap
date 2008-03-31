@@ -46,14 +46,6 @@
 #include <net/if.h>
 #include <net/pfvar.h>
 
-#include <TRObject.h>
-
-#include <util/TRString.h>
-#include <util/TRArray.h>
-
-#include "TRPacketFilter.h"
-#include "TRPFAddress.h"
-
 /* Forward Declarations */
 @class TRPFAddress;
 

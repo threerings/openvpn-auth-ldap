@@ -42,8 +42,7 @@
 
 #include <tests.h>
 
-#include "TRLog.h"
-#include "util/TRAutoreleasePool.h"
+#include <TRVPNPlugin.h>
 
 void print_usage(const char *name) {
     printf("Usage: %s [filename]\n", name);

@@ -35,8 +35,6 @@
 #ifndef TRLOG_H
 #define TRLOG_H
 
-#include "TRObject.h"
-
 typedef enum {
     TRLOG_ERR,
     TRLOG_WARNING,

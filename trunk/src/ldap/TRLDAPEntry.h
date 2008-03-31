@@ -35,9 +35,6 @@
 #ifndef TRLDAPENTRY_H
 #define TRLDAPENTRY_H
 
-#include "TRObject.h"
-#include "util/TRHash.h"
-
 @interface TRLDAPEntry : TRObject {
 @private
     TRString *_dn;

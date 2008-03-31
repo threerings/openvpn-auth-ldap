@@ -42,7 +42,7 @@
 
 #include "tests.h"
 
-#include <config/TRConfig.h>
+#include <TRVPNPlugin.h>
 
 /* Path Constants */
 #define TEST_CONF        DATA_PATH("TRConfig.conf")

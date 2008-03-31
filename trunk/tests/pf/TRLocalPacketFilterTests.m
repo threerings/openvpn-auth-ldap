@@ -40,8 +40,7 @@
 
 #include <check.h>
 
-#include <pf/TRLocalPacketFilter.h>
-#include <util/TRString.h>
+#include <TRVPNPlugin.h>
 
 #include "mockpf.h"
 

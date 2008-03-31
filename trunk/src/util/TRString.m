@@ -30,10 +30,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
@@ -41,11 +37,7 @@
 #include <assert.h>
 #include <stdarg.h>
 
-#include "util/strlcpy.h"
-
-#include "util/TRString.h"
-
-#include "util/xmalloc.h"
+#include <TRVPNPlugin.h>
 
 /**
  * OO String wrapper.

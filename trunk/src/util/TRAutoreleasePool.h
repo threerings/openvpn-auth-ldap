@@ -25,8 +25,6 @@
 #ifndef __TRAutoreleasePool_h__
 #define __TRAutoreleasePool_h__
 
-#include "TRObject.h"
-
 typedef struct _TRAutoreleasePoolBucket TRAutoreleasePoolBucket;
 
 @interface TRAutoreleasePool : TRObject

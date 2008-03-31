@@ -35,8 +35,6 @@
 #ifndef TRENUMERATOR_H
 #define TRENUMERATOR_H
 
-#include "TRObject.h"
-
 @protocol TREnumerator
 - (id) nextObject;
 @end
