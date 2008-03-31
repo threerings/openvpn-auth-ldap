@@ -38,7 +38,7 @@
 
 #include <check.h>
 
-#include <ldap/TRLDAPEntry.h>
+#include <TRVPNPlugin.h>
 
 START_TEST(test_initWithDN) {
     TRLDAPEntry *entry;

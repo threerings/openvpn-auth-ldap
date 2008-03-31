@@ -39,7 +39,7 @@
 #include <check.h>
 #include <string.h>
 
-#include <ldap/TRLDAPSearchFilter.h>
+#include <TRVPNPlugin.h>
 
 START_TEST(test_initWithFormat) {
     TRLDAPSearchFilter *filter = [[TRLDAPSearchFilter alloc] initWithFormat: [TRString stringWithCString: "%s foo"]];

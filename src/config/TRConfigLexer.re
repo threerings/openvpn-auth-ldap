@@ -42,9 +42,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
-#include "TRConfigLexer.h"
-
-#include "TRConfigParser.h"
+#include <TRVPNPlugin.h>
 
 /*
  * re2c Configuration

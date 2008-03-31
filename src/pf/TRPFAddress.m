@@ -32,14 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <string.h>
 
-#include "TRPFAddress.h"
-#include <util/TRString.h>
+#include <TRVPNPlugin.h>
 
 /**
  * Represents a single IPv4 or IPv6 address, for use with PF.

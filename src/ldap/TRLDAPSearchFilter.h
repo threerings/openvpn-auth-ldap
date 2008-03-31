@@ -35,9 +35,6 @@
 #ifndef TRLDAPSEARCHFILTER_H
 #define TRLDAPSEARCHFILTER_H
 
-#include <TRObject.h>
-#include <util/TRString.h>
-
 @interface TRLDAPSearchFilter : TRObject {
 @private
     TRString *_format;

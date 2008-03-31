@@ -33,10 +33,6 @@
 #ifndef LFAUTHLDAPCONFIG_H
 #define LFAUTHLDAPCONFIG_H
 
-#include "TRObject.h"
-#include "util/TRArray.h"
-#include "TRConfig.h"
-
 @interface TRAuthLDAPConfig : TRObject <TRConfigDelegate> {
 @private
     /* LDAP Settings */

@@ -36,7 +36,7 @@
 #include <config.h>
 #endif
 
-#include "TRConfigToken.h"
+#include <TRVPNPlugin.h>
 
 /**
  * Represents a config file parser token.

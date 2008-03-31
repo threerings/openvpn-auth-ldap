@@ -45,9 +45,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include <TRObject.h>
-#include <util/TRString.h>
-
 typedef struct {
     sa_family_t family;
     union {

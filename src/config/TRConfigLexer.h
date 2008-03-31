@@ -32,15 +32,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ldap.h>
-
-#include "TRObject.h"
-#include "util/TRString.h"
-
-#include "TRConfig.h"
-
 #ifndef TRCONFIGLEXER_H
 #define TRCONFIGLEXER_H
+
+#include <ldap.h>
 
 typedef enum {
     LEXER_SC_INITIAL,

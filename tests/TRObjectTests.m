@@ -39,7 +39,7 @@
 
 #include <check.h>
 
-#include <TRObject.h>
+#include <TRVPNPlugin.h>
 
 START_TEST (test_retainRelease) {
     TRObject *obj;

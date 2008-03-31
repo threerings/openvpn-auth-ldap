@@ -36,8 +36,7 @@
 #include <config.h>
 #endif
 
-#include <util/TRString.h>
-#include <util/TRAutoreleasePool.h>
+#include <TRVPNPlugin.h>
 
 #include <check.h>
 #include <string.h>

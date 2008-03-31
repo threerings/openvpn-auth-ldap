@@ -38,8 +38,7 @@
 
 #include <check.h>
 
-#include <util/TRArray.h>
-#include <util/TRString.h>
+#include <TRVPNPlugin.h>
 
 START_TEST (test_addObject) {
     TRArray *array = [[TRArray alloc] init];

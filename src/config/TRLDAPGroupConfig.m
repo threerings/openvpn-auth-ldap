@@ -34,7 +34,7 @@
 
 #include <stdlib.h>
 
-#include "TRLDAPGroupConfig.h"
+#include "TRVPNPlugin.h"
 
 @implementation TRLDAPGroupConfig
 - (void) dealloc {

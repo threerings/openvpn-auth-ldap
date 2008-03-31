@@ -36,7 +36,7 @@
 #include <config.h>
 #endif
 
-#include "TRConfig.h"
+#include <TRVPNPlugin.h>
 
 /**
  * An Apache-style configuration file parser/lexer.

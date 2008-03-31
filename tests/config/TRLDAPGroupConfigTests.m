@@ -36,7 +36,7 @@
 #include <config.h>
 #endif
 
-#include <config/TRLDAPGroupConfig.h>
+#include <TRVPNPlugin.h>
 
 #include <check.h>
 

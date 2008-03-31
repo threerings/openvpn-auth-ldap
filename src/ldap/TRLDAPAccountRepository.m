@@ -31,7 +31,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TRLDAPAccountRepository.h"
+#include "TRVPNPlugin.h"
 
 @implementation TRLDAPAccountRepository
 

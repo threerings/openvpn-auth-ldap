@@ -32,20 +32,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef TRCONFIGTOKEN_H
+#define TRCONFIGTOKEN_H
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #include <stdlib.h>
 
-#include "util/strlcpy.h"
-
-#include "TRObject.h"
-#include "TRConfig.h"
-#include "util/TRString.h"
-
-#ifndef TRCONFIGTOKEN_H
-#define TRCONFIGTOKEN_H
+/**
+ * Object Data Types.
+ * Tokens are always strings (TOKEN_DATATYPE_STRING),
+ * but sometimes they can also be integers and booleans.
+ * In other words, the integer and boolean datatypes should
+ * be considered to provide a superset of functionality to the
+ * string data type.
+ */
+typedef enum {
+    TOKEN_DATATYPE_STRING,
+    TOKEN_DATATYPE_INT,
+    TOKEN_DATATYPE_BOOL
+} TRConfigDataType;
 
 @interface TRConfigToken : TRObject {
 @private

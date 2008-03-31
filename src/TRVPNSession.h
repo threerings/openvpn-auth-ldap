@@ -35,9 +35,6 @@
 #ifndef TRVPNSESSION_H
 #define TRVPNSESSION_H
 
-#include "TRObject.h"
-#include "util/TRString.h"
-
 @interface TRVPNSession: TRObject {
 @private
     TRString *_username;

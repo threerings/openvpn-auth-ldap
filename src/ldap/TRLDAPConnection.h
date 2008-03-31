@@ -35,13 +35,6 @@
 
 #include <ldap.h>
 
-#include "TRObject.h"
-#include "util/TRArray.h"
-#include "util/TRHash.h"
-#include "util/TRString.h"
-
-#include "ldap/TRLDAPEntry.h"
-
 @interface TRLDAPConnection : TRObject {
 @private
     LDAP *ldapConn;

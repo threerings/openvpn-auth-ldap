@@ -22,7 +22,7 @@
 
 #include <check.h>
 
-#include <util/TRAutoreleasePool.h>
+#include <TRVPNPlugin.h>
 
 static unsigned int livecount;
 

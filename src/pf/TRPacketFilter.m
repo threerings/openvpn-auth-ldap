@@ -32,16 +32,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TRPacketFilter.h"
-
-#include <util/xmalloc.h>
-
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+
+#include <TRVPNPlugin.h>
 
 /**
  * Packet Filter Utility Class

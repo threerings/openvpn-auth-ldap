@@ -36,13 +36,12 @@
 #include <config.h>
 #endif
 
-#include <config/TRConfigLexer.h>
-#include <config/TRConfigParser.h>
-
 #include <check.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#include <TRVPNPlugin.h>
 
 #include "tests.h"
 

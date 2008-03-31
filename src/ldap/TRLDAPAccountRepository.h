@@ -34,14 +34,6 @@
 #ifndef TRLDAPACCOUNTREPOSITORY_H
 #define TRLDAPACCOUNTREPOSITORY_H
 
-#include "TRObject.h"
-#include "TRLDAPConnection.h"
-#include "TRLDAPSearchFilter.h"
-
-#include "TRAccountRepository.h"
-
-#include "util/TRString.h"
-
 /**
  * LDAP user/group account verification.
  */

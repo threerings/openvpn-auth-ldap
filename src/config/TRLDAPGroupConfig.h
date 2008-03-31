@@ -35,9 +35,6 @@
 #ifndef TRLDAPGROUPCONFIG_H
 #define TRLDAPGROUPCONFIG_H  
 
-#include "TRObject.h"
-#include "util/TRString.h"
-
 @interface TRLDAPGroupConfig : TRObject {
 @private
     TRString *_baseDN;
