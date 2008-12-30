@@ -76,7 +76,7 @@
 #define SKIP(cond)    CHECK_EOI(); goto LEXER_SC_ ## cond
 
 /* Get the current token length */
-#define TOKEN_LENGTH()    ((_eoi ? _eoi : _cursor) - _token)
+#define TOKEN_LENGTH()    (_cursor - _token)
 
 @implementation TRConfigLexer
 
@@ -116,7 +116,6 @@
     if (_cursor == _limit) {
         /* Save the cursor and signal EOI */
         _eoi = _cursor;
-        _cursor = "\n";
     }
 }
 
@@ -126,6 +125,9 @@
     any = .;
     key = [A-Za-z0-9_-]+;
     */
+
+    /* Test for EOI before scanning */
+    CHECK_EOI();
 
     switch (_condition) {
         case SC(INITIAL):

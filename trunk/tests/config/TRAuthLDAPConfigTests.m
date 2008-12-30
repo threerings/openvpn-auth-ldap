@@ -46,6 +46,7 @@
 /* Data Constants */
 #define TEST_LDAP_URL    "ldap://ldap1.example.org"
 #define TEST_LDAP_TIMEOUT    15
+#define TEST_LDAP_BASEDN "ou=People,dc=example,dc=com"
 
 START_TEST (test_initWithConfigFile) {
     TRAuthLDAPConfig *config;
@@ -114,6 +115,21 @@ START_TEST (test_initWithMissingKey) {
 }
 END_TEST
 
+START_TEST (test_initWithMissingTrailingNewline) {
+    TRAuthLDAPConfig *config;
+    TRString *baseDN;
+
+    config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MISSING_NEWLINE];
+    fail_if(config == NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] did not parse a file missing a trailing newline");
+
+    /* Verify that the final section was parsed */
+    baseDN = [config baseDN];
+    fail_unless(strcmp([baseDN cString], TEST_LDAP_BASEDN) == 0, "-[TRAuthLDAPConfig baseDN] returned incorrect value (got '%s', expected '%s')", [[config baseDN] cString], TEST_LDAP_BASEDN);
+    
+    [config release];
+}
+END_TEST
+
 Suite *TRAuthLDAPConfig_suite(void) {
     Suite *s = suite_create("TRAuthLDAPConfig");
 
@@ -124,6 +140,7 @@ Suite *TRAuthLDAPConfig_suite(void) {
     tcase_add_test(tc_parse, test_initWithMismatchedSection);
     tcase_add_test(tc_parse, test_initWithDuplicateKeys);
     tcase_add_test(tc_parse, test_initWithMissingKey);
+    tcase_add_test(tc_parse, test_initWithMissingTrailingNewline);
 
     return s;
 }
