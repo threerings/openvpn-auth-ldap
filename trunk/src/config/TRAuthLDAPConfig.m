@@ -86,6 +86,14 @@ typedef struct OpcodeTable {
     BOOL required;
 } OpcodeTable;
 
+/* Bad opcode */
+static OpcodeTable UnknownOpcode = {
+    .name = "",
+    .opcode = LF_UNKNOWN_OPCODE,
+    .multi = NO,
+    .required = NO
+};
+
 /* Section Types */
 static OpcodeTable SectionTypes[] = {
     /* name             opcode              multi   required */
@@ -185,7 +193,7 @@ static OpcodeTable *parse_opcode (TRConfigToken *token, OpcodeTable **tables) {
     }
 
     /* Unknown opcode */
-    return (NULL);
+    return (&UnknownOpcode);
 }
 
 /* Parse a string, returning the associated opcode from the supplied table */
@@ -201,7 +209,7 @@ static const char *string_for_opcode(ConfigOpcode opcode, OpcodeTable *tables[])
     }
 
     /* Unknown opcode */
-    return (NULL);
+    return ("?");
 }
 
 

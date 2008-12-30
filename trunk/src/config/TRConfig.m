@@ -86,7 +86,10 @@
             break;
     }
     /* Signal EOF and clean up */
-    TRConfigParse(parser, 0, NULL, _delegate);
+    if (!_error) {
+        /* Only trigger EOF handling if no errors occured */
+        TRConfigParse(parser, 0, NULL, _delegate);
+    }
     TRConfigParseFree(parser, free);
     [lexer release];
 

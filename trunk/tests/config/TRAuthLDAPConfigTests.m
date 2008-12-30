@@ -130,6 +130,16 @@ START_TEST (test_initWithMissingTrailingNewline) {
 }
 END_TEST
 
+START_TEST (test_initWithBadSection) {
+    TRAuthLDAPConfig *config;
+    TRString *baseDN;
+
+    config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_BAD_SECTION];
+    fail_if(config != NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] accepted an invalid section.");
+
+}
+END_TEST
+
 Suite *TRAuthLDAPConfig_suite(void) {
     Suite *s = suite_create("TRAuthLDAPConfig");
 
@@ -141,6 +151,7 @@ Suite *TRAuthLDAPConfig_suite(void) {
     tcase_add_test(tc_parse, test_initWithDuplicateKeys);
     tcase_add_test(tc_parse, test_initWithMissingKey);
     tcase_add_test(tc_parse, test_initWithMissingTrailingNewline);
+    tcase_add_test(tc_parse, test_initWithBadSection);
 
     return s;
 }
