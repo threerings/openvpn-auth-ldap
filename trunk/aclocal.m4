@@ -1,4 +1,3 @@
-builtin(include,objc.m4)
 builtin(include,pthread.m4)
 builtin(include,platform.m4)
 builtin(include,check.m4)

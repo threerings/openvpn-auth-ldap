@@ -1,4 +1,4 @@
 #!/bin/sh
 
-autoconf259
-autoheader259
+autoconf
+autoheader
