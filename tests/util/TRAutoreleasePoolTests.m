@@ -31,7 +31,7 @@ static unsigned int livecount;
 
 @implementation PoolTester
 
-- (void) release {
+- (oneway void) release {
     livecount--;
     [super release];
 }

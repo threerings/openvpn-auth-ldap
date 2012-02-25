@@ -25,6 +25,17 @@
 #ifndef __TRAutoreleasePool_h__
 #define __TRAutoreleasePool_h__
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef APPLE_RUNTIME
+
+@interface TRAutoreleasePool : NSAutoreleasePool
+@end
+
+#else /* APPLE_RUNTIME */
+
 typedef struct _TRAutoreleasePoolBucket TRAutoreleasePoolBucket;
 
 @interface TRAutoreleasePool : TRObject
@@ -39,4 +50,5 @@ typedef struct _TRAutoreleasePoolBucket TRAutoreleasePoolBucket;
 
 @end
 
+#endif /* !APPLE_RUNTIME */
 #endif /* __TRAutoreleasePool_h__ */

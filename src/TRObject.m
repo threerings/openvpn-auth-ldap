@@ -36,27 +36,12 @@
 
 #include <TRVPNPlugin.h>
 
-/*
- * Apple's Obj-C compiler assumes that all objects
- * inherit from NSObject, and must call [super dealloc]
- * in their dealloc method. If you don't, the compiler
- * prints a warning (which breaks -Werror):
- *    TRObject.m:61: warning: method possibly missing a [super dealloc] call
- *
- * So, let's pretend to give Object a dealloc method
- * and hide our call to it via if (false).
- *
- * Additionally, we implement brain-dead, non-thread-safe
- * reference counting.
- */ 
-@interface Object (AppleDeallocGCCWarning)
-- (void) dealloc;
-@end
-
 /**
  * Base class. Handles reference counting and equality.
  */
 @implementation TRObject
+
+#ifndef APPLE_RUNTIME
 
 - (id) init {
     self = [super init];
@@ -69,13 +54,9 @@
 
 - (void) dealloc {
     [super free];
-
-    /* Make Apple's objc compiler be quiet */
-    if (false)
-        [super dealloc];
 }
 
-- (unsigned int) refCount {
+- (unsigned int) retainCount {
     return _refCount;
 }
 
@@ -106,16 +87,16 @@
  * pool will be released at a later time.
  * @result Returns a reference to the receiver.
  */
-- (id) autorelease
-{
+- (id) autorelease {
         [TRAutoreleasePool addObject: self];
         return self;
 }
 
 /* Don't auto-release the class object! */
-+ (id) autorelease
-{
++ (id) autorelease {
         return self;
 }
+
+#endif /* APPLE_RUNTIME */
 
 @end

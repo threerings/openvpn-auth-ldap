@@ -177,6 +177,7 @@ AC_DEFUN([OD_OBJC_RUNTIME],[
 	if test x"${od_cv_objc_runtime_apple}" = x"yes"; then
 			OBJC_RUNTIME="APPLE_RUNTIME"
 			OBJC_RUNTIME_FLAGS="-fnext-runtime"
+			OBJC_LIBS="${OBJC_LIBS} -framework Foundation"
 			AC_MSG_NOTICE([Using Apple Objective-C runtime])
 			AC_DEFINE([APPLE_RUNTIME], 1, [Define if using the Apple Objective-C runtime and compiler.]) 
 	elif test x"${od_cv_objc_runtime_gnu}" = x"yes"; then
