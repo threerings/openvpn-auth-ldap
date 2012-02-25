@@ -278,14 +278,6 @@ TRLDAPConnection *connect_ldap(TRAuthLDAPConfig *config) {
             goto error;
     }
 
-    /* Bind if requested */
-    if ([config bindDN]) {
-        if (![ldap bindWithDN: [config bindDN] password: [config bindPassword]]) {
-            [TRLog error: "Unable to bind as %s", [[config bindDN] cString]];
-            goto error;
-        }
-    }
-
     /* Certificate file */
     if ((value = [config tlsCACertFile])) 
         if (![ldap setTLSCACertFile: value])
@@ -310,6 +302,14 @@ TRLDAPConnection *connect_ldap(TRAuthLDAPConfig *config) {
     if ([config tlsEnabled])
         if (![ldap startTLS])
             goto error;
+
+    /* Bind if requested */
+    if ([config bindDN]) {
+        if (![ldap bindWithDN: [config bindDN] password: [config bindPassword]]) {
+            [TRLog error: "Unable to bind as %s", [[config bindDN] cString]];
+            goto error;
+        }
+    }
 
     return ldap;
 
