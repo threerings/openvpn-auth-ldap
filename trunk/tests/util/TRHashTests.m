@@ -56,20 +56,20 @@ END_TEST
 START_TEST(test_setObjectForKey) {
     TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
     TRString *string = [[TRString alloc] initWithCString: "Hello, World"];
-    unsigned int refCount = [string refCount];
+    unsigned int refCount = [string retainCount];
 
     [hash setObject: string forKey: string];
     /* Verify that the object has been retained twice:
      * - Once as the value
      * - Once as the key
      */
-    fail_unless([string refCount] == refCount + 2);
+    fail_unless([string retainCount] == refCount + 2);
 
     /* Release our hash table */
     [hash release];
 
     /* Verify that the object has been released */
-    fail_unless([string refCount] == refCount);
+    fail_unless([string retainCount] == refCount);
 
     [string release];
 }
@@ -83,22 +83,22 @@ START_TEST(test_setObjectForKey_replacement) {
     TRString *key = [[TRString alloc] initWithCString: "Key"];
     TRString *value1 = [[TRString alloc] initWithCString: "Hello, World"];
     TRString *value2 = [[TRString alloc] initWithCString: "Goodbye, World"];
-    unsigned int refCount = [key refCount];
+    unsigned int refCount = [key retainCount];
 
     /* Insert value1 */
     [hash setObject: value1 forKey: key];
-    fail_unless([key refCount] == refCount + 1);
+    fail_unless([key retainCount] == refCount + 1);
 
     /* Replace the node */
     [hash setObject: value2 forKey: key];
-    fail_unless([key refCount] == refCount + 1);
-    fail_unless([value1 refCount] == refCount);
+    fail_unless([key retainCount] == refCount + 1);
+    fail_unless([value1 retainCount] == refCount);
 
     [hash release];
     /* Verify that the objects have been released */
-    fail_unless([key refCount] == refCount);
-    fail_unless([value1 refCount] == refCount);
-    fail_unless([value2 refCount] == refCount);
+    fail_unless([key retainCount] == refCount);
+    fail_unless([value1 retainCount] == refCount);
+    fail_unless([value2 retainCount] == refCount);
 
     [key release];
     [value1 release];
@@ -110,7 +110,7 @@ START_TEST(test_removeObjectForKey) {
     TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
     TRString *key = [[TRString alloc] initWithCString: "Key"];
     TRString *value = [[TRString alloc] initWithCString: "Value"];
-    unsigned int refCount = [key refCount];
+    unsigned int refCount = [key retainCount];
 
     /* Insert */
     [hash setObject: value forKey: key];
@@ -119,8 +119,8 @@ START_TEST(test_removeObjectForKey) {
     [hash removeObjectForKey: key];
 
     /* Validate refCounts */
-    fail_unless([key refCount] == refCount);
-    fail_unless([value refCount] == refCount);
+    fail_unless([key retainCount] == refCount);
+    fail_unless([value retainCount] == refCount);
 
     /* Clean up */
     [key release];

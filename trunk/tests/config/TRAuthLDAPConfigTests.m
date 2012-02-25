@@ -132,7 +132,6 @@ END_TEST
 
 START_TEST (test_initWithBadSection) {
     TRAuthLDAPConfig *config;
-    TRString *baseDN;
 
     config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_BAD_SECTION];
     fail_if(config != NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] accepted an invalid section.");

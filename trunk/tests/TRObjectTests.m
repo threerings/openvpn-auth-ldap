@@ -46,15 +46,15 @@ START_TEST (test_retainRelease) {
 
     /* Initialize the object */
     obj = [[TRObject alloc] init];
-    fail_unless([obj refCount] == 1, "Newly initialized TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
+    fail_unless([obj retainCount] == 1, "Newly initialized TRObject has unexpected reference count (Expected 1, got %d)", [obj retainCount]);
 
     /* Increment the refcount */
     [obj retain];
-    fail_unless([obj refCount] == 2, "Retained TRObject has unexpected reference count (Expected 2, got %d)", [obj refCount]);
+    fail_unless([obj retainCount] == 2, "Retained TRObject has unexpected reference count (Expected 2, got %d)", [obj retainCount]);
 
     /* Decrement the refcount */
     [obj release];
-    fail_unless([obj refCount] == 1, "Released TRObject has unexpected reference count (Expected 1, got %d)", [obj refCount]);
+    fail_unless([obj retainCount] == 1, "Released TRObject has unexpected reference count (Expected 1, got %d)", [obj retainCount]);
 
     /* Deallocate the object */
     [obj release];

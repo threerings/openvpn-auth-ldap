@@ -41,6 +41,18 @@
 #endif
 
 #include <stdbool.h>
+
+#ifdef APPLE_RUNTIME
+#include <Foundation/Foundation.h>
+
+@protocol TRObject <NSObject>
+@end
+
+@interface TRObject : NSObject <TRObject>
+@end
+
+#else /* APPLE_RUNTIME */
+
 #include <objc/Object.h>
 
 @protocol TRObject
@@ -48,7 +60,7 @@
 - (id) init;
 
 /* Reference counting */
-- (unsigned int) refCount;
+- (unsigned int) retainCount;
 - (id) retain;
 - (void) release;
 - (id) autorelease;
@@ -75,4 +87,5 @@
 
 @end
 
+#endif /* !APPLE_RUNTIME */
 #endif /* TROBJECT_H */

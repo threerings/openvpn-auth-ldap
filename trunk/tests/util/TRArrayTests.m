@@ -49,23 +49,23 @@ START_TEST (test_addObject) {
     /* Add 3 items to the array */
     [array addObject: string1];
     fail_unless([array lastObject] == string1);
-    fail_unless([string1 refCount] == 2);
+    fail_unless([string1 retainCount] == 2);
 
     [array addObject: string2];
     fail_unless([array lastObject] == string2);
-    fail_unless([string2 refCount] == 2);
+    fail_unless([string2 retainCount] == 2);
 
     [array addObject: string3];
     fail_unless([array lastObject] == string3);
-    fail_unless([string3 refCount] == 2);
+    fail_unless([string3 retainCount] == 2);
 
     /* Clean up the array */
     [array release];
 
     /* Verify that the array released all objects */
-    fail_unless([string1 refCount] == 1);
-    fail_unless([string2 refCount] == 1);
-    fail_unless([string3 refCount] == 1);
+    fail_unless([string1 retainCount] == 1);
+    fail_unless([string2 retainCount] == 1);
+    fail_unless([string3 retainCount] == 1);
 
     /* Clean up our remaining objects */
     [string1 release];
