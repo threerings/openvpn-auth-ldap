@@ -203,7 +203,7 @@ static int ldap_get_errno(LDAP *ld) {
     /* Wait for the result */
     timeout.tv_sec = _timeout;
     timeout.tv_usec = 0;
-    if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
+    if (ldap_result(ldapConn, msgid, 1, &timeout, &res) <= 0) {
         err = ldap_get_errno(ldapConn);
         if (err == LDAP_TIMEOUT)
             ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
