@@ -18,12 +18,12 @@
  * $Name: kazlib_1_20 $
  */
 
-#include <stdlib.h>
-#include <stddef.h>
-#include <assert.h>
-#include <string.h>
+#import <stdlib.h>
+#import <stddef.h>
+#import <assert.h>
+#import <string.h>
 #define HASH_IMPLEMENTATION
-#include "hash.h"
+#import "hash.h"
 
 #ifdef KAZLIB_RCSID
 static const char rcsid[] = "$Id: hash.c,v 1.36.2.11 2000/11/13 01:36:45 kaz Exp $";
@@ -844,9 +844,9 @@ static int hash_comp_default(const void *key1, const void *key2)
 
 #ifdef KAZLIB_TEST_MAIN
 
-#include <stdio.h>
-#include <ctype.h>
-#include <stdarg.h>
+#import <stdio.h>
+#import <ctype.h>
+#import <stdarg.h>
 
 typedef char input_t[256];
 

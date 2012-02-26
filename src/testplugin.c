@@ -30,14 +30,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <err.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
+#import <err.h>
+#import <stdio.h>
+#import <stdlib.h>
+#import <unistd.h>
+#import <string.h>
+#import <errno.h>
 
-#include <openvpn-plugin.h>
+#import <openvpn-plugin.h>
 
 /* Argument / environment templates */
 const char username_template[] = "username=";

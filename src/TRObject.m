@@ -32,9 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <assert.h>
+#import <assert.h>
 
-#include <TRVPNPlugin.h>
+#import "TRObject.h"
 
 /**
  * Base class. Handles reference counting and equality.

@@ -30,8 +30,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LFAUTHLDAPCONFIG_H
-#define LFAUTHLDAPCONFIG_H
+#import "TRObject.h"
+
+#import "TRLDAPGroupConfig.h"
+
+#import "config/TRConfig.h"
+#import "util/TRString.h"
+#import "util/TRArray.h"
 
 @interface TRAuthLDAPConfig : TRObject <TRConfigDelegate> {
 @private
@@ -122,5 +127,3 @@
 - (TRArray *) ldapGroups;
 
 @end
-
-#endif /* LFAUTHLDAPCONFIG_H */

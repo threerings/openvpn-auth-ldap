@@ -33,17 +33,17 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#ifndef __TRPFADDRESS_H__
-#define __TRPFADDRESS_H__
+#import "TRObject.h"
+#import "util/TRString.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#import <sys/types.h>
+#import <sys/ioctl.h>
+#import <sys/socket.h>
+#import <netinet/in.h>
+#import <arpa/inet.h>
 
 typedef struct {
     sa_family_t family;
@@ -64,5 +64,3 @@ typedef struct {
 - (void) address: (TRPortableAddress *) addr;
 
 @end
-
-#endif /* __TRPFADDRESS_H__ */

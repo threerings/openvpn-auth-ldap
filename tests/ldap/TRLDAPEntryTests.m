@@ -33,12 +33,12 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <check.h>
+#import <check.h>
 
-#include <TRVPNPlugin.h>
+#import "ldap/TRLDAPEntry.h"
 
 START_TEST(test_initWithDN) {
     TRLDAPEntry *entry;

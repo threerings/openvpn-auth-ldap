@@ -32,15 +32,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRENUMERATOR_H
-#define TRENUMERATOR_H
+#import "TRObject.h"
 
-@protocol TREnumerator
+@protocol TREnumerator <TRObject>
 - (id) nextObject;
 @end
 
 @interface TREnumerator : TRObject <TREnumerator>
 - (id) nextObject;
 @end
-
-#endif /* TRENUMERATOR_H */

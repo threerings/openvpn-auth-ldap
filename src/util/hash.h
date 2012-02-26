@@ -21,9 +21,9 @@
 #ifndef HASH_H
 #define HASH_H
 
-#include <limits.h>
+#import <limits.h>
 #ifdef KAZLIB_SIDEEFFECT_DEBUG
-#include "sfx.h"
+#import "sfx.h"
 #endif
 
 /*

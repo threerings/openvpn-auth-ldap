@@ -33,12 +33,12 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <TRVPNPlugin.h>
+#import "config/TRLDAPGroupConfig.h"
 
-#include <check.h>
+#import <check.h>
 
 /* Data Constants */
 #define TEST_LDAP_BASEDN    "ou=People,dc=example,dc=com"

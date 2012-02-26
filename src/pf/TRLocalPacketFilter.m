@@ -32,16 +32,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <TRVPNPlugin.h>
+#import "TRLocalPacketFilter.h"
 
 #ifdef HAVE_PF
 
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <assert.h>
+#import <fcntl.h>
+#import <unistd.h>
+#import <stdlib.h>
+#import <string.h>
+#import <errno.h>
+#import <assert.h>
 
 
 /* Private Methods */

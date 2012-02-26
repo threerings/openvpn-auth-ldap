@@ -32,9 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string.h>
+#import <string.h>
 
-#include <TRVPNPlugin.h>
+#import "TRPFAddress.h"
 
 /**
  * Represents a single IPv4 or IPv6 address, for use with PF.

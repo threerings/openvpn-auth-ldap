@@ -22,12 +22,11 @@
  * or in connection with the use or performance of this software.
  */
 
-#ifndef __TRAutoreleasePool_h__
-#define __TRAutoreleasePool_h__
-
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
+
+#import "TRObject.h"
 
 #ifdef APPLE_RUNTIME
 
@@ -51,4 +50,3 @@ typedef struct _TRAutoreleasePoolBucket TRAutoreleasePoolBucket;
 @end
 
 #endif /* !APPLE_RUNTIME */
-#endif /* __TRAutoreleasePool_h__ */

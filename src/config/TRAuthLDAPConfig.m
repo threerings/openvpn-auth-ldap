@@ -31,14 +31,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <assert.h>
+#import <stdio.h>
+#import <stdlib.h>
+#import <string.h>
+#import <fcntl.h>
+#import <errno.h>
+#import <assert.h>
 
-#include <TRVPNPlugin.h>
+#import "TRAuthLDAPConfig.h"
+
+#import "TRLog.h"
+#import "util/TRHash.h"
 
 /* All Variables and Section Types */
 typedef enum {

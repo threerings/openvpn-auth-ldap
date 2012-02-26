@@ -37,13 +37,13 @@
 #define TROBJECT_H
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <stdbool.h>
+#import <stdbool.h>
 
 #ifdef APPLE_RUNTIME
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
 @protocol TRObject <NSObject>
 @end
@@ -53,7 +53,7 @@
 
 #else /* APPLE_RUNTIME */
 
-#include <objc/Object.h>
+#import <objc/Object.h>
 
 @protocol TRObject
 /*  Initialization */

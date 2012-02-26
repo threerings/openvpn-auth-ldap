@@ -32,14 +32,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRCONFIGTOKEN_H
-#define TRCONFIGTOKEN_H
-
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <stdlib.h>
+#import <stdlib.h>
+
+#import "TRObject.h"
+#import "util/TRString.h"
 
 /**
  * Object Data Types.
@@ -87,5 +87,3 @@ typedef enum {
 - (BOOL) boolValue: (BOOL *) value;
 
 @end
-
-#endif /* TRCONFIGTOKEN_H */

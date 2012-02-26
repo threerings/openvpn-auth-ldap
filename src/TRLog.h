@@ -32,8 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRLOG_H
-#define TRLOG_H
+#import "TRObject.h"
 
 typedef enum {
     TRLOG_ERR,
@@ -60,5 +59,3 @@ DO_LOG_DECL(debug);
 #undef DO_LOG_DECL
 
 @end
-
-#endif /* TRLOG_H */

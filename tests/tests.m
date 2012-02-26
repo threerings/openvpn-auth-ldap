@@ -33,16 +33,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <config.h>
+#import <config.h>
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <check.h>
-#include <stdio.h>
+#import <stdlib.h>
+#import <unistd.h>
+#import <check.h>
+#import <stdio.h>
 
-#include <tests.h>
+#import <tests.h>
 
-#include <TRVPNPlugin.h>
+#import "TRLog.h"
+#import "util/TRAutoreleasePool.h"
 
 void print_usage(const char *name) {
     printf("Usage: %s [filename]\n", name);

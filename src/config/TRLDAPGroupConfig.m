@@ -32,9 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
+#import <stdlib.h>
 
-#include "TRVPNPlugin.h"
+#import "TRLDAPGroupConfig.h"
 
 @implementation TRLDAPGroupConfig
 - (void) dealloc {

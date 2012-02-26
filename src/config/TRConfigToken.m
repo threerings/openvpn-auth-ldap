@@ -33,10 +33,10 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <TRVPNPlugin.h>
+#import "TRConfigToken.h"
 
 /**
  * Represents a config file parser token.

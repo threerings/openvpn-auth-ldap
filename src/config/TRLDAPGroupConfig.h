@@ -32,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRLDAPGROUPCONFIG_H
-#define TRLDAPGROUPCONFIG_H  
+#import "TRObject.h"
+#import "util/TRString.h"
 
 @interface TRLDAPGroupConfig : TRObject {
 @private
@@ -56,5 +56,3 @@
 - (void) setPFTable: (TRString *) tableName;
 
 @end
-
-#endif /* TRLDAPGROUPCONFIG_H */

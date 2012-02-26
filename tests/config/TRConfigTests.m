@@ -33,16 +33,16 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <check.h>
-#include <fcntl.h>
-#include <unistd.h>
+#import <check.h>
+#import <fcntl.h>
+#import <unistd.h>
 
-#include "tests.h"
+#import "tests.h"
 
-#include <TRVPNPlugin.h>
+#import "config/TRConfig.h"
 
 /* Path Constants */
 #define TEST_CONF        DATA_PATH("TRConfig.conf")

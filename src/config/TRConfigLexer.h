@@ -32,10 +32,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRCONFIGLEXER_H
-#define TRCONFIGLEXER_H
+#import <ldap.h>
 
-#include <ldap.h>
+#import "TRObject.h"
+#import "config/TRConfigToken.h"
 
 typedef enum {
     LEXER_SC_INITIAL,
@@ -67,5 +67,3 @@ typedef enum {
 - (TRConfigToken *) scan;
 
 @end
-
-#endif /* TRCONFIGLEXER_H */

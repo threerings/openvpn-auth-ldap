@@ -32,9 +32,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
+#import <stdlib.h>
 
-#include <TRVPNPlugin.h>
+#import "util/TRArray.h"
+#import "xmalloc.h"
 
 typedef struct _TRArrayStack {
     id object;

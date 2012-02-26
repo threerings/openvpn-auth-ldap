@@ -33,7 +33,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <TRVPNPlugin.h>
+#import "TRLDAPSearchFilter.h"
+#import "util/TRAutoreleasePool.h"
 
 @interface TRLDAPSearchFilter (TRLDAPSearchFilterPrivate)
  - (TRString *) escapeForSearch: (TRString *) string;

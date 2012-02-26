@@ -33,16 +33,16 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
 #ifdef HAVE_PF
 
-#include <check.h>
+#import <check.h>
 
-#include <TRVPNPlugin.h>
+#import "pf/TRLocalPacketFilter.h"
 
-#include "mockpf.h"
+#import "mockpf.h"
 
 static TRLocalPacketFilter *pf = nil;
 

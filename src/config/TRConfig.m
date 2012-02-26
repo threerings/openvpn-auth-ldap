@@ -33,10 +33,13 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <TRVPNPlugin.h>
+#import "TRConfig.h"
+#import "TRConfigLexer.h"
+#import "TRConfigParser.h"
+#import "TRConfigToken.h"
 
 /**
  * An Apache-style configuration file parser/lexer.

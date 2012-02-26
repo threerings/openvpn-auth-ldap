@@ -30,11 +30,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include <sys/time.h>
+#import <stdlib.h>
+#import <string.h>
+#import <sys/time.h>
 
-#include "TRVPNPlugin.h"
+#import "TRLDAPConnection.h"
+#import "TRLog.h"
+
+#import "util/xmalloc.h"
 
 /* Maximum number of unique attributes returned for a given entry. */
 #define MAX_ATTRIBUTES 2048
