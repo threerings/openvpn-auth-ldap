@@ -30,14 +30,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include <stdio.h>
-#include <assert.h>
-#include <stdarg.h>
+#import <stdlib.h>
+#import <string.h>
+#import <limits.h>
+#import <stdio.h>
+#import <assert.h>
+#import <stdarg.h>
 
-#include <TRVPNPlugin.h>
+#import "TRString.h"
+#import "xmalloc.h"
 
 /**
  * OO String wrapper.

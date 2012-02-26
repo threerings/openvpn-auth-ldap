@@ -33,15 +33,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <check.h>
-#include <string.h>
+#import <check.h>
+#import <string.h>
 
-#include <TRVPNPlugin.h>
+#import "config/TRAuthLDAPConfig.h"
 
-#include "tests.h"
+#import "tests.h"
 
 /* Data Constants */
 #define TEST_LDAP_URL    "ldap://ldap1.example.org"

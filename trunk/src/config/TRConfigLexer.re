@@ -33,16 +33,18 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <stdio.h>
-#include <assert.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
+#import <stdio.h>
+#import <assert.h>
+#import <sys/types.h>
+#import <sys/stat.h>
+#import <sys/mman.h>
 
-#include <TRVPNPlugin.h>
+#import "config/TRConfig.h"
+#import "config/TRConfigLexer.h"
+#import "config/TRConfigParser.h"
 
 /*
  * re2c Configuration

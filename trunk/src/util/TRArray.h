@@ -32,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRARRAY_H
-#define TRARRAY_H
+#import "TRObject.h"
+#import "TREnumerator.h"
 
 @interface TRArray : TRObject {
 @private
@@ -51,5 +51,3 @@
 - (unsigned int) count;
 
 @end
-
-#endif /* TRARRAY_H */

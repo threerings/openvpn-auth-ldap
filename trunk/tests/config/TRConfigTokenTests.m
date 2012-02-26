@@ -33,13 +33,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <TRVPNPlugin.h>
+#import "config/TRConfigToken.h"
+#import "config/TRConfig.h"
+#import "config/TRConfigParser.h"
 
-#include <check.h>
-#include <string.h>
+#import <check.h>
+#import <string.h>
 
 #define TEST_STRING "The answer to life, the universe, and everything"
 #define TEST_LINE_NUMBER 42

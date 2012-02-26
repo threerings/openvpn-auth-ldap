@@ -32,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRLDAPSEARCHFILTER_H
-#define TRLDAPSEARCHFILTER_H
+#import "TRObject.h"
+#import "util/TRString.h"
 
 @interface TRLDAPSearchFilter : TRObject {
 @private
@@ -44,5 +44,3 @@
 - (TRString *) getFilter: (TRString *) subString;
 
 @end
-
-#endif /* TRLDAPSEARCHFILTER_H */

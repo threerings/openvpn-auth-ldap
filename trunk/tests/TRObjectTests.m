@@ -34,12 +34,12 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <check.h>
+#import <check.h>
 
-#include <TRVPNPlugin.h>
+#import "TRObject.h"
 
 START_TEST (test_retainRelease) {
     TRObject *obj;

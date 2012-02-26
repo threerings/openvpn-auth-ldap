@@ -32,14 +32,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <assert.h>
+#import <fcntl.h>
+#import <unistd.h>
+#import <stdlib.h>
+#import <string.h>
+#import <errno.h>
+#import <assert.h>
 
-#include <TRVPNPlugin.h>
+#import "TRPacketFilter.h"
 
 /**
  * Packet Filter Utility Class

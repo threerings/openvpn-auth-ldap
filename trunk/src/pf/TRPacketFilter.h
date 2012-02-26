@@ -32,8 +32,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __TRPACKETFILTER_H__
-#define __TRPACKETFILTER_H__
+#import "TRObject.h"
+#import "util/TRArray.h"
+#import "util/TRString.h"
+#import "TRPFAddress.h"
 
 typedef enum {
     PF_SUCCESS                  = 0,    /* No error occured. */
@@ -109,5 +111,3 @@ typedef enum {
 + (char *) stringForError: (pferror_t) error;
 
 @end
-
-#endif /* __TRPACKETFILTER_H__ */

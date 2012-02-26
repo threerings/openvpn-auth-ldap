@@ -30,10 +30,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LFLDAPCONNECTION_H
-#define LFLDAPCONNECTION_H
+#import <ldap.h>
 
-#include <ldap.h>
+#import "TRObject.h"
+
+#import "ldap/TRLDAPEntry.h"
+
+#import "util/TRString.h"
+#import "util/TRArray.h"
 
 @interface TRLDAPConnection : TRObject {
 @private
@@ -60,4 +64,3 @@
 
 @end
 
-#endif /* LFLDAPCONNECTION_H */

@@ -33,14 +33,14 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <check.h>
+#import <check.h>
 
-#include <string.h>
+#import <string.h>
 
-#include <TRVPNPlugin.h>
+#import "pf/TRPFAddress.h"
 
 START_TEST(test_initWithPresentationAddress) {
     TRString *addrString;

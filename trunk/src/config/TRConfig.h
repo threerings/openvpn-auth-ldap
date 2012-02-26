@@ -32,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRCONFIG_H
-#define TRCONFIG_H
+#import "TRObject.h"
+#import "TRConfigToken.h"
 
 @protocol TRConfigDelegate
 - (void) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
@@ -55,5 +55,3 @@
 - (void) errorStop;
 
 @end
-
-#endif /* TRCONFIG_H */

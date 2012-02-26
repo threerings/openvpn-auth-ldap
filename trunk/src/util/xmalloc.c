@@ -31,9 +31,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include <err.h>
+#import <stdlib.h>
+#import <string.h>
+#import <err.h>
 
 /* Safe Malloc */
 void *xmalloc(size_t size) {

@@ -33,17 +33,19 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <check.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
+#import <check.h>
+#import <string.h>
+#import <unistd.h>
+#import <fcntl.h>
 
-#include <TRVPNPlugin.h>
+#import "config/TRConfig.h"
+#import "config/TRConfigParser.h"
+#import "config/TRConfigLexer.h"
 
-#include "tests.h"
+#import "tests.h"
 
 /* Path Constants */
 #define TEST_CONF        DATA_PATH("test-lineNumbers.conf")

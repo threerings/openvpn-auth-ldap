@@ -32,11 +32,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <syslog.h>
-#include <stdio.h>
-#include <stdarg.h>
+#import <syslog.h>
+#import <stdio.h>
+#import <stdarg.h>
 
-#include <TRVPNPlugin.h>
+#import "TRLog.h"
 
 static BOOL _quiesce = NO;
 

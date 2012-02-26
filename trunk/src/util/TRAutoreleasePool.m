@@ -34,14 +34,14 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <stdlib.h>
-#include <pthread.h>
-#include <assert.h>
+#import <stdlib.h>
+#import <pthread.h>
+#import <assert.h>
 
-#include <TRVPNPlugin.h>
+#import "TRAutoreleasePool.h"
 
 #ifndef APPLE_RUNTIME
 

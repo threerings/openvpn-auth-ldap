@@ -33,13 +33,13 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <check.h>
-#include <string.h>
+#import <check.h>
+#import <string.h>
 
-#include <TRVPNPlugin.h>
+#import "ldap/TRLDAPSearchFilter.h"
 
 START_TEST(test_initWithFormat) {
     TRLDAPSearchFilter *filter = [[TRLDAPSearchFilter alloc] initWithFormat: [TRString stringWithCString: "%s foo"]];

@@ -34,12 +34,12 @@
 
 %include {
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <TRVPNPlugin.h>
+#import "config/TRConfig.h"
 
-#include <stdio.h>
+#import <stdio.h>
 }
 
 %name TRConfigParse

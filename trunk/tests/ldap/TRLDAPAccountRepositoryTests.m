@@ -33,14 +33,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <TRVPNPlugin.h>
+#import "ldap/TRLDAPAccountRepository.h"
+#import "config/TRAuthLDAPConfig.h"
 
-#include <check.h>
+#import <check.h>
 
-#include "tests.h"
+#import "tests.h"
 
 START_TEST(test_initWithLDAPConnection) {
     TRLDAPAccountRepository *accounts;

@@ -20,9 +20,9 @@
  * or in connection with the use or performance of this software.
  */
 
-#include <check.h>
+#import <check.h>
 
-#include <TRVPNPlugin.h>
+#import "util/TRAutoreleasePool.h"
 
 static unsigned int livecount;
 

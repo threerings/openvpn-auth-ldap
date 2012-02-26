@@ -33,14 +33,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <TRVPNPlugin.h>
+#import "util/TRString.h"
+#import "util/TRAutoreleasePool.h"
 
-#include <check.h>
-#include <string.h>
-#include <limits.h>
+#import <check.h>
+#import <string.h>
+#import <limits.h>
 
 #define TEST_STRING "Hello, World!"
 

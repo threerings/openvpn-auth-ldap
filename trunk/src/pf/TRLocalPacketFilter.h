@@ -33,21 +33,23 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#if !defined(TRPACKETFILTER_H) && defined HAVE_PF
-#define TRPACKETFILTER_H
+#ifdef HAVE_PF
+
+#import "TRObject.h"
+#import "TRPacketFilter.h"
+#import "util/TRArray.h"
+#import "TRPFAddress.h"
+#import "util/TRString.h"
 
 /* pf includes */
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <net/if.h>
-#include <net/pfvar.h>
-
-/* Forward Declarations */
-@class TRPFAddress;
+#import <sys/types.h>
+#import <sys/ioctl.h>
+#import <sys/socket.h>
+#import <net/if.h>
+#import <net/pfvar.h>
 
 @interface TRLocalPacketFilter : TRObject <TRPacketFilter> {
 @private
@@ -66,4 +68,4 @@
 
 @end
 
-#endif /* TRPACKETFILTER_H && HAVE_PF */
+#endif /* HAVE_PF */

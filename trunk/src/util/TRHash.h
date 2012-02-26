@@ -32,10 +32,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRHASH_H
-#define TRHASH_H
+#import "hash.h"
 
-#include "hash.h"
+#import "TRObject.h"
+#import "util/TRString.h"
+#import "TREnumerator.h"
 
 @interface TRHash : TRObject {
 @private
@@ -50,5 +51,3 @@
 - (TREnumerator *) keyEnumerator;
 
 @end
-
-#endif /* TRHASH_H */

@@ -32,8 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRLDAPENTRY_H
-#define TRLDAPENTRY_H
+#import "TRObject.h"
+#import "util/TRString.h"
+#import "util/TRHash.h"
 
 @interface TRLDAPEntry : TRObject {
 @private
@@ -46,5 +47,3 @@
 - (TRHash *) attributes;
 
 @end
-
-#endif /* TRLDAPENTRY_H */

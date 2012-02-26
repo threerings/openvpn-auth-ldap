@@ -28,13 +28,13 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif /* HAVE_CONFIG_H */
 
 #ifndef HAVE_STRLCPY
 
-#include <sys/types.h>
-#include <string.h>
+#import <sys/types.h>
+#import <string.h>
 
 /*
  * Copy src to string dst of size siz.  At most siz-1 characters

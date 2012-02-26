@@ -32,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TRVPNSESSION_H
-#define TRVPNSESSION_H
+#import "TRObject.h"
+#import "util/TRString.h"
 
 @interface TRVPNSession: TRObject {
 @private
@@ -44,5 +44,3 @@
 - (TRString *) username;
 
 @end
-
-#endif /* TRVPNSESSION_H */

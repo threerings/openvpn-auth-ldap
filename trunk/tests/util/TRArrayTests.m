@@ -33,12 +33,13 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <check.h>
+#import <check.h>
 
-#include <TRVPNPlugin.h>
+#import "util/TRArray.h"
+#import "util/TRString.h"
 
 START_TEST (test_addObject) {
     TRArray *array = [[TRArray alloc] init];

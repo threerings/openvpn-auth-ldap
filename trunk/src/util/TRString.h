@@ -30,16 +30,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LFSTRING_H
-#define LFSTRING_H
-
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include <stdlib.h>
+#import <stdlib.h>
 
-#include <TRVPNPlugin.h>
+#import "TRObject.h"
 
 @interface TRString : TRObject {
 @private
@@ -76,5 +73,3 @@
 - (void) appendString: (TRString *) string;
 
 @end
-
-#endif /* LFSTRING_H */
