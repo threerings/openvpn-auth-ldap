@@ -35,6 +35,13 @@
 #import <assert.h>
 
 #import "TRObject.h"
+#import "util/TRAutoreleasePool.h"
+
+#ifndef APPLE_RUNTIME
+@interface Object (QuiesceWarnings)
+- (void) dealloc;
+@end
+#endif /* !APPLE_RUNTIME */
 
 /**
  * Base class. Handles reference counting and equality.
@@ -54,6 +61,10 @@
 
 - (void) dealloc {
     [super free];
+
+    /* Quiesce compiler warnings regarding missing call to -dealloc */
+    if (false)
+	[super dealloc];
 }
 
 - (unsigned int) retainCount {

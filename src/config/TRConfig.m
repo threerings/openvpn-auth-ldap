@@ -36,6 +36,8 @@
 #import <config.h>
 #endif
 
+#import <stdlib.h>
+
 #import "TRConfig.h"
 #import "TRConfigLexer.h"
 #import "TRConfigParser.h"
