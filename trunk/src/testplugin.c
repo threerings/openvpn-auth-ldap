@@ -30,14 +30,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <err.h>
-#import <stdio.h>
-#import <stdlib.h>
-#import <unistd.h>
-#import <string.h>
-#import <errno.h>
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
 
-#import <openvpn-plugin.h>
+#include <openvpn-plugin.h>
 
 /* Argument / environment templates */
 const char username_template[] = "username=";
@@ -77,7 +77,10 @@ static plugin_data *plugin_data_init (const char *config_file) {
 
     /* Fetch the username and password */
     printf("Username: ");
-    fgets(username, sizeof(username), stdin);
+    if (fgets(username, sizeof(username), stdin) == NULL) {
+        errx(1, "Failed to read username");
+    }
+
     password = getpass("Password: ");
     
     /* Strip off the trailing \n */
