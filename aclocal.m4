@@ -177,12 +177,10 @@ AC_DEFUN([OD_OBJC_RUNTIME],[
 	# Apple runtime is prefered
 	if test x"${od_cv_objc_runtime_apple}" = x"yes"; then
 			OBJC_RUNTIME="APPLE_RUNTIME"
-			OBJC_RUNTIME_FLAGS="-fnext-runtime"
 			AC_MSG_NOTICE([Using Apple Objective-C runtime])
 			AC_DEFINE([APPLE_RUNTIME], 1, [Define if using the Apple Objective-C runtime and compiler.]) 
 	elif test x"${od_cv_objc_runtime_gnu}" = x"yes"; then
 			OBJC_RUNTIME="GNU_RUNTIME"
-			OBJC_RUNTIME_FLAGS="-fgnu-runtime"
 			AC_MSG_NOTICE([Using GNU Objective-C runtime])
 			AC_DEFINE([GNU_RUNTIME], 1, [Define if using the GNU Objective-C runtime and compiler.]) 
 	else
