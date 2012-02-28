@@ -6,7 +6,8 @@ VPATH=          @srcdir@
 SUBDIR=		config \
 		ldap \
 		pf \
-		util
+		util \
+		runner
 
 include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
@@ -25,19 +26,22 @@ OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 MODULES=	-Lconfig -lauth-ldap-test-config \
 		-Lldap -lauth-ldap-test-ldap \
 		-Lpf -lauth-ldap-test-pf \
-		-Lutil -lauth-ldap-test-util
+		-Lutil -lauth-ldap-test-util \
+		-Lrunner -lauth-ldap-test-runner
 
 MODULE_LIBS=	config/libauth-ldap-test-config.a \
 		ldap/libauth-ldap-test-ldap.a \
 		pf/libauth-ldap-test-pf.a \
-		util/libauth-ldap-test-util.a
+		util/libauth-ldap-test-util.a \
+		runner/libauth-ldap-test-runner.a
 
-LIBS+=		$(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@ $(MODULES) \
+LIBS+=		$(MODULES) \
 		-L${top_builddir}/src -lauth-ldap-testing \
 		-L${top_builddir}/src/config -lauth-ldap-config \
 		-L${top_builddir}/src/ldap -lauth-ldap-ldap \
 		-L${top_builddir}/src/pf -lauth-ldap-pf \
-		-L${top_builddir}/src/util -lauth-ldap-util
+		-L${top_builddir}/src/util -lauth-ldap-util \
+		$(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@
 
 LDFLAGS+=	 $(LIBS)
 
