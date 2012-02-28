@@ -26,7 +26,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#import <config.h>
+#include <config.h>
 #endif
 
 #ifndef HAVE_STRLCPY
