@@ -37,24 +37,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <config.h>
+#include <config.h>
 
 #ifdef HAVE_PF
 
-#import <dlfcn.h>
-#import <fcntl.h>
-#import <unistd.h>
-#import <stdarg.h>
-#import <string.h>
-#import <errno.h>
-#import <stdlib.h>
-#import <assert.h>
+#include <dlfcn.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdarg.h>
+#include <string.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <assert.h>
 
-#import <sys/types.h>
-#import <sys/ioctl.h>
-#import <sys/socket.h>
-#import <net/if.h>
-#import <net/pfvar.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <net/if.h>
+#include <net/pfvar.h>
 
 /*
  * This code serves as a shim to allow the unit testing of /dev/pf
