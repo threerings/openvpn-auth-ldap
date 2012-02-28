@@ -24,11 +24,11 @@ TEST_OBJS=	testplugin.o
 
 CFLAGS+=	$(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
 OBJCFLAGS+=	$(LDAP_CFLAGS) $(OPENVPN_CFLAGS)
-LIBS+=		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS) \
-		-Lconfig -lauth-ldap-config \
+LIBS+=		-Lconfig -lauth-ldap-config \
 		-Lldap -lauth-ldap-ldap \
 		-Lpf -lauth-ldap-pf \
-		-Lutil -lauth-ldap-util
+		-Lutil -lauth-ldap-util \
+		$(LDAP_LIBS) $(OBJC_LIBS) $(FLEX_LIBS)
 		
 MODULE_LIBS=	config/libauth-ldap-config.a \
 		ldap/libauth-ldap-ldap.a \
