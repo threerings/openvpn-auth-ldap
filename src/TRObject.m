@@ -37,18 +37,18 @@
 #import "TRObject.h"
 #import "util/TRAutoreleasePool.h"
 
-#ifndef APPLE_RUNTIME
+#ifndef HAVE_FRAMEWORK_FOUNDATION 
 @interface Object (QuiesceWarnings)
 - (void) dealloc;
 @end
-#endif /* !APPLE_RUNTIME */
+#endif /* !HAVE_FRAMEWORK_FOUNDATION */
 
 /**
  * Base class. Handles reference counting and equality.
  */
 @implementation TRObject
 
-#ifndef APPLE_RUNTIME
+#ifndef HAVE_FRAMEWORK_FOUNDATION
 
 - (id) init {
     self = [super init];
@@ -108,6 +108,6 @@
         return self;
 }
 
-#endif /* APPLE_RUNTIME */
+#endif /* HAVE_FRAMEWORK_FOUNDATION */
 
 @end
