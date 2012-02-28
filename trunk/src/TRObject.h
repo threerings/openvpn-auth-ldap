@@ -77,7 +77,7 @@
 }
 
 - (id) init;
-- (unsigned int) refCount;
+- (unsigned int) retainCount;
 - (id) retain;
 - (void) release;
 - (id) autorelease;

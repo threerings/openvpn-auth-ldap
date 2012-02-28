@@ -35,7 +35,7 @@
 #ifndef MALLOC_H
 #define MALLOC_H
 
-#import <stdlib.h>
+#include <stdlib.h>
 
 void *xmalloc(size_t size);
 void *xrealloc(void *ptr, size_t size);

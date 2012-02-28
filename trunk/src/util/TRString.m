@@ -30,15 +30,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <config.h>
+
+#import <stdarg.h>
 #import <stdlib.h>
 #import <string.h>
 #import <limits.h>
 #import <stdio.h>
 #import <assert.h>
-#import <stdarg.h>
 
 #import "TRString.h"
 #import "xmalloc.h"
+#import "strlcpy.h"
 
 /**
  * OO String wrapper.
@@ -61,10 +64,13 @@
     TRString *ret;
 
     va_start(ap, format);
-    vasprintf(&output, format, ap);
+    int res = vasprintf(&output, format, ap);
     va_end(ap);
 
-    assert(output != NULL);
+    /* Linux states that the value of 'output' is unspecified on error. FreeBSD
+     * states that it will be NULL */
+    assert(res != -1 && output != NULL);
+
     ret = [[[TRString alloc] initWithCString: output] autorelease];
     free(output);
 

@@ -33,6 +33,7 @@
  */
 
 #import <assert.h>
+#import <stdarg.h>
 
 #import "TRObject.h"
 #import "util/TRAutoreleasePool.h"
