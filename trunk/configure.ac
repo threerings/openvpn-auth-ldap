@@ -60,6 +60,7 @@ AC_CACHE_SAVE
 OD_OPENLDAP
 OD_LIBCHECK
 TR_OPENSSL
+AC_CHECK_FRAMEWORK(Foundation, NSStringFromSelector)
 AC_CACHE_SAVE
 
 # OpenVPN
@@ -92,6 +93,7 @@ AC_CONFIG_FILES([
 	tests/ldap/Makefile
 	tests/pf/Makefile
 	tests/util/Makefile
+	tests/runner/Makefile
 
 	tools/Makefile
 ])

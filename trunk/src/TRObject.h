@@ -42,7 +42,7 @@
 
 #import <stdbool.h>
 
-#ifdef APPLE_RUNTIME
+#ifdef HAVE_FRAMEWORK_FOUNDATION
 #import <Foundation/Foundation.h>
 
 @protocol TRObject <NSObject>
@@ -51,7 +51,7 @@
 @interface TRObject : NSObject <TRObject>
 @end
 
-#else /* APPLE_RUNTIME */
+#else /* HAVE_FRAMEWORK_FOUNDATION */
 
 #import <objc/Object.h>
 
@@ -87,5 +87,5 @@
 
 @end
 
-#endif /* !APPLE_RUNTIME */
+#endif /* !HAVE_FRAMEWORK_FOUNDATION */
 #endif /* TROBJECT_H */

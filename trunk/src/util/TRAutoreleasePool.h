@@ -28,12 +28,14 @@
 
 #import "TRObject.h"
 
-#ifdef APPLE_RUNTIME
+#ifdef HAVE_FRAMEWORK_FOUNDATION
+
+#import <Foundation/Foundation.h>
 
 @interface TRAutoreleasePool : NSAutoreleasePool
 @end
 
-#else /* APPLE_RUNTIME */
+#else /* HAVE_FRAMEWORK_FOUNDATION */
 
 typedef struct _TRAutoreleasePoolBucket TRAutoreleasePoolBucket;
 
@@ -49,4 +51,4 @@ typedef struct _TRAutoreleasePoolBucket TRAutoreleasePoolBucket;
 
 @end
 
-#endif /* !APPLE_RUNTIME */
+#endif /* !HAVE_FRAMEWORK_FOUNDATION */

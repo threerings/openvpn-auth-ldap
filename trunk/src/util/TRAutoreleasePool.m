@@ -43,7 +43,7 @@
 
 #import "TRAutoreleasePool.h"
 
-#ifndef APPLE_RUNTIME
+#ifndef HAVE_FRAMEWORK_FOUNDATION
 
 /* Number of objects to store in each pool bucket.
  * Selected arbitrarily. */
@@ -114,7 +114,7 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
     }
 }
 
-#endif /* !APPLE_RUNTIME */
+#endif /* !HAVE_FRAMEWORK_FOUNDATION */
 
 /*!
  * @brief Foundation Allocation Pool Class.
@@ -135,7 +135,7 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
  */
 @implementation TRAutoreleasePool
 
-#ifndef APPLE_RUNTIME
+#ifndef HAVE_FRAMEWORK_FOUNDATION
 
 #ifndef HAVE_THREADLS
 + initialize {
@@ -238,7 +238,7 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
     return nil;
 }
 
-#endif /* !APPLE_RUNTIME */
+#endif /* !HAVE_FRAMEWORK_FOUNDATION */
 
 @end
 
