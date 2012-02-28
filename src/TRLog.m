@@ -32,9 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <stdarg.h>
 #import <syslog.h>
 #import <stdio.h>
-#import <stdarg.h>
 
 #import "TRLog.h"
 

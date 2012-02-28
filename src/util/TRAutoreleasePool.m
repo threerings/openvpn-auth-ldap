@@ -41,6 +41,8 @@
 #import <pthread.h>
 #import <assert.h>
 
+#import "xmalloc.h"
+
 #import "TRAutoreleasePool.h"
 
 #ifndef HAVE_FRAMEWORK_FOUNDATION
