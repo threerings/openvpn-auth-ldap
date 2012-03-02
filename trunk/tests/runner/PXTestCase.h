@@ -27,6 +27,8 @@
 
 #import "TRObject.h"
 
+#define fail_unless(expr, ...)
+
 @interface PXTestCase : TRObject
 
 - (void) setUp;
