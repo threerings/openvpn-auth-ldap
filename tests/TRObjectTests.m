@@ -37,11 +37,14 @@
 #import <config.h>
 #endif
 
-#import <check.h>
-
 #import "TRObject.h"
+#import "runner/PXTestCase.h"
 
-START_TEST (test_retainRelease) {
+@interface TRObjectTests : PXTestCase @end
+
+@implementation TRObjectTests
+
+- (void) testRetainRelease {
     TRObject *obj;
 
     /* Initialize the object */
@@ -59,9 +62,8 @@ START_TEST (test_retainRelease) {
     /* Deallocate the object */
     [obj release];
 }
-END_TEST
 
-START_TEST (test_isEqual) {
+- (void) testIsEqual {
     TRObject *obj;
 
     /* Initialize the object */
@@ -72,20 +74,5 @@ START_TEST (test_isEqual) {
     /* Deallocate the object */
     [obj release];
 }
-END_TEST
 
-
-Suite *TRObject_suite(void) {
-    Suite *s = suite_create("TRObject");
-
-    TCase *tc_general = tcase_create("General");
-    suite_add_tcase(s, tc_general);
-    tcase_add_test(tc_general, test_isEqual);
-
-    TCase *tc_refcount = tcase_create("Reference Counting");
-    suite_add_tcase(s, tc_refcount);
-    tcase_add_test(tc_refcount, test_retainRelease);
-
-
-    return s;
-}
+@end

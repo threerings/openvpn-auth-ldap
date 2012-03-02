@@ -45,12 +45,27 @@
 #import "TRLog.h"
 #import "util/TRAutoreleasePool.h"
 
+#import "runner/PXTestCaseRunner.h"
+#import "runner/PXTestConsoleResultHandler.h"
+
 void print_usage(const char *name) {
     printf("Usage: %s [filename]\n", name);
     printf(" [filename]\tWrite XML log to <filename>\n");
 }
 
 int main(int argc, char *argv[]) {
+    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+
+    PXTestConsoleResultHandler *handler = [[[PXTestConsoleResultHandler alloc] init] autorelease];
+    PXTestCaseRunner *runner = [[[PXTestCaseRunner alloc] initWithResultHandler: handler] autorelease];
+    [runner runAllCases];
+
+    [pool release];
+
+    // TODO - Detect failure
+    exit(EXIT_SUCCESS);
+    
+#if TODO_TESTS
     Suite *s;
     SRunner *sr;
     int nf;
@@ -101,4 +116,5 @@ int main(int argc, char *argv[]) {
         exit(EXIT_SUCCESS);
     else
         exit(EXIT_FAILURE);
+#endif /* TODO_TESTS */
 }
