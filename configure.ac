@@ -62,7 +62,10 @@ AC_CACHE_SAVE
 OD_OPENLDAP
 OD_LIBCHECK
 TR_OPENSSL
-AC_CHECK_FRAMEWORK(Foundation, NSStringFromSelector, [OBJC_LIBS="${OBJC_LIBS} -framework Foundation"])
+AC_CHECK_FRAMEWORK(Foundation, NSStringFromSelector, [
+	AC_DEFINE(HAVE_FRAMEWORK_FOUNDATION, 1, [Define if you have the Foundation framework.])
+	OBJC_LIBS="${OBJC_LIBS} -framework Foundation"
+])
 AC_CACHE_SAVE
 
 # OpenVPN
