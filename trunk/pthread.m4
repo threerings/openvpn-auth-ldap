@@ -3,6 +3,7 @@ dnl
 dnl Modified from the original version:
 dnl * Removed pthread-specific CC support
 dnl * Added FreeBSD specific -pthread/-lpthread flags
+dnl * When setting flags, set them for both LIBS and CFLAGS
 dnl Notes:
 dnl * -D_THREAD_SAFE may not be necessary on FreeBSD
 dnl   and elsewhere.
@@ -138,6 +139,7 @@ for flag in $acx_pthread_flags; do
                 -*)
                 AC_MSG_CHECKING([whether pthreads work with $flag])
                 PTHREAD_CFLAGS="$flag"
+                PTHREAD_LIBS="$flag"
                 ;;
 
 		pthread-config)
