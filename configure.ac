@@ -7,6 +7,7 @@ AC_CANONICAL_SYSTEM
 
 # Compiler
 AC_PROG_CC(clang gcc)
+AC_PROG_CC_C99
 AC_PROG_OBJC(clang gcc)
 TR_WERROR
 AC_CACHE_SAVE
