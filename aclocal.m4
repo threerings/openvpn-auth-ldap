@@ -112,11 +112,11 @@ AC_DEFUN([OD_OBJC_RUNTIME],[
 	AC_MSG_RESULT(${od_cv_objc_req_pthread})
 
 	if test x"${od_cv_objc_req_pthread}" = x"no"; then
-		OBJC_LIBS="-lobjc"
+		OBJC_LIBS="${OBJC_LIBS} -lobjc"
 		OBJC_PTHREAD_LIBS="${PTHREAD_LIBS}"
 		OBJC_PTHREAD_CFLAGS="${PTHREAD_CFLAGS}"
 	elif test x"${od_cv_objc_req_pthread}" = x"yes"; then
-		OBJC_LIBS="-lobjc ${PTHREAD_LIBS}"
+		OBJC_LIBS="${OBJC_LIBS} -lobjc ${PTHREAD_LIBS}"
 		OBJCFLAGS="${OBJCFLAGS} ${PTHREAD_CFLAGS}"
 	fi
 
