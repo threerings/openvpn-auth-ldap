@@ -34,7 +34,7 @@
  */
 
 #import "TRLDAPSearchFilter.h"
-#import "util/TRAutoreleasePool.h"
+#import "TRAutoreleasePool.h"
 
 @interface TRLDAPSearchFilter (TRLDAPSearchFilterPrivate)
  - (TRString *) escapeForSearch: (TRString *) string;

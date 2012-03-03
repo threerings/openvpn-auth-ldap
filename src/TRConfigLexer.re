@@ -42,9 +42,9 @@
 #import <sys/stat.h>
 #import <sys/mman.h>
 
-#import "config/TRConfig.h"
-#import "config/TRConfigLexer.h"
-#import "config/TRConfigParser.h"
+#import "TRConfig.h"
+#import "TRConfigLexer.h"
+#import "TRConfigParser.h"
 
 /*
  * re2c Configuration

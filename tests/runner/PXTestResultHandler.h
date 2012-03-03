@@ -29,7 +29,7 @@
 
 #import "PXTestException.h"
 #import "PXTestCase.h"
-#import "util/TRString.h"
+#import "TRString.h"
 
 /**
  * Provides handling of test results. The results may be printed

@@ -40,7 +40,7 @@
 
 #import <check.h>
 
-#import "pf/TRLocalPacketFilter.h"
+#import "TRLocalPacketFilter.h"
 
 #import "mockpf.h"
 

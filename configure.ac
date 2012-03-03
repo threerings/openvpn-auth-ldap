@@ -88,10 +88,6 @@ AC_CONFIG_FILES([
 	Mk/subdir.mk
 
 	src/Makefile
-	src/config/Makefile
-	src/ldap/Makefile
-	src/pf/Makefile
-	src/util/Makefile
 
 	tests/Makefile
 	tests/config/Makefile

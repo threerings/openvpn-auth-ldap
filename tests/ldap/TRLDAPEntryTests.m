@@ -38,7 +38,7 @@
 
 #import <check.h>
 
-#import "ldap/TRLDAPEntry.h"
+#import "TRLDAPEntry.h"
 
 START_TEST(test_initWithDN) {
     TRLDAPEntry *entry;

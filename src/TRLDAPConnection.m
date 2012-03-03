@@ -37,7 +37,7 @@
 #import "TRLDAPConnection.h"
 #import "TRLog.h"
 
-#import "util/xmalloc.h"
+#import "xmalloc.h"
 
 /* Maximum number of unique attributes returned for a given entry. */
 #define MAX_ATTRIBUTES 2048

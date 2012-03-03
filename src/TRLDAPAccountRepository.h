@@ -1,10 +1,9 @@
 /*
- * TRConfigLexer.h vi:ts=4:sw=4:expandtab:
- * Configuration Lexer
+ * TRLDAPAccountRepository.h vi:ts=4:sw=4:expandtab:
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
+ * Copyright (c) 2008-2012 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,38 +31,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <ldap.h>
-
 #import "TRObject.h"
-#import "config/TRConfigToken.h"
+#import "TRString.h"
 
-typedef enum {
-    LEXER_SC_INITIAL,
-    LEXER_SC_SECTION,
-    LEXER_SC_SECTION_NAME,
-    LEXER_SC_VALUE,
-    LEXER_SC_STRING_VALUE
-} LexerStartCondition;
+#import "TRAccountRepository.h"
+#import "TRLDAPConnection.h"
+#import "TRLDAPSearchFilter.h"
 
-@interface TRConfigLexer : TRObject {
+/**
+ * LDAP user/group account verification.
+ */
+@interface TRLDAPAccountRepository : TRObject <TRAccountRepository> {
 @private
-    /* Input buffer */
-    char *buffer;
-    size_t bufferLength;
-
-    /* re2c lexer state */
-    char *_cursor;
-    char *_limit;
-    char *_marker;
-    char *_ctxMarker;
-    char *_token;
-    char *_eoi;
-    unsigned int _lineNumber;
-    LexerStartCondition _condition;
+    TRLDAPConnection *_ldap;
+    TRLDAPSearchFilter *_userFilter;
+    TRLDAPSearchFilter *_groupFilter;
 }
 
-- (id) initWithFD: (int) fd;
-
-- (TRConfigToken *) scan;
-
+- (id) initWithLDAPConnection: (TRLDAPConnection *) ldap
+             userSearchFilter: (TRLDAPSearchFilter *) userFilter
+            groupSearchFilter: (TRLDAPSearchFilter *) groupFilter;
+             
+- (BOOL) authenticateUser: (TRString *) username withPassword: (TRString *) password;
+- (BOOL) checkGroupMember: (TRString *) username withGroup: (TRString *) groupname;
 @end

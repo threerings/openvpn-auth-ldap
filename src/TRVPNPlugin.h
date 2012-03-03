@@ -37,36 +37,36 @@
 #define TRVPNPLUGIN_H
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#import <config.h>
 #endif
 
-#include "TRObject.h"
-#include "TRLog.h"
+#import "TRObject.h"
+#import "TRLog.h"
 
-#include "util/TRString.h"
-#include "util/TREnumerator.h"
-#include "util/TRArray.h"
-#include "util/TRAutoreleasePool.h"
-#include "util/TRHash.h"
-#include "util/xmalloc.h"
+#import "TRString.h"
+#import "TREnumerator.h"
+#import "TRArray.h"
+#import "TRAutoreleasePool.h"
+#import "TRHash.h"
+#import "xmalloc.h"
 
-#include "TRAccountRepository.h"
-#include "TRVPNSession.h"
+#import "TRAccountRepository.h"
+#import "TRVPNSession.h"
 
-#include "config/TRConfigToken.h"
-#include "config/TRConfig.h"
-#include "config/TRConfigParser.h"
-#include "config/TRAuthLDAPConfig.h"
-#include "config/TRConfigLexer.h"
-#include "config/TRLDAPGroupConfig.h"
+#import "TRConfigToken.h"
+#import "TRConfig.h"
+#import "TRConfigParser.h"
+#import "TRAuthLDAPConfig.h"
+#import "TRConfigLexer.h"
+#import "TRLDAPGroupConfig.h"
 
-#include "ldap/TRLDAPConnection.h"
-#include "ldap/TRLDAPEntry.h"
-#include "ldap/TRLDAPSearchFilter.h"
-#include "ldap/TRLDAPAccountRepository.h"
+#import "TRLDAPConnection.h"
+#import "TRLDAPEntry.h"
+#import "TRLDAPSearchFilter.h"
+#import "TRLDAPAccountRepository.h"
 
-#include "pf/TRPFAddress.h"
-#include "pf/TRPacketFilter.h"
-#include "pf/TRLocalPacketFilter.h"
+#import "TRPFAddress.h"
+#import "TRPacketFilter.h"
+#import "TRLocalPacketFilter.h"
 
 #endif /* TRVPNPLUGIN_H */

@@ -1,6 +1,6 @@
 /*
- * TRHash.h vi:ts=4:sw=4:expandtab:
- * Hash table
+ * TRLocalPacketFilter.h vi:ts=4:sw=4:expandtab:
+ * Interface to local OpenBSD /dev/pf
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -32,22 +32,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "hash.h"
+#ifdef HAVE_CONFIG_H
+#import <config.h>
+#endif
+
+#ifdef HAVE_PF
 
 #import "TRObject.h"
-#import "util/TRString.h"
-#import "TREnumerator.h"
+#import "TRPacketFilter.h"
+#import "TRArray.h"
+#import "TRPFAddress.h"
+#import "TRString.h"
 
-@interface TRHash : TRObject {
+/* pf includes */
+#import <sys/types.h>
+#import <sys/ioctl.h>
+#import <sys/socket.h>
+#import <net/if.h>
+#import <net/pfvar.h>
+
+@interface TRLocalPacketFilter : TRObject <TRPacketFilter> {
 @private
-    hash_t *_hash;
+    /** Cached reference to /dev/pf. */
+    int _fd;
 }
 
-- (id) initWithCapacity: (unsigned long) numItems;
-- (BOOL) isFull;
-- (id) valueForKey: (TRString *) key;
-- (void) setObject: (id) anObject forKey: (TRString *) key;
-- (void) removeObjectForKey: (TRString *) key;
-- (TREnumerator *) keyEnumerator;
+- (pferror_t) open;
+- (void) close;
+
+- (pferror_t) tables: (TRArray **) result;
+- (pferror_t) flushTable: (TRString *) tableName;
+- (pferror_t) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName;
+- (pferror_t) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName;
+- (pferror_t) addressesFromTable: (TRString *) tableName withResult: (TRArray **) result;
 
 @end
+
+#endif /* HAVE_PF */

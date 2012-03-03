@@ -36,8 +36,8 @@
 #import <config.h>
 #endif
 
-#import "util/TRString.h"
-#import "util/TRAutoreleasePool.h"
+#import "TRString.h"
+#import "TRAutoreleasePool.h"
 
 #import <check.h>
 #import <string.h>

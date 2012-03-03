@@ -39,7 +39,7 @@
 #import <check.h>
 #import <string.h>
 
-#import "config/TRAuthLDAPConfig.h"
+#import "TRAuthLDAPConfig.h"
 
 #import "tests.h"
 
