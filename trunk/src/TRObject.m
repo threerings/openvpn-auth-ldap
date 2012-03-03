@@ -104,8 +104,8 @@
 
     /* Determine if this is a subclass of PXTestCase. By starting with the class
      * itself, we skip over the non-subclassed PLInstrumentCase class. */
-    for (Class superClass = cls; superClass != NULL; superClass = class_getSuperclass(superClass)) {
-        if (superClass == selfClass)
+    for (Class superClass = selfClass; superClass != NULL; superClass = class_getSuperclass(superClass)) {
+        if (superClass == cls)
             return YES;
     }
 
