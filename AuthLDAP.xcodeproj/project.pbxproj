@@ -1,0 +1,276 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		055C589F15029D4000B34430 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C589E15029D4000B34430 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		055C589815029D4000B34430 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		055C589A15029D4000B34430 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		055C589E15029D4000B34430 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		055C58B515029D9F00B34430 /* libauthldap.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libauthldap.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		055C589715029D4000B34430 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				055C589F15029D4000B34430 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		055C58B215029D9F00B34430 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		055C588F15029D4000B34430 = {
+			isa = PBXGroup;
+			children = (
+				055C589D15029D4000B34430 /* Frameworks */,
+				055C589B15029D4000B34430 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		055C589B15029D4000B34430 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				055C589A15029D4000B34430 /* tests */,
+				055C58B515029D9F00B34430 /* libauthldap.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		055C589D15029D4000B34430 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				055C589E15029D4000B34430 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		055C58B315029D9F00B34430 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		055C589915029D4000B34430 /* tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 055C58A915029D4000B34430 /* Build configuration list for PBXNativeTarget "tests" */;
+			buildPhases = (
+				055C589615029D4000B34430 /* Sources */,
+				055C589715029D4000B34430 /* Frameworks */,
+				055C589815029D4000B34430 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tests;
+			productName = AuthLDAP;
+			productReference = 055C589A15029D4000B34430 /* tests */;
+			productType = "com.apple.product-type.tool";
+		};
+		055C58B415029D9F00B34430 /* authldap */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 055C58B615029DA000B34430 /* Build configuration list for PBXNativeTarget "authldap" */;
+			buildPhases = (
+				055C58B115029D9F00B34430 /* Sources */,
+				055C58B215029D9F00B34430 /* Frameworks */,
+				055C58B315029D9F00B34430 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = authldap;
+			productName = authldap;
+			productReference = 055C58B515029D9F00B34430 /* libauthldap.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		055C589115029D4000B34430 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = "Plausible Labs Cooperative, Inc.";
+			};
+			buildConfigurationList = 055C589415029D4000B34430 /* Build configuration list for PBXProject "AuthLDAP" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 055C588F15029D4000B34430;
+			productRefGroup = 055C589B15029D4000B34430 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				055C589915029D4000B34430 /* tests */,
+				055C58B415029D9F00B34430 /* authldap */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		055C589615029D4000B34430 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		055C58B115029D9F00B34430 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		055C58A715029D4000B34430 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		055C58A815029D4000B34430 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		055C58AA15029D4000B34430 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		055C58AB15029D4000B34430 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		055C58B715029DA000B34430 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		055C58B815029DA000B34430 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		055C589415029D4000B34430 /* Build configuration list for PBXProject "AuthLDAP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				055C58A715029D4000B34430 /* Debug */,
+				055C58A815029D4000B34430 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		055C58A915029D4000B34430 /* Build configuration list for PBXNativeTarget "tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				055C58AA15029D4000B34430 /* Debug */,
+				055C58AB15029D4000B34430 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		055C58B615029DA000B34430 /* Build configuration list for PBXNativeTarget "authldap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				055C58B715029DA000B34430 /* Debug */,
+				055C58B815029DA000B34430 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 055C589115029D4000B34430 /* Project object */;
+}
