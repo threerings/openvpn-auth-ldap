@@ -57,7 +57,7 @@
 
     /* Initialize the object */
     obj = [[TRObject alloc] init];
-    STAssertEquals([obj retainCount], (PXUInteger)1, "Newly initialized TRObject has unexpected reference count");
+    STAssertEquals([obj retainCount], (PXUInteger)2, "Newly initialized TRObject has unexpected reference count");
 
     /* Increment the refcount */
     [obj retain];

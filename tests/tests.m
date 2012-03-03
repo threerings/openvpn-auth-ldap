@@ -56,65 +56,20 @@ void print_usage(const char *name) {
 int main(int argc, char *argv[]) {
     TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
 
+    /* Set up the test runner and reporting. */
     PXTestConsoleResultHandler *handler = [[[PXTestConsoleResultHandler alloc] init] autorelease];
     PXTestCaseRunner *runner = [[[PXTestCaseRunner alloc] initWithResultHandler: handler] autorelease];
-    [runner runAllCases];
-
-    [pool release];
-
-    // TODO - Detect failure
-    exit(EXIT_SUCCESS);
-    
-#if TODO_TESTS
-    Suite *s;
-    SRunner *sr;
-    int nf;
-    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
-
-    if (argc > 2) {
-        print_usage(argv[0]);
-        exit(1);
-    }
-
-    /* Load all test suites */
-    s = TRString_suite();
-    sr = srunner_create(s);
-    srunner_add_suite(sr, TRAuthLDAPConfig_suite());
-    srunner_add_suite(sr, TRAutoreleasePool_suite());
-    srunner_add_suite(sr, TRLDAPAccountRepository_suite());
-    srunner_add_suite(sr, TRLDAPConnection_suite());
-    srunner_add_suite(sr, TRLDAPEntry_suite());
-    srunner_add_suite(sr, TRLDAPSearchFilter_suite());
-    srunner_add_suite(sr, TRObject_suite());
-    srunner_add_suite(sr, TRArray_suite());
-    srunner_add_suite(sr, TRHash_suite());
-    srunner_add_suite(sr, TRConfigToken_suite());
-    srunner_add_suite(sr, TRConfigLexer_suite());
-    srunner_add_suite(sr, TRConfig_suite());
-    srunner_add_suite(sr, TRLDAPGroupConfig_suite());
-    srunner_add_suite(sr, TRVPNSession_suite());
-    srunner_add_suite(sr, TRPFAddress_suite());
-#ifdef HAVE_PF
-    srunner_add_suite(sr, TRLocalPacketFilter_suite());
-#endif
-
-    /* Enable XML output */
-    if (argc == 2)
-        srunner_set_xml(sr, argv[1]);
 
     /* Run tests */
     [TRLog _quiesceLogging: YES];
-    srunner_run_all(sr, CK_NORMAL);
+    BOOL success = [runner runAllCases];
     [TRLog _quiesceLogging: NO];
 
-    nf = srunner_ntests_failed(sr);
-    srunner_free(sr);
     [pool release];
 
-
-    if (nf == 0)
+    if (success) {
         exit(EXIT_SUCCESS);
-    else
+    } else {
         exit(EXIT_FAILURE);
-#endif /* TODO_TESTS */
+    }
 }

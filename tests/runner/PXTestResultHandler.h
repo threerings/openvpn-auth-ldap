@@ -27,6 +27,7 @@
 
 #import "TRObject.h"
 
+#import "PXTestException.h"
 #import "PXTestCase.h"
 #import "util/TRString.h"
 
@@ -49,12 +50,21 @@
 - (void) didExecuteTestCase: (PXTestCase *) testCase;
 
 /**
- * Called upon execution of an test case's test method.
+ * Called upon successful execution of an test case's test method.
  *
  * @param testCase The executed test case instance.
  * @param selector The selector executed.
  */
 - (void) didExecuteTestCase: (PXTestCase *) testCase selector: (SEL) selector; 
+
+/**
+ * Called upon failed execution of an test case's test method.
+ *
+ * @param testCase The executed test case instance.
+ * @param selector The selector executed.
+ * @param exception The failure cause.
+ */
+- (void) didExecuteTestCase: (PXTestCase *) testCase selector: (SEL) selector withException: (PXTestException *) exception;
 
 /**
  * If an test method can not be run, this method will be called.

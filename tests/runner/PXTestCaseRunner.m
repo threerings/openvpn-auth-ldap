@@ -57,8 +57,12 @@
 /**
  * Locate all subclasses of PLInstrumentCase registed with the Objective-C runtime, and
  * execute all instrumentation methods.
+ *
+ * @return Returns YES if all tests were run successfully, or NO if any errors were reported.
+ *
+ * @warning This method may be modified to return a more descriptive object type in the future.
  */
-- (void) runAllCases {
+- (BOOL) runAllCases {
     Class *classes;
     int numClasses;
 
@@ -68,12 +72,13 @@
 
     /* If none, nothing to do */
     if (numClasses == 0)
-        return;
+        return YES;
 
     /* Fetch all classes */        
     classes = malloc(sizeof(Class) * numClasses);
     numClasses = objc_getClassList(classes, numClasses);
 
+    BOOL success = YES;
     for (int i = 0; i < numClasses; i++) {
         Class cls = classes[i];
         Class superClass = cls;
@@ -91,19 +96,28 @@
         /* If it is an instrument instance, run the tests */
         if (isInstrument) {
             PXTestCase *obj = [[cls alloc] init];
-            [self runCase: obj];
+            if (![self runCase: obj]) {
+                success = NO;
+            }
             [obj release];
         }
     }
 
     /* Clean up */
     free(classes);
+
+    return success;
 }
 
 /**
  * Execute all test methods for the given test case.
+ *
+ * @param testCase The test case to run.
+ * @return Returns YES if the test was run successfully, or NO if an error was reported.
+ *
+ * @warning This method may be modified to return a more descriptive object type in the future.
  */
-- (void) runCase: (PXTestCase *) testCase {
+- (BOOL) runCase: (PXTestCase *) testCase {
     TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
     
     Method *methods;
@@ -114,6 +128,7 @@
     
     /* Iterate over the available methods */
     methods = class_copyMethodList([testCase class], &methodCount);
+    BOOL success = YES;
     for (unsigned int i = 0; i < methodCount; i++) {
         Method m;
         SEL methodSel;
@@ -127,19 +142,24 @@
         /* Only invoke methods that start with the name "test" */
         if (strstr(sel_getName(methodSel), "test") == NULL)
             continue;
-    
+
+        PXTestException *e = nil;
         [testCase setUp]; {
             void (*imp)(id self, SEL _cmd) = (void (*)(id self, SEL _cmd)) method_getImplementation(m);
             @try {
                 imp(testCase, methodSel);
-            } @catch (PXTestException *e) {
-                // TODO
-                fprintf(stderr, "TODO: Handle exception: %s\n", [[e reason] cString]);
+            } @catch (PXTestException *re) {
+                success = NO;
+                e = re;
             }
         } [testCase tearDown];
 
         /* Inform the result handler of method execution */
-        [_resultHandler didExecuteTestCase: testCase selector: methodSel];
+        if (e != nil) {
+            [_resultHandler didExecuteTestCase: testCase selector: methodSel withException: e];
+        } else {
+            [_resultHandler didExecuteTestCase: testCase selector: methodSel];
+        }
     }
     
     /* Inform the result handler of completion */
@@ -150,6 +170,8 @@
         free(methods);
     
     [pool release];
+
+    return success;
 }
 
 @end
