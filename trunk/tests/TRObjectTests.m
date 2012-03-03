@@ -38,7 +38,7 @@
 #endif
 
 #import "TRObject.h"
-#import "runner/PXTestCase.h"
+#import "PXTestCase.h"
 
 @interface TRObjectTests : PXTestCase @end
 
