@@ -39,7 +39,7 @@
 
 - (id) initWithResultHandler: (id<PXTestResultHandler>) resultHandler;
 
-- (void) runAllCases;
-- (void) runCase: (PXTestCase *) instrumentCase;
+- (BOOL) runAllCases;
+- (BOOL) runCase: (PXTestCase *) instrumentCase;
 
 @end

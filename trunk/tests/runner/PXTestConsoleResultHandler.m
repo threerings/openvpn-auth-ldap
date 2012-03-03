@@ -72,7 +72,16 @@
 // from PXTestResultHandler protocol
 - (void) didExecuteTestCase: (PXTestCase *) testCase selector: (SEL) selector {
     TRString *output = [TRString stringWithFormat: "Test case -[%s %s] completed at %s\n", 
-                        class_getName([testCase class]), selector, [[self dateString] cString]];
+                        class_getName([testCase class]), sel_getName(selector), [[self dateString] cString]];
+
+    fprintf(stderr, "%s", [output cString]);
+}
+
+// from PXTestResultHandler protocol
+- (void) didExecuteTestCase: (PXTestCase *) testCase selector: (SEL) selector withException: (PXTestException *) exception {
+    TRString *output = [TRString stringWithFormat: "Test case -[%s %s] (%s:%d) failed with error: %s\n", 
+                        class_getName([testCase class]), sel_getName(selector), [[exception fileName] cString], [exception lineNumber],
+                        [[exception reason] cString]];
 
     fprintf(stderr, "%s", [output cString]);
 }
@@ -80,7 +89,7 @@
 // from PXTestResultHandler protocol
 - (void) didSkipTestCase: (PXTestCase *) testCase selector: (SEL) selector reason: (TRString *) reason {
     TRString *output = [TRString stringWithFormat: "Test case -[%s %s] failed (%s) at %s\n", 
-                        class_getName([testCase class]), selector, [reason cString], [[self dateString] cString]];
+                        class_getName([testCase class]), sel_getName(selector), [reason cString], [[self dateString] cString]];
     
     fprintf(stderr, "%s", [output cString]);
 }
