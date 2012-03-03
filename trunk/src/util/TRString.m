@@ -60,19 +60,11 @@
  */
 + (TRString *) stringWithFormat: (const char *) format, ... {
     va_list ap;
-    char *output;
     TRString *ret;
 
     va_start(ap, format);
-    int res = vasprintf(&output, format, ap);
+    ret = [[(TRString *)[self alloc] initWithFormat: format arguments: ap] autorelease];
     va_end(ap);
-
-    /* Linux states that the value of 'output' is unspecified on error. FreeBSD
-     * states that it will be NULL */
-    assert(res != -1 && output != NULL);
-
-    ret = [[[TRString alloc] initWithCString: output] autorelease];
-    free(output);
 
     return ret;
 }
@@ -82,6 +74,24 @@
  */
 + (TRString *) stringWithCString: (const char *) cString {
     return [[[TRString alloc] initWithCString: cString] autorelease];
+}
+
+/**
+ * Initialize a new string using the provided printf-style format
+ * string and arguments.
+ */
+- (id) initWithFormat: (const char *) format arguments: (va_list) arguments {
+  char *output;
+  int res = vasprintf(&output, format, arguments);
+
+  /* Linux states that the value of 'output' is unspecified on error. FreeBSD
+   * states that it will be NULL */
+  assert(res != -1 && output != NULL);
+
+  self = [self initWithCString: output];
+  free(output);
+
+  return self;
 }
 
 /**

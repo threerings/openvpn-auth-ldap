@@ -7,9 +7,11 @@ include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-OBJS=	PXTestCase.o \
+OBJS=	PXTestException.o \
+	PXTestCase.o \
 	PXTestCaseRunner.o \
-	PXTestConsoleResultHandler.o
+	PXTestConsoleResultHandler.o \
+	PXTestAssert.o
 LIB=	libauth-ldap-test-runner.a
 
 CFLAGS+=	@CHECK_CFLAGS@

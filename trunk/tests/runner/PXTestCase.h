@@ -1,5 +1,7 @@
 /*
  * Author: Landon Fuller <landonf@plausible.coop>
+ *
+ * Copyright (c) 2012 Landon Fuller <landonf@bikemonkey.org>
  * Copyright (c) 2008-2012 Plausible Labs Cooperative, Inc.
  * All rights reserved.
  *
@@ -26,12 +28,14 @@
  */
 
 #import "TRObject.h"
-
-#define fail_unless(expr, ...)
+#import "PXTestAssert.h"
+#import "PXTestException.h"
 
 @interface PXTestCase : TRObject
 
 - (void) setUp;
 - (void) tearDown;
+
+- (void) failWithException: (PXTestException *) exception;
 
 @end

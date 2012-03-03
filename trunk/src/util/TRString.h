@@ -47,6 +47,7 @@
 + (TRString *) stringWithFormat: (const char *) format, ...;
 + (TRString *) stringWithCString: (const char *) cString;
 
+- (id) initWithFormat: (const char *) format arguments: (va_list) arguments;
 - (id) initWithCString: (const char *) cString;
 - (id) initWithString: (TRString *) string;
 - (id) initWithBytes: (const char *) data numBytes: (size_t) length;

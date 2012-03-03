@@ -129,8 +129,13 @@
             continue;
     
         [testCase setUp]; {
-            void (*imp)() = (void (*)()) method_getImplementation(m);
-            imp();
+            void (*imp)(id self, SEL _cmd) = (void (*)(id self, SEL _cmd)) method_getImplementation(m);
+            @try {
+                imp(testCase, methodSel);
+            } @catch (PXTestException *e) {
+                // TODO
+                fprintf(stderr, "TODO: Handle exception: %s\n", [[e reason] cString]);
+            }
         } [testCase tearDown];
 
         /* Inform the result handler of method execution */

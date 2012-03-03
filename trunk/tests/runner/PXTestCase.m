@@ -1,5 +1,7 @@
 /*
  * Author: Landon Fuller <landonf@plausible.coop>
+ *
+ * Copyright (c) 2012 Landon Fuller <landonf@bikemonkey.org>
  * Copyright (c) 2008-2012 Plausible Labs Cooperative, Inc.
  * All rights reserved.
  *
@@ -45,6 +47,13 @@
  */
 - (void) tearDown {
     // Do nothing
+}
+
+/**
+ * Fail the current test with @a exception.
+ */
+- (void) failWithException: (PXTestException *) exception {
+    @throw exception; 
 }
 
 @end
