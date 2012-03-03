@@ -3,19 +3,32 @@ top_srcdir=     @top_srcdir@
 top_builddir=   @top_builddir@
 VPATH=          @srcdir@
 
-SUBDIR=		config \
-		ldap \
-		pf \
-		util \
-		runner
-
 include ${top_builddir}/Mk/autoconf.mk
 include ${top_builddir}/Mk/compile.mk
 include ${top_builddir}/Mk/subdir.mk
 
-
 TEST_OBJS=	tests.o \
+		PXTestAssert.o \
+		PXTestCase.o \
+		PXTestCaseRunner.o \
+		PXTestConsoleResultHandler.o \
+		PXTestException.o \
+		TRArrayTests.o \
+		TRAuthLDAPConfigTests.o \
+		TRAutoreleasePoolTests.o \
+		TRConfigLexerTests.o \
+		TRConfigTests.o \
+		TRConfigTokenTests.o \
+		TRHashTests.o \
+		TRLDAPAccountRepositoryTests.o \
+		TRLDAPConnectionTests.o \
+		TRLDAPEntryTests.o \
+		TRLDAPGroupConfigTests.o \
+		TRLDAPSearchFilterTests.o \
+		TRLocalPacketFilterTests.o \
 		TRObjectTests.o \
+		TRPFAddressTests.o \
+		TRStringTests.o \
 		TRVPNSessionTests.o
 
 TEST_GEN=	tests.h
@@ -23,20 +36,7 @@ TEST_GEN=	tests.h
 CFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 
-MODULES=	-Lconfig -lauth-ldap-test-config \
-		-Lldap -lauth-ldap-test-ldap \
-		-Lpf -lauth-ldap-test-pf \
-		-Lutil -lauth-ldap-test-util \
-		-Lrunner -lauth-ldap-test-runner
-
-MODULE_LIBS=	config/libauth-ldap-test-config.a \
-		ldap/libauth-ldap-test-ldap.a \
-		pf/libauth-ldap-test-pf.a \
-		util/libauth-ldap-test-util.a \
-		runner/libauth-ldap-test-runner.a
-
-LIBS+=		$(MODULES) \
-		-L${top_builddir}/src -lauth-ldap \
+LIBS+=		-L${top_builddir}/src -lauth-ldap \
 		$(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@
 
 LDFLAGS+=	 $(LIBS)
@@ -55,7 +55,7 @@ pre-all:: $(TEST_GEN)
 tests.h: tests.h.in
 	$(EDIT) $(srcdir)/tests.h.in > $@
 
-tests: ${TEST_GEN} ${TEST_OBJS} ${MODULE_LIBS} ../src/libauth-ldap.a
+tests: ${TEST_GEN} ${TEST_OBJS} ../src/libauth-ldap.a
 	${CC} -o $@ ${TEST_OBJS} ${LDFLAGS}
 
 test:: tests
