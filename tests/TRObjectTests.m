@@ -44,6 +44,14 @@
 
 @implementation TRObjectTests
 
+- (void) testIsKindOfClass {
+    TRObject *trObj = [[[TRObject alloc] init] autorelease];
+
+    STAssertTrue([self isKindOfClass: [TRObject class]], "Test case should be considered a subclass of TRObject");
+    STAssertTrue([self isKindOfClass: [self class]], "Test case should consider itself to be of the same kind as its own class.");
+    STAssertFalse([trObj isKindOfClass: [self class]], "TRObject is not an intance of TRObjectTests, or an instance of a TRObjectTests subclass");
+}
+
 - (void) testRetainRelease {
     TRObject *obj;
 
