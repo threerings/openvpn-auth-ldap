@@ -16,6 +16,7 @@
 //  the License.
 //
 
+#import <stdarg.h>
 #import "PXTestException.h"
 
 @interface PXTestException (PrivateMethods)
@@ -88,16 +89,23 @@
     testDescription = [TRString stringWithCString: ""];
   }
 
+// XXX - We need to support -description here
+#if TODO_FOUNDATION_COMPAT
   TRString *reason =
     [TRString stringWithFormat:"'%@' should be equal to '%@'. %",
      [left description], [right description], testDescription];
+#else
+ TRString *reason =
+   [TRString stringWithFormat:"'%p' should be equal to '%p'. %",
+    left, right, testDescription];
+#endif
 
   return [self failureInFile:filename atLine:lineNumber reason:reason];
 }
 
-+ (PXTestException *)failureInEqualityBetweenValue:(NSValue *)left
-                                      andValue:(NSValue *)right
-                                  withAccuracy:(NSValue *)accuracy
++ (PXTestException *)failureInEqualityBetweenValue:(id)left
+                                      andValue:(id)right
+                                  withAccuracy:(id)accuracy
                                         inFile:(TRString *)filename
                                         atLine:(int)lineNumber
                                withDescription:(TRString *)formatString, ... {

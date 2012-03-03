@@ -33,14 +33,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TROBJECT_H
-#define TROBJECT_H
-
 #ifdef HAVE_CONFIG_H
 #import <config.h>
 #endif
 
 #import <stdbool.h>
+
+#import "PXObjCRuntime.h"
 
 #ifdef HAVE_FRAMEWORK_FOUNDATION
 #import <Foundation/Foundation.h>
@@ -83,9 +82,10 @@
 - (id) autorelease;
 - (BOOL) isEqual: (id) anObject;
 
+- (BOOL) isKindOfClass: (Class) cls;
+
 - (void) dealloc;
 
 @end
 
 #endif /* !HAVE_FRAMEWORK_FOUNDATION */
-#endif /* TROBJECT_H */

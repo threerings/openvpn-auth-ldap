@@ -195,15 +195,13 @@ do { \
     } else { \
       __typeof__(a1) a1value = (a1); \
       __typeof__(a2) a2value = (a2); \
-      NSValue *a1encoded = [NSValue value:&a1value withObjCType:@encode(__typeof__(a1))]; \
-      NSValue *a2encoded = [NSValue value:&a2value withObjCType:@encode(__typeof__(a2))]; \
-      if ([a1encoded isEqualToValue:a2encoded]) { \
+      if (a1value == a2value) { \
         TRString *_expression = [TRString stringWithFormat:"((%s) != (%s))", #a1, #a2]; \
         [self failWithException:([PXTestException failureInCondition:_expression \
                          isTrue:NO \
                          inFile:[TRString stringWithCString:__FILE__] \
                          atLine:__LINE__ \
-                withDescription:"%", STComposeString(description, ##__VA_ARGS__)])]; \
+                withDescription:"%s", STComposeString(description, ##__VA_ARGS__)])]; \
       }\
     } \
   } \
@@ -508,11 +506,9 @@ do { \
     } else { \
       __typeof__(a1) a1value = (a1); \
       __typeof__(a2) a2value = (a2); \
-      NSValue *a1encoded = [NSValue value:&a1value withObjCType: @encode(__typeof__(a1))]; \
-      NSValue *a2encoded = [NSValue value:&a2value withObjCType: @encode(__typeof__(a2))]; \
-      if (![a1encoded isEqualToValue:a2encoded]) { \
-        [self failWithException:[PXTestException failureInEqualityBetweenValue: a1encoded \
-                                                                  andValue: a2encoded \
+      if (a1value != a2value) { \
+        [self failWithException:[PXTestException failureInEqualityBetweenValue: [TRString stringWithCString: #a1] \
+                                                                  andValue: [TRString stringWithCString: #a2] \
                                                               withAccuracy: nil \
                                                                     inFile: [TRString stringWithCString:__FILE__] \
                                                                     atLine: __LINE__ \

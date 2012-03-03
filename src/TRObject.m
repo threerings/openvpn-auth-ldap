@@ -38,6 +38,8 @@
 #import "TRObject.h"
 #import "util/TRAutoreleasePool.h"
 
+#import <objc/runtime.h>
+
 #ifndef HAVE_FRAMEWORK_FOUNDATION 
 @interface Object (QuiesceWarnings)
 - (void) dealloc;
@@ -60,23 +62,30 @@
     return self;
 }
 
+/**
+ * Called upon deallocation of the receiver. Responsible for discarding all resources held by the
+ * receiver.
+ *
+ * This method will be called automatically when the receiver's reference count reaches 0. It should
+ * never be called directly. As an exception to this, subclass implementations of -dealloc must
+ * incorporate the superclass implementation through a message to super.
+ */
 - (void) dealloc {
     [super free];
 
     /* Quiesce compiler warnings regarding missing call to -dealloc */
     if (false)
-	[super dealloc];
+        [super dealloc];
 }
 
-- (unsigned int) retainCount {
-    return _refCount;
-}
-
-- (id) retain {
-    _refCount++;
-    return self;
-}
-
+/**
+ * Return YES if the receiver is equal to @a anObject.
+ *
+ * The default implementation of this method performs a check for pointer equality. Subclasses may override this
+ * method to check for value equality.
+ *
+ * @note If two objects are equal, they must also have the same hash value.
+ */ 
 - (BOOL) isEqual: (id) anObject {
     if (self == anObject)
         return YES;
@@ -84,6 +93,45 @@
         return NO;
 }
 
+/**
+ * Returns YES if the receiver is an instance of the given @a cls, or any class that inherits
+ * from cls.
+ *
+ * @param cls The class against which the receiver's class will be tested.
+ */
+- (BOOL) isKindOfClass: (Class) cls {
+    Class selfClass = [self class];
+
+    /* Determine if this is a subclass of PXTestCase. By starting with the class
+     * itself, we skip over the non-subclassed PLInstrumentCase class. */
+    for (Class superClass = cls; superClass != NULL; superClass = class_getSuperclass(superClass)) {
+        if (superClass == selfClass)
+            return YES;
+    }
+
+    return NO;
+}
+
+/**
+ * Return the current object retain count. This does not take into account any enqueued autorelease calls,
+ * and should generally not be used.
+ */
+- (unsigned int) retainCount {
+    return _refCount;
+}
+
+/**
+ * Retain a reference to the receiver, incrementing the reference count.
+ */
+- (id) retain {
+    _refCount++;
+    return self;
+}
+
+/**
+ * Release a reference to the receiver, decrementing the reference count. If the reference count reaches zero,
+ * the receiver will be deallocated.
+ */
 - (void) release {
     /* This must never occur */
     assert(_refCount >= 1);

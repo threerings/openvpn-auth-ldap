@@ -50,9 +50,6 @@
 #import "TRObject.h"
 #import "util/TRString.h"
 
-// TODO
-@class NSValue;
-
 @interface PXTestException : TRObject {
 @private
     /** The test failure reason. */
@@ -78,9 +75,9 @@
                                          inFile:(TRString *)filename
                                          atLine:(int)lineNumber
                                 withDescription:(TRString *)formatString, ...;
-+ (PXTestException *)failureInEqualityBetweenValue:(NSValue *)left 
-                                      andValue:(NSValue *)right 
-                                  withAccuracy:(NSValue *)accuracy 
++ (PXTestException *)failureInEqualityBetweenValue:(id)left 
+                                      andValue:(id)right 
+                                  withAccuracy:(id)accuracy 
                                         inFile:(TRString *)filename 
                                         atLine:(int) ineNumber
                                withDescription:(TRString *)formatString, ...;
