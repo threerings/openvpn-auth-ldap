@@ -67,8 +67,8 @@
     testDescription = [TRString stringWithCString: ""];
   }
 
-  TRString *reason = [TRString stringWithFormat:"'%@' should be %s. %",
-                      condition, isTrue ? "false" : "true", testDescription];
+  TRString *reason = [TRString stringWithFormat:"'%s' should be %s. %s",
+                      [condition cString], isTrue ? "false" : "true", [testDescription cString] ];
 
   return [self failureInFile:filename atLine:lineNumber reason:reason];
 }
@@ -90,14 +90,14 @@
   }
 
 // XXX - We need to support -description here
-#if TODO_FOUNDATION_COMPAT
+#ifdef HAVE_FRAMEWORK_FOUNDATION
   TRString *reason =
-    [TRString stringWithFormat:"'%@' should be equal to '%@'. %",
-     [left description], [right description], testDescription];
+    [TRString stringWithFormat:"'%@' should be equal to '%@'. %s",
+     [left description], [right description], [testDescription cString]];
 #else
  TRString *reason =
-   [TRString stringWithFormat:"'%p' should be equal to '%p'. %",
-    left, right, testDescription];
+   [TRString stringWithFormat:"'%p' should be equal to '%p'. %s",
+    left, right, [testDescription cString]];
 #endif
 
   return [self failureInFile:filename atLine:lineNumber reason:reason];
@@ -122,15 +122,28 @@
   }
 
   TRString *reason;
+// XXX - We need to support -description here
+#ifdef HAVE_FRAMEWORK_FOUNDATION
   if (accuracy) {
     reason =
-      [TRString stringWithFormat:"'%@' should be equal to '%@'. %",
+      [TRString stringWithFormat:"'%@' should be equal to '%@'. %@",
        left, right, testDescription];
   } else {
     reason =
-      [TRString stringWithFormat:"'%@' should be equal to '%@' +/-'%@'. %",
+      [TRString stringWithFormat:"'%@' should be equal to '%@' +/-'%@'. %@",
        left, right, accuracy, testDescription];
   }
+#else /* HAVE_FRAMEWORK_FOUNDATION */
+  if (accuracy) {
+    reason =
+      [TRString stringWithFormat:"'%p' should be equal to '%p'. %s",
+       left, right, [testDescription cString]];
+  } else {
+    reason =
+      [TRString stringWithFormat:"'%p' should be equal to '%p' +/-'%p'. %s",
+       left, right, accuracy, [testDescription cString]];
+  }
+#endif
 
   return [self failureInFile:filename atLine:lineNumber reason:reason];
 }
@@ -151,8 +164,8 @@
     testDescription = [TRString stringWithCString: ""];
   }
 
-  TRString *reason = [TRString stringWithFormat:"'%@' should raise. %",
-                      expression, testDescription];
+  TRString *reason = [TRString stringWithFormat:"'%s' should raise. %s",
+                      [expression cString], [testDescription cString]];
 
   return [self failureInFile:filename atLine:lineNumber reason:reason];
 }
@@ -180,8 +193,8 @@
     reason = [exception reason];
   } else {
     // not one of our exception, use the exceptions reason and our description
-    reason = [TRString stringWithFormat:"'%@' raised '%@'. %",
-              expression, [exception reason], testDescription];
+    reason = [TRString stringWithFormat:"'%s' raised '%s'. %s",
+              [expression cString], [[exception reason] cString], [testDescription cString]];
   }
 
   return [self failureInFile:filename atLine:lineNumber reason:reason];
