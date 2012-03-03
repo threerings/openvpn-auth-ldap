@@ -2,10 +2,10 @@
  * TRObject.m vi:ts=4:sw=4:expandtab:
  * TRObject Unit Tests
  *
- * Author: Landon Fuller <landonf@threerings.net>
+ * Author: Landon Fuller <landonf@bikemonkey.org>
  *
  * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
- * Copyright (c) 2007 Landon Fuller <landonf@threerings.net>
+ * Copyright (c) 2007 - 2012 Landon Fuller <landonf@bikemonkey.org>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@
 
     /* Initialize the object */
     obj = [[TRObject alloc] init];
-    STAssertEquals([obj retainCount], (PXUInteger)2, "Newly initialized TRObject has unexpected reference count");
+    STAssertEquals([obj retainCount], (PXUInteger)1, "Newly initialized TRObject has unexpected reference count");
 
     /* Increment the refcount */
     [obj retain];
