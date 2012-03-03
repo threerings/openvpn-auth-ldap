@@ -27,6 +27,7 @@ TEST_OBJS=	tests.o \
 		TRLDAPSearchFilterTests.o \
 		TRLocalPacketFilterTests.o \
 		TRObjectTests.o \
+		mockpf.o \
 		TRPFAddressTests.o \
 		TRStringTests.o \
 		TRVPNSessionTests.o

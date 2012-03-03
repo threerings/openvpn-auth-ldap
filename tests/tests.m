@@ -45,8 +45,8 @@
 #import "TRLog.h"
 #import "TRAutoreleasePool.h"
 
-#import "runner/PXTestCaseRunner.h"
-#import "runner/PXTestConsoleResultHandler.h"
+#import "PXTestCaseRunner.h"
+#import "PXTestConsoleResultHandler.h"
 
 void print_usage(const char *name) {
     printf("Usage: %s [filename]\n", name);
