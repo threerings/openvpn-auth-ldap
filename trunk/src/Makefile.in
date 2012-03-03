@@ -73,7 +73,7 @@ install:: $(PLUGIN_FILE)
 	$(INSTALL_PLUGIN)
 
 clean::
-	rm -f $(AUTH_OBJS) $(PLUGIN_OBJS) $(AUTH_LIB) $(GEN_SRCS) testplugin
+	rm -f $(AUTH_OBJS) $(TEST_OBJS) $(PLUGIN_OBJS) $(AUTH_LIB) $(GEN_SRCS) testplugin
 	$(CLEAN_PLUGIN)
 
 distclean:: clean
