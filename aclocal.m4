@@ -56,8 +56,10 @@ AC_DEFUN([OD_OBJC_RUNTIME],[
 	OLD_LIBS="${LIBS}"
 	OLD_OBJCFLAGS="${OBJCFLAGS}"
 
-	# Add -lobjc. The following tests will ensure that the library exists and functions with the detected Objective C compiler
-	LIBS="${LIBS} -lobjc"
+	# Add -lobjc and -fobjc-exceptions. The following tests will ensure that the library exists and
+	# functions with the detected Objective C compiler
+	OBJCFLAGS="${OBJCFLAGS} -fobjc-exceptions"
+	LIBS="${LIBS} -lobjc -fobjc-exceptions"
 
 	# Test if pthreads are required to link against
 	# libobjc - this is the case on FreeBSD.
@@ -113,11 +115,11 @@ AC_DEFUN([OD_OBJC_RUNTIME],[
 
 	if test x"${od_cv_objc_req_pthread}" = x"no"; then
 		OBJC_LIBS="${OBJC_LIBS} -lobjc"
-		OBJC_PTHREAD_LIBS="${PTHREAD_LIBS}"
-		OBJC_PTHREAD_CFLAGS="${PTHREAD_CFLAGS}"
+		OBJC_PTHREAD_LIBS="${PTHREAD_LIBS} -fobjc-exceptions"
+		OBJC_PTHREAD_CFLAGS="${PTHREAD_CFLAGS} -fobjc-exceptions"
 	elif test x"${od_cv_objc_req_pthread}" = x"yes"; then
-		OBJC_LIBS="${OBJC_LIBS} -lobjc ${PTHREAD_LIBS}"
-		OBJCFLAGS="${OBJCFLAGS} ${PTHREAD_CFLAGS}"
+		OBJC_LIBS="${OBJC_LIBS} -lobjc ${PTHREAD_LIBS} -fobjc-exceptions"
+		OBJCFLAGS="${OBJCFLAGS} ${PTHREAD_CFLAGS} -fobjc-exceptions"
 	fi
 
 	if test x"${with_objc_runtime}" = x || test x"${with_objc_runtime}" = x"apple"; then
