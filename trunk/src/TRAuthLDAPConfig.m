@@ -41,7 +41,7 @@
 #import "TRAuthLDAPConfig.h"
 
 #import "TRLog.h"
-#import "util/TRHash.h"
+#import "TRHash.h"
 
 /* All Variables and Section Types */
 typedef enum {

@@ -26,7 +26,7 @@
  */
 #import <stdlib.h>
 
-#import "util/TRAutoreleasePool.h"
+#import "TRAutoreleasePool.h"
 
 #import "PXTestCaseRunner.h"
 #import "PXTestObjC.h"

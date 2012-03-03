@@ -41,9 +41,9 @@
 #import <unistd.h>
 #import <fcntl.h>
 
-#import "config/TRConfig.h"
-#import "config/TRConfigParser.h"
-#import "config/TRConfigLexer.h"
+#import "TRConfig.h"
+#import "TRConfigParser.h"
+#import "TRConfigLexer.h"
 
 #import "tests.h"
 

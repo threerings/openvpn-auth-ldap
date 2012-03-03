@@ -1,6 +1,6 @@
 /*
- * TRConfigToken.h vi:ts=4:sw=4:expandtab:
- * Configuration Lexer Tokens
+ * TRPFAddress.h vi:ts=4:sw=4:expandtab:
+ * OpenBSD PF Address
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -36,54 +36,31 @@
 #import <config.h>
 #endif
 
-#import <stdlib.h>
-
 #import "TRObject.h"
-#import "util/TRString.h"
+#import "TRString.h"
 
-/**
- * Object Data Types.
- * Tokens are always strings (TOKEN_DATATYPE_STRING),
- * but sometimes they can also be integers and booleans.
- * In other words, the integer and boolean datatypes should
- * be considered to provide a superset of functionality to the
- * string data type.
- */
-typedef enum {
-    TOKEN_DATATYPE_STRING,
-    TOKEN_DATATYPE_INT,
-    TOKEN_DATATYPE_BOOL
-} TRConfigDataType;
+#import <sys/types.h>
+#import <sys/ioctl.h>
+#import <sys/socket.h>
+#import <netinet/in.h>
+#import <arpa/inet.h>
 
-@interface TRConfigToken : TRObject {
-@private
-    /* Parser's token identifier */
-    int _tokenID;
-
-    /* Token's line origin */
-    unsigned int _lineNumber;
-
-    /* String value */
-    TRString *_string;
-
-    /* Current data type */
-    TRConfigDataType _dataType;
-
-    /* Union of internal representations */
+typedef struct {
+    sa_family_t family;
     union {
-        int _intValue;
-        BOOL _boolValue;
-    } _internalRep;
+        struct in_addr ip4_addr;
+        struct in6_addr ip6_addr;
+    };
+    uint8_t netmask;
+} TRPortableAddress;
+
+@interface TRPFAddress : TRObject {
+@private
+    TRPortableAddress _addr;
 }
 
-- (id) initWithBytes: (const char *) data numBytes: (size_t) length lineNumber: (unsigned int) line tokenID: (int) tokenID;
-
-- (int) tokenID;
-- (unsigned int) lineNumber;
-
-- (TRString *) string;
-- (const char *) cString;
-- (BOOL) intValue: (int *) value;
-- (BOOL) boolValue: (BOOL *) value;
+- (id) initWithPresentationAddress: (TRString *) address;
+- (id) initWithPortableAddress: (TRPortableAddress *) address;
+- (void) address: (TRPortableAddress *) addr;
 
 @end

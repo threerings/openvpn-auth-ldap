@@ -34,9 +34,9 @@
 
 #import "TRLDAPGroupConfig.h"
 
-#import "config/TRConfig.h"
-#import "util/TRString.h"
-#import "util/TRArray.h"
+#import "TRConfig.h"
+#import "TRString.h"
+#import "TRArray.h"
 
 @interface TRAuthLDAPConfig : TRObject <TRConfigDelegate> {
 @private

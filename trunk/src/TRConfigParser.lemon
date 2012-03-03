@@ -37,7 +37,7 @@
 #import <config.h>
 #endif
 
-#import "config/TRConfig.h"
+#import "TRConfig.h"
 
 #import <stdio.h>
 }

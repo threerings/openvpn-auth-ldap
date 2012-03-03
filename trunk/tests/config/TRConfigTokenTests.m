@@ -36,9 +36,9 @@
 #import <config.h>
 #endif
 
-#import "config/TRConfigToken.h"
-#import "config/TRConfig.h"
-#import "config/TRConfigParser.h"
+#import "TRConfigToken.h"
+#import "TRConfig.h"
+#import "TRConfigParser.h"
 
 #import <check.h>
 #import <string.h>

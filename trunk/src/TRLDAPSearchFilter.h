@@ -1,6 +1,6 @@
 /*
- * TRLDAPEntry.h vi:ts=4:sw=4:expandtab:
- * LDAP Entry
+ * TRLDAPSearchFilter.h vi:ts=4:sw=4:expandtab:
+ * LDAP Search Filter Generator
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -33,17 +33,14 @@
  */
 
 #import "TRObject.h"
-#import "util/TRString.h"
-#import "util/TRHash.h"
+#import "TRString.h"
 
-@interface TRLDAPEntry : TRObject {
+@interface TRLDAPSearchFilter : TRObject {
 @private
-    TRString *_dn;
-    TRHash *_attributes;
+    TRString *_format;
 }
 
-- (id) initWithDN: (TRString *) dn attributes: (TRHash *) attributes;
-- (TRString *) dn;
-- (TRHash *) attributes;
+- (id) initWithFormat: (TRString *) format;
+- (TRString *) getFilter: (TRString *) subString;
 
 @end

@@ -42,7 +42,7 @@
 
 #import "tests.h"
 
-#import "config/TRConfig.h"
+#import "TRConfig.h"
 
 /* Path Constants */
 #define TEST_CONF        DATA_PATH("TRConfig.conf")

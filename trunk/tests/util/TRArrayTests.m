@@ -38,8 +38,8 @@
 
 #import <check.h>
 
-#import "util/TRArray.h"
-#import "util/TRString.h"
+#import "TRArray.h"
+#import "TRString.h"
 
 START_TEST (test_addObject) {
     TRArray *array = [[TRArray alloc] init];

@@ -33,7 +33,7 @@
  */
 
 #import "TRObject.h"
-#import "util/TRString.h"
+#import "TRString.h"
 
 @interface TRVPNSession: TRObject {
 @private

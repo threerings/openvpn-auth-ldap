@@ -1,8 +1,10 @@
 /*
- * TRLDAPConnection.h vi:ts=4:sw=4:expandtab:
- * Simple LDAP Wrapper
+ * TRLDAPEntry.h vi:ts=4:sw=4:expandtab:
+ * LDAP Entry
  *
- * Copyright (c) 2005 - 2007 Landon Fuller <landonf@threerings.net>
+ * Author: Landon Fuller <landonf@threerings.net>
+ *
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13,7 +15,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Landon Fuller nor the names of any contributors
+ * 3. Neither the name of the copyright holder nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  * 
@@ -30,37 +32,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <ldap.h>
-
 #import "TRObject.h"
+#import "TRString.h"
+#import "TRHash.h"
 
-#import "ldap/TRLDAPEntry.h"
-
-#import "util/TRString.h"
-#import "util/TRArray.h"
-
-@interface TRLDAPConnection : TRObject {
+@interface TRLDAPEntry : TRObject {
 @private
-    LDAP *ldapConn;
-    int _timeout;
+    TRString *_dn;
+    TRHash *_attributes;
 }
 
-- (id) initWithURL: (TRString *) url timeout: (int) timeout;
-- (BOOL) startTLS;
-
-- (BOOL) bindWithDN: (TRString *) bindDN password: (TRString *) password;
-
-- (TRArray *) searchWithFilter: (TRString *) filter
-              scope: (int) scope
-              baseDN: (TRString *) base
-              attributes: (TRArray *) attributes;
-- (BOOL) compareDN: (TRString *) dn withAttribute: (TRString *) attribute value: (TRString *) value;
-
-- (BOOL) setReferralEnabled: (BOOL) enabled;
-- (BOOL) setTLSCACertFile: (TRString *) fileName;
-- (BOOL) setTLSCACertDir: (TRString *) directory;
-- (BOOL) setTLSClientCert: (TRString *) certFile keyFile: (TRString *) keyFile;
-- (BOOL) setTLSCipherSuite: (TRString *) cipherSuite;
+- (id) initWithDN: (TRString *) dn attributes: (TRHash *) attributes;
+- (TRString *) dn;
+- (TRHash *) attributes;
 
 @end
-

@@ -36,7 +36,7 @@
 #import <stdarg.h>
 
 #import "TRObject.h"
-#import "util/TRAutoreleasePool.h"
+#import "TRAutoreleasePool.h"
 
 #import <objc/runtime.h>
 

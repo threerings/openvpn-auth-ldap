@@ -43,7 +43,7 @@
 #import <tests.h>
 
 #import "TRLog.h"
-#import "util/TRAutoreleasePool.h"
+#import "TRAutoreleasePool.h"
 
 #import "runner/PXTestCaseRunner.h"
 #import "runner/PXTestConsoleResultHandler.h"

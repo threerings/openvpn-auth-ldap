@@ -48,7 +48,7 @@
 // This notice may not be removed from this file.
 
 #import "TRObject.h"
-#import "util/TRString.h"
+#import "TRString.h"
 
 @interface PXTestException : TRObject {
 @private

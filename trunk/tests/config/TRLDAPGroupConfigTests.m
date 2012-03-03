@@ -36,7 +36,7 @@
 #import <config.h>
 #endif
 
-#import "config/TRLDAPGroupConfig.h"
+#import "TRLDAPGroupConfig.h"
 
 #import <check.h>
 

@@ -34,7 +34,7 @@
 
 #import <stdlib.h>
 
-#import "util/TRArray.h"
+#import "TRArray.h"
 #import "xmalloc.h"
 
 typedef struct _TRArrayStack {

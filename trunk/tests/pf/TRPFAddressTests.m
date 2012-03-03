@@ -40,7 +40,7 @@
 
 #import <string.h>
 
-#import "pf/TRPFAddress.h"
+#import "TRPFAddress.h"
 
 START_TEST(test_initWithPresentationAddress) {
     TRString *addrString;

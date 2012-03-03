@@ -1,9 +1,10 @@
 /*
- * TRLDAPAccountRepository.h vi:ts=4:sw=4:expandtab:
+ * TRHash.h vi:ts=4:sw=4:expandtab:
+ * Hash table
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
- * Copyright (c) 2008-2012 Three Rings Design, Inc.
+ * Copyright (c) 2006 - 2007 Three Rings Design, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,27 +32,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "hash.h"
+
 #import "TRObject.h"
-#import "util/TRString.h"
+#import "TRString.h"
+#import "TREnumerator.h"
 
-#import "TRAccountRepository.h"
-#import "TRLDAPConnection.h"
-#import "TRLDAPSearchFilter.h"
-
-/**
- * LDAP user/group account verification.
- */
-@interface TRLDAPAccountRepository : TRObject <TRAccountRepository> {
+@interface TRHash : TRObject {
 @private
-    TRLDAPConnection *_ldap;
-    TRLDAPSearchFilter *_userFilter;
-    TRLDAPSearchFilter *_groupFilter;
+    hash_t *_hash;
 }
 
-- (id) initWithLDAPConnection: (TRLDAPConnection *) ldap
-             userSearchFilter: (TRLDAPSearchFilter *) userFilter
-            groupSearchFilter: (TRLDAPSearchFilter *) groupFilter;
-             
-- (BOOL) authenticateUser: (TRString *) username withPassword: (TRString *) password;
-- (BOOL) checkGroupMember: (TRString *) username withGroup: (TRString *) groupname;
+- (id) initWithCapacity: (unsigned long) numItems;
+- (BOOL) isFull;
+- (id) valueForKey: (TRString *) key;
+- (void) setObject: (id) anObject forKey: (TRString *) key;
+- (void) removeObjectForKey: (TRString *) key;
+- (TREnumerator *) keyEnumerator;
+
 @end

@@ -1,6 +1,6 @@
 /*
- * TRLocalPacketFilter.h vi:ts=4:sw=4:expandtab:
- * Interface to local OpenBSD /dev/pf
+ * TRConfigLexer.h vi:ts=4:sw=4:expandtab:
+ * Configuration Lexer
  *
  * Author: Landon Fuller <landonf@threerings.net>
  *
@@ -32,40 +32,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-#import <config.h>
-#endif
-
-#ifdef HAVE_PF
+#import <ldap.h>
 
 #import "TRObject.h"
-#import "TRPacketFilter.h"
-#import "util/TRArray.h"
-#import "TRPFAddress.h"
-#import "util/TRString.h"
+#import "TRConfigToken.h"
 
-/* pf includes */
-#import <sys/types.h>
-#import <sys/ioctl.h>
-#import <sys/socket.h>
-#import <net/if.h>
-#import <net/pfvar.h>
+typedef enum {
+    LEXER_SC_INITIAL,
+    LEXER_SC_SECTION,
+    LEXER_SC_SECTION_NAME,
+    LEXER_SC_VALUE,
+    LEXER_SC_STRING_VALUE
+} LexerStartCondition;
 
-@interface TRLocalPacketFilter : TRObject <TRPacketFilter> {
+@interface TRConfigLexer : TRObject {
 @private
-    /** Cached reference to /dev/pf. */
-    int _fd;
+    /* Input buffer */
+    char *buffer;
+    size_t bufferLength;
+
+    /* re2c lexer state */
+    char *_cursor;
+    char *_limit;
+    char *_marker;
+    char *_ctxMarker;
+    char *_token;
+    char *_eoi;
+    unsigned int _lineNumber;
+    LexerStartCondition _condition;
 }
 
-- (pferror_t) open;
-- (void) close;
+- (id) initWithFD: (int) fd;
 
-- (pferror_t) tables: (TRArray **) result;
-- (pferror_t) flushTable: (TRString *) tableName;
-- (pferror_t) addAddress: (TRPFAddress *) address toTable: (TRString *) tableName;
-- (pferror_t) deleteAddress: (TRPFAddress *) address fromTable: (TRString *) tableName;
-- (pferror_t) addressesFromTable: (TRString *) tableName withResult: (TRArray **) result;
+- (TRConfigToken *) scan;
 
 @end
-
-#endif /* HAVE_PF */

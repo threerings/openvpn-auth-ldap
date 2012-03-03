@@ -36,8 +36,8 @@
 #import <config.h>
 #endif
 
-#import "ldap/TRLDAPConnection.h"
-#import "config/TRAuthLDAPConfig.h"
+#import "TRLDAPConnection.h"
+#import "TRAuthLDAPConfig.h"
 
 #import <check.h>
 #import <string.h>

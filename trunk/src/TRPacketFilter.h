@@ -33,8 +33,8 @@
  */
 
 #import "TRObject.h"
-#import "util/TRArray.h"
-#import "util/TRString.h"
+#import "TRArray.h"
+#import "TRString.h"
 #import "TRPFAddress.h"
 
 typedef enum {

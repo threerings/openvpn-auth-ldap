@@ -22,7 +22,7 @@
 
 #import <check.h>
 
-#import "util/TRAutoreleasePool.h"
+#import "TRAutoreleasePool.h"
 
 static unsigned int livecount;
 

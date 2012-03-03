@@ -36,11 +36,7 @@ MODULE_LIBS=	config/libauth-ldap-test-config.a \
 		runner/libauth-ldap-test-runner.a
 
 LIBS+=		$(MODULES) \
-		-L${top_builddir}/src -lauth-ldap-testing \
-		-L${top_builddir}/src/config -lauth-ldap-config \
-		-L${top_builddir}/src/ldap -lauth-ldap-ldap \
-		-L${top_builddir}/src/pf -lauth-ldap-pf \
-		-L${top_builddir}/src/util -lauth-ldap-util \
+		-L${top_builddir}/src -lauth-ldap \
 		$(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@
 
 LDFLAGS+=	 $(LIBS)
@@ -59,7 +55,7 @@ pre-all:: $(TEST_GEN)
 tests.h: tests.h.in
 	$(EDIT) $(srcdir)/tests.h.in > $@
 
-tests: ${TEST_GEN} ${TEST_OBJS} ${MODULE_LIBS} ../src/libauth-ldap-testing.a
+tests: ${TEST_GEN} ${TEST_OBJS} ${MODULE_LIBS} ../src/libauth-ldap.a
 	${CC} -o $@ ${TEST_OBJS} ${LDFLAGS}
 
 test:: tests
