@@ -88,14 +88,7 @@ AC_CONFIG_FILES([
 	Mk/subdir.mk
 
 	src/Makefile
-
 	tests/Makefile
-	tests/config/Makefile
-	tests/ldap/Makefile
-	tests/pf/Makefile
-	tests/util/Makefile
-	tests/runner/Makefile
-
 	tools/Makefile
 ])
 AC_OUTPUT
