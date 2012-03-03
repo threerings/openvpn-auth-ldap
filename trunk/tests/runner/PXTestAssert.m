@@ -51,6 +51,7 @@
 // to provide. I didn't stick GTM in front of the Macro names, so that they would 
 // be easy to remember.
 
+#import <stdarg.h>
 #import "PXTestAssert.h"
 
 TRString *STComposeString(const char *formatString, ...) {

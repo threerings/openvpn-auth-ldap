@@ -49,15 +49,15 @@
 
     /* Initialize the object */
     obj = [[TRObject alloc] init];
-    STAssertEquals([obj retainCount], (NSUInteger)1, "Newly initialized TRObject has unexpected reference count");
+    STAssertEquals([obj retainCount], (PXUInteger)1, "Newly initialized TRObject has unexpected reference count");
 
     /* Increment the refcount */
     [obj retain];
-    STAssertEquals([obj retainCount], (NSUInteger)2, "Retained TRObject has unexpected reference count");
+    STAssertEquals([obj retainCount], (PXUInteger)2, "Retained TRObject has unexpected reference count");
 
     /* Decrement the refcount */
     [obj release];
-    STAssertEquals([obj retainCount], (NSUInteger)1, "Released TRObject has unexpected reference count");
+    STAssertEquals([obj retainCount], (PXUInteger)1, "Released TRObject has unexpected reference count");
 
     /* Deallocate the object */
     [obj release];
