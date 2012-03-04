@@ -37,11 +37,15 @@
 #import <config.h>
 #endif
 
-#import <check.h>
+#import "PXTestCase.h"
 
 #import "TRVPNSession.h"
 
-START_TEST(test_initWithUsername) {
+@interface TRVPNSessionTests : PXTestCase @end
+
+@implementation TRVPNSessionTests
+
+- (void) test_initWithUsername {
     TRVPNSession *session;
     TRString *username = [[TRString alloc] initWithCString: "user"];
 
@@ -52,14 +56,5 @@ START_TEST(test_initWithUsername) {
     [username release];
     [session release];
 }
-END_TEST
 
-Suite *TRVPNSession_suite(void) {
-    Suite *s = suite_create("TRVPNSession");
-
-    TCase *tc_session = tcase_create("VPN Session");
-    suite_add_tcase(s, tc_session);
-    tcase_add_test(tc_session, test_initWithUsername);
-
-    return s;
-}
+@end

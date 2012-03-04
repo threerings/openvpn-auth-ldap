@@ -36,14 +36,18 @@
 #import <config.h>
 #endif
 
+#import "PXTestCase.h"
+
 #import "TRLDAPAccountRepository.h"
 #import "TRAuthLDAPConfig.h"
 
-#import <check.h>
-
 #import "tests.h"
 
-START_TEST(test_initWithLDAPConnection) {
+@interface TRLDAPAccountRepositoryTests : PXTestCase @end
+
+@implementation TRLDAPAccountRepositoryTests
+
+- (void) test_initWithLDAPConnection {
     TRLDAPAccountRepository *accounts;
     TRAuthLDAPConfig *config;
     TRLDAPConnection *conn;
@@ -65,14 +69,5 @@ START_TEST(test_initWithLDAPConnection) {
     [config release];
     [conn release];
 }
-END_TEST
 
-Suite *TRLDAPAccountRepository_suite(void) {
-    Suite *s = suite_create("TRLDAPAccountRepository");
-
-    TCase *tc_entry = tcase_create("LDAP Account Repository");
-    suite_add_tcase(s, tc_entry);
-    tcase_add_test(tc_entry, test_initWithLDAPConnection);
-
-    return s;
-}
+@end

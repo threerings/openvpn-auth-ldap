@@ -36,17 +36,22 @@
 #import <config.h>
 #endif
 
+#import "PXTestCase.h"
+
 #import "TRConfigToken.h"
 #import "TRConfig.h"
 #import "TRConfigParser.h"
 
-#import <check.h>
 #import <string.h>
 
 #define TEST_STRING "The answer to life, the universe, and everything"
 #define TEST_LINE_NUMBER 42
 
-START_TEST (test_initWithBytes) {
+@interface TRConfigTokenTests : PXTestCase @end
+
+@implementation TRConfigTokenTests
+
+- (void) test_initWithBytes {
     int tokenID;
     unsigned int lineNumber;
     TRConfigToken *token;
@@ -65,9 +70,8 @@ START_TEST (test_initWithBytes) {
 
     [token release];
 }
-END_TEST
 
-START_TEST (test_intValue) {
+- (void) test_intValue {
     TRConfigToken *token;
     int value;
 
@@ -82,9 +86,8 @@ START_TEST (test_intValue) {
 
     [token release];
 }
-END_TEST
 
-START_TEST (test_boolValue) {
+- (void) test_boolValue {
     TRConfigToken *token;
     BOOL value;
 
@@ -110,17 +113,5 @@ START_TEST (test_boolValue) {
 
     [token release];
 }
-END_TEST
 
-
-Suite *TRConfigToken_suite(void) {
-    Suite *s = suite_create("TRConfigToken");
-
-    TCase *tc_token = tcase_create("Token Operations");
-    suite_add_tcase(s, tc_token);
-    tcase_add_test(tc_token, test_initWithBytes);
-    tcase_add_test(tc_token, test_intValue);
-    tcase_add_test(tc_token, test_boolValue);
-
-    return s;
-}
+@end

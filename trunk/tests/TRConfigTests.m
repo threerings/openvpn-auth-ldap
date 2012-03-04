@@ -36,7 +36,8 @@
 #import <config.h>
 #endif
 
-#import <check.h>
+#import "PXTestCase.h"
+
 #import <fcntl.h>
 #import <unistd.h>
 
@@ -79,7 +80,11 @@
 }
 @end
 
-START_TEST (test_initWithFD) {
+@interface TRConfigTests : PXTestCase @end
+
+@implementation TRConfigTests
+
+- (void) testInitWithFD {
     TRConfig *config;
     MockConfigDelegate *delegate;
     int configFD;
@@ -100,14 +105,6 @@ START_TEST (test_initWithFD) {
     [delegate release];
     close(configFD);
 }
-END_TEST
 
-Suite *TRConfig_suite(void) {
-    Suite *s = suite_create("TRConfig");
 
-    TCase *tc_lex = tcase_create("Parse Configuration");
-    suite_add_tcase(s, tc_lex);
-    tcase_add_test(tc_lex, test_initWithFD);
-
-    return s;
-}
+@end

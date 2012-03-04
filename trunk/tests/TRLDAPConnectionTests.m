@@ -36,10 +36,11 @@
 #import <config.h>
 #endif
 
+#import "PXTestCase.h"
+
 #import "TRLDAPConnection.h"
 #import "TRAuthLDAPConfig.h"
 
-#import <check.h>
 #import <string.h>
 
 #import "tests.h"
@@ -48,7 +49,11 @@
 #define TEST_LDAP_URL    "ldap://ldap1.example.org"
 #define TEST_LDAP_TIMEOUT    15
 
-START_TEST(test_init) {
+@interface TRLDAPConnectionTests : PXTestCase @end
+
+@implementation TRLDAPConnectionTests
+
+- (void) testInit {
     TRAuthLDAPConfig *config;
     TRLDAPConnection *conn;
     TRString *value;
@@ -80,14 +85,5 @@ START_TEST(test_init) {
     [config release];
     [conn release];
 }
-END_TEST
 
-Suite *TRLDAPConnection_suite(void) {
-    Suite *s = suite_create("TRLDAPConnection");
-
-    TCase *tc_ldap = tcase_create("LDAP");
-    suite_add_tcase(s, tc_ldap);
-    tcase_add_test(tc_ldap, test_init);
-
-    return s;
-}
+@end

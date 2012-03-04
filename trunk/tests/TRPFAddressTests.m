@@ -36,13 +36,17 @@
 #import <config.h>
 #endif
 
-#import <check.h>
+#import "PXTestCase.h"
 
 #import <string.h>
 
 #import "TRPFAddress.h"
 
-START_TEST(test_initWithPresentationAddress) {
+@interface TRPFAddressTests : PXTestCase @end
+
+@implementation TRPFAddressTests
+
+- (void) test_initWithPresentationAddress {
     TRString *addrString;
     TRPFAddress *pfAddr;
     /* Independent verification */
@@ -77,9 +81,8 @@ START_TEST(test_initWithPresentationAddress) {
 
     [pfAddr release];
 }
-END_TEST
 
-START_TEST(test_initWithPortableAddress) {
+- (void) test_initWithPortableAddress {
     TRString *addrString;
     TRPFAddress *pfAddr;
     TRPortableAddress expected;
@@ -104,16 +107,5 @@ START_TEST(test_initWithPortableAddress) {
     /* Verify */
     fail_unless(memcmp(&actual, &expected, sizeof(expected)) == 0);
 }
-END_TEST
 
-
-Suite *TRPFAddress_suite(void) {
-    Suite *s = suite_create("TRPFAddress");
-
-    TCase *tc_addr = tcase_create("Address");
-    suite_add_tcase(s, tc_addr);
-    tcase_add_test(tc_addr, test_initWithPresentationAddress);
-    tcase_add_test(tc_addr, test_initWithPortableAddress);
-
-    return s;
-}
+@end

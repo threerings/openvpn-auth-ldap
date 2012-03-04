@@ -36,24 +36,25 @@
 #import <config.h>
 #endif
 
-#import <check.h>
-
+#import "PXTestCase.h"
 #import "TRHash.h"
 
-START_TEST(test_initWithCapacity) {
+@interface TRHashTests : PXTestCase @end
+
+@implementation TRHashTests
+
+- (void) testInitWithCapacity {
     TRHash *hash = [[TRHash alloc] initWithCapacity: 42];
     [hash release];
 }
-END_TEST
 
-START_TEST(test_isFull) {
+- (void) testIsFull {
     TRHash *hash = [[TRHash alloc] initWithCapacity: 0];
     fail_unless([hash isFull]);
     [hash release];
 }
-END_TEST
 
-START_TEST(test_setObjectForKey) {
+- (void) test_setObjectForKey {
     TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
     TRString *string = [[TRString alloc] initWithCString: "Hello, World"];
     unsigned int refCount = [string retainCount];
@@ -73,12 +74,11 @@ START_TEST(test_setObjectForKey) {
 
     [string release];
 }
-END_TEST
 
 /*
  * Verifies that replacing a key correctly releases key and associated value
  */
-START_TEST(test_setObjectForKey_replacement) {
+- (void) test_setObjectForKey_replacement {
     TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
     TRString *key = [[TRString alloc] initWithCString: "Key"];
     TRString *value1 = [[TRString alloc] initWithCString: "Hello, World"];
@@ -104,9 +104,8 @@ START_TEST(test_setObjectForKey_replacement) {
     [value1 release];
     [value2 release];
 }
-END_TEST
 
-START_TEST(test_removeObjectForKey) {
+- (void) test_removeObjectForKey {
     TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
     TRString *key = [[TRString alloc] initWithCString: "Key"];
     TRString *value = [[TRString alloc] initWithCString: "Value"];
@@ -127,9 +126,8 @@ START_TEST(test_removeObjectForKey) {
     [value release];
     [hash release];
 }
-END_TEST
 
-START_TEST(test_valueForKey) {
+- (void) test_valueForKey {
     TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
     TRString *key = [[TRString alloc] initWithCString: "Key"];
     TRString *value = [[TRString alloc] initWithCString: "Value"];
@@ -145,9 +143,8 @@ START_TEST(test_valueForKey) {
     [key release];
     [value release];
 }
-END_TEST
 
-START_TEST(test_keyEnumerator) {
+- (void) test_keyEnumerator {
     TRHash *hash = [[TRHash alloc] initWithCapacity: HASHCOUNT_T_MAX];
     TRString *key = [[TRString alloc] initWithCString: "Key"];
     TRString *value = [[TRString alloc] initWithCString: "Value"];
@@ -170,21 +167,5 @@ START_TEST(test_keyEnumerator) {
     [key release];
     [value release];
 }
-END_TEST
 
-
-Suite *TRHash_suite(void) {
-    Suite *s = suite_create("TRHash");
-
-    TCase *tc_hash = tcase_create("Hash");
-    suite_add_tcase(s, tc_hash);
-    tcase_add_test(tc_hash, test_initWithCapacity);
-    tcase_add_test(tc_hash, test_isFull);
-    tcase_add_test(tc_hash, test_setObjectForKey);
-    tcase_add_test(tc_hash, test_setObjectForKey_replacement);
-    tcase_add_test(tc_hash, test_removeObjectForKey);
-    tcase_add_test(tc_hash, test_valueForKey);
-    tcase_add_test(tc_hash, test_keyEnumerator);
-
-    return s;
-}
+@end
