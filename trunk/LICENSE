@@ -11,10 +11,12 @@ Small portions of the implementation were taken from various sources, including:
 	- FreeBSD libc (strlcpy)
 	- FreeBSD kernel (pf ioctl validation)
 	- kazlib (hash table implementation)
+	- PLInstrument (test runner framework)
+	- SenTestCase (test assertion macros)
 
-Associated copyrights and licenses are documented below. You'll find that they
-are all compatible and as permissive as the standard BSD license -- in fact,
-most are simply small variations on the license.
+Associated copyrights and licenses are documented below. All code included
+in the final product are either made available under the BSD license, or
+under an compatible and equivalently permissive license.
 
 Some additional sources are included with this distribution and used as a part
 of the build process; they are not linked with the final product:
@@ -109,6 +111,56 @@ final output. They are subject to the following copyright and license:
 	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	OTHER DEALINGS IN THE SOFTWARE.	
+
+The test/PXTestAssert.h, test/PXTestAssert.m, PXTestException.h, and
+PXTestException.m files provide the assertion macros used in the unit
+test system. These files were derived from Google's GTM project, which
+in turn is derived from Sen:Te's OCUnit. These files are used only for
+the unit tests, and thus not included in the final output.
+They are subject to the following copyright and license:
+
+	Copyright 2007-2008 Google Inc.
+
+	Licensed under the Apache License, Version 2.0 (the "License"); you may not
+	use this file except in compliance with the License.  You may obtain a copy
+	of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+	License for the specific language governing permissions and limitations under
+	the License.
+
+	Portions of this file fall under the following license, marked with
+	SENTE_BEGIN - SENTE_END
+	
+	Copyright (c) 1997-2005, Sen:te (Sente SA).  All rights reserved.
+	
+	Use of this source code is governed by the following license:
+	
+	Redistribution and use in source and binary forms, with or without modification,
+	are permitted provided that the following conditions are met:
+	
+	(1) Redistributions of source code must retain the above copyright notice,
+	this list of conditions and the following disclaimer.
+	
+	(2) Redistributions in binary form must reproduce the above copyright notice,
+	this list of conditions and the following disclaimer in the documentation
+	and/or other materials provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+	IN NO EVENT SHALL Sente SA OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+	OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+	OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+	EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	Note: this license is equivalent to the FreeBSD license.
 
 All other code is subject to the following copyright and license:
 
