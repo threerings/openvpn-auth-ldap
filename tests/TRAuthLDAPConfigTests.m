@@ -36,9 +36,9 @@
 #import <config.h>
 #endif
 
-#import <check.h>
 #import <string.h>
 
+#import "PXTestCase.h"
 #import "TRAuthLDAPConfig.h"
 
 #import "tests.h"
@@ -48,7 +48,11 @@
 #define TEST_LDAP_TIMEOUT    15
 #define TEST_LDAP_BASEDN "ou=People,dc=example,dc=com"
 
-START_TEST (test_initWithConfigFile) {
+@interface TRAuthLDAPConfigTests : PXTestCase @end
+
+@implementation TRAuthLDAPConfigTests
+
+- (void) test_initWithConfigFile {
     TRAuthLDAPConfig *config;
     TRString *string;
 
@@ -73,9 +77,8 @@ START_TEST (test_initWithConfigFile) {
 
     [config release];
 }
-END_TEST
 
-START_TEST (test_initWithIncorrectlyNamedSection) {
+- (void) test_initWithIncorrectlyNamedSection {
     TRAuthLDAPConfig *config;
 
     config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_NAMED];
@@ -83,9 +86,8 @@ START_TEST (test_initWithIncorrectlyNamedSection) {
 
     [config release];
 }
-END_TEST
 
-START_TEST (test_initWithMismatchedSection) {
+- (void) test_initWithMismatchedSection {
     TRAuthLDAPConfig *config;
 
     config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MISMATCHED];
@@ -93,9 +95,8 @@ START_TEST (test_initWithMismatchedSection) {
 
     [config release];
 }
-END_TEST
 
-START_TEST (test_initWithDuplicateKeys) {
+- (void) test_initWithDuplicateKeys {
     TRAuthLDAPConfig *config;
 
     config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_MULTIKEY];
@@ -103,9 +104,8 @@ START_TEST (test_initWithDuplicateKeys) {
 
     [config release];
 }
-END_TEST
 
-START_TEST (test_initWithMissingKey) {
+- (void) test_initWithMissingKey {
     TRAuthLDAPConfig *config;
 
     config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_REQUIRED];
@@ -113,9 +113,8 @@ START_TEST (test_initWithMissingKey) {
 
     [config release];
 }
-END_TEST
 
-START_TEST (test_initWithMissingTrailingNewline) {
+- (void) test_initWithMissingTrailingNewline {
     TRAuthLDAPConfig *config;
     TRString *baseDN;
 
@@ -128,29 +127,13 @@ START_TEST (test_initWithMissingTrailingNewline) {
     
     [config release];
 }
-END_TEST
 
-START_TEST (test_initWithBadSection) {
+- (void) test_initWithBadSection {
     TRAuthLDAPConfig *config;
 
     config = [[TRAuthLDAPConfig alloc] initWithConfigFile: AUTH_LDAP_CONF_BAD_SECTION];
     fail_if(config != NULL, "-[[TRAuthLDAPConfig alloc] initWithConfigFile:] accepted an invalid section.");
 
 }
-END_TEST
 
-Suite *TRAuthLDAPConfig_suite(void) {
-    Suite *s = suite_create("TRAuthLDAPConfig");
-
-    TCase *tc_parse = tcase_create("Parse Configuration");
-    suite_add_tcase(s, tc_parse);
-    tcase_add_test(tc_parse, test_initWithConfigFile);
-    tcase_add_test(tc_parse, test_initWithIncorrectlyNamedSection);
-    tcase_add_test(tc_parse, test_initWithMismatchedSection);
-    tcase_add_test(tc_parse, test_initWithDuplicateKeys);
-    tcase_add_test(tc_parse, test_initWithMissingKey);
-    tcase_add_test(tc_parse, test_initWithMissingTrailingNewline);
-    tcase_add_test(tc_parse, test_initWithBadSection);
-
-    return s;
-}
+@end

@@ -36,16 +36,21 @@
 #import <config.h>
 #endif
 
+#import "PXTestCase.h"
+
 #import "TRString.h"
 #import "TRAutoreleasePool.h"
 
-#import <check.h>
 #import <string.h>
 #import <limits.h>
 
 #define TEST_STRING "Hello, World!"
 
-START_TEST (test_initWithCString) {
+@interface TRStringTests: PXTestCase @end
+
+@implementation TRStringTests
+
+- (void) test_initWithCString {
     const char *cString = TEST_STRING;
     TRString *str;
 
@@ -55,9 +60,9 @@ START_TEST (test_initWithCString) {
     fail_unless(strcmp(cString, TEST_STRING) == 0, "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", TEST_STRING, cString);
     [str release];
 }
-END_TEST
 
-START_TEST (test_initWithString) {
+
+- (void) test_initWithString {
     const char *cString = TEST_STRING;
     TRString *srcString = [[TRString alloc] initWithCString: cString];
     TRString *str;
@@ -70,9 +75,9 @@ START_TEST (test_initWithString) {
     [srcString release];
     [str release];
 }
-END_TEST
 
-START_TEST (test_initWithBytes) {
+
+- (void) test_initWithBytes {
     const char *data = TEST_STRING;
     const char *cString;
     TRString *str;
@@ -93,9 +98,9 @@ START_TEST (test_initWithBytes) {
 
     [str release];
 }
-END_TEST
 
-START_TEST (test_stringWithFormat) {
+
+- (void) test_stringWithFormat {
     TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
     TRString *str;
     
@@ -105,9 +110,9 @@ START_TEST (test_stringWithFormat) {
 
     [pool release];
 }
-END_TEST
 
-START_TEST (test_stringWithCString) {
+
+- (void) test_stringWithCString {
     TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
     TRString *str;
     
@@ -117,18 +122,18 @@ START_TEST (test_stringWithCString) {
 
     [pool release];
 }
-END_TEST
 
-START_TEST (test_length) {
+
+- (void) test_length {
     TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
     size_t length = [str length];
 
     fail_unless(length == sizeof(TEST_STRING), "-[TRString length] returned incorrect value. (Expected %u, got %u)", sizeof(TEST_STRING), length);
     [str release];
 }
-END_TEST
 
-START_TEST (test_intValue) {
+
+- (void) test_intValue {
     TRString *str;
     int i;
     bool success;
@@ -154,31 +159,15 @@ START_TEST (test_intValue) {
     fail_unless(i == INT_MIN, "-[TRString intValue: returned incorrect value for INT_MIN. (Expected %d, got %d)", INT_MIN, i);
     [str release];
 }
-END_TEST
 
-START_TEST (test_hash) {
+
+- (void) test_hash {
     TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
     int hash = [str hash];
 
     fail_if(hash == 0);
     [str release];
 }
-END_TEST
 
 
-Suite *TRString_suite(void) {
-    Suite *s = suite_create("TRString");
-
-    TCase *tc_string = tcase_create("String Handling");
-    suite_add_tcase(s, tc_string);
-    tcase_add_test(tc_string, test_initWithCString);
-    tcase_add_test(tc_string, test_initWithString);
-    tcase_add_test(tc_string, test_initWithBytes);
-    tcase_add_test(tc_string, test_stringWithFormat);
-    tcase_add_test(tc_string, test_stringWithCString);
-    tcase_add_test(tc_string, test_length);
-    tcase_add_test(tc_string, test_intValue);
-    tcase_add_test(tc_string, test_hash);
-
-    return s;
-}
+@end

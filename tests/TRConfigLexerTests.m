@@ -36,7 +36,6 @@
 #import <config.h>
 #endif
 
-#import <check.h>
 #import <string.h>
 #import <unistd.h>
 #import <fcntl.h>
@@ -45,12 +44,18 @@
 #import "TRConfigParser.h"
 #import "TRConfigLexer.h"
 
+#import "PXTestCase.h"
+
 #import "tests.h"
 
 /* Path Constants */
 #define TEST_CONF        DATA_PATH("test-lineNumbers.conf")
 
-START_TEST (test_parse) {
+@interface TRConfigLexerTests : PXTestCase @end
+
+@implementation TRConfigLexerTests
+
+- (void) testParse {
     TRConfigLexer *lexer;
     TRConfigToken *token;
     int configFD;
@@ -81,15 +86,5 @@ START_TEST (test_parse) {
     close(configFD);
     [lexer dealloc];
 }
-END_TEST
 
-
-Suite *TRConfigLexer_suite(void) {
-    Suite *s = suite_create("TRConfigLexer");
-
-    TCase *tc_lex = tcase_create("Lexificate File");
-    suite_add_tcase(s, tc_lex);
-    tcase_add_test(tc_lex, test_parse);
-
-    return s;
-}
+@end

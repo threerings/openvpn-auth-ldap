@@ -39,7 +39,10 @@
 /*
  * Useful Paths
  */
-#define TEST_DATA               "@TEST_DATA@"
+#ifndef TEST_DATA
+#error Path to test data must be supplied at compile time.
+#endif
+
 #define DATA_PATH(relative)     TEST_DATA "/" relative
 
 #ifndef HAVE_PF
@@ -54,25 +57,3 @@
 #define AUTH_LDAP_CONF_REQUIRED DATA_PATH("auth-ldap-required.conf")
 #define AUTH_LDAP_CONF_MISSING_NEWLINE DATA_PATH("auth-ldap-missing-newline.conf")
 #define AUTH_LDAP_CONF_BAD_SECTION  DATA_PATH("auth-ldap-bad-section.conf")
-
-/*
- * Unit Tests
- */
-
-Suite *TRString_suite(void);
-Suite *TRAuthLDAPConfig_suite(void);
-Suite *TRAutoreleasePool_suite(void);
-Suite *TRLDAPAccountRepository_suite(void);
-Suite *TRLDAPConnection_suite(void);
-Suite *TRLDAPEntry_suite(void);
-Suite *TRLDAPSearchFilter_suite(void);
-Suite *TRObject_suite(void);
-Suite *TRArray_suite(void);
-Suite *TRHash_suite(void);
-Suite *TRConfigToken_suite(void);
-Suite *TRConfigLexer_suite(void);
-Suite *TRConfig_suite(void);
-Suite *TRLDAPGroupConfig_suite(void);
-Suite *TRLocalPacketFilter_suite(void);
-Suite *TRPFAddress_suite(void);
-Suite *TRVPNSession_suite(void);

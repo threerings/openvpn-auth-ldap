@@ -5,6 +5,7 @@
  * Author: Landon Fuller <landonf@threerings.net>
  *
  * Copyright (c) 2006 Three Rings Design, Inc.
+ * Copyright (c) 2012 Landon Fuller <landonf@bikemonkey.org>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,12 +37,16 @@
 #import <config.h>
 #endif
 
-#import <check.h>
+#import "PXTestCase.h"
 
 #import "TRArray.h"
 #import "TRString.h"
 
-START_TEST (test_addObject) {
+@interface TRArrayTests : PXTestCase @end
+
+@implementation TRArrayTests
+
+- (void) test_addObject {
     TRArray *array = [[TRArray alloc] init];
     TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
     TRString *string2 = [[TRString alloc] initWithCString: "String 2"];
@@ -73,9 +78,8 @@ START_TEST (test_addObject) {
     [string2 release];
     [string3 release];
 }
-END_TEST
 
-START_TEST (test_removeObject) {
+- (void) test_removeObject {
     TRArray *array = [[TRArray alloc] init];
     TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
     TRString *string2 = [[TRString alloc] initWithCString: "String 2"];
@@ -95,9 +99,8 @@ START_TEST (test_removeObject) {
     [string1 release];
     [string2 release];
 }
-END_TEST
 
-START_TEST (test_containsObject) {
+- (void) test_containsObject {
     TRArray *array = [[TRArray alloc] init];
     TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
 
@@ -105,17 +108,16 @@ START_TEST (test_containsObject) {
     [array addObject: string1];
 
     /* Look for our object */
-    fail_unless([array containsObject: string1]);
+    STAssertTrue([array containsObject: string1], "Array claims to not contain the added object.");
 
     /* And a known bad one ... */
-    fail_if([array containsObject: array]);
+    STAssertFalse([array containsObject: array], "Array claims to contain itself.");
 
     [array release];
     [string1 release];
 }
-END_TEST
 
-START_TEST(test_count) {
+- (void) test_count {
     TRArray *array = [[TRArray alloc] init];
     TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
 
@@ -129,9 +131,8 @@ START_TEST(test_count) {
     [string1 release];
 
 }
-END_TEST
 
-START_TEST(test_objectEnumerator) {
+- (void) test_objectEnumerator {
     TRArray *array = [[TRArray alloc] init];
     TRString *string1 = [[TRString alloc] initWithCString: "String 1"];
     TRString *string2 = [[TRString alloc] initWithCString: "String 2"];
@@ -162,20 +163,5 @@ START_TEST(test_objectEnumerator) {
     [string1 release];
     [string2 release];
 }
-END_TEST
 
-
-
-Suite *TRArray_suite(void) {
-    Suite *s = suite_create("TRArray");
-
-    TCase *tc_array = tcase_create("Array");
-    suite_add_tcase(s, tc_array);
-    tcase_add_test(tc_array, test_addObject);
-    tcase_add_test(tc_array, test_removeObject);
-    tcase_add_test(tc_array, test_containsObject);
-    tcase_add_test(tc_array, test_objectEnumerator);
-    tcase_add_test(tc_array, test_count);
-
-    return s;
-}
+@end

@@ -20,9 +20,8 @@
  * or in connection with the use or performance of this software.
  */
 
-#import <check.h>
-
 #import "TRAutoreleasePool.h"
+#import "PXTestCase.h"
 
 static unsigned int livecount;
 
@@ -43,7 +42,11 @@ static unsigned int livecount;
 
 @end
 
-START_TEST (test_TRAutoreleasePool_addObject) {
+@interface TRAutoreleasePoolTests : PXTestCase @end
+
+@implementation TRAutoreleasePoolTests
+
+- (void) testAddObject {
     TRAutoreleasePool *pool;
     TRObject *obj;
     int i;
@@ -71,16 +74,5 @@ START_TEST (test_TRAutoreleasePool_addObject) {
 
     fail_unless(livecount == 0, "[TRAutoreleasePool release] failed to release %d objects.", livecount);
 }
-END_TEST
 
-Suite *TRAutoreleasePool_suite(void) {
-    Suite *s = suite_create("TRAutoreleasePool");
-
-    TCase *tc = tcase_create("Default");
-
-    suite_add_tcase(s, tc);
-
-    tcase_add_test(tc, test_TRAutoreleasePool_addObject);
-
-    return s;
-}
+@end

@@ -36,11 +36,14 @@
 #import <config.h>
 #endif
 
-#import <check.h>
-
+#import "PXTestCase.h"
 #import "TRLDAPEntry.h"
 
-START_TEST(test_initWithDN) {
+@interface TRLDAPEntryTests : PXTestCase @end
+
+@implementation TRLDAPEntryTests
+
+- (void) testInitWithDN {
     TRLDAPEntry *entry;
     TRString *dn;
     TRHash *attributes;
@@ -59,14 +62,5 @@ START_TEST(test_initWithDN) {
     [dn release];
     [attributes release];
 }
-END_TEST
 
-Suite *TRLDAPEntry_suite(void) {
-    Suite *s = suite_create("TRLDAPEntry");
-
-    TCase *tc_entry = tcase_create("LDAP Entry");
-    suite_add_tcase(s, tc_entry);
-    tcase_add_test(tc_entry, test_initWithDN);
-
-    return s;
-}
+@end

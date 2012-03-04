@@ -1,3 +1,4 @@
+
 //
 //  Test macros compatible with (and borrowed from) SenTestCase
 //  Derived from GTMSenTestCase.h
@@ -17,9 +18,9 @@
 //  the License.
 //
 
-// Portions of this file fall under the following license, marked with
-// SENTE_BEGIN - SENTE_END
+// Portions of this file fall under the following licenses
 //
+// Copyright 2012 Landon Fuller <landonf@bikemonkey.org>
 // Copyright (c) 1997-2005, Sen:te (Sente SA).  All rights reserved.
 //
 // Use of this source code is governed by the following license:
@@ -53,6 +54,10 @@
 // be easy to remember.
 
 #import "PXTestException.h"
+
+/* libcheck-compatible assertions */
+#define fail_unless(expr, ...) STAssertTrue(expr, "Legacy assertion '"#expr"' failed" , ## __VA_ARGS__)
+#define fail_if(expr, ...) STAssertFalse(expr, "Legacy assertion '"#expr"' failed" , ## __VA_ARGS__)
 
 #ifdef __cplusplus
 extern "C" {

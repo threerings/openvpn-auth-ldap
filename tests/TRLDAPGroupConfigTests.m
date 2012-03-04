@@ -36,20 +36,16 @@
 #import <config.h>
 #endif
 
+#import "PXTestCase.h"
 #import "TRLDAPGroupConfig.h"
-
-#import <check.h>
 
 /* Data Constants */
 #define TEST_LDAP_BASEDN    "ou=People,dc=example,dc=com"
 #define TEST_LDAP_ATTRIBUTE    "uniqueMember"
 #define TEST_LDAP_FILTER    "(|(cn=artists)(cn=engineers))"
 
-Suite *TRLDAPGroupConfig_suite(void) {
-    Suite *s = suite_create("TRLDAPGroupConfig");
+@interface TRLDAPGroupConfigTests : PXTestCase @end
 
-    TCase *tc_main = tcase_create("Main");
-    suite_add_tcase(s, tc_main);
-
-    return s;
-}
+@implementation TRLDAPGroupConfigTests
+// TODO
+@end
