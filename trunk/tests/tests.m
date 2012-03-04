@@ -33,14 +33,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <config.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
 
 #import <stdlib.h>
 #import <unistd.h>
-#import <check.h>
 #import <stdio.h>
-
-#import <tests.h>
 
 #import "TRLog.h"
 #import "TRAutoreleasePool.h"
