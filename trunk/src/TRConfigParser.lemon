@@ -46,7 +46,12 @@
 %token_type {TRConfigToken *}
 %token_prefix {TOKEN_}
 %extra_argument {id <TRConfigDelegate> configDelegate}
-%token_destructor {[$$ release];}
+%token_destructor {
+    [$$ release];
+
+    /* quiesces unused variable compiler warning */
+    if (NO) configDelegate = nil;
+}
 
 %syntax_error {
     [configDelegate parseError: TOKEN];
