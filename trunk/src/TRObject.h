@@ -55,18 +55,54 @@
 #import <objc/Object.h>
 
 @protocol TRObject
-/*  Initialization */
-- (id) init;
 
-/* Reference counting */
+/**
+ * Return the current object retain count. This does not take into account any enqueued autorelease calls,
+ * and should generally not be used.
+ */
 - (unsigned int) retainCount;
-- (id) retain;
-- (void) release;
-- (id) autorelease;
-- (void) dealloc;
 
-/* Equality */
+/**
+ * Retain a reference to the receiver, incrementing the reference count.
+ */
+- (id) retain;
+
+/**
+ * Release a reference to the receiver, decrementing the reference count. If the reference count reaches zero,
+ * the receiver will be deallocated.
+ */
+- (oneway void) release;
+
+/**
+ * Add the object to the current autorelease pool. Objects in the autorelease
+ * pool will be released at a later time.
+ * @result Returns a reference to the receiver.
+ */
+- (id) autorelease;
+
+/**
+ * Return the receiver's class.
+ */
+- (Class) class;
+
+/**
+ * Return YES if the receiver is equal to @a anObject.
+ *
+ * The default implementation of this method performs a check for pointer equality. Subclasses may override this
+ * method to check for value equality.
+ *
+ * @note If two objects are equal, they must also have the same hash value.
+ */ 
 - (BOOL) isEqual: (id) anObject;
+
+/**
+ * Returns YES if the receiver is an instance of the given @a cls, or any class that inherits
+ * from cls.
+ *
+ * @param cls The class against which the receiver's class will be tested.
+ */
+- (BOOL) isKindOfClass: (Class) cls;
+
 @end
 
 
@@ -75,15 +111,9 @@
     unsigned int _refCount;
 }
 
-- (id) init;
++ (id) alloc;
+
 - (unsigned int) retainCount;
-- (id) retain;
-- (void) release;
-- (id) autorelease;
-- (BOOL) isEqual: (id) anObject;
-
-- (BOOL) isKindOfClass: (Class) cls;
-
 - (void) dealloc;
 
 @end

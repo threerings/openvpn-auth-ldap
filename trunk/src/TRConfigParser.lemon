@@ -50,7 +50,7 @@
     [$$ release];
 
     /* quiesces unused variable compiler warning */
-    if (NO) configDelegate = nil;
+    if (NO) [configDelegate class];
 }
 
 %syntax_error {

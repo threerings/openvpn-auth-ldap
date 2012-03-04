@@ -35,7 +35,7 @@
 #import "TRObject.h"
 #import "TRConfigToken.h"
 
-@protocol TRConfigDelegate
+@protocol TRConfigDelegate <TRObject>
 - (void) setKey: (TRConfigToken *) name value: (TRConfigToken *) value;
 - (void) startSection: (TRConfigToken *) sectionType sectionName: (TRConfigToken *) name;
 - (void) endSection: (TRConfigToken *) sectionEnd;

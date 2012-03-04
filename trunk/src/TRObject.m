@@ -53,6 +53,17 @@
 
 #ifndef HAVE_FRAMEWORK_FOUNDATION
 
+/**
+ * Allocate a new instance of the receiver.
+ */
++ (id) alloc {
+    return class_createInstance(self, 0);
+}
+
+/**
+ * Implemented by subclasses to initialize a newly allocated object. The default
+ * implementation performs no initialization.
+ */
 - (id) init {
     self = [super init];
     if (!self)
@@ -78,14 +89,12 @@
         [super dealloc];
 }
 
-/**
- * Return YES if the receiver is equal to @a anObject.
- *
- * The default implementation of this method performs a check for pointer equality. Subclasses may override this
- * method to check for value equality.
- *
- * @note If two objects are equal, they must also have the same hash value.
- */ 
+// from TRObject protocol
+- (Class) class {
+    return object_getClass(self);
+}
+
+// from TRObject protocol
 - (BOOL) isEqual: (id) anObject {
     if (self == anObject)
         return YES;
@@ -93,12 +102,7 @@
         return NO;
 }
 
-/**
- * Returns YES if the receiver is an instance of the given @a cls, or any class that inherits
- * from cls.
- *
- * @param cls The class against which the receiver's class will be tested.
- */
+// from TRObject protocol
 - (BOOL) isKindOfClass: (Class) cls {
     Class selfClass = [self class];
 
@@ -112,26 +116,18 @@
     return NO;
 }
 
-/**
- * Return the current object retain count. This does not take into account any enqueued autorelease calls,
- * and should generally not be used.
- */
+// from TRObject protocol
 - (unsigned int) retainCount {
     return _refCount;
 }
 
-/**
- * Retain a reference to the receiver, incrementing the reference count.
- */
+// from TRObject protocol
 - (id) retain {
     _refCount++;
     return self;
 }
 
-/**
- * Release a reference to the receiver, decrementing the reference count. If the reference count reaches zero,
- * the receiver will be deallocated.
- */
+// from TRObject protocol
 - (void) release {
     /* This must never occur */
     assert(_refCount >= 1);
@@ -142,11 +138,7 @@
         [self dealloc];
 }
 
-/*!
- * Add the object to the current autorelease pool. Objects in the autorelease
- * pool will be released at a later time.
- * @result Returns a reference to the receiver.
- */
+// from TRObject protocol
 - (id) autorelease {
         [TRAutoreleasePool addObject: self];
         return self;
