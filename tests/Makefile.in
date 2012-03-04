@@ -32,13 +32,11 @@ TEST_OBJS=	tests.o \
 		TRStringTests.o \
 		TRVPNSessionTests.o
 
-TEST_GEN=	tests.h
-
-CFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
-OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
+CFLAGS+=	-DTEST_DATA=\"${srcdir}/data\"
+OBJCFLAGS+=	-DTEST_DATA=\"${srcdir}/data\"
 
 LIBS+=		-L${top_builddir}/src -lauth-ldap \
-		$(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@
+		$(OBJC_LIBS) $(LDAP_LIBS)
 
 LDFLAGS+=	 $(LIBS)
 
@@ -50,13 +48,13 @@ EDIT=   sed \
 all:: tests
 
 # Generate any headers before subdirs are traversed
-pre-all:: $(TEST_GEN)
+pre-all:: 
 
 # Generated File(s)
 tests.h: tests.h.in
 	$(EDIT) $(srcdir)/tests.h.in > $@
 
-tests: ${TEST_GEN} ${TEST_OBJS} ../src/libauth-ldap.a
+tests: ${TEST_OBJS} ../src/libauth-ldap.a
 	${CC} -o $@ ${TEST_OBJS} ${LDFLAGS}
 
 test:: tests
@@ -65,7 +63,7 @@ test:: tests
 install::
 
 clean::
-	rm -f $(TEST_OBJS) $(TEST_GEN) tests
+	rm -f $(TEST_OBJS) tests
 
 distclean:: clean
 	rm -f Makefile
