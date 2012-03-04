@@ -62,6 +62,33 @@
 		05B375481502FC88005E3D62 /* lemon.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B375411502FC3F005E3D62 /* lemon.c */; };
 		05B3755715031709005E3D62 /* makeheaders.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B375441502FC3F005E3D62 /* makeheaders.c */; };
 		05B3758115031864005E3D62 /* TRConfigParser.lemon in Sources */ = {isa = PBXBuildFile; fileRef = 05B374D21502FADC005E3D62 /* TRConfigParser.lemon */; };
+		05B375B615031DE5005E3D62 /* mockpf.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B3759515031DE5005E3D62 /* mockpf.c */; };
+		05B375B715031DE5005E3D62 /* PXTestAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B3759815031DE5005E3D62 /* PXTestAssert.m */; };
+		05B375B815031DE5005E3D62 /* PXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B3759A15031DE5005E3D62 /* PXTestCase.m */; };
+		05B375B915031DE5005E3D62 /* PXTestCaseRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B3759C15031DE5005E3D62 /* PXTestCaseRunner.m */; };
+		05B375BA15031DE5005E3D62 /* PXTestConsoleResultHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B3759E15031DE5005E3D62 /* PXTestConsoleResultHandler.m */; };
+		05B375BB15031DE5005E3D62 /* PXTestException.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375A015031DE5005E3D62 /* PXTestException.m */; };
+		05B375BC15031DE5005E3D62 /* tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375A415031DE5005E3D62 /* tests.m */; };
+		05B375BD15031DE5005E3D62 /* TRArrayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375A515031DE5005E3D62 /* TRArrayTests.m */; };
+		05B375BE15031DE5005E3D62 /* TRAuthLDAPConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375A615031DE5005E3D62 /* TRAuthLDAPConfigTests.m */; };
+		05B375BF15031DE5005E3D62 /* TRAutoreleasePoolTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375A715031DE5005E3D62 /* TRAutoreleasePoolTests.m */; };
+		05B375C015031DE5005E3D62 /* TRConfigLexerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375A815031DE5005E3D62 /* TRConfigLexerTests.m */; };
+		05B375C115031DE5005E3D62 /* TRConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375A915031DE5005E3D62 /* TRConfigTests.m */; };
+		05B375C215031DE5005E3D62 /* TRConfigTokenTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375AA15031DE5005E3D62 /* TRConfigTokenTests.m */; };
+		05B375C315031DE5005E3D62 /* TRHashTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375AB15031DE5005E3D62 /* TRHashTests.m */; };
+		05B375C415031DE5005E3D62 /* TRLDAPAccountRepositoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375AC15031DE5005E3D62 /* TRLDAPAccountRepositoryTests.m */; };
+		05B375C515031DE5005E3D62 /* TRLDAPConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375AD15031DE5005E3D62 /* TRLDAPConnectionTests.m */; };
+		05B375C615031DE5005E3D62 /* TRLDAPEntryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375AE15031DE5005E3D62 /* TRLDAPEntryTests.m */; };
+		05B375C715031DE5005E3D62 /* TRLDAPGroupConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375AF15031DE5005E3D62 /* TRLDAPGroupConfigTests.m */; };
+		05B375C815031DE5005E3D62 /* TRLDAPSearchFilterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375B015031DE5005E3D62 /* TRLDAPSearchFilterTests.m */; };
+		05B375C915031DE5005E3D62 /* TRLocalPacketFilterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375B115031DE5005E3D62 /* TRLocalPacketFilterTests.m */; };
+		05B375CA15031DE5005E3D62 /* TRObjectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375B215031DE5005E3D62 /* TRObjectTests.m */; };
+		05B375CB15031DE5005E3D62 /* TRPFAddressTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375B315031DE5005E3D62 /* TRPFAddressTests.m */; };
+		05B375CC15031DE5005E3D62 /* TRStringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375B415031DE5005E3D62 /* TRStringTests.m */; };
+		05B375CD15031DE5005E3D62 /* TRVPNSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B375B515031DE5005E3D62 /* TRVPNSessionTests.m */; };
+		05B375D515032AE5005E3D62 /* libauthldap.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C58B515029D9F00B34430 /* libauthldap.a */; };
+		05B375D715032AFC005E3D62 /* libldap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B375D615032AFC005E3D62 /* libldap.dylib */; };
+		05B375D815032B20005E3D62 /* TRConfigLexer.re in Sources */ = {isa = PBXBuildFile; fileRef = 05B374D11502FADC005E3D62 /* TRConfigLexer.re */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -76,6 +103,17 @@
 				"${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.h",
 			);
 			script = "\"${BUILT_PRODUCTS_DIR}/lemon\" -T${SRCROOT}/tools/lempar.c -m -q \"${INPUT_FILE_PATH}\" \"-O${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.m\"\n\n\"${BUILT_PRODUCTS_DIR}/makeheaders\" \"${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.m\"\n\n\n\n";
+		};
+		05B375D915032B24005E3D62 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.re";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.m",
+			);
+			script = "# Add additional search locations for re2c\nexport PATH=\"${PATH}:/opt/local/bin:/usr/local/bin\"\n\nre2c -o \"${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.m\" \"${INPUT_FILE_PATH}\"";
 		};
 /* End PBXBuildRule section */
 
@@ -191,6 +229,51 @@
 		05B375441502FC3F005E3D62 /* makeheaders.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = makeheaders.c; sourceTree = "<group>"; };
 		05B375451502FC3F005E3D62 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		05B3754D150316FD005E3D62 /* makeheaders */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = makeheaders; sourceTree = BUILT_PRODUCTS_DIR; };
+		05B3758A15031DE5005E3D62 /* auth-ldap-bad-section.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "auth-ldap-bad-section.conf"; sourceTree = "<group>"; };
+		05B3758B15031DE5005E3D62 /* auth-ldap-mismatched.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "auth-ldap-mismatched.conf"; sourceTree = "<group>"; };
+		05B3758C15031DE5005E3D62 /* auth-ldap-missing-newline.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "auth-ldap-missing-newline.conf"; sourceTree = "<group>"; };
+		05B3758D15031DE5005E3D62 /* auth-ldap-multikey.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "auth-ldap-multikey.conf"; sourceTree = "<group>"; };
+		05B3758E15031DE5005E3D62 /* auth-ldap-named.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "auth-ldap-named.conf"; sourceTree = "<group>"; };
+		05B3758F15031DE5005E3D62 /* auth-ldap-pf.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "auth-ldap-pf.conf"; sourceTree = "<group>"; };
+		05B3759015031DE5005E3D62 /* auth-ldap-required.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "auth-ldap-required.conf"; sourceTree = "<group>"; };
+		05B3759115031DE5005E3D62 /* auth-ldap.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "auth-ldap.conf"; sourceTree = "<group>"; };
+		05B3759215031DE5005E3D62 /* test-lineNumbers.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test-lineNumbers.conf"; sourceTree = "<group>"; };
+		05B3759315031DE5005E3D62 /* TRConfig.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TRConfig.conf; sourceTree = "<group>"; };
+		05B3759415031DE5005E3D62 /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
+		05B3759515031DE5005E3D62 /* mockpf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mockpf.c; sourceTree = "<group>"; };
+		05B3759615031DE5005E3D62 /* mockpf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mockpf.h; sourceTree = "<group>"; };
+		05B3759715031DE5005E3D62 /* PXTestAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PXTestAssert.h; sourceTree = "<group>"; };
+		05B3759815031DE5005E3D62 /* PXTestAssert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PXTestAssert.m; sourceTree = "<group>"; };
+		05B3759915031DE5005E3D62 /* PXTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PXTestCase.h; sourceTree = "<group>"; };
+		05B3759A15031DE5005E3D62 /* PXTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PXTestCase.m; sourceTree = "<group>"; };
+		05B3759B15031DE5005E3D62 /* PXTestCaseRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PXTestCaseRunner.h; sourceTree = "<group>"; };
+		05B3759C15031DE5005E3D62 /* PXTestCaseRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PXTestCaseRunner.m; sourceTree = "<group>"; };
+		05B3759D15031DE5005E3D62 /* PXTestConsoleResultHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PXTestConsoleResultHandler.h; sourceTree = "<group>"; };
+		05B3759E15031DE5005E3D62 /* PXTestConsoleResultHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PXTestConsoleResultHandler.m; sourceTree = "<group>"; };
+		05B3759F15031DE5005E3D62 /* PXTestException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PXTestException.h; sourceTree = "<group>"; };
+		05B375A015031DE5005E3D62 /* PXTestException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PXTestException.m; sourceTree = "<group>"; };
+		05B375A115031DE5005E3D62 /* PXTestObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PXTestObjC.h; sourceTree = "<group>"; };
+		05B375A215031DE5005E3D62 /* PXTestResultHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PXTestResultHandler.h; sourceTree = "<group>"; };
+		05B375A315031DE5005E3D62 /* tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tests.h; sourceTree = "<group>"; };
+		05B375A415031DE5005E3D62 /* tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tests.m; sourceTree = "<group>"; };
+		05B375A515031DE5005E3D62 /* TRArrayTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRArrayTests.m; sourceTree = "<group>"; };
+		05B375A615031DE5005E3D62 /* TRAuthLDAPConfigTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRAuthLDAPConfigTests.m; sourceTree = "<group>"; };
+		05B375A715031DE5005E3D62 /* TRAutoreleasePoolTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRAutoreleasePoolTests.m; sourceTree = "<group>"; };
+		05B375A815031DE5005E3D62 /* TRConfigLexerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRConfigLexerTests.m; sourceTree = "<group>"; };
+		05B375A915031DE5005E3D62 /* TRConfigTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRConfigTests.m; sourceTree = "<group>"; };
+		05B375AA15031DE5005E3D62 /* TRConfigTokenTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRConfigTokenTests.m; sourceTree = "<group>"; };
+		05B375AB15031DE5005E3D62 /* TRHashTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRHashTests.m; sourceTree = "<group>"; };
+		05B375AC15031DE5005E3D62 /* TRLDAPAccountRepositoryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPAccountRepositoryTests.m; sourceTree = "<group>"; };
+		05B375AD15031DE5005E3D62 /* TRLDAPConnectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPConnectionTests.m; sourceTree = "<group>"; };
+		05B375AE15031DE5005E3D62 /* TRLDAPEntryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPEntryTests.m; sourceTree = "<group>"; };
+		05B375AF15031DE5005E3D62 /* TRLDAPGroupConfigTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPGroupConfigTests.m; sourceTree = "<group>"; };
+		05B375B015031DE5005E3D62 /* TRLDAPSearchFilterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPSearchFilterTests.m; sourceTree = "<group>"; };
+		05B375B115031DE5005E3D62 /* TRLocalPacketFilterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLocalPacketFilterTests.m; sourceTree = "<group>"; };
+		05B375B215031DE5005E3D62 /* TRObjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRObjectTests.m; sourceTree = "<group>"; };
+		05B375B315031DE5005E3D62 /* TRPFAddressTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRPFAddressTests.m; sourceTree = "<group>"; };
+		05B375B415031DE5005E3D62 /* TRStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRStringTests.m; sourceTree = "<group>"; };
+		05B375B515031DE5005E3D62 /* TRVPNSessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRVPNSessionTests.m; sourceTree = "<group>"; };
+		05B375D615032AFC005E3D62 /* libldap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libldap.dylib; path = usr/lib/libldap.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,7 +281,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05B375D715032AFC005E3D62 /* libldap.dylib in Frameworks */,
 				055C589F15029D4000B34430 /* Foundation.framework in Frameworks */,
+				05B375D515032AE5005E3D62 /* libauthldap.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,6 +316,7 @@
 			children = (
 				05B375401502FC3F005E3D62 /* tools */,
 				05B374BE1502FADC005E3D62 /* src */,
+				05B3758815031DE5005E3D62 /* tests */,
 				055C589D15029D4000B34430 /* Frameworks */,
 				055C589B15029D4000B34430 /* Products */,
 			);
@@ -251,6 +337,7 @@
 			isa = PBXGroup;
 			children = (
 				05B3752F1502FBE9005E3D62 /* openvpn-plugin.h */,
+				05B375D615032AFC005E3D62 /* libldap.dylib */,
 				055C589E15029D4000B34430 /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -284,6 +371,8 @@
 				05B374D21502FADC005E3D62 /* TRConfigParser.lemon */,
 				05B374D31502FADC005E3D62 /* TRConfigToken.h */,
 				05B374D41502FADC005E3D62 /* TRConfigToken.m */,
+				05B374DF1502FADC005E3D62 /* TRLDAPGroupConfig.h */,
+				05B374E01502FADC005E3D62 /* TRLDAPGroupConfig.m */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -323,8 +412,6 @@
 				05B374DC1502FADC005E3D62 /* TRLDAPConnection.m */,
 				05B374DD1502FADC005E3D62 /* TRLDAPEntry.h */,
 				05B374DE1502FADC005E3D62 /* TRLDAPEntry.m */,
-				05B374DF1502FADC005E3D62 /* TRLDAPGroupConfig.h */,
-				05B374E01502FADC005E3D62 /* TRLDAPGroupConfig.m */,
 				05B374E11502FADC005E3D62 /* TRLDAPSearchFilter.h */,
 				05B374E21502FADC005E3D62 /* TRLDAPSearchFilter.m */,
 			);
@@ -374,6 +461,113 @@
 				05B375451502FC3F005E3D62 /* README */,
 			);
 			path = tools;
+			sourceTree = "<group>";
+		};
+		05B3758815031DE5005E3D62 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				05B3759415031DE5005E3D62 /* Makefile.in */,
+				05B375A315031DE5005E3D62 /* tests.h */,
+				05B375A415031DE5005E3D62 /* tests.m */,
+				05B3758915031DE5005E3D62 /* data */,
+				05B375D015031E88005E3D62 /* PF */,
+				05B375CF15031E6E005E3D62 /* Test Runner */,
+				05B375D115031E95005E3D62 /* Foundation */,
+				05B375D415031EC4005E3D62 /* Config */,
+				05B375D315031EBD005E3D62 /* LDAP */,
+				05B375D215031EAC005E3D62 /* VPN */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
+		05B3758915031DE5005E3D62 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				05B3758A15031DE5005E3D62 /* auth-ldap-bad-section.conf */,
+				05B3758B15031DE5005E3D62 /* auth-ldap-mismatched.conf */,
+				05B3758C15031DE5005E3D62 /* auth-ldap-missing-newline.conf */,
+				05B3758D15031DE5005E3D62 /* auth-ldap-multikey.conf */,
+				05B3758E15031DE5005E3D62 /* auth-ldap-named.conf */,
+				05B3758F15031DE5005E3D62 /* auth-ldap-pf.conf */,
+				05B3759015031DE5005E3D62 /* auth-ldap-required.conf */,
+				05B3759115031DE5005E3D62 /* auth-ldap.conf */,
+				05B3759215031DE5005E3D62 /* test-lineNumbers.conf */,
+				05B3759315031DE5005E3D62 /* TRConfig.conf */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		05B375CF15031E6E005E3D62 /* Test Runner */ = {
+			isa = PBXGroup;
+			children = (
+				05B3759715031DE5005E3D62 /* PXTestAssert.h */,
+				05B3759815031DE5005E3D62 /* PXTestAssert.m */,
+				05B3759915031DE5005E3D62 /* PXTestCase.h */,
+				05B3759A15031DE5005E3D62 /* PXTestCase.m */,
+				05B3759B15031DE5005E3D62 /* PXTestCaseRunner.h */,
+				05B3759C15031DE5005E3D62 /* PXTestCaseRunner.m */,
+				05B3759D15031DE5005E3D62 /* PXTestConsoleResultHandler.h */,
+				05B3759E15031DE5005E3D62 /* PXTestConsoleResultHandler.m */,
+				05B3759F15031DE5005E3D62 /* PXTestException.h */,
+				05B375A015031DE5005E3D62 /* PXTestException.m */,
+				05B375A115031DE5005E3D62 /* PXTestObjC.h */,
+				05B375A215031DE5005E3D62 /* PXTestResultHandler.h */,
+			);
+			name = "Test Runner";
+			sourceTree = "<group>";
+		};
+		05B375D015031E88005E3D62 /* PF */ = {
+			isa = PBXGroup;
+			children = (
+				05B3759515031DE5005E3D62 /* mockpf.c */,
+				05B3759615031DE5005E3D62 /* mockpf.h */,
+				05B375B115031DE5005E3D62 /* TRLocalPacketFilterTests.m */,
+				05B375B315031DE5005E3D62 /* TRPFAddressTests.m */,
+			);
+			name = PF;
+			sourceTree = "<group>";
+		};
+		05B375D115031E95005E3D62 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				05B375A515031DE5005E3D62 /* TRArrayTests.m */,
+				05B375A715031DE5005E3D62 /* TRAutoreleasePoolTests.m */,
+				05B375AB15031DE5005E3D62 /* TRHashTests.m */,
+				05B375B215031DE5005E3D62 /* TRObjectTests.m */,
+				05B375B415031DE5005E3D62 /* TRStringTests.m */,
+			);
+			name = Foundation;
+			sourceTree = "<group>";
+		};
+		05B375D215031EAC005E3D62 /* VPN */ = {
+			isa = PBXGroup;
+			children = (
+				05B375B515031DE5005E3D62 /* TRVPNSessionTests.m */,
+			);
+			name = VPN;
+			sourceTree = "<group>";
+		};
+		05B375D315031EBD005E3D62 /* LDAP */ = {
+			isa = PBXGroup;
+			children = (
+				05B375AC15031DE5005E3D62 /* TRLDAPAccountRepositoryTests.m */,
+				05B375AD15031DE5005E3D62 /* TRLDAPConnectionTests.m */,
+				05B375AE15031DE5005E3D62 /* TRLDAPEntryTests.m */,
+				05B375B015031DE5005E3D62 /* TRLDAPSearchFilterTests.m */,
+			);
+			name = LDAP;
+			sourceTree = "<group>";
+		};
+		05B375D415031EC4005E3D62 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				05B375A615031DE5005E3D62 /* TRAuthLDAPConfigTests.m */,
+				05B375A815031DE5005E3D62 /* TRConfigLexerTests.m */,
+				05B375A915031DE5005E3D62 /* TRConfigTests.m */,
+				05B375AA15031DE5005E3D62 /* TRConfigTokenTests.m */,
+				05B375AF15031DE5005E3D62 /* TRLDAPGroupConfigTests.m */,
+			);
+			name = Config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -442,6 +636,7 @@
 				055C58B315029D9F00B34430 /* Headers */,
 			);
 			buildRules = (
+				05B375D915032B24005E3D62 /* PBXBuildRule */,
 				05B3755C1503173C005E3D62 /* PBXBuildRule */,
 			);
 			dependencies = (
@@ -521,6 +716,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05B375B615031DE5005E3D62 /* mockpf.c in Sources */,
+				05B375B715031DE5005E3D62 /* PXTestAssert.m in Sources */,
+				05B375B815031DE5005E3D62 /* PXTestCase.m in Sources */,
+				05B375B915031DE5005E3D62 /* PXTestCaseRunner.m in Sources */,
+				05B375BA15031DE5005E3D62 /* PXTestConsoleResultHandler.m in Sources */,
+				05B375BB15031DE5005E3D62 /* PXTestException.m in Sources */,
+				05B375BC15031DE5005E3D62 /* tests.m in Sources */,
+				05B375BD15031DE5005E3D62 /* TRArrayTests.m in Sources */,
+				05B375BE15031DE5005E3D62 /* TRAuthLDAPConfigTests.m in Sources */,
+				05B375BF15031DE5005E3D62 /* TRAutoreleasePoolTests.m in Sources */,
+				05B375C015031DE5005E3D62 /* TRConfigLexerTests.m in Sources */,
+				05B375C115031DE5005E3D62 /* TRConfigTests.m in Sources */,
+				05B375C215031DE5005E3D62 /* TRConfigTokenTests.m in Sources */,
+				05B375C315031DE5005E3D62 /* TRHashTests.m in Sources */,
+				05B375C415031DE5005E3D62 /* TRLDAPAccountRepositoryTests.m in Sources */,
+				05B375C515031DE5005E3D62 /* TRLDAPConnectionTests.m in Sources */,
+				05B375C615031DE5005E3D62 /* TRLDAPEntryTests.m in Sources */,
+				05B375C715031DE5005E3D62 /* TRLDAPGroupConfigTests.m in Sources */,
+				05B375C815031DE5005E3D62 /* TRLDAPSearchFilterTests.m in Sources */,
+				05B375C915031DE5005E3D62 /* TRLocalPacketFilterTests.m in Sources */,
+				05B375CA15031DE5005E3D62 /* TRObjectTests.m in Sources */,
+				05B375CB15031DE5005E3D62 /* TRPFAddressTests.m in Sources */,
+				05B375CC15031DE5005E3D62 /* TRStringTests.m in Sources */,
+				05B375CD15031DE5005E3D62 /* TRVPNSessionTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -528,6 +747,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05B375D815032B20005E3D62 /* TRConfigLexer.re in Sources */,
 				05B3758115031864005E3D62 /* TRConfigParser.lemon in Sources */,
 				05B374F41502FADC005E3D62 /* auth-ldap.m in Sources */,
 				05B374F51502FADC005E3D62 /* hash.c in Sources */,
@@ -593,7 +813,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CONFIG_H_MACROS = "APPLE_RUNTIME=1 HAVE_FRAMEWORK_FOUNDATION=1 HAVE_INTTYPES_H=1 HAVE_MEMORY_H=1 HAVE_OBJC_OBJC_H=1 HAVE_PTHREAD=1 HAVE_STDINT_H=1 HAVE_STDLIB_H=1 HAVE_STRINGS_H=1 HAVE_STRING_H=1 HAVE_SYS_STAT_H=1 HAVE_SYS_TYPES_H=1 HAVE_UNISTD_H=1 PACKAGE_BUGREPORT=\"landonf@opendarwin.org\" PACKAGE_NAME=\"auth-ldap\" PACKAGE_STRING=\"auth-ldap\" PACKAGE_TARNAME=\"auth-ldap\" PACKAGE_URL=\"\" PACKAGE_VERSION=\"2.0\" STDC_HEADERS=1 _GNU_SOURCE=1";
+				CONFIG_H_MACROS = "TEST_DATA=\"\\\"${SRCROOT}/tests/data\\\"\" APPLE_RUNTIME=1 HAVE_FRAMEWORK_FOUNDATION=1 HAVE_INTTYPES_H=1 HAVE_MEMORY_H=1 HAVE_OBJC_OBJC_H=1 HAVE_PTHREAD=1 HAVE_STDINT_H=1 HAVE_STDLIB_H=1 HAVE_STRINGS_H=1 HAVE_STRING_H=1 HAVE_SYS_STAT_H=1 HAVE_SYS_TYPES_H=1 HAVE_UNISTD_H=1 PACKAGE_BUGREPORT=\"landonf@opendarwin.org\" PACKAGE_NAME=\"auth-ldap\" PACKAGE_STRING=\"auth-ldap\" PACKAGE_TARNAME=\"auth-ldap\" PACKAGE_URL=\"\" PACKAGE_VERSION=\"2.0\" STDC_HEADERS=1 _GNU_SOURCE=1";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -625,7 +845,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CONFIG_H_MACROS = "APPLE_RUNTIME=1 HAVE_FRAMEWORK_FOUNDATION=1 HAVE_INTTYPES_H=1 HAVE_MEMORY_H=1 HAVE_OBJC_OBJC_H=1 HAVE_PTHREAD=1 HAVE_STDINT_H=1 HAVE_STDLIB_H=1 HAVE_STRINGS_H=1 HAVE_STRING_H=1 HAVE_SYS_STAT_H=1 HAVE_SYS_TYPES_H=1 HAVE_UNISTD_H=1 PACKAGE_BUGREPORT=\"landonf@opendarwin.org\" PACKAGE_NAME=\"auth-ldap\" PACKAGE_STRING=\"auth-ldap\" PACKAGE_TARNAME=\"auth-ldap\" PACKAGE_URL=\"\" PACKAGE_VERSION=\"2.0\" STDC_HEADERS=1 _GNU_SOURCE=1";
+				CONFIG_H_MACROS = "TEST_DATA=\"\\\"${SRCROOT}/tests/data\\\"\" APPLE_RUNTIME=1 HAVE_FRAMEWORK_FOUNDATION=1 HAVE_INTTYPES_H=1 HAVE_MEMORY_H=1 HAVE_OBJC_OBJC_H=1 HAVE_PTHREAD=1 HAVE_STDINT_H=1 HAVE_STDLIB_H=1 HAVE_STRINGS_H=1 HAVE_STRING_H=1 HAVE_SYS_STAT_H=1 HAVE_SYS_TYPES_H=1 HAVE_UNISTD_H=1 PACKAGE_BUGREPORT=\"landonf@opendarwin.org\" PACKAGE_NAME=\"auth-ldap\" PACKAGE_STRING=\"auth-ldap\" PACKAGE_TARNAME=\"auth-ldap\" PACKAGE_URL=\"\" PACKAGE_VERSION=\"2.0\" STDC_HEADERS=1 _GNU_SOURCE=1";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -744,6 +964,7 @@
 				05B3753F1502FC2F005E3D62 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		05B37554150316FE005E3D62 /* Build configuration list for PBXNativeTarget "makeheaders" */ = {
 			isa = XCConfigurationList;
@@ -752,6 +973,7 @@
 				05B37556150316FE005E3D62 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
