@@ -4,5 +4,5 @@ This directory contains tools required to build the OpenVPN Auth-LDAP Plugin:
         - Write output to the defined -O path
 
  - makeheaders was downloaded from http://www.hwaci.com/sw/mkhdr/
-     The makeheaders tool was modified to support Objective-C source
-     files (.m)
+     The makeheaders tool was modified to treat Objective-C source
+     files (.m) as C files.
