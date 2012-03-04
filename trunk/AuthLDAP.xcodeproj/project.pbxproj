@@ -8,10 +8,114 @@
 
 /* Begin PBXBuildFile section */
 		055C589F15029D4000B34430 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C589E15029D4000B34430 /* Foundation.framework */; };
+		05B374F41502FADC005E3D62 /* auth-ldap.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374BF1502FADC005E3D62 /* auth-ldap.m */; };
+		05B374F51502FADC005E3D62 /* hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B374C01502FADC005E3D62 /* hash.c */; };
+		05B374F61502FADC005E3D62 /* hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374C11502FADC005E3D62 /* hash.h */; };
+		05B374F71502FADC005E3D62 /* PXObjCRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374C31502FADC005E3D62 /* PXObjCRuntime.h */; };
+		05B374F81502FADC005E3D62 /* strlcpy.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B374C41502FADC005E3D62 /* strlcpy.c */; };
+		05B374F91502FADC005E3D62 /* strlcpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374C51502FADC005E3D62 /* strlcpy.h */; };
+		05B374FA1502FADC005E3D62 /* testplugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B374C61502FADC005E3D62 /* testplugin.c */; };
+		05B374FB1502FADC005E3D62 /* TRAccountRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374C71502FADC005E3D62 /* TRAccountRepository.h */; };
+		05B374FC1502FADC005E3D62 /* TRArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374C81502FADC005E3D62 /* TRArray.h */; };
+		05B374FD1502FADC005E3D62 /* TRArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374C91502FADC005E3D62 /* TRArray.m */; };
+		05B374FE1502FADC005E3D62 /* TRAuthLDAPConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374CA1502FADC005E3D62 /* TRAuthLDAPConfig.h */; };
+		05B374FF1502FADC005E3D62 /* TRAuthLDAPConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374CB1502FADC005E3D62 /* TRAuthLDAPConfig.m */; };
+		05B375001502FADC005E3D62 /* TRAutoreleasePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374CC1502FADC005E3D62 /* TRAutoreleasePool.h */; };
+		05B375011502FADC005E3D62 /* TRAutoreleasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374CD1502FADC005E3D62 /* TRAutoreleasePool.m */; };
+		05B375021502FADC005E3D62 /* TRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374CE1502FADC005E3D62 /* TRConfig.h */; };
+		05B375031502FADC005E3D62 /* TRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374CF1502FADC005E3D62 /* TRConfig.m */; };
+		05B375041502FADC005E3D62 /* TRConfigLexer.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374D01502FADC005E3D62 /* TRConfigLexer.h */; };
+		05B375051502FADC005E3D62 /* TRConfigToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374D31502FADC005E3D62 /* TRConfigToken.h */; };
+		05B375061502FADC005E3D62 /* TRConfigToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374D41502FADC005E3D62 /* TRConfigToken.m */; };
+		05B375071502FADC005E3D62 /* TREnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374D51502FADC005E3D62 /* TREnumerator.h */; };
+		05B375081502FADC005E3D62 /* TREnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374D61502FADC005E3D62 /* TREnumerator.m */; };
+		05B375091502FADC005E3D62 /* TRHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374D71502FADC005E3D62 /* TRHash.h */; };
+		05B3750A1502FADC005E3D62 /* TRHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374D81502FADC005E3D62 /* TRHash.m */; };
+		05B3750B1502FADC005E3D62 /* TRLDAPAccountRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374D91502FADC005E3D62 /* TRLDAPAccountRepository.h */; };
+		05B3750C1502FADC005E3D62 /* TRLDAPAccountRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374DA1502FADC005E3D62 /* TRLDAPAccountRepository.m */; };
+		05B3750D1502FADC005E3D62 /* TRLDAPConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374DB1502FADC005E3D62 /* TRLDAPConnection.h */; };
+		05B3750E1502FADC005E3D62 /* TRLDAPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374DC1502FADC005E3D62 /* TRLDAPConnection.m */; };
+		05B3750F1502FADC005E3D62 /* TRLDAPEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374DD1502FADC005E3D62 /* TRLDAPEntry.h */; };
+		05B375101502FADC005E3D62 /* TRLDAPEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374DE1502FADC005E3D62 /* TRLDAPEntry.m */; };
+		05B375111502FADC005E3D62 /* TRLDAPGroupConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374DF1502FADC005E3D62 /* TRLDAPGroupConfig.h */; };
+		05B375121502FADC005E3D62 /* TRLDAPGroupConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374E01502FADC005E3D62 /* TRLDAPGroupConfig.m */; };
+		05B375131502FADC005E3D62 /* TRLDAPSearchFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374E11502FADC005E3D62 /* TRLDAPSearchFilter.h */; };
+		05B375141502FADC005E3D62 /* TRLDAPSearchFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374E21502FADC005E3D62 /* TRLDAPSearchFilter.m */; };
+		05B375151502FADC005E3D62 /* TRLocalPacketFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374E31502FADC005E3D62 /* TRLocalPacketFilter.h */; };
+		05B375161502FADC005E3D62 /* TRLocalPacketFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374E41502FADC005E3D62 /* TRLocalPacketFilter.m */; };
+		05B375171502FADC005E3D62 /* TRLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374E51502FADC005E3D62 /* TRLog.h */; };
+		05B375181502FADC005E3D62 /* TRLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374E61502FADC005E3D62 /* TRLog.m */; };
+		05B375191502FADC005E3D62 /* TRObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374E71502FADC005E3D62 /* TRObject.h */; };
+		05B3751A1502FADC005E3D62 /* TRObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374E81502FADC005E3D62 /* TRObject.m */; };
+		05B3751B1502FADC005E3D62 /* TRPacketFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374E91502FADC005E3D62 /* TRPacketFilter.h */; };
+		05B3751C1502FADC005E3D62 /* TRPacketFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374EA1502FADC005E3D62 /* TRPacketFilter.m */; };
+		05B3751D1502FADC005E3D62 /* TRPFAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374EB1502FADC005E3D62 /* TRPFAddress.h */; };
+		05B3751E1502FADC005E3D62 /* TRPFAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374EC1502FADC005E3D62 /* TRPFAddress.m */; };
+		05B3751F1502FADC005E3D62 /* TRString.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374ED1502FADC005E3D62 /* TRString.h */; };
+		05B375201502FADC005E3D62 /* TRString.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374EE1502FADC005E3D62 /* TRString.m */; };
+		05B375211502FADC005E3D62 /* TRVPNPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374EF1502FADC005E3D62 /* TRVPNPlugin.h */; };
+		05B375221502FADC005E3D62 /* TRVPNSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374F01502FADC005E3D62 /* TRVPNSession.h */; };
+		05B375231502FADC005E3D62 /* TRVPNSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374F11502FADC005E3D62 /* TRVPNSession.m */; };
+		05B375241502FADC005E3D62 /* xmalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B374F21502FADC005E3D62 /* xmalloc.c */; };
+		05B375251502FADC005E3D62 /* xmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374F31502FADC005E3D62 /* xmalloc.h */; };
+		05B375301502FBE9005E3D62 /* openvpn-plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B3752F1502FBE9005E3D62 /* openvpn-plugin.h */; };
+		05B375481502FC88005E3D62 /* lemon.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B375411502FC3F005E3D62 /* lemon.c */; };
+		05B3755715031709005E3D62 /* makeheaders.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B375441502FC3F005E3D62 /* makeheaders.c */; };
+		05B3758115031864005E3D62 /* TRConfigParser.lemon in Sources */ = {isa = PBXBuildFile; fileRef = 05B374D21502FADC005E3D62 /* TRConfigParser.lemon */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		05B3755C1503173C005E3D62 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.lemon";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.m",
+				"${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.h",
+			);
+			script = "\"${BUILT_PRODUCTS_DIR}/lemon\" -T${SRCROOT}/tools/lempar.c -m -q \"${INPUT_FILE_PATH}\" \"-O${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.m\"\n\n\"${BUILT_PRODUCTS_DIR}/makeheaders\" \"${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.m\"\n\n\n\n";
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXContainerItemProxy section */
+		05B3755815031716005E3D62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 055C589115029D4000B34430 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 05B375351502FC2F005E3D62;
+			remoteInfo = lemon;
+		};
+		05B3755A15031717005E3D62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 055C589115029D4000B34430 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 05B3754C150316FD005E3D62;
+			remoteInfo = makeheaders;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		055C589815029D4000B34430 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		05B375341502FC2F005E3D62 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		05B3754B150316FD005E3D62 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -26,6 +130,67 @@
 		055C589A15029D4000B34430 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		055C589E15029D4000B34430 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		055C58B515029D9F00B34430 /* libauthldap.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libauthldap.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		05B374BF1502FADC005E3D62 /* auth-ldap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "auth-ldap.m"; sourceTree = "<group>"; };
+		05B374C01502FADC005E3D62 /* hash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hash.c; sourceTree = "<group>"; };
+		05B374C11502FADC005E3D62 /* hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hash.h; sourceTree = "<group>"; };
+		05B374C21502FADC005E3D62 /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
+		05B374C31502FADC005E3D62 /* PXObjCRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PXObjCRuntime.h; sourceTree = "<group>"; };
+		05B374C41502FADC005E3D62 /* strlcpy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = strlcpy.c; sourceTree = "<group>"; };
+		05B374C51502FADC005E3D62 /* strlcpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strlcpy.h; sourceTree = "<group>"; };
+		05B374C61502FADC005E3D62 /* testplugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testplugin.c; sourceTree = "<group>"; };
+		05B374C71502FADC005E3D62 /* TRAccountRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRAccountRepository.h; sourceTree = "<group>"; };
+		05B374C81502FADC005E3D62 /* TRArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRArray.h; sourceTree = "<group>"; };
+		05B374C91502FADC005E3D62 /* TRArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRArray.m; sourceTree = "<group>"; };
+		05B374CA1502FADC005E3D62 /* TRAuthLDAPConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRAuthLDAPConfig.h; sourceTree = "<group>"; };
+		05B374CB1502FADC005E3D62 /* TRAuthLDAPConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRAuthLDAPConfig.m; sourceTree = "<group>"; };
+		05B374CC1502FADC005E3D62 /* TRAutoreleasePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRAutoreleasePool.h; sourceTree = "<group>"; };
+		05B374CD1502FADC005E3D62 /* TRAutoreleasePool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRAutoreleasePool.m; sourceTree = "<group>"; };
+		05B374CE1502FADC005E3D62 /* TRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRConfig.h; sourceTree = "<group>"; };
+		05B374CF1502FADC005E3D62 /* TRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRConfig.m; sourceTree = "<group>"; };
+		05B374D01502FADC005E3D62 /* TRConfigLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRConfigLexer.h; sourceTree = "<group>"; };
+		05B374D11502FADC005E3D62 /* TRConfigLexer.re */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TRConfigLexer.re; sourceTree = "<group>"; };
+		05B374D21502FADC005E3D62 /* TRConfigParser.lemon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TRConfigParser.lemon; sourceTree = "<group>"; };
+		05B374D31502FADC005E3D62 /* TRConfigToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRConfigToken.h; sourceTree = "<group>"; };
+		05B374D41502FADC005E3D62 /* TRConfigToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRConfigToken.m; sourceTree = "<group>"; };
+		05B374D51502FADC005E3D62 /* TREnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TREnumerator.h; sourceTree = "<group>"; };
+		05B374D61502FADC005E3D62 /* TREnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TREnumerator.m; sourceTree = "<group>"; };
+		05B374D71502FADC005E3D62 /* TRHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRHash.h; sourceTree = "<group>"; };
+		05B374D81502FADC005E3D62 /* TRHash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRHash.m; sourceTree = "<group>"; };
+		05B374D91502FADC005E3D62 /* TRLDAPAccountRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRLDAPAccountRepository.h; sourceTree = "<group>"; };
+		05B374DA1502FADC005E3D62 /* TRLDAPAccountRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPAccountRepository.m; sourceTree = "<group>"; };
+		05B374DB1502FADC005E3D62 /* TRLDAPConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRLDAPConnection.h; sourceTree = "<group>"; };
+		05B374DC1502FADC005E3D62 /* TRLDAPConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPConnection.m; sourceTree = "<group>"; };
+		05B374DD1502FADC005E3D62 /* TRLDAPEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRLDAPEntry.h; sourceTree = "<group>"; };
+		05B374DE1502FADC005E3D62 /* TRLDAPEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPEntry.m; sourceTree = "<group>"; };
+		05B374DF1502FADC005E3D62 /* TRLDAPGroupConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRLDAPGroupConfig.h; sourceTree = "<group>"; };
+		05B374E01502FADC005E3D62 /* TRLDAPGroupConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPGroupConfig.m; sourceTree = "<group>"; };
+		05B374E11502FADC005E3D62 /* TRLDAPSearchFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRLDAPSearchFilter.h; sourceTree = "<group>"; };
+		05B374E21502FADC005E3D62 /* TRLDAPSearchFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLDAPSearchFilter.m; sourceTree = "<group>"; };
+		05B374E31502FADC005E3D62 /* TRLocalPacketFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRLocalPacketFilter.h; sourceTree = "<group>"; };
+		05B374E41502FADC005E3D62 /* TRLocalPacketFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLocalPacketFilter.m; sourceTree = "<group>"; };
+		05B374E51502FADC005E3D62 /* TRLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRLog.h; sourceTree = "<group>"; };
+		05B374E61502FADC005E3D62 /* TRLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRLog.m; sourceTree = "<group>"; };
+		05B374E71502FADC005E3D62 /* TRObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRObject.h; sourceTree = "<group>"; };
+		05B374E81502FADC005E3D62 /* TRObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRObject.m; sourceTree = "<group>"; };
+		05B374E91502FADC005E3D62 /* TRPacketFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRPacketFilter.h; sourceTree = "<group>"; };
+		05B374EA1502FADC005E3D62 /* TRPacketFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRPacketFilter.m; sourceTree = "<group>"; };
+		05B374EB1502FADC005E3D62 /* TRPFAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRPFAddress.h; sourceTree = "<group>"; };
+		05B374EC1502FADC005E3D62 /* TRPFAddress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRPFAddress.m; sourceTree = "<group>"; };
+		05B374ED1502FADC005E3D62 /* TRString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRString.h; sourceTree = "<group>"; };
+		05B374EE1502FADC005E3D62 /* TRString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRString.m; sourceTree = "<group>"; };
+		05B374EF1502FADC005E3D62 /* TRVPNPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRVPNPlugin.h; sourceTree = "<group>"; };
+		05B374F01502FADC005E3D62 /* TRVPNSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRVPNSession.h; sourceTree = "<group>"; };
+		05B374F11502FADC005E3D62 /* TRVPNSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TRVPNSession.m; sourceTree = "<group>"; };
+		05B374F21502FADC005E3D62 /* xmalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xmalloc.c; sourceTree = "<group>"; };
+		05B374F31502FADC005E3D62 /* xmalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xmalloc.h; sourceTree = "<group>"; };
+		05B3752F1502FBE9005E3D62 /* openvpn-plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "openvpn-plugin.h"; sourceTree = "<group>"; };
+		05B375361502FC2F005E3D62 /* lemon */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lemon; sourceTree = BUILT_PRODUCTS_DIR; };
+		05B375411502FC3F005E3D62 /* lemon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lemon.c; sourceTree = "<group>"; };
+		05B375421502FC3F005E3D62 /* lempar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lempar.c; sourceTree = "<group>"; };
+		05B375431502FC3F005E3D62 /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
+		05B375441502FC3F005E3D62 /* makeheaders.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = makeheaders.c; sourceTree = "<group>"; };
+		05B375451502FC3F005E3D62 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		05B3754D150316FD005E3D62 /* makeheaders */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = makeheaders; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,12 +209,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		05B375331502FC2F005E3D62 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05B3754A150316FD005E3D62 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		055C588F15029D4000B34430 = {
 			isa = PBXGroup;
 			children = (
+				05B375401502FC3F005E3D62 /* tools */,
+				05B374BE1502FADC005E3D62 /* src */,
 				055C589D15029D4000B34430 /* Frameworks */,
 				055C589B15029D4000B34430 /* Products */,
 			);
@@ -60,6 +241,8 @@
 			children = (
 				055C589A15029D4000B34430 /* tests */,
 				055C58B515029D9F00B34430 /* libauthldap.a */,
+				05B375361502FC2F005E3D62 /* lemon */,
+				05B3754D150316FD005E3D62 /* makeheaders */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,9 +250,130 @@
 		055C589D15029D4000B34430 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				05B3752F1502FBE9005E3D62 /* openvpn-plugin.h */,
 				055C589E15029D4000B34430 /* Foundation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		05B374BE1502FADC005E3D62 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				05B374C21502FADC005E3D62 /* Makefile.in */,
+				05B374BF1502FADC005E3D62 /* auth-ldap.m */,
+				05B374C61502FADC005E3D62 /* testplugin.c */,
+				05B3752C1502FB3A005E3D62 /* VPN */,
+				05B375271502FAF2005E3D62 /* Config */,
+				05B375281502FB0D005E3D62 /* Foundation */,
+				05B375291502FB18005E3D62 /* LDAP */,
+				05B3752B1502FB31005E3D62 /* PF */,
+				05B3752A1502FB25005E3D62 /* Logging */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		05B375271502FAF2005E3D62 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				05B374CA1502FADC005E3D62 /* TRAuthLDAPConfig.h */,
+				05B374CB1502FADC005E3D62 /* TRAuthLDAPConfig.m */,
+				05B374CE1502FADC005E3D62 /* TRConfig.h */,
+				05B374CF1502FADC005E3D62 /* TRConfig.m */,
+				05B374D01502FADC005E3D62 /* TRConfigLexer.h */,
+				05B374D11502FADC005E3D62 /* TRConfigLexer.re */,
+				05B374D21502FADC005E3D62 /* TRConfigParser.lemon */,
+				05B374D31502FADC005E3D62 /* TRConfigToken.h */,
+				05B374D41502FADC005E3D62 /* TRConfigToken.m */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
+		05B375281502FB0D005E3D62 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				05B374C01502FADC005E3D62 /* hash.c */,
+				05B374C11502FADC005E3D62 /* hash.h */,
+				05B374C31502FADC005E3D62 /* PXObjCRuntime.h */,
+				05B374C41502FADC005E3D62 /* strlcpy.c */,
+				05B374C51502FADC005E3D62 /* strlcpy.h */,
+				05B374C81502FADC005E3D62 /* TRArray.h */,
+				05B374C91502FADC005E3D62 /* TRArray.m */,
+				05B374CC1502FADC005E3D62 /* TRAutoreleasePool.h */,
+				05B374CD1502FADC005E3D62 /* TRAutoreleasePool.m */,
+				05B374D51502FADC005E3D62 /* TREnumerator.h */,
+				05B374D61502FADC005E3D62 /* TREnumerator.m */,
+				05B374D71502FADC005E3D62 /* TRHash.h */,
+				05B374D81502FADC005E3D62 /* TRHash.m */,
+				05B374E71502FADC005E3D62 /* TRObject.h */,
+				05B374E81502FADC005E3D62 /* TRObject.m */,
+				05B374ED1502FADC005E3D62 /* TRString.h */,
+				05B374EE1502FADC005E3D62 /* TRString.m */,
+				05B374F21502FADC005E3D62 /* xmalloc.c */,
+				05B374F31502FADC005E3D62 /* xmalloc.h */,
+			);
+			name = Foundation;
+			sourceTree = "<group>";
+		};
+		05B375291502FB18005E3D62 /* LDAP */ = {
+			isa = PBXGroup;
+			children = (
+				05B374D91502FADC005E3D62 /* TRLDAPAccountRepository.h */,
+				05B374DA1502FADC005E3D62 /* TRLDAPAccountRepository.m */,
+				05B374DB1502FADC005E3D62 /* TRLDAPConnection.h */,
+				05B374DC1502FADC005E3D62 /* TRLDAPConnection.m */,
+				05B374DD1502FADC005E3D62 /* TRLDAPEntry.h */,
+				05B374DE1502FADC005E3D62 /* TRLDAPEntry.m */,
+				05B374DF1502FADC005E3D62 /* TRLDAPGroupConfig.h */,
+				05B374E01502FADC005E3D62 /* TRLDAPGroupConfig.m */,
+				05B374E11502FADC005E3D62 /* TRLDAPSearchFilter.h */,
+				05B374E21502FADC005E3D62 /* TRLDAPSearchFilter.m */,
+			);
+			name = LDAP;
+			sourceTree = "<group>";
+		};
+		05B3752A1502FB25005E3D62 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				05B374E51502FADC005E3D62 /* TRLog.h */,
+				05B374E61502FADC005E3D62 /* TRLog.m */,
+			);
+			name = Logging;
+			sourceTree = "<group>";
+		};
+		05B3752B1502FB31005E3D62 /* PF */ = {
+			isa = PBXGroup;
+			children = (
+				05B374E31502FADC005E3D62 /* TRLocalPacketFilter.h */,
+				05B374E41502FADC005E3D62 /* TRLocalPacketFilter.m */,
+				05B374E91502FADC005E3D62 /* TRPacketFilter.h */,
+				05B374EA1502FADC005E3D62 /* TRPacketFilter.m */,
+				05B374EB1502FADC005E3D62 /* TRPFAddress.h */,
+				05B374EC1502FADC005E3D62 /* TRPFAddress.m */,
+			);
+			name = PF;
+			sourceTree = "<group>";
+		};
+		05B3752C1502FB3A005E3D62 /* VPN */ = {
+			isa = PBXGroup;
+			children = (
+				05B374C71502FADC005E3D62 /* TRAccountRepository.h */,
+				05B374EF1502FADC005E3D62 /* TRVPNPlugin.h */,
+				05B374F01502FADC005E3D62 /* TRVPNSession.h */,
+				05B374F11502FADC005E3D62 /* TRVPNSession.m */,
+			);
+			name = VPN;
+			sourceTree = "<group>";
+		};
+		05B375401502FC3F005E3D62 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				05B375411502FC3F005E3D62 /* lemon.c */,
+				05B375421502FC3F005E3D62 /* lempar.c */,
+				05B375431502FC3F005E3D62 /* Makefile.in */,
+				05B375441502FC3F005E3D62 /* makeheaders.c */,
+				05B375451502FC3F005E3D62 /* README */,
+			);
+			path = tools;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -79,6 +383,33 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05B374F61502FADC005E3D62 /* hash.h in Headers */,
+				05B374F71502FADC005E3D62 /* PXObjCRuntime.h in Headers */,
+				05B374F91502FADC005E3D62 /* strlcpy.h in Headers */,
+				05B374FB1502FADC005E3D62 /* TRAccountRepository.h in Headers */,
+				05B374FC1502FADC005E3D62 /* TRArray.h in Headers */,
+				05B374FE1502FADC005E3D62 /* TRAuthLDAPConfig.h in Headers */,
+				05B375001502FADC005E3D62 /* TRAutoreleasePool.h in Headers */,
+				05B375021502FADC005E3D62 /* TRConfig.h in Headers */,
+				05B375041502FADC005E3D62 /* TRConfigLexer.h in Headers */,
+				05B375051502FADC005E3D62 /* TRConfigToken.h in Headers */,
+				05B375071502FADC005E3D62 /* TREnumerator.h in Headers */,
+				05B375091502FADC005E3D62 /* TRHash.h in Headers */,
+				05B3750B1502FADC005E3D62 /* TRLDAPAccountRepository.h in Headers */,
+				05B3750D1502FADC005E3D62 /* TRLDAPConnection.h in Headers */,
+				05B3750F1502FADC005E3D62 /* TRLDAPEntry.h in Headers */,
+				05B375111502FADC005E3D62 /* TRLDAPGroupConfig.h in Headers */,
+				05B375131502FADC005E3D62 /* TRLDAPSearchFilter.h in Headers */,
+				05B375151502FADC005E3D62 /* TRLocalPacketFilter.h in Headers */,
+				05B375171502FADC005E3D62 /* TRLog.h in Headers */,
+				05B375191502FADC005E3D62 /* TRObject.h in Headers */,
+				05B3751B1502FADC005E3D62 /* TRPacketFilter.h in Headers */,
+				05B3751D1502FADC005E3D62 /* TRPFAddress.h in Headers */,
+				05B3751F1502FADC005E3D62 /* TRString.h in Headers */,
+				05B375211502FADC005E3D62 /* TRVPNPlugin.h in Headers */,
+				05B375221502FADC005E3D62 /* TRVPNSession.h in Headers */,
+				05B375251502FADC005E3D62 /* xmalloc.h in Headers */,
+				05B375301502FBE9005E3D62 /* openvpn-plugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,13 +442,50 @@
 				055C58B315029D9F00B34430 /* Headers */,
 			);
 			buildRules = (
+				05B3755C1503173C005E3D62 /* PBXBuildRule */,
 			);
 			dependencies = (
+				05B3755915031716005E3D62 /* PBXTargetDependency */,
+				05B3755B15031717005E3D62 /* PBXTargetDependency */,
 			);
 			name = authldap;
 			productName = authldap;
 			productReference = 055C58B515029D9F00B34430 /* libauthldap.a */;
 			productType = "com.apple.product-type.library.static";
+		};
+		05B375351502FC2F005E3D62 /* lemon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05B3753D1502FC2F005E3D62 /* Build configuration list for PBXNativeTarget "lemon" */;
+			buildPhases = (
+				05B375321502FC2F005E3D62 /* Sources */,
+				05B375331502FC2F005E3D62 /* Frameworks */,
+				05B375341502FC2F005E3D62 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = lemon;
+			productName = lemon;
+			productReference = 05B375361502FC2F005E3D62 /* lemon */;
+			productType = "com.apple.product-type.tool";
+		};
+		05B3754C150316FD005E3D62 /* makeheaders */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05B37554150316FE005E3D62 /* Build configuration list for PBXNativeTarget "makeheaders" */;
+			buildPhases = (
+				05B37549150316FD005E3D62 /* Sources */,
+				05B3754A150316FD005E3D62 /* Frameworks */,
+				05B3754B150316FD005E3D62 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = makeheaders;
+			productName = makeheaders;
+			productReference = 05B3754D150316FD005E3D62 /* makeheaders */;
+			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
@@ -142,6 +510,8 @@
 			targets = (
 				055C589915029D4000B34430 /* tests */,
 				055C58B415029D9F00B34430 /* authldap */,
+				05B375351502FC2F005E3D62 /* lemon */,
+				05B3754C150316FD005E3D62 /* makeheaders */,
 			);
 		};
 /* End PBXProject section */
@@ -158,10 +528,64 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05B3758115031864005E3D62 /* TRConfigParser.lemon in Sources */,
+				05B374F41502FADC005E3D62 /* auth-ldap.m in Sources */,
+				05B374F51502FADC005E3D62 /* hash.c in Sources */,
+				05B374F81502FADC005E3D62 /* strlcpy.c in Sources */,
+				05B374FA1502FADC005E3D62 /* testplugin.c in Sources */,
+				05B374FD1502FADC005E3D62 /* TRArray.m in Sources */,
+				05B374FF1502FADC005E3D62 /* TRAuthLDAPConfig.m in Sources */,
+				05B375011502FADC005E3D62 /* TRAutoreleasePool.m in Sources */,
+				05B375031502FADC005E3D62 /* TRConfig.m in Sources */,
+				05B375061502FADC005E3D62 /* TRConfigToken.m in Sources */,
+				05B375081502FADC005E3D62 /* TREnumerator.m in Sources */,
+				05B3750A1502FADC005E3D62 /* TRHash.m in Sources */,
+				05B3750C1502FADC005E3D62 /* TRLDAPAccountRepository.m in Sources */,
+				05B3750E1502FADC005E3D62 /* TRLDAPConnection.m in Sources */,
+				05B375101502FADC005E3D62 /* TRLDAPEntry.m in Sources */,
+				05B375121502FADC005E3D62 /* TRLDAPGroupConfig.m in Sources */,
+				05B375141502FADC005E3D62 /* TRLDAPSearchFilter.m in Sources */,
+				05B375161502FADC005E3D62 /* TRLocalPacketFilter.m in Sources */,
+				05B375181502FADC005E3D62 /* TRLog.m in Sources */,
+				05B3751A1502FADC005E3D62 /* TRObject.m in Sources */,
+				05B3751C1502FADC005E3D62 /* TRPacketFilter.m in Sources */,
+				05B3751E1502FADC005E3D62 /* TRPFAddress.m in Sources */,
+				05B375201502FADC005E3D62 /* TRString.m in Sources */,
+				05B375231502FADC005E3D62 /* TRVPNSession.m in Sources */,
+				05B375241502FADC005E3D62 /* xmalloc.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05B375321502FC2F005E3D62 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05B375481502FC88005E3D62 /* lemon.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05B37549150316FD005E3D62 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05B3755715031709005E3D62 /* makeheaders.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		05B3755915031716005E3D62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 05B375351502FC2F005E3D62 /* lemon */;
+			targetProxy = 05B3755815031716005E3D62 /* PBXContainerItemProxy */;
+		};
+		05B3755B15031717005E3D62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 05B3754C150316FD005E3D62 /* makeheaders */;
+			targetProxy = 05B3755A15031717005E3D62 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		055C58A715029D4000B34430 /* Debug */ = {
@@ -169,6 +593,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CONFIG_H_MACROS = "APPLE_RUNTIME=1 HAVE_FRAMEWORK_FOUNDATION=1 HAVE_INTTYPES_H=1 HAVE_MEMORY_H=1 HAVE_OBJC_OBJC_H=1 HAVE_PTHREAD=1 HAVE_STDINT_H=1 HAVE_STDLIB_H=1 HAVE_STRINGS_H=1 HAVE_STRING_H=1 HAVE_SYS_STAT_H=1 HAVE_SYS_TYPES_H=1 HAVE_UNISTD_H=1 PACKAGE_BUGREPORT=\"landonf@opendarwin.org\" PACKAGE_NAME=\"auth-ldap\" PACKAGE_STRING=\"auth-ldap\" PACKAGE_TARNAME=\"auth-ldap\" PACKAGE_URL=\"\" PACKAGE_VERSION=\"2.0\" STDC_HEADERS=1 _GNU_SOURCE=1";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -176,6 +601,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"$(CONFIG_H_MACROS)",
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -184,6 +610,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -195,15 +625,21 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CONFIG_H_MACROS = "APPLE_RUNTIME=1 HAVE_FRAMEWORK_FOUNDATION=1 HAVE_INTTYPES_H=1 HAVE_MEMORY_H=1 HAVE_OBJC_OBJC_H=1 HAVE_PTHREAD=1 HAVE_STDINT_H=1 HAVE_STDLIB_H=1 HAVE_STRINGS_H=1 HAVE_STRING_H=1 HAVE_SYS_STAT_H=1 HAVE_SYS_TYPES_H=1 HAVE_UNISTD_H=1 PACKAGE_BUGREPORT=\"landonf@opendarwin.org\" PACKAGE_NAME=\"auth-ldap\" PACKAGE_STRING=\"auth-ldap\" PACKAGE_TARNAME=\"auth-ldap\" PACKAGE_URL=\"\" PACKAGE_VERSION=\"2.0\" STDC_HEADERS=1 _GNU_SOURCE=1";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(CONFIG_H_MACROS)";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${SHARED_DERIVED_FILE_DIR}/${CURRENT_ARCH}",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 			};
@@ -230,6 +666,7 @@
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -237,6 +674,35 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Release;
+		};
+		05B3753E1502FC2F005E3D62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		05B3753F1502FC2F005E3D62 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		05B37555150316FE005E3D62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		05B37556150316FE005E3D62 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -267,6 +733,23 @@
 			buildConfigurations = (
 				055C58B715029DA000B34430 /* Debug */,
 				055C58B815029DA000B34430 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		05B3753D1502FC2F005E3D62 /* Build configuration list for PBXNativeTarget "lemon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05B3753E1502FC2F005E3D62 /* Debug */,
+				05B3753F1502FC2F005E3D62 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		05B37554150316FE005E3D62 /* Build configuration list for PBXNativeTarget "makeheaders" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05B37555150316FE005E3D62 /* Debug */,
+				05B37556150316FE005E3D62 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

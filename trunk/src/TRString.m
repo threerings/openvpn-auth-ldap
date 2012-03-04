@@ -30,7 +30,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef HAVE_CONFIG_H
 #import <config.h>
+#endif /* HAVE_CONFIG_H */
 
 #import <stdarg.h>
 #import <stdlib.h>
