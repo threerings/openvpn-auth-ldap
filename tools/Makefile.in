@@ -9,24 +9,20 @@ include ${top_builddir}/Mk/subdir.mk
 
 # Build the Lemon tool
 LEMON_OBJS=	lemon.o
-LEMON_GEN_SRCS=	lempar.c
 
 MAKEHEADERS_OBJS=	makeheaders.o
 CFLAGS=
 
 all:: lemon makeheaders
 
-lempar.c: lempar.c.in
-	cat $(srcdir)/lempar.c.in >lempar.c
-
-lemon: $(LEMON_OBJS) $(LEMON_GEN_SRCS)
+lemon: $(LEMON_OBJS)
 	$(CC) ${CFLAGS} -o $@ $(LEMON_OBJS) $(LIBS) $(LDFLAGS)
 
 makeheaders: $(MAKEHEADERS_OBJS)
 	$(CC) ${CFLAGS} -o $@ $(MAKEHEADERS_OBJS) $(LIBS) $(LDFLAGS)
 
 clean::
-	rm -f $(LEMON_OBJS) $(LEMON_GEN_SRCS) lemon
+	rm -f $(LEMON_OBJS) lemon
 	rm -f $(MAKEHEADERS_OBJS) makeheaders
 
 distclean:: clean
