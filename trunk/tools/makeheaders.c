@@ -1,7 +1,38 @@
+static const char ident[] = "@(#) $Header: /cvstrac/cvstrac/makeheaders.c,v 1.4 2005/03/16 22:17:51 drh Exp $";
 /*
-** This program scans C and C++ source files and automatically generates
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the Simplified BSD License (also
+** known as the "2-Clause License" or "FreeBSD License".)
+**
+** Copyright 1993 D. Richard Hipp. All rights reserved.
+**
+** Redistribution and use in source and binary forms, with or
+** without modification, are permitted provided that the following
+** conditions are met:
+**
+**   1. Redistributions of source code must retain the above copyright
+**      notice, this list of conditions and the following disclaimer.
+**
+**   2. Redistributions in binary form must reproduce the above copyright
+**      notice, this list of conditions and the following disclaimer in
+**      the documentation and/or other materials provided with the
+**      distribution.
+**
+** This software is provided "as is" and any express or implied warranties,
+** including, but not limited to, the implied warranties of merchantability
+** and fitness for a particular purpose are disclaimed.  In no event shall
+** the author or contributors be liable for any direct, indirect, incidental,
+** special, exemplary, or consequential damages (including, but not limited
+** to, procurement of substitute goods or services; loss of use, data or
+** profits; or business interruption) however caused and on any theory of
+** liability, whether in contract, strict liability, or tort (including
+** negligence or otherwise) arising in any way out of the use of this
+** software, even if advised of the possibility of such damage.
+**
+** This program is distributed in the hope that it will be useful,
+** but without any warranty; without even the implied warranty of
+** merchantability or fitness for a particular purpose.
 ** appropriate header files.
-** %Z% %P% %I% %G% %Z%
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,10 +40,13 @@
 #include <memory.h>
 #include <sys/stat.h>
 #include <assert.h>
-#ifndef WIN32
-# include <unistd.h>
-#else
+#if defined( __MINGW32__) ||  defined(__DMC__) || defined(_MSC_VER) || defined(__POCC__)
+#  ifndef WIN32
+#    define WIN32
+#  endif
 # include <string.h>
+#else
+# include <unistd.h>
 #endif
 
 /*
@@ -93,6 +127,8 @@ struct Decl {
   char *zFwd;        /* A forward declaration.  NULL if there is none. */
   char *zFwdCpp;     /* Use this forward declaration for C++. */
   char *zDecl;       /* A full declaration of this object */
+  char *zExtra;      /* Extra declaration text inserted into class objects */
+  int extraType;     /* Last public:, protected: or private: in zExtraDecl */
   struct Include *pInclude;   /* #includes that come before this declaration */
   int flags;         /* See the "Properties" below */
   Token *pComment;   /* A block comment associated with this declaration */
@@ -176,6 +212,10 @@ struct Decl {
 #define PS_Method        0x020000    /* If "::" token has been seen */
 #define PS_Local         0x040000    /* If within #if LOCAL_INTERFACE..#endif */
 #define PS_Local2        0x080000    /* If "LOCAL" seen. */
+#define PS_Public        0x100000    /* If "PUBLIC" seen. */
+#define PS_Protected     0x200000    /* If "PROTECTED" seen. */
+#define PS_Private       0x400000    /* If "PRIVATE" seen. */
+#define PS_PPP           0x700000    /* If any of PUBLIC, PRIVATE, PROTECTED */
 
 /*
 ** The following set of flags are ORed into the "flags" field of
@@ -451,8 +491,7 @@ static int Hash(const char *z, int n){
   while( n-- ){
     h = h ^ (h<<5) ^ *z++;
   }
-  if( h<0 ) h = -h;
-  return h;
+  return h & 0x7fffffff;
 }
 
 /*
@@ -861,7 +900,7 @@ static int GetToken(InStream *pIn, Token *pToken){
       }else{
         /* A divide operator */
         pToken->eType = TT_Other;
-        pToken->nText = 1;
+        pToken->nText = 1 + (z[i+1]=='+');
       }
       break;
 
@@ -920,6 +959,25 @@ static int GetToken(InStream *pIn, Token *pToken){
       while( isalnum(z[i]) || z[i]=='_' ){ i++; };
       pToken->eType = TT_Id;
       pToken->nText = i - pIn->i;
+      break;
+
+    case ':': 
+      pToken->eType = TT_Other;
+      pToken->nText = 1 + (z[i+1]==':');
+      break;
+
+    case '=':
+    case '<':
+    case '>':
+    case '+':
+    case '-':
+    case '*':
+    case '%':
+    case '^':
+    case '&':
+    case '|': 
+      pToken->eType = TT_Other;
+      pToken->nText = 1 + (z[i+1]=='=');
       break;
 
     default:
@@ -1286,17 +1344,36 @@ static void PrintTokens(Token *pFirst, Token *pLast){
 ** to that string.  Space to hold the string is obtained from malloc()
 ** and must be freed by the calling function.
 **
-** The characters ";\n" are always appended.
+** Certain keywords (EXPORT, PRIVATE, PUBLIC, PROTECTED) are always
+** skipped.
+**
+** If pSkip!=0 then skip over nSkip tokens beginning with pSkip.
+**
+** If zTerm!=0 then append the text to the end.
 */
-static char *TokensToString(Token *pFirst, Token *pLast){
+static char *TokensToString(
+  Token *pFirst,    /* First token in the string */
+  Token *pLast,     /* Last token in the string */
+  char *zTerm,      /* Terminate the string with this text if not NULL */
+  Token *pSkip,     /* Skip this token if not NULL */
+  int nSkip         /* Skip a total of this many tokens */
+){
   char *zReturn;
   String str;
   int needSpace = 0;
   int c;
+  int iSkip = 0;
+  int skipOne = 0;
 
   StringInit(&str);
   pLast = pLast->pNext;
   while( pFirst!=pLast ){
+    if( pFirst==pSkip ){ iSkip = nSkip; }
+    if( iSkip>0 ){ 
+      iSkip--;
+      pFirst=pFirst->pNext; 
+      continue;
+    }
     switch( pFirst->eType ){
       case TT_Preprocessor:
         StringAppend(&str,"\n",1);
@@ -1305,10 +1382,27 @@ static char *TokensToString(Token *pFirst, Token *pLast){
         needSpace = 0;
         break;
 
-      case TT_Id:
-        if( pFirst->nText==6 && pFirst->zText[0]=='E' 
-        && strncmp(pFirst->zText,"EXPORT",6)==0 ){
-          break;
+      case TT_Id: 
+        switch( pFirst->zText[0] ){
+          case 'E':        
+            if( pFirst->nText==6 && strncmp(pFirst->zText,"EXPORT",6)==0 ){
+              skipOne = 1;
+            }
+            break;
+          case 'P':
+            switch( pFirst->nText ){
+              case 6:  skipOne = !strncmp(pFirst->zText,"PUBLIC", 6);    break;
+              case 7:  skipOne = !strncmp(pFirst->zText,"PRIVATE",7);    break;
+              case 9:  skipOne = !strncmp(pFirst->zText,"PROTECTED",9);  break;
+              default: break;
+            }
+            break;
+          default:
+            break;
+        }
+        if( skipOne ){
+          pFirst = pFirst->pNext;
+          continue;
         }
         /* Fall thru to the next case */
       case TT_Number:
@@ -1331,7 +1425,9 @@ static char *TokensToString(Token *pFirst, Token *pLast){
     }
     pFirst = pFirst->pNext;
   }
-  StringAppend(&str,";\n",2);
+  if( zTerm && *zTerm ){
+    StringAppend(&str,zTerm,strlen(zTerm));
+  }
   zReturn = StrDup(StringGet(&str),0);
   StringReset(&str);
   return zReturn;
@@ -1355,12 +1451,20 @@ static int ProcessTypeDecl(Token *pList, int flags, int *pReset){
   Decl *pDecl;
   String str;
   int need_to_collapse = 1;
+  int type = 0;
 
   *pReset = 0;
   if( pList==0 || pList->pNext==0 || pList->pNext->eType!=TT_Id ){
     return 0;
   }
   pName = pList->pNext;
+
+  /* Catch the case of "struct Foo;" and skip it. */
+  if( pName->pNext && pName->pNext->zText[0]==';' ){
+    *pReset = ';';
+    return 0;
+  }
+
   for(pEnd=pName->pNext; pEnd && pEnd->eType!=TT_Braces; pEnd=pEnd->pNext){
     switch( pEnd->zText[0] ){
       case '(':
@@ -1407,17 +1511,32 @@ static int ProcessTypeDecl(Token *pList, int flags, int *pReset){
     printf(";\n");
   }
 #endif
-  pDecl = CreateDecl(pName->zText,pName->nText);
+
+  /*
+  ** Create a new Decl object for this definition.  Actually, if this
+  ** is a C++ class definition, then the Decl object might already exist,
+  ** so check first for that case before creating a new one.
+  */
+  switch( *pList->zText ){
+    case 'c':  type = TY_Class;        break;
+    case 's':  type = TY_Structure;    break;
+    case 'e':  type = TY_Enumeration;  break;
+    case 'u':  type = TY_Union;        break;
+    default:   /* Can't Happen */      break;
+  }
+  if( type!=TY_Class ){
+    pDecl = 0;
+  }else{
+    pDecl = FindDecl(pName->zText, pName->nText);
+    if( pDecl && (pDecl->flags & type)!=type ) pDecl = 0;
+  }
+  if( pDecl==0 ){
+    pDecl = CreateDecl(pName->zText,pName->nText);
+  }
   if( (flags & PS_Static) || !(flags & (PS_Interface|PS_Export)) ){
     DeclSetProperty(pDecl,DP_Local);
   }
-  switch( *pList->zText ){
-    case 'c':  DeclSetProperty(pDecl,TY_Class);       break;
-    case 's':  DeclSetProperty(pDecl,TY_Structure);   break;
-    case 'e':  DeclSetProperty(pDecl,TY_Enumeration); break;
-    case 'u':  DeclSetProperty(pDecl,TY_Union);       break;
-    default:     /* Can't Happen */  break;
-  }
+  DeclSetProperty(pDecl,type);
 
   /* The object has a full declaration only if it is contained within
   ** "#if INTERFACE...#endif" or "#if EXPORT_INTERFACE...#endif" or
@@ -1425,7 +1544,7 @@ static int ProcessTypeDecl(Token *pList, int flags, int *pReset){
   ** forward declaration.
   */
   if( flags & (PS_Local | PS_Export | PS_Interface)  ){
-    pDecl->zDecl = TokensToString(pList,pEnd);
+    pDecl->zDecl = TokensToString(pList,pEnd,";\n",0,0);
   }else{
     pDecl->zDecl = 0;
   }
@@ -1526,7 +1645,8 @@ static Token *FindDeclName(Token *pFirst, Token *pLast){
       static int isInit = 0;
       static char *aWords[] = { "char", "class", 
        "const", "double", "enum", "extern", "EXPORT", "ET_PROC", 
-       "float", "int", "long", 
+       "float", "int", "long",
+       "PRIVATE", "PROTECTED", "PUBLIC",
        "register", "static", "struct", "sizeof", "signed", "typedef", 
        "union", "volatile", "virtual", "void", };
   
@@ -1554,6 +1674,71 @@ static Token *FindDeclName(Token *pFirst, Token *pLast){
 }
 
 /*
+** This routine is called when we see a method for a class that begins
+** with the PUBLIC, PRIVATE, or PROTECTED keywords.  Such methods are
+** added to their class definitions.
+*/
+static int ProcessMethodDef(Token *pFirst, Token *pLast, int flags){
+  Token *pCode;
+  Token *pClass;
+  char *zDecl;
+  Decl *pDecl;
+  String str;
+  int type;
+
+  pCode = pLast;
+  pLast = pLast->pPrev;
+  while( pFirst->zText[0]=='P' ){
+    int rc = 1;
+    switch( pFirst->nText ){
+      case 6:  rc = strncmp(pFirst->zText,"PUBLIC",6); break;
+      case 7:  rc = strncmp(pFirst->zText,"PRIVATE",7); break;
+      case 9:  rc = strncmp(pFirst->zText,"PROTECTED",9); break;
+      default:  break;
+    }
+    if( rc ) break;
+    pFirst = pFirst->pNext;
+  }
+  pClass = FindDeclName(pFirst,pLast);
+  if( pClass==0 ){
+    fprintf(stderr,"%s:%d: Unable to find the class name for this method\n",
+       zFilename, pFirst->nLine);
+    return 1;
+  }
+  pDecl = FindDecl(pClass->zText, pClass->nText);
+  if( pDecl==0 || (pDecl->flags & TY_Class)!=TY_Class ){
+    pDecl = CreateDecl(pClass->zText, pClass->nText);
+    DeclSetProperty(pDecl, TY_Class);
+  }
+  StringInit(&str);
+  if( pDecl->zExtra ){
+    StringAppend(&str, pDecl->zExtra, 0);
+    SafeFree(pDecl->zExtra);
+    pDecl->zExtra = 0;
+  }
+  type = flags & PS_PPP;
+  if( pDecl->extraType!=type ){
+    if( type & PS_Public ){
+      StringAppend(&str, "public:\n", 0);
+      pDecl->extraType = PS_Public;
+    }else if( type & PS_Protected ){
+      StringAppend(&str, "protected:\n", 0);
+      pDecl->extraType = PS_Protected;
+    }else if( type & PS_Private ){
+      StringAppend(&str, "private:\n", 0);
+      pDecl->extraType = PS_Private;
+    }
+  }
+  StringAppend(&str, "  ", 0);
+  zDecl = TokensToString(pFirst, pLast, ";\n", pClass, 2);
+  StringAppend(&str, zDecl, 0);
+  SafeFree(zDecl);
+  pDecl->zExtra = StrDup(StringGet(&str), 0);
+  StringReset(&str);
+  return 0;
+}
+
+/*
 ** This routine is called when we see a function or procedure definition.
 ** We make an entry in the declaration table that is a prototype for this
 ** function or procedure.
@@ -1567,7 +1752,11 @@ static int ProcessProcedureDef(Token *pFirst, Token *pLast, int flags){
     return 0;
   }
   if( flags & PS_Method ){
-    return 0;
+    if( flags & PS_PPP ){
+      return ProcessMethodDef(pFirst, pLast, flags);
+    }else{
+      return 0;
+    }
   }
   if( (flags & PS_Static)!=0 && !proto_static ){
     return 0;
@@ -1611,7 +1800,7 @@ static int ProcessProcedureDef(Token *pFirst, Token *pLast, int flags){
     pDecl->tokenCode = *pCode;
   }
   DeclSetProperty(pDecl,TY_Subroutine);
-  pDecl->zDecl = TokensToString(pFirst,pLast);
+  pDecl->zDecl = TokensToString(pFirst,pLast,";\n",0,0);
   if( (flags & (PS_Static|PS_Local2))!=0 ){
     DeclSetProperty(pDecl,DP_Local);
   }else if( (flags & (PS_Export2))!=0 ){
@@ -1667,7 +1856,7 @@ static int ProcessInlineProc(Token *pFirst, int flags, int *pReset){
   pDecl = CreateDecl(pName->zText,pName->nText);
   pDecl->pComment = pFirst->pComment;
   DeclSetProperty(pDecl,TY_Subroutine);
-  pDecl->zDecl = TokensToString(pFirst,pEnd);
+  pDecl->zDecl = TokensToString(pFirst,pEnd,";\n",0,0);
   if( (flags & (PS_Static|PS_Local|PS_Local2)) ){
     DeclSetProperty(pDecl,DP_Local);
   }else if( flags & (PS_Export|PS_Export2) ){
@@ -1697,7 +1886,9 @@ static int ProcessInlineProc(Token *pFirst, int flags, int *pReset){
 ** variable definition.
 */
 static int isVariableDef(Token *pFirst, Token *pEnd){
-  if( pEnd && pEnd->zText[0]=='=' ){
+  if( pEnd && pEnd->zText[0]=='=' && 
+    (pEnd->pPrev->nText!=8 || strncmp(pEnd->pPrev->zText,"operator",8)!=0)
+  ){
     return 1;
   }
   while( pFirst && pFirst!=pEnd && pFirst->pNext && pFirst->pNext!=pEnd ){
@@ -1814,8 +2005,8 @@ static int ProcessDecl(Token *pFirst, Token *pEnd, int flags){
     }
   }
   pDecl->pComment = pFirst->pComment;
-  pDecl->zDecl = TokensToString(pFirst,pEnd->pPrev);
-  if( isLocal || (flags & (PS_Local||PS_Local2))!=0 ){
+  pDecl->zDecl = TokensToString(pFirst,pEnd->pPrev,";\n",0,0);
+  if( isLocal || (flags & (PS_Local|PS_Local2))!=0 ){
     DeclSetProperty(pDecl,DP_Local);
   }else if( flags & (PS_Export|PS_Export2) ){
     DeclSetProperty(pDecl,DP_Export);
@@ -1980,7 +2171,7 @@ static int ParsePreprocessor(Token *pToken, int flags, int *pPresetFlags){
       zArg++;
     }
     if( *zArg==0 || *zArg=='\n' ){ return 0; }
-    nArg = pToken->nText + (int)pToken->zText - (int)zArg;
+    nArg = pToken->nText + (int)(pToken->zText - zArg);
     if( nArg==9 && strncmp(zArg,"INTERFACE",9)==0 ){
       PushIfMacro(0,0,0,pToken->nLine,PS_Interface);
     }else if( nArg==16 && strncmp(zArg,"EXPORT_INTERFACE",16)==0 ){
@@ -1999,7 +2190,7 @@ static int ParsePreprocessor(Token *pToken, int flags, int *pPresetFlags){
       zArg++;
     }
     if( *zArg==0 || *zArg=='\n' ){ return 0; }
-    nArg = pToken->nText + (int)pToken->zText - (int)zArg;
+    nArg = pToken->nText + (int)(pToken->zText - zArg);
     PushIfMacro("defined",zArg,nArg,pToken->nLine,0);
   }else if( nCmd==6 && strncmp(zCmd,"ifndef",6)==0 ){
     /*
@@ -2010,7 +2201,7 @@ static int ParsePreprocessor(Token *pToken, int flags, int *pPresetFlags){
       zArg++;
     }
     if( *zArg==0 || *zArg=='\n' ){ return 0; }
-    nArg = pToken->nText + (int)pToken->zText - (int)zArg;
+    nArg = pToken->nText + (int)(pToken->zText - zArg);
     PushIfMacro("!defined",zArg,nArg,pToken->nLine,0);
   }else if( nCmd==4 && strncmp(zCmd,"else",4)==0 ){
     /*
@@ -2086,6 +2277,10 @@ static int ParseFile(Token *pList, int initFlags){
         break;
 
       case '=':
+        if( pList->pPrev->nText==8 
+            && strncmp(pList->pPrev->zText,"operator",8)==0 ){
+          break;
+        }
         nErr += ProcessDecl(pStart,pList,flags);
         pStart = 0;
         while( pList && pList->zText[0]!=';' ){
@@ -2164,6 +2359,19 @@ static int ParseFile(Token *pList, int initFlags){
          }
          break;
 
+       case 'P':
+         if( pList->nText==6 && strncmp(pList->zText, "PUBLIC",6)==0 ){
+           flags |= PS_Public;
+           pStart = pList;
+         }else if( pList->nText==7 && strncmp(pList->zText, "PRIVATE",7)==0 ){
+           flags |= PS_Private;
+           pStart = pList;
+         }else if( pList->nText==9 && strncmp(pList->zText,"PROTECTED",9)==0 ){
+           flags |= PS_Protected;
+           pStart = pList;
+         }
+         break;
+
        case 's':
          if( pList->nText==6 && strncmp(pList->zText,"struct",6)==0 ){
            if( pList->pNext && pList->pNext->eType==TT_Braces ){
@@ -2205,6 +2413,7 @@ static int ParseFile(Token *pList, int initFlags){
        }
        break;
 
+    case TT_String:
     case TT_Number:
        break;
 
@@ -2227,6 +2436,33 @@ static int ParseFile(Token *pList, int initFlags){
   }
 
   return nErr;
+}
+
+/*
+** If the given Decl object has a non-null zExtra field, then the text
+** of that zExtra field needs to be inserted in the middle of the
+** zDecl field before the last "}" in the zDecl.  This routine does that.
+** If the zExtra is NULL, this routine is a no-op.
+**
+** zExtra holds extra method declarations for classes.  The declarations
+** have to be inserted into the class definition.
+*/
+static void InsertExtraDecl(Decl *pDecl){
+  int i;
+  String str;
+
+  if( pDecl==0 || pDecl->zExtra==0 || pDecl->zDecl==0 ) return;
+  i = strlen(pDecl->zDecl) - 1;
+  while( i>0 && pDecl->zDecl[i]!='}' ){ i--; }
+  StringInit(&str);
+  StringAppend(&str, pDecl->zDecl, i);
+  StringAppend(&str, pDecl->zExtra, 0);
+  StringAppend(&str, &pDecl->zDecl[i], 0);
+  SafeFree(pDecl->zDecl);
+  SafeFree(pDecl->zExtra);
+  pDecl->zDecl = StrDup(StringGet(&str), 0);
+  StringReset(&str);
+  pDecl->zExtra = 0;
 }
 
 /*
@@ -2333,6 +2569,7 @@ static void DeclareObject(
   int isCpp;             /* True if generating C++ */
   int doneTypedef = 0;   /* True if a typedef has been done for this object */
 
+  /* printf("BEGIN %s of %s\n",needFullDecl?"FULL":"PROTOTYPE",pDecl->zName);*/
   /* 
   ** For any object that has a forward declaration, go ahead and do the
   ** forward declaration first.
@@ -2404,6 +2641,7 @@ static void DeclareObject(
       if( p->zDecl[0]=='#' ){
         ScanText(&p->zDecl[1],pState);
       }else{
+        InsertExtraDecl(p);
         ScanText(p->zDecl,pState);
       }
     }
@@ -2428,6 +2666,7 @@ static void DeclareObject(
       }else if( isCpp && DeclHasAnyProperty(p,DP_ExternCReqd|DP_ExternReqd) ){
         StringAppend(pState->pStr,"extern \"C\" ",0);
       }
+      InsertExtraDecl(p);
       StringAppend(pState->pStr,p->zDecl,0);
       if( !isCpp && DeclHasProperty(p,DP_Cplusplus) ){
         fprintf(stderr,
@@ -2443,6 +2682,7 @@ static void DeclareObject(
       /* This has to be a typedef */
       doneTypedef = 1;
       ChangeIfContext(p->zIf,pState);
+      InsertExtraDecl(p);
       StringAppend(pState->pStr,p->zDecl,0);
     }
   }
@@ -2466,6 +2706,8 @@ static void ScanText(
   InStream sIn;         /* The input text */
   Token sToken;         /* The current token being examined */
   Token sNext;          /* The next non-space token */
+
+  /* printf("BEGIN SCAN TEXT on %s\n", zText); */
 
   sIn.z = zText;
   sIn.i = 0;
@@ -2510,6 +2752,7 @@ static void ScanText(
       sIn.i -= sToken.nText - 1;
     }
   }
+  /* printf("END SCANTEXT\n"); */
 }
 
 /*
@@ -2584,7 +2827,7 @@ static int MakeHeader(InFile *pFile, FILE *report, int nolocal_flag){
     fprintf(stderr,
        "%s: Can't overwrite this file because it wasn't previously\n"
        "%*s  generated by 'makeheaders'.\n",
-       pFile->zHdr, strlen(pFile->zHdr), "");
+       pFile->zHdr, (int)strlen(pFile->zHdr), "");
     nErr++;
   }else if( strcmp(zOldVersion,zNewVersion)!=0 ){
     if( report ) fprintf(report,"updated\n");
@@ -2660,6 +2903,7 @@ static void DumpDeclList(void){
       printf("Decl: [%.*s]\n",ClipTrailingNewline(pDecl->zFwd),pDecl->zFwd);
     }
     if( pDecl->zDecl ){
+      InsertExtraDecl(pDecl);
       printf("Def: [%.*s]\n",ClipTrailingNewline(pDecl->zDecl),pDecl->zDecl);
     }
     if( pDecl->flags ){
@@ -2735,16 +2979,17 @@ static void DocumentationDump(void){
     }
     if( nLabel==0 ) continue;
     zLabel[nLabel] = 0;
+    InsertExtraDecl(pDecl);
     zDecl = pDecl->zDecl;
     if( zDecl==0 ) zDecl = pDecl->zFwd;
-    printf("%s %s %s %d %d %d %d %d %d\n",
+    printf("%s %s %s %p %d %d %d %d %d\n",
        pDecl->zName,
        zLabel,
        pDecl->zFile,
-       pDecl->pComment ? (int)pDecl->pComment/sizeof(Token) : 0,
+       pDecl->pComment,
        pDecl->pComment ? pDecl->pComment->nText+1 : 0,
-       pDecl->zIf ? strlen(pDecl->zIf)+1 : 0,
-       zDecl ? strlen(zDecl) : 0,
+       pDecl->zIf ? (int)strlen(pDecl->zIf)+1 : 0,
+       zDecl ? (int)strlen(zDecl) : 0,
        pDecl->pComment ? pDecl->pComment->nLine : 0,
        pDecl->tokenCode.nText ? pDecl->tokenCode.nText+1 : 0
     );
@@ -2775,7 +3020,7 @@ void PrintModuleRecord(const char *zFile, const char *zFilename){
   if( *zFile!='/' || zFile[1]!='*' ) return;
   for(i=2; zFile[i] && (zFile[i-1]!='/' || zFile[i-2]!='*'); i++){}
   if( zFile[i]==0 ) return;
-  printf("%s M %s %d %d 0 0 0\n%.*s\n",
+  printf("%s M %s %d %d 0 0 0 0\n%.*s\n",
     zFilename, zFilename, addr, i+1, i, zFile);
   addr += 4;
 }
@@ -2792,10 +3037,16 @@ static InFile *CreateInFile(char *zArg, int *pnErr){
   int i;
 
   /* 
-  ** Get the name of the input file to be scanned
+  ** Get the name of the input file to be scanned.  The input file is
+  ** everything before the first ':' or the whole file if no ':' is seen.
+  **
+  ** Except, on windows, ignore any ':' that occurs as the second character
+  ** since it might be part of the drive specifier.  So really, the ":' has
+  ** to be the 3rd or later character in the name.  This precludes 1-character
+  ** file names, which really should not be a problem.
   */
   zSrc = zArg;
-  for(nSrc=0; zSrc[nSrc] && zArg[nSrc]!=':'; nSrc++){}
+  for(nSrc=2; zSrc[nSrc] && zArg[nSrc]!=':'; nSrc++){}
   pFile = SafeMalloc( sizeof(InFile) );
   memset(pFile,0,sizeof(InFile));
   pFile->zSrc = StrDup(zSrc,nSrc);
@@ -2883,7 +3134,7 @@ static void AddParameters(int index, int *pArgc, char ***pArgv){
   int argc = *pArgc;      /* The original argc value */
   char **argv = *pArgv;   /* The original argv value */
   int newArgc;            /* Value for argc after inserting new arguments */
-  char **zNew;            /* The new argv after this routine is done */
+  char **zNew = 0;        /* The new argv after this routine is done */
   char *zFile;            /* Name of the input file */
   int nNew = 0;           /* Number of new entries in the argv[] file */
   int nAlloc = 0;         /* Space allocated for zNew[] */
@@ -3005,6 +3256,9 @@ static char zInit[] =
   "#define LOCAL_INTERFACE 0\n"
   "#define EXPORT\n"
   "#define LOCAL static\n"
+  "#define PUBLIC\n"
+  "#define PRIVATE\n"
+  "#define PROTECTED\n"
 ;
 
 #if TEST==0
@@ -3013,7 +3267,7 @@ int main(int argc, char **argv){
   int nErr = 0;         /* Number of errors encountered */
   Token *pList;         /* List of input tokens for one file */
   InFile *pFileList = 0;/* List of all input files */
-  InFile *pTail;        /* Last file on the list */
+  InFile *pTail = 0;    /* Last file on the list */
   InFile *pFile;        /* for looping over the file list */
   int h_flag = 0;       /* True if -h is present.  Output unified header */
   int H_flag = 0;       /* True if -H is present.  Output EXPORT header */
