@@ -1,6 +1,5 @@
 builtin(include,pthread.m4)
 builtin(include,platform.m4)
-builtin(include,check.m4)
 builtin(include,framework.m4)
 
 #------------------------------------------------------------------------
