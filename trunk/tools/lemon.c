@@ -3618,6 +3618,13 @@ void ReportTable(
   }
   tplt_xfer(lemp->name,in,out,&lineno);
 
+  /* Generate #includes for the header file */
+  if( mhflag ){
+    fprintf(out,"#if INTERFACE\n"); lineno++;
+    fprintf(out,"#include <stdio.h>\n"); lineno++;
+    fprintf(out,"#endif\n"); lineno++;
+  }
+	  
   /* Generate #defines for all tokens */
   if( mhflag ){
     const char *prefix;
