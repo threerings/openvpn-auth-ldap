@@ -42,9 +42,8 @@
 
 @interface Object (QuiesceWarnings)
 
-// WARNING: Depending on the libobjc implementation, neither of these may
-// be implemented.
-- (id) init;
+/* WARNING: In modern objc runtime implementations, these methods are either not
+ * implemented, or are deprecated. */
 - (void) dealloc;
 
 @end
@@ -66,10 +65,6 @@
  * implementation performs no initialization.
  */
 - (id) init {
-    // self = [super init];
-    if (!self)
-        return self;
-
     _refCount = 1;
     return self;
 }
