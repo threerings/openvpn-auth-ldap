@@ -45,8 +45,6 @@
 
 #import "TRAutoreleasePool.h"
 
-#ifndef HAVE_FRAMEWORK_FOUNDATION
-
 /* Number of objects to store in each pool bucket.
  * Selected arbitrarily. */
 #define BUCKET_SIZE 1024
@@ -116,8 +114,6 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
     }
 }
 
-#endif /* !HAVE_FRAMEWORK_FOUNDATION */
-
 /*!
  * @brief Foundation Allocation Pool Class.
  *
@@ -136,8 +132,6 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
  * allocated.
  */
 @implementation TRAutoreleasePool
-
-#ifndef HAVE_FRAMEWORK_FOUNDATION
 
 #ifndef HAVE_THREADLS
 + initialize {
@@ -239,8 +233,6 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
     /* Not reached */
     return nil;
 }
-
-#endif /* !HAVE_FRAMEWORK_FOUNDATION */
 
 @end
 

@@ -36,6 +36,8 @@
 #import <config.h>
 #endif
 
+#import <string.h>
+
 #import "TRConfigToken.h"
 
 /**

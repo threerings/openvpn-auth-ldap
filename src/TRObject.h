@@ -41,17 +41,6 @@
 
 #import "PXObjCRuntime.h"
 
-#ifdef HAVE_FRAMEWORK_FOUNDATION
-#import <Foundation/Foundation.h>
-
-@protocol TRObject <NSObject>
-@end
-
-@interface TRObject : NSObject <TRObject>
-@end
-
-#else /* HAVE_FRAMEWORK_FOUNDATION */
-
 #import <objc/Object.h>
 
 @protocol TRObject
@@ -60,7 +49,7 @@
  * Return the current object retain count. This does not take into account any enqueued autorelease calls,
  * and should generally not be used.
  */
-- (unsigned int) retainCount;
+- (PXUInteger) retainCount;
 
 /**
  * Retain a reference to the receiver, incrementing the reference count.
@@ -108,14 +97,13 @@
 
 @interface TRObject : Object <TRObject> {
 @private
-    unsigned int _refCount;
+    PXUInteger _refCount;
 }
 
 + (id) alloc;
 
-- (unsigned int) retainCount;
+- (id) init;
+
 - (void) dealloc;
 
 @end
-
-#endif /* !HAVE_FRAMEWORK_FOUNDATION */

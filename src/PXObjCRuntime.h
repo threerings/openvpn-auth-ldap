@@ -38,8 +38,6 @@
 
 #import <stdbool.h>
 
-#ifndef HAVE_FRAMEWORK_FOUNDATION
-
 /** Used to describe a signed integer */
 #if __LP64__
 typedef long PXInteger;
@@ -53,14 +51,3 @@ typedef unsigned long PXUInteger;
 #else
 typedef unsigned int PXUInteger;
 #endif
-
-#else /* !HAVE_FRAMEWORK_FOUNDATION */
-#import <Foundation/Foundation.h>
-
-/** Used to describe a signed integer */
-typedef NSInteger PXInteger;
-
-/** Used to describe an unsigned integer */
-typedef NSUInteger PXUInteger;
-
-#endif /* HAVE_FRAMEWORK_FOUNDATION */

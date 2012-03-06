@@ -40,18 +40,19 @@
 
 #import <objc/runtime.h>
 
-#ifndef HAVE_FRAMEWORK_FOUNDATION 
 @interface Object (QuiesceWarnings)
+
+// WARNING: Depending on the libobjc implementation, neither of these may
+// be implemented.
+- (id) init;
 - (void) dealloc;
+
 @end
-#endif /* !HAVE_FRAMEWORK_FOUNDATION */
 
 /**
  * Base class. Handles reference counting and equality.
  */
 @implementation TRObject
-
-#ifndef HAVE_FRAMEWORK_FOUNDATION
 
 /**
  * Allocate a new instance of the receiver.
@@ -65,7 +66,7 @@
  * implementation performs no initialization.
  */
 - (id) init {
-    self = [super init];
+    // self = [super init];
     if (!self)
         return self;
 
@@ -82,7 +83,7 @@
  * incorporate the superclass implementation through a message to super.
  */
 - (void) dealloc {
-    [super free];
+    object_dispose(self);
 
     /* Quiesce compiler warnings regarding missing call to -dealloc */
     if (false)
@@ -117,7 +118,7 @@
 }
 
 // from TRObject protocol
-- (unsigned int) retainCount {
+- (PXUInteger) retainCount {
     return _refCount;
 }
 
@@ -128,7 +129,7 @@
 }
 
 // from TRObject protocol
-- (void) release {
+- (oneway void) release {
     /* This must never occur */
     assert(_refCount >= 1);
 
@@ -148,7 +149,5 @@
 + (id) autorelease {
         return self;
 }
-
-#endif /* HAVE_FRAMEWORK_FOUNDATION */
 
 @end
