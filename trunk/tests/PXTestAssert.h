@@ -53,6 +53,8 @@
 // to provide. I didn't stick GTM in front of the Macro names, so that they would 
 // be easy to remember.
 
+#import <string.h>
+
 #import "PXTestException.h"
 
 /* libcheck-compatible assertions */

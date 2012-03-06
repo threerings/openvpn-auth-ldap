@@ -33,6 +33,7 @@
 #import <time.h>
 #import <locale.h>
 #import <langinfo.h>
+#import <stdio.h>
 
 /**
  * Console test result handler. All results are output to standard error.

@@ -25,14 +25,4 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if defined(APPLE_RUNTIME) && defined(HAVE_FRAMEWORK_FOUNDATION)
-#import <AvailabilityMacros.h>
-#import <TargetConditionals.h>
-#endif /* APPLE_RUNTIME && HAVE_FRAMEWORK_FOUNDATION */
-
-#if TARGET_OS_IPHONE
 #import <objc/runtime.h>
-#import <objc/message.h>
-#else
-#import <objc/runtime.h>
-#endif

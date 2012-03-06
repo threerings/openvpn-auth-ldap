@@ -90,7 +90,7 @@
   }
 
 // XXX - We need to support -description here
-#ifdef HAVE_FRAMEWORK_FOUNDATION
+#if TODO_TRSTRING_FORMAT
   TRString *reason =
     [TRString stringWithFormat:"'%@' should be equal to '%@'. %s",
      [left description], [right description], [testDescription cString]];
@@ -123,7 +123,7 @@
 
   TRString *reason;
 // XXX - We need to support -description here
-#ifdef HAVE_FRAMEWORK_FOUNDATION
+#if TODO_TRSTRING_FORMAT
   if (accuracy) {
     reason =
       [TRString stringWithFormat:"'%@' should be equal to '%@'. %@",

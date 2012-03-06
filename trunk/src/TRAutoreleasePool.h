@@ -28,15 +28,6 @@
 
 #import "TRObject.h"
 
-#ifdef HAVE_FRAMEWORK_FOUNDATION
-
-#import <Foundation/Foundation.h>
-
-@interface TRAutoreleasePool : NSAutoreleasePool
-@end
-
-#else /* HAVE_FRAMEWORK_FOUNDATION */
-
 typedef struct _TRAutoreleasePoolBucket TRAutoreleasePoolBucket;
 
 @interface TRAutoreleasePool : TRObject
@@ -50,5 +41,3 @@ typedef struct _TRAutoreleasePoolBucket TRAutoreleasePoolBucket;
 - (void) addObject:(id)anObject;
 
 @end
-
-#endif /* !HAVE_FRAMEWORK_FOUNDATION */
