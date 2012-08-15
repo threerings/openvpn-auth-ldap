@@ -84,7 +84,7 @@
     /* Quote all occurrences of the special characters */
     while ((part = [unquotedString substringToCharset: specialChars]) != NULL) {
         TRString *temp;
-        int index;
+        size_t index;
         char c;
 
         /* Append everything until the first special character */

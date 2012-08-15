@@ -40,14 +40,6 @@
 
 #import <objc/runtime.h>
 
-@interface Object (QuiesceWarnings)
-
-/* WARNING: In modern objc runtime implementations, these methods are either not
- * implemented, or are deprecated. */
-- (void) dealloc;
-
-@end
-
 /**
  * Base class. Handles reference counting and equality.
  */
@@ -79,10 +71,6 @@
  */
 - (void) dealloc {
     object_dispose(self);
-
-    /* Quiesce compiler warnings regarding missing call to -dealloc */
-    if (false)
-        [super dealloc];
 }
 
 // from TRObject protocol
@@ -96,6 +84,12 @@
         return YES;
     else
         return NO;
+}
+
+// from TRObject protocol
+- (PXUInteger) hash {
+    assert(sizeof(PXUInteger) >= sizeof(uintptr_t));
+    return (PXUInteger) self;
 }
 
 // from TRObject protocol

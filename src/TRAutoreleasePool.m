@@ -134,12 +134,12 @@ static void bucket_flush (TRAutoreleasePoolBucket *bucket) {
 @implementation TRAutoreleasePool
 
 #ifndef HAVE_THREADLS
-+ initialize {
-    if (self == [TRAutoreleasePool class]) {
-        /* Initialize our pthread key */
-        pthread_key_create(&autorelease_stack_key, NULL);
-    }
-    return self;
++ (void) initialize {
+    if (self != [TRAutoreleasePool class])
+        return;
+    
+    /* Initialize our pthread key */
+    pthread_key_create(&autorelease_stack_key, NULL);
 }
 #endif
 

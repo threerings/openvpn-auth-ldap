@@ -57,7 +57,7 @@
 - (void) test_setObjectForKey {
     TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
     TRString *string = [[TRString alloc] initWithCString: "Hello, World"];
-    unsigned int refCount = [string retainCount];
+    size_t refCount = [string retainCount];
 
     [hash setObject: string forKey: string];
     /* Verify that the object has been retained twice:
@@ -83,7 +83,7 @@
     TRString *key = [[TRString alloc] initWithCString: "Key"];
     TRString *value1 = [[TRString alloc] initWithCString: "Hello, World"];
     TRString *value2 = [[TRString alloc] initWithCString: "Goodbye, World"];
-    unsigned int refCount = [key retainCount];
+    size_t refCount = [key retainCount];
 
     /* Insert value1 */
     [hash setObject: value1 forKey: key];
@@ -109,7 +109,7 @@
     TRHash *hash = [[TRHash alloc] initWithCapacity: 1];
     TRString *key = [[TRString alloc] initWithCString: "Key"];
     TRString *value = [[TRString alloc] initWithCString: "Value"];
-    unsigned int refCount = [key retainCount];
+    PXUInteger refCount = [key retainCount];
 
     /* Insert */
     [hash setObject: value forKey: key];
