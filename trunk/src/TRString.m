@@ -206,7 +206,7 @@
         return (false);
     }
 
-    *value = i;
+    *value = (int) i;
     return (true);
 }
 

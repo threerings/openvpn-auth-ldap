@@ -163,7 +163,7 @@
 
 - (void) test_hash {
     TRString *str = [[TRString alloc] initWithCString: TEST_STRING];
-    int hash = [str hash];
+    PXUInteger hash = [str hash];
 
     fail_if(hash == 0);
     [str release];

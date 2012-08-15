@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		055C589F15029D4000B34430 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C589E15029D4000B34430 /* Foundation.framework */; };
+		05733B7A15DB7372009E53FA /* asprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = 05733B7915DB7372009E53FA /* asprintf.c */; };
+		05733B7B15DB7372009E53FA /* asprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = 05733B7915DB7372009E53FA /* asprintf.c */; };
 		05B374F41502FADC005E3D62 /* auth-ldap.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B374BF1502FADC005E3D62 /* auth-ldap.m */; };
 		05B374F51502FADC005E3D62 /* hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 05B374C01502FADC005E3D62 /* hash.c */; };
 		05B374F61502FADC005E3D62 /* hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B374C11502FADC005E3D62 /* hash.h */; };
@@ -168,6 +170,7 @@
 		055C589A15029D4000B34430 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		055C589E15029D4000B34430 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		055C58B515029D9F00B34430 /* libauthldap.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libauthldap.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		05733B7915DB7372009E53FA /* asprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = asprintf.c; sourceTree = "<group>"; };
 		05B374BF1502FADC005E3D62 /* auth-ldap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "auth-ldap.m"; sourceTree = "<group>"; };
 		05B374C01502FADC005E3D62 /* hash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hash.c; sourceTree = "<group>"; };
 		05B374C11502FADC005E3D62 /* hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hash.h; sourceTree = "<group>"; };
@@ -399,6 +402,7 @@
 				05B374EE1502FADC005E3D62 /* TRString.m */,
 				05B374F21502FADC005E3D62 /* xmalloc.c */,
 				05B374F31502FADC005E3D62 /* xmalloc.h */,
+				05733B7915DB7372009E53FA /* asprintf.c */,
 			);
 			name = Foundation;
 			sourceTree = "<group>";
@@ -740,6 +744,7 @@
 				05B375CB15031DE5005E3D62 /* TRPFAddressTests.m in Sources */,
 				05B375CC15031DE5005E3D62 /* TRStringTests.m in Sources */,
 				05B375CD15031DE5005E3D62 /* TRVPNSessionTests.m in Sources */,
+				05733B7A15DB7372009E53FA /* asprintf.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -773,6 +778,7 @@
 				05B375201502FADC005E3D62 /* TRString.m in Sources */,
 				05B375231502FADC005E3D62 /* TRVPNSession.m in Sources */,
 				05B375241502FADC005E3D62 /* xmalloc.c in Sources */,
+				05733B7B15DB7372009E53FA /* asprintf.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -902,6 +908,7 @@
 		05B3753E1502FC2F005E3D62 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -909,6 +916,7 @@
 		05B3753F1502FC2F005E3D62 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -916,6 +924,7 @@
 		05B37555150316FE005E3D62 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -923,6 +932,7 @@
 		05B37556150316FE005E3D62 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

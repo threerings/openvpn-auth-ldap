@@ -54,7 +54,6 @@
 
 - (const char *) cString;
 - (size_t) length;
-- (unsigned long) hash;
 
 - (BOOL) intValue: (int *) value;
 

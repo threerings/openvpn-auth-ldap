@@ -85,6 +85,14 @@
 - (BOOL) isEqual: (id) anObject;
 
 /**
+ * Returns an unsigned integer that may be used as a table address in a hash table structure.
+ *
+ * The value returned by this method must not change while the object is part of a collection
+ * that uses hash values to determine collection position.
+ */
+- (PXUInteger) hash;
+
+/**
  * Returns YES if the receiver is an instance of the given @a cls, or any class that inherits
  * from cls.
  *
@@ -95,8 +103,9 @@
 @end
 
 
-@interface TRObject : Object <TRObject> {
+@interface TRObject <TRObject> {
 @private
+    id isa;
     PXUInteger _refCount;
 }
 

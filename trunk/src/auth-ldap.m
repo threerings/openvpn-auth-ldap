@@ -59,7 +59,7 @@ static const char *get_env(const char *key, const char *env[]) {
         return (NULL);
 
     for (i = 0; env[i]; i++) {
-        int keylen = strlen(key);
+        size_t keylen = strlen(key);
 
         if (keylen > strlen(env[i]))
             continue;
@@ -89,7 +89,7 @@ static TRString *quoteForSearch(const char *string) {
     /* Quote all occurrences of the special characters */
     while ((part = [unquotedString substringToCharset: specialChars]) != NULL) {
         TRString *temp;
-        int index;
+        size_t index;
         char c;
 
         /* Append everything until the first special character */
