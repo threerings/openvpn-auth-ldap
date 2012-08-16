@@ -37,6 +37,7 @@
 #import <config.h>
 #endif
 
+#import <stdint.h>
 #import <stdbool.h>
 
 #import "PXObjCRuntime.h"
