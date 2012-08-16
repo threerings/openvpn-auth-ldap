@@ -53,6 +53,13 @@
 }
 
 /**
+ * Return the receiver's class.
+ */
++ (Class) class {
+    return self;
+}
+
+/**
  * Implemented by subclasses to initialize a newly allocated object. The default
  * implementation performs no initialization.
  */
@@ -96,8 +103,6 @@
 - (BOOL) isKindOfClass: (Class) cls {
     Class selfClass = [self class];
 
-    /* Determine if this is a subclass of PXTestCase. By starting with the class
-     * itself, we skip over the non-subclassed PLInstrumentCase class. */
     for (Class superClass = selfClass; superClass != NULL; superClass = class_getSuperclass(superClass)) {
         if (superClass == cls)
             return YES;
