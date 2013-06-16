@@ -26,7 +26,7 @@ TEST_OBJS=	tests.o \
 CFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 OBJCFLAGS+=	@CHECK_CFLAGS@ -DTEST_DATA=\"${srcdir}/data\"
 LIBS+=		-lauth-ldap-testing $(OBJC_LIBS) $(LDAP_LIBS) @CHECK_LIBS@
-LDFLAGS+=	-L${top_builddir}src $(LIBS)
+LDFLAGS+=	-L${top_builddir}/src $(LIBS)
 
 # Recompile the tests every time
 all: tests
