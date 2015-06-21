@@ -36,7 +36,7 @@ plugin /usr/local/lib/openvpn-auth-ldap.so "<config>"
 ```
 
 The config directive must point to an auth-ldap configuration file. An example configuration file
-is provided with the distribution, or see the [Configuration] page.
+is provided with the distribution, or see the [Configuration](wiki/Configuration) page.
 
 
 ## Security
