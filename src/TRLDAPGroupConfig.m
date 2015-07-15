@@ -84,6 +84,14 @@
     _memberAttribute = [memberAttribute retain];
 }
 
+- (BOOL) memberRFC2307BIS {
+    return (_memberRFC2307BIS);
+}
+
+- (void) setMemberRFC2307BIS: (BOOL) memberRFC2307BIS {
+    _memberRFC2307BIS = memberRFC2307BIS;
+}
+
 - (void) setPFTable: (TRString *) tableName {
     if (_pfTable)
         [_pfTable release];
