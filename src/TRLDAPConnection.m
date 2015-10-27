@@ -416,7 +416,7 @@ finish:
     }
 
     /* Wait for the result */
-    if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
+    if (ldap_result(ldapConn, msgid, 1, &timeout, &res) <= 0) {
         err = ldap_get_errno(ldapConn);
         if (err == LDAP_TIMEOUT)
             ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
