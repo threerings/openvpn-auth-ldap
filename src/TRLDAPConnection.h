@@ -54,8 +54,8 @@
               scope: (int) scope
               baseDN: (TRString *) base
               attributes: (TRArray *) attributes;
-- (BOOL) compareDN: (TRString *) dn withAttribute: (TRString *) attribute value: (TRString *) value;
 - (BOOL) compare: (TRString *) dn withAttribute: (TRString *) attribute value: (TRString *) value;
+- (BOOL) compareDN: (TRString *) dn withAttribute: (TRString *) attribute value: (TRString *) value;
 
 - (BOOL) setReferralEnabled: (BOOL) enabled;
 - (BOOL) setTLSCACertFile: (TRString *) fileName;

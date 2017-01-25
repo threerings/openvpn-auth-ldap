@@ -53,6 +53,14 @@
     [super dealloc];
 }
 
+- (id) init {
+    self = [super init];
+    if (self == nil)
+        return self;
+
+    _memberRFC2307BIS = YES;
+    return self;
+}
 
 - (TRString *) baseDN {
     return (_baseDN);
