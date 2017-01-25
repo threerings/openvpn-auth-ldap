@@ -45,6 +45,7 @@
         return self;
 
     _dn = [dn retain];
+    _rdn = nil;
     _attributes = [attributes retain];
 
     return self;
@@ -52,6 +53,7 @@
 
 - (void) dealloc {
     [_dn release];
+    [_rdn release];
     [_attributes release];
     [super dealloc];
 }
@@ -61,6 +63,14 @@
  */
 - (TRString *) dn {
     return _dn;
+}
+
+- (TRString *) rdn {
+    return _rdn;
+}
+
+- (void) setRDN: (TRString *) rdn {
+    _rdn=rdn;
 }
 
 /**

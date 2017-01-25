@@ -273,6 +273,50 @@ static int ldap_get_errno(LDAP *ld) {
     int numEntries;
     int err;
 
+- (BOOL) compare: (TRString *) dn withAttribute: (TRString *) attribute value: (TRString *) value {
+    struct timeval	timeout;
+    LDAPMessage	*res;
+    struct berval	bval;
+    int		err;
+    int		msgid;
+
+    /* Set up the ber structure for our value */
+    bval.bv_val = (char *) [value cString];
+    bval.bv_len = [value length] - 1; /* Length includes NULL terminator */
+
+    /* Set up the timeout */
+    timeout.tv_sec = _timeout;
+    timeout.tv_usec = 0;
+
+    /* Perform the compare */
+    if ((err = ldap_compare_ext(ldapConn, [dn cString], [attribute cString], &bval, NULL, NULL, &msgid)) != LDAP_SUCCESS) {
+        [TRLog debug: "LDAP compare failed: %d: %s", err, ldap_err2string(err)];
+        return NO;
+    }
+
+    /* Wait for the result */
+    if (ldap_result(ldapConn, msgid, 1, &timeout, &res) == -1) {
+        err = ldap_get_errno(ldapConn);
+        if (err == LDAP_TIMEOUT)
+            ldap_abandon_ext(ldapConn, msgid, NULL, NULL);
+
+        [TRLog debug: "ldap_compare_ext failed: %s", ldap_err2string(err)];
+        return NO;
+    }
+
+    /* Check the result */
+    if (ldap_parse_result(ldapConn, res, &err, NULL, NULL, NULL, NULL, 1) != LDAP_SUCCESS) {
+        /* Parsing failed */
+        return NO;
+    }
+    if (err == LDAP_COMPARE_TRUE)
+        return YES;
+    else
+        return NO;
+
+    return NO;
+}
+
 
     count = 0;
     entries = nil;

@@ -76,6 +76,7 @@ typedef enum {
 
     /* Group Section Variables */
     LF_GROUP_MEMBER_ATTRIBUTE,  /* Group Membership Attribute */
+    LF_GROUP_MEMBER_RFC2307BIS,	/* Look for full DN for user in attribute */
 
     /* Misc Shared */
     LF_UNKNOWN_OPCODE,          /* Unknown Opcode */
@@ -151,6 +152,7 @@ static OpcodeTable AuthSectionVariables[] = {
 static OpcodeTable GroupSectionVariables[] = {
     /* name                 opcode                      multi   required */
     { "MemberAttribute",    LF_GROUP_MEMBER_ATTRIBUTE,  NO,     NO },
+    { "RFC2307bis",		LF_GROUP_MEMBER_RFC2307BIS, NO,	NO },
     { NULL, 0 }
 };
 
@@ -719,10 +721,20 @@ error:
 
             switch(opcodeEntry->opcode) {
                 TRLDAPGroupConfig *config;
+                BOOL memberRFC2307BIS;
 
                 case LF_GROUP_MEMBER_ATTRIBUTE:
                     config = [self currentSectionContext];
                     [config setMemberAttribute: [value string]];
+                    break;
+
+                case LF_GROUP_MEMBER_RFC2307BIS:
+                    config = [self currentSectionContext];
+                    if (![value boolValue: &memberRFC2307BIS]) {
+                        [self errorBoolValue: value];
+                        return;
+                    }
+                    [config setMemberRFC2307BIS: memberRFC2307BIS];
                     break;
 
                 case LF_LDAP_BASEDN:

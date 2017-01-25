@@ -39,11 +39,14 @@
 @interface TRLDAPEntry : TRObject {
 @private
     TRString *_dn;
+    TRString *_rdn;
     TRHash *_attributes;
 }
 
 - (id) initWithDN: (TRString *) dn attributes: (TRHash *) attributes;
 - (TRString *) dn;
+- (TRString *) rdn;
+- (void) setRDN: (TRString *) rdn;
 - (TRHash *) attributes;
 
 @end

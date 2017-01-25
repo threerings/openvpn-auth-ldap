@@ -377,6 +377,7 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
     TREnumerator *entryIter;
     TRLDAPEntry *entry;
     TRLDAPGroupConfig *result = nil;
+    int userNameLength;
 
     /*
      * Groups are loaded into the array in the order that they are listed
@@ -397,12 +398,23 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
         if (!ldapEntries)
             break;
 
-        /* Iterate over the returned entries */
-        entryIter = [ldapEntries objectEnumerator];
-        while ((entry = [entryIter nextObject]) != nil) {
-            if ([ldap compareDN: [entry dn] withAttribute: [groupConfig memberAttribute] value: [ldapUser dn]]) {
-                /* Group match! */
-                result = groupConfig;
+        if ([groupConfig memberRFC2307BIS]) {
+            /* Iterate over the returned entries */
+            entryIter = [ldapEntries objectEnumerator];
+            while ((entry = [entryIter nextObject]) != nil) {
+                if ([ldap compareDN: [entry dn] withAttribute: [groupConfig memberAttribute] value: [ldapUser dn]]) {
+                    /* Group match! */
+                    result = groupConfig;
+                }
+            }
+        } else {
+            /* Iterate over the returned entries */
+            entryIter = [ldapEntries objectEnumerator];
+            while ((entry = [entryIter nextObject]) != nil) {
+                if ([ldap compare: [entry dn] withAttribute: [groupConfig memberAttribute] value: [ldapUser rdn]]) {
+                    /* Group match! */
+                    result = groupConfig;
+                }
             }
         }
 
@@ -524,6 +536,7 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
     pool = [[TRAutoreleasePool alloc] init];
 
     username = get_env("username", envp);
+    TRString *userName=[[TRString alloc]initWithCString: username];
     password = get_env("password", envp);
     remoteAddress = get_env("ifconfig_pool_remote_ip", envp);
 
@@ -541,6 +554,7 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 
     /* Find the user record */
     ldapUser = find_ldap_user(ldap, ctx->config, username);
+    [ldapUser setRDN: userName];
     if (!ldapUser) {
         /* No such user. */
         [TRLog warning: "LDAP user \"%s\" was not found.", username];

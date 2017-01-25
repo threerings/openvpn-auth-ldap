@@ -40,6 +40,7 @@
     TRString *_baseDN;
     TRString *_searchFilter;
     TRString *_memberAttribute;
+    BOOL     _memberRFC2307BIS;
     TRString *_pfTable;
 }
 
@@ -51,6 +52,9 @@
 
 - (TRString *) memberAttribute;
 - (void) setMemberAttribute: (TRString *) memberAttribute;
+
+- (BOOL) memberRFC2307BIS;
+- (void) setMemberRFC2307BIS: (BOOL) memberRFC2307BIS;
 
 - (TRString *) pfTable;
 - (void) setPFTable: (TRString *) tableName;
