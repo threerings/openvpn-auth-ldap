@@ -60,6 +60,7 @@
     TRString *_pfTable;
     TRArray *_ldapGroups;
     BOOL _pfEnabled;
+	BOOL _passwordISCR;
 
     /* Parser State */
     TRString *_configFileName;
@@ -125,5 +126,8 @@
 - (void) setPFEnabled: (BOOL) newPFSetting;
 
 - (TRArray *) ldapGroups;
+
+- (BOOL) passWordIsCR;
+- (void) setPassWordIsCR: (BOOL)newCRSetting;
 
 @end

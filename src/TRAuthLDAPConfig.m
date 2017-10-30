@@ -78,6 +78,9 @@ typedef enum {
     LF_GROUP_MEMBER_ATTRIBUTE,  /* Group Membership Attribute */
     LF_GROUP_MEMBER_RFC2307BIS,	/* Look for full DN for user in attribute */
 
+	/* OpenVPN Challenge/Response */
+    LF_AUTH_PASSOWRD_CR,      /* Password is in challenge/repsonse format */
+
     /* Misc Shared */
     LF_UNKNOWN_OPCODE,          /* Unknown Opcode */
 } ConfigOpcode;
@@ -156,6 +159,13 @@ static OpcodeTable GroupSectionVariables[] = {
     { NULL, 0 }
 };
 
+/* OpenVPN Challenge/Response */
+static OpcodeTable OpenVPNCRVariables[] = {
+    /* name                 opcode                      multi   required */
+    { "PasswordIsCR",    LF_AUTH_PASSOWRD_CR,  NO,     NO },
+    { NULL, 0 }
+};
+
 /* Section Types */
 static OpcodeTable *Sections[] = {
     SectionTypes,
@@ -173,7 +183,8 @@ static OpcodeTable *AuthSection[] = {
     AuthSectionVariables,
     GenericLDAPVariables,
     GenericPFVariables,
-    NULL
+    OpenVPNCRVariables,
+	NULL
 };
 
 /* Group Section Definition */
@@ -181,6 +192,7 @@ static OpcodeTable *GroupSection[] = {
     GroupSectionVariables,
     GenericLDAPVariables,
     GenericPFVariables,
+
     NULL
 };
 
@@ -684,6 +696,7 @@ error:
 
             switch(opcodeEntry->opcode) {
                 BOOL requireGroup;
+				BOOL passWordCR;
 
                 case LF_AUTH_REQUIRE_GROUP:
                     if (![value boolValue: &requireGroup]) {
@@ -704,6 +717,14 @@ error:
                 case LF_AUTH_PFTABLE:
                     [self setPFTable: [value string]];
                     [self setPFEnabled: YES];
+                    break;
+
+                case LF_AUTH_PASSOWRD_CR:
+                   if (![value boolValue: &passWordCR]) {
+                        [self errorBoolValue: value];
+                        return;
+                    }
+                    [self setPassWordIsCR: passWordCR];
                     break;
 
                 /* Unknown Setting */
@@ -979,4 +1000,11 @@ error:
     return _ldapGroups;
 }
 
+- (BOOL) passWordIsCR {
+    return (_passwordISCR);
+}
+
+- (void) setPassWordIsCR: (BOOL) newCRSetting {
+    _passwordISCR = newCRSetting;
+}
 @end

@@ -43,6 +43,8 @@
 
 #import <TRVPNPlugin.h>
 
+#include "openvpn-cr.h"
+
 /* Plugin Context */
 typedef struct ldap_ctx {
     TRAuthLDAPConfig *config;
@@ -429,8 +431,19 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
 static int handle_auth_user_pass_verify(ldap_ctx *ctx, TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *password) {
     TRLDAPGroupConfig *groupConfig;
 
+	const char *auth_password = password;
+	if ([ctx->config passWordIsCR]) {
+		openvpn_response resp;
+		char *parse_error;
+		if (!extract_openvpn_cr(password, &resp, &parse_error)) {
+	        [TRLog error: "Error extracting challenge/response from password. Parse error = '%s'", 	parse_error];
+	        return (OPENVPN_PLUGIN_FUNC_ERROR);
+		}
+		auth_password = (const char*)resp.password;
+	}
+
     /* Authenticate the user */
-    if (!auth_ldap_user(ldap, ctx->config, ldapUser, password)) {
+    if (!auth_ldap_user(ldap, ctx->config, ldapUser, auth_password)) {
         [TRLog error: "Incorrect password supplied for LDAP DN \"%s\".", [[ldapUser dn] cString]];
         return (OPENVPN_PLUGIN_FUNC_ERROR);
     }
@@ -539,6 +552,7 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
     TRString *userName=[[TRString alloc]initWithCString: username];
     password = get_env("password", envp);
     remoteAddress = get_env("ifconfig_pool_remote_ip", envp);
+
 
     /* At the very least, we need a username to work with */
     if (!username) {
