@@ -8,6 +8,7 @@ The OpenVPN Auth-LDAP Plugin implements username/password authentication via LDA
   * LDAP group-based access restrictions.
   * Integration with the OpenBSD packet filter, supporting adding and removing VPN clients from PF tables based on group membership.
   * Tested against OpenLDAP, the plugin will authenticate against any LDAP server that supports LDAP simple binds -- including Active Directory.
+  * Supports OpenVPN Challenge/Response protocol, enabling it to be used in combination with one time password systems like Google Authenticator
 
 ## Building
 
