@@ -157,11 +157,20 @@ AC_DEFUN([OD_OBJC_RUNTIME],[
 			AC_LINK_IFELSE([
 					AC_LANG_PROGRAM([
 							#include <objc/objc.h>
+							#ifdef __GNU_LIBOBJC__
+							#include <objc/runtime.h>
+							#else
 							#include <objc/objc-api.h>
+							#endif
 						], [
+							#ifdef __GNU_LIBOBJC_
+							Class class = objc_lookUpClass("Object");
+							puts(class_getName(class));_
+							#else
 							id class = objc_lookup_class("Object");
 							id obj = @<:@class alloc@:>@;
 							puts(@<:@obj name@:>@);
+							#endif
 						])
 					], [
 						od_cv_objc_runtime_gnu="yes"
