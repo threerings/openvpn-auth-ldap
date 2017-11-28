@@ -79,7 +79,7 @@ typedef enum {
     LF_GROUP_MEMBER_RFC2307BIS,	/* Look for full DN for user in attribute */
 
 	/* OpenVPN Challenge/Response */
-    LF_AUTH_PASSOWRD_CR,      /* Password is in challenge/repsonse format */
+    LF_AUTH_PASSWORD_CR,      /* Password is in challenge/repsonse format */
 
     /* Misc Shared */
     LF_UNKNOWN_OPCODE,          /* Unknown Opcode */
@@ -162,7 +162,7 @@ static OpcodeTable GroupSectionVariables[] = {
 /* OpenVPN Challenge/Response */
 static OpcodeTable OpenVPNCRVariables[] = {
     /* name                 opcode                      multi   required */
-    { "PasswordIsCR",    LF_AUTH_PASSOWRD_CR,  NO,     NO },
+    { "PasswordIsCR",    LF_AUTH_PASSWORD_CR,  NO,     NO },
     { NULL, 0 }
 };
 
@@ -719,7 +719,7 @@ error:
                     [self setPFEnabled: YES];
                     break;
 
-                case LF_AUTH_PASSOWRD_CR:
+                case LF_AUTH_PASSWORD_CR:
                    if (![value boolValue: &passWordCR]) {
                         [self errorBoolValue: value];
                         return;
