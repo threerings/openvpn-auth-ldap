@@ -22,11 +22,37 @@ The OpenVPN Auth-LDAP Plugin implements username/password authentication via LDA
 To build, you will need to configure the sources appropriately. Example:
 
 ```
-./configure --prefix=/usr/local --with-openldap=/usr/local --with-openvpn=/usr/ports/security/openvpn/work/openvpn-2.0.2
+./configure --prefix=/usr/local --with-openldap=/usr/local --with-openvpn=/home/sean/work/openvpn-2.0.2
 ```
 
-The module will be build in src/openvpn-auth-ldap.so and installed as
+The module will be built in src/openvpn-auth-ldap.so and installed as
 `${prefix}/lib/openvpn-auth-ldap.so`.
+
+
+#### Building On Ubuntu 16.04 ####
+
+The following steps were tested on a clean Ubuntu 16.04 LTS Amazon EC2 m5.large instance in January 2018 (source AMI: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20180109 - ami-41e0b93b).
+
+If you wish to repeat this process, follow these steps on your own machine:
+
+```
+git clone https://github.com/snowrider311/openvpn-auth-ldap
+cd openvpn-auth-ldap/
+./ubuntu_16.04_lts_build.sh
+```
+
+The `ubuntu_16.04_lts_build.sh` script will install all needed build dependencies, perform the build, and install `openvpn-auth-ldap.so` to `/usr/local/lib`.
+
+If you then wish to create a Debian package, you can then run this script:
+
+```
+./ubuntu_16.04_lts_package.sh
+```
+
+That script will install [FPM](https://github.com/jordansissel/fpm) and then use it to build a Debian package. If you then run `sudo dpkg -i openvpn-auth-ldap-snowrider311_2.0.3-1_amd64.deb`, then `openvpn-auth-ldap.so` will be installed to `/usr/lib/openvpn`, the same location as the standard, unforked `openvpn-auth-ldap` Debian package installs to. 
+
+Note: Superuser privileges are required to run these scripts.
+
 
 ## Usage
 

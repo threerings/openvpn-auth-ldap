@@ -41,6 +41,7 @@
     TRString *_searchFilter;
     TRString *_memberAttribute;
     BOOL     _memberRFC2307BIS;
+    BOOL     _useCompareOperation;
     TRString *_pfTable;
 }
 
@@ -55,6 +56,9 @@
 
 - (BOOL) memberRFC2307BIS;
 - (void) setMemberRFC2307BIS: (BOOL) memberRFC2307BIS;
+
+- (BOOL) useCompareOperation;
+- (void) setUseCompareOperation: (BOOL) useCompareOperation;
 
 - (TRString *) pfTable;
 - (void) setPFTable: (TRString *) tableName;

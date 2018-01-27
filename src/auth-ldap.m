@@ -400,23 +400,19 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
         if (!ldapEntries)
             break;
 
-        if ([groupConfig memberRFC2307BIS]) {
-            /* Iterate over the returned entries */
-            entryIter = [ldapEntries objectEnumerator];
-            while ((entry = [entryIter nextObject]) != nil) {
-                if ([ldap compareDN: [entry dn] withAttribute: [groupConfig memberAttribute] value: [ldapUser dn]]) {
-                    /* Group match! */
-                    result = groupConfig;
-                }
-            }
-        } else {
-            /* Iterate over the returned entries */
-            entryIter = [ldapEntries objectEnumerator];
-            while ((entry = [entryIter nextObject]) != nil) {
-                if ([ldap compare: [entry dn] withAttribute: [groupConfig memberAttribute] value: [ldapUser rdn]]) {
-                    /* Group match! */
-                    result = groupConfig;
-                }
+        /* If RFC2307BIS flag is true, search for full DN, otherwise just search for uid */
+        TRString *searchValue = [groupConfig memberRFC2307BIS] ? [ldapUser dn] : [ldapUser rdn];
+
+        /* This will be used if we're using the "search" operation instead of the "compare" operation */
+        TRString *searchFilter = [TRString stringWithFormat: "(%s=%s)", [[groupConfig memberAttribute] cString], [searchValue cString]];
+
+        /* Iterate over the returned entries */
+        entryIter = [ldapEntries objectEnumerator];
+        while ((entry = [entryIter nextObject]) != nil) {
+            if ((![groupConfig useCompareOperation] && [ldap searchWithFilter: searchFilter scope: LDAP_SCOPE_SUBTREE baseDN: [entry dn] attributes: NULL]) ||
+                ([groupConfig useCompareOperation] && [ldap compareDN: [entry dn] withAttribute: [groupConfig memberAttribute] value: searchValue])) {
+                /* Group match! */
+                result = groupConfig;
             }
         }
 
