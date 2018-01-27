@@ -404,7 +404,7 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
         TRString *searchValue = [groupConfig memberRFC2307BIS] ? [ldapUser dn] : [ldapUser rdn];
 
         /* This will be used if we're using the "search" operation instead of the "compare" operation */
-        TRString *searchFilter = [TRString stringWithFormat: "(%s=%s)", [[groupConfig memberAttribute] cString], [[ldapUser rdn] cString]];
+        TRString *searchFilter = [TRString stringWithFormat: "(%s=%s)", [[groupConfig memberAttribute] cString], [searchValue cString]];
 
         /* Iterate over the returned entries */
         entryIter = [ldapEntries objectEnumerator];
