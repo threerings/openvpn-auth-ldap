@@ -1,0 +1,17 @@
+Makefile
+Mk/autoconf.mk
+Mk/compile.mk
+Mk/subdir.mk
+autom4te.cache/
+config.h
+config.h.in
+config.log
+config.status
+configure
+docs/Makefile
+docs/doxyfile
+src/Makefile
+tests/Makefile
+tools/Makefile
+AuthLDAP.xcodeproj/project.xcworkspace/xcuserdata/
+AuthLDAP.xcodeproj/xcuserdata/

@@ -59,6 +59,7 @@
         return self;
 
     _memberRFC2307BIS = YES;
+    _useCompareOperation = YES;
     return self;
 }
 
@@ -98,6 +99,14 @@
 
 - (void) setMemberRFC2307BIS: (BOOL) memberRFC2307BIS {
     _memberRFC2307BIS = memberRFC2307BIS;
+}
+
+- (BOOL) useCompareOperation {
+    return (_useCompareOperation);
+}
+
+- (void) setUseCompareOperation: (BOOL) useCompareOperation {
+    _useCompareOperation = useCompareOperation;
 }
 
 - (void) setPFTable: (TRString *) tableName {

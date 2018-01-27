@@ -77,6 +77,7 @@ typedef enum {
     /* Group Section Variables */
     LF_GROUP_MEMBER_ATTRIBUTE,  /* Group Membership Attribute */
     LF_GROUP_MEMBER_RFC2307BIS,	/* Look for full DN for user in attribute */
+    LF_GROUP_MEMBER_USECOMPAREOPERATION, /* Use LDAP Compare operation instead of Search (Search is faster but doesn't work in all LDAP environments) */
 
 	/* OpenVPN Challenge/Response */
     LF_AUTH_PASSWORD_CR,      /* Password is in challenge/repsonse format */
@@ -155,7 +156,8 @@ static OpcodeTable AuthSectionVariables[] = {
 static OpcodeTable GroupSectionVariables[] = {
     /* name                 opcode                      multi   required */
     { "MemberAttribute",    LF_GROUP_MEMBER_ATTRIBUTE,  NO,     NO },
-    { "RFC2307bis",		LF_GROUP_MEMBER_RFC2307BIS, NO,	NO },
+    { "RFC2307bis",	        LF_GROUP_MEMBER_RFC2307BIS, NO,     NO },
+    { "UseCompareOperation", LF_GROUP_MEMBER_USECOMPAREOPERATION, NO, NO },
     { NULL, 0 }
 };
 
@@ -743,6 +745,7 @@ error:
             switch(opcodeEntry->opcode) {
                 TRLDAPGroupConfig *config;
                 BOOL memberRFC2307BIS;
+                BOOL useCompareOperation;
 
                 case LF_GROUP_MEMBER_ATTRIBUTE:
                     config = [self currentSectionContext];
@@ -756,6 +759,15 @@ error:
                         return;
                     }
                     [config setMemberRFC2307BIS: memberRFC2307BIS];
+                    break;
+
+                case LF_GROUP_MEMBER_USECOMPAREOPERATION:
+                    config = [self currentSectionContext];
+                    if (![value boolValue: &useCompareOperation]) {
+                        [self errorBoolValue: value];
+                        return;
+                    }
+                    [config setUseCompareOperation: useCompareOperation];
                     break;
 
                 case LF_LDAP_BASEDN:
