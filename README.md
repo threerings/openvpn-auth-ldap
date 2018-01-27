@@ -28,6 +28,7 @@ To build, you will need to configure the sources appropriately. Example:
 The module will be built in src/openvpn-auth-ldap.so and installed as
 `${prefix}/lib/openvpn-auth-ldap.so`.
 
+
 #### Building On Ubuntu 16.04 ####
 
 The following steps were tested on a clean Ubuntu 16.04 LTS Amazon EC2 m5.large instance in January 2018 (source AMI: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20180109 - ami-41e0b93b).
@@ -52,7 +53,6 @@ That script will install [FPM](https://github.com/jordansissel/fpm) and then use
 
 Note: Superuser privileges are required to run these scripts.
 
-If you just want the Debian package, it's checked into this repository ([direct link](https://github.com/snowrider311/openvpn-auth-ldap/blob/master/openvpn-auth-ldap-snowrider311_2.0.3-1_amd64.deb)).
 
 ## Usage
 
