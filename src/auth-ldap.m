@@ -43,6 +43,8 @@
 
 #import <TRVPNPlugin.h>
 
+#import <pthread.h>
+
 /* Plugin Context */
 typedef struct ldap_ctx {
     TRAuthLDAPConfig *config;
@@ -51,6 +53,11 @@ typedef struct ldap_ctx {
 #endif
 } ldap_ctx;
 
+/* Per-client Context (for Async) */
+typedef struct per_client_ctx {
+	int n_calls;
+	bool generated_pf_file;
+} per_client_ctx;
 
 static const char *get_env(const char *key, const char *env[]) {
     int i;
@@ -211,8 +218,12 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 }
 #endif /* HAVE_PF */
 
-OPENVPN_EXPORT openvpn_plugin_handle_t
-openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[]) {
+OPENVPN_EXPORT openvpn_plugin_handle_t openvpn_plugin_open_v2(
+    unsigned int *type,
+    const char *argv[],
+    const char *envp[],
+    struct openvpn_plugin_string_list **return_list)
+{
     ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
 
 /* Read the configuration */
@@ -426,7 +437,7 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
 }
 
 /** Handle user authentication. */
-static int handle_auth_user_pass_verify(ldap_ctx *ctx, TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *password) {
+static int handle_auth_user_pass_verify(ldap_ctx *ctx, per_client_ctx *pcc, const char *envp[], TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *password) {
     TRLDAPGroupConfig *groupConfig;
 
     /* Authenticate the user */
@@ -450,8 +461,14 @@ static int handle_auth_user_pass_verify(ldap_ctx *ctx, TRLDAPConnection *ldap, T
         return OPENVPN_PLUGIN_FUNC_SUCCESS;
     }
 
+    // TODO: set the auth_control_file value based on success or failure.
+
     /* Never reached */
     return OPENVPN_PLUGIN_FUNC_ERROR;
+}
+
+void async_handle_auth_user_pass_verify(void *arg) {
+    return;
 }
 
 #ifdef HAVE_PF
@@ -521,16 +538,29 @@ static int handle_client_connect_disconnect(ldap_ctx *ctx, TRLDAPConnection *lda
     return OPENVPN_PLUGIN_FUNC_SUCCESS;
 }
 
+typedef struct ThreadedLDAPContext {
+    ldap_ctx *ctx;
+    void *per_client_context;
+} ThreadedLDAPContext;
 
-
-OPENVPN_EXPORT int
-openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const char *argv[], const char *envp[]) {
+OPENVPN_PLUGIN_DEF int openvpn_plugin_func_v2 (
+    openvpn_plugin_handle_t handle,
+    const int type,
+    const char *argv[],
+    const char *envp[],
+    void *per_client_context,
+    struct openvpn_plugin_string_list **return_list)
+{
     const char *username, *password, *remoteAddress;
     ldap_ctx *ctx = handle;
+    per_client_ctx *pcc = per_client_context;
     TRLDAPConnection *ldap = nil;
     TRLDAPEntry *ldapUser = nil;
     TRAutoreleasePool *pool = nil;
     int ret = OPENVPN_PLUGIN_FUNC_ERROR;
+
+    pthread_t *async_auth_thread;
+    pthread_create(async_auth_thread, NULL, &async_handle_auth_user_pass_verify, ctx);
 
     /* Per-request allocation pool. */
     pool = [[TRAutoreleasePool alloc] init];
@@ -539,6 +569,7 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
     TRString *userName=[[TRString alloc]initWithCString: username];
     password = get_env("password", envp);
     remoteAddress = get_env("ifconfig_pool_remote_ip", envp);
+    const char *auth_control_file = get_env("auth_control_file", envp);
 
     /* At the very least, we need a username to work with */
     if (!username) {
@@ -546,12 +577,23 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
         goto cleanup;
     }
 
+    // do some shit in a thread
     /* Create an LDAP connection */
-    if (!(ldap = connect_ldap(ctx->config))) {
-        [TRLog error: "LDAP connect failed."];
-        goto cleanup;
-    }
+    // if (!(ldap = connect_ldap(ctx->config))) {
+    //     [TRLog error: "LDAP connect failed."];
+    //     goto cleanup;
+    // }
 
+    switch (type) {
+        case OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY:
+            break;
+        
+        case OPENVPN_PLUGIN_CLIENT_CONNECT:
+            break;
+        
+        case OPENVPN_PLUGIN_CLIENT_DISCONNECT:
+            break;
+    }
     /* Find the user record */
     ldapUser = find_ldap_user(ldap, ctx->config, username);
     [ldapUser setRDN: userName];
@@ -567,7 +609,7 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
             if (!password) {
                 [TRLog debug: "No remote password supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY)."];
             } else {
-                ret = handle_auth_user_pass_verify(ctx, ldap, ldapUser, password);
+                ret = handle_auth_user_pass_verify(ctx, pcc, auth_control_file, ldap, ldapUser, password);
             }
             break;
         /* New connection established */
