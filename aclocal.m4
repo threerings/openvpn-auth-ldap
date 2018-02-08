@@ -22,7 +22,7 @@ builtin(include,framework.m4)
 #	Result is cached.
 #
 #	Defines one of the following preprocessor macros:
-#		APPLE_RUNTIME GNU_RUNTIME
+#		APPLE_RUNTIME GNU_RUNTIME MODERN_RUNTIME
 #
 #	Substitutes the following variables:
 #		OBJC_RUNTIME OBJC_RUNTIME_FLAGS OBJC_LIBS
@@ -30,7 +30,7 @@ builtin(include,framework.m4)
 #------------------------------------------------------------------------
 AC_DEFUN([OD_OBJC_RUNTIME],[
 	AC_REQUIRE([AC_PROG_OBJC])
-	AC_ARG_WITH(objc-runtime, AC_HELP_STRING([--with-objc-runtime], [Specify either "GNU" or "apple"]), [with_objc_runtime=${withval}])
+	AC_ARG_WITH(objc-runtime, AC_HELP_STRING([--with-objc-runtime], [Specify either "GNU", "apple", or "modern"]), [with_objc_runtime=${withval}])
 
 	if test x"${with_objc_runtime}" != x; then
 		case "${with_objc_runtime}" in
@@ -38,8 +38,10 @@ AC_DEFUN([OD_OBJC_RUNTIME],[
 				;;
 			apple)
 				;;
+			modern)
+				;;
 			*)
-				AC_MSG_ERROR([${with_objc_runtime} is not a valid argument to --with-objc-runtime. Please specify either "GNU" or "apple"])
+				AC_MSG_ERROR([${with_objc_runtime} is not a valid argument to --with-objc-runtime. Please specify either "GNU", "apple", or "modern"])
 				;;
 		esac
 	fi
@@ -175,6 +177,33 @@ AC_DEFUN([OD_OBJC_RUNTIME],[
 		od_cv_objc_runtime_gnu="no"
 	fi
 
+	if test x"${with_objc_runtime}" = x || test x"${with_objc_runtime}" = x"modern"; then
+		AC_MSG_CHECKING([for Modern Objective C runtime])
+		AC_CACHE_VAL(od_cv_objc_runtime_modern, [
+			# The following uses quadrigraphs
+			# '@<:@' = '['
+			# '@:>@' = ']'
+			AC_LINK_IFELSE([
+					AC_LANG_PROGRAM([
+							#include <objc/objc.h>
+							#include <objc/runtime.h>
+						], [
+							id class = objc_lookUpClass("NSObject");
+							id obj = @<:@class alloc@:>@;
+							puts(@<:@obj name@:>@);
+						])
+					], [
+						od_cv_objc_runtime_modern="yes"
+					], [
+						od_cv_objc_runtime_modern="no"
+					]
+			)
+		])
+		AC_MSG_RESULT(${od_cv_objc_runtime_modern})
+	else
+		od_cv_objc_runtime_modern="no"
+	fi
+
 	# Apple runtime is prefered
 	if test x"${od_cv_objc_runtime_apple}" = x"yes"; then
 			OBJC_RUNTIME="APPLE_RUNTIME"
@@ -184,6 +213,16 @@ AC_DEFUN([OD_OBJC_RUNTIME],[
 			OBJC_RUNTIME="GNU_RUNTIME"
 			AC_MSG_NOTICE([Using GNU Objective-C runtime])
 			AC_DEFINE([GNU_RUNTIME], 1, [Define if using the GNU Objective-C runtime and compiler.]) 
+	elif test x"${od_cv_objc_runtime_modern}" = x"yes"; then
+			OBJC_RUNTIME="MODERN_RUNTIME"
+			case "${target_os}" in
+				linux*) OBJC_RUNTIME_FLAGS="-fgnu-runtime"
+					OBJC_LIBS="-lgnustep-base ${OBJC_LIBS}";;
+				darwin*) OBJC_RUNTIME_FLAGS="-fnext-runtime"
+					LDFLAGS="-framework Foundation ${LDFLAGS}";;
+			esac
+			AC_MSG_NOTICE([Using Modern Objective-C runtime])
+			AC_DEFINE([MODERN_RUNTIME], 1, [Define if using the Modern Objective-C runtime and compiler.]) 
 	else
 			AC_MSG_FAILURE([Could not locate a working Objective-C runtime.])
 	fi
