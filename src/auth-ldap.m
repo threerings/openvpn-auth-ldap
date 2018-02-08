@@ -57,6 +57,7 @@ typedef struct ldap_ctx {
     per_client_ctx *pcc;
     const char *username;
     const char *password;
+    const char *acf;
     pthread_t async_auth_thread;
 #ifdef HAVE_PF
     id<TRPacketFilter> pf;
@@ -503,11 +504,13 @@ void *async_handle_auth_user_pass_verify(void *ctx_ptr) {
     }
 
 set_auth_control_file:
-    // TODO: set the auth_control_file value based on success or failure.
-    // if () {
-    //     FILE *acf;
-    //     fp = fopen()
-    // }
+    // Set the auth_control_file value based on success or failure.
+    if (ctx->acf) {
+        FILE *acf;
+        acf = fopen(ctx->acf, "w");
+        fputs("1", acf);
+        fclose(acf);
+    }
 
 cleanup:
     if (ldapUser != nil)
@@ -617,6 +620,8 @@ OPENVPN_PLUGIN_DEF int openvpn_plugin_func_v2 (
 
     ctx->username = username;
     ctx->password = password;
+    ctx->acf = malloc(sizeof(auth_control_file));
+    ctx->acf = auth_control_file;
 
     pthread_create(&ctx->async_auth_thread, NULL, &async_handle_auth_user_pass_verify, (void *) ctx);
 
