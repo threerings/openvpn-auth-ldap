@@ -43,6 +43,10 @@
 
 #import <TRVPNPlugin.h>
 
+#ifdef MODERN_RUNTIME
+#include <Foundation/NSAutoreleasePool.h>
+#endif
+
 #import <pthread.h>
 
 /* Per-client Context (for Async) */
@@ -90,7 +94,7 @@ static TRString *quoteForSearch(const char *string) {
     const char specialChars[] = "*()\\"; /* RFC 2254. We don't care about NULL */
     TRString *result = [[TRString alloc] init];
     TRString *unquotedString, *part;
-    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     /* Make a copy of the string */
     unquotedString = [[TRString alloc] initWithCString: string];
@@ -611,7 +615,11 @@ OPENVPN_PLUGIN_DEF int openvpn_plugin_func_v2 (
     ctx->pcc = per_client_context;
 
     /* Per-request allocation pool. */
+#ifdef MODERN_RUNTIME
+    pool = [[NSAutoreleasePool alloc] init];
+#else
     pool = [[TRAutoreleasePool alloc] init];
+#endif
 
     username = get_env("username", envp);
     password = get_env("password", envp);
@@ -661,6 +669,10 @@ OPENVPN_PLUGIN_DEF int openvpn_plugin_func_v2 (
 
 cleanup:
     if (pool != nil) {
+#ifdef MODERN_RUNTIME  
+        [pool drain];
+#else  
         [pool release];
+#endif
     }
 }
