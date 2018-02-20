@@ -46,7 +46,6 @@
 #import "TRString.h"
 #import "TREnumerator.h"
 #import "TRArray.h"
-#import "TRAutoreleasePool.h"
 #import "TRHash.h"
 #import "xmalloc.h"
 

@@ -34,7 +34,8 @@
  */
 
 #import "TRLDAPSearchFilter.h"
-#import "TRAutoreleasePool.h"
+
+#include <Foundation/NSAutoreleasePool.h>
 
 @interface TRLDAPSearchFilter (TRLDAPSearchFilterPrivate)
  - (TRString *) escapeForSearch: (TRString *) string;
@@ -73,7 +74,7 @@
     const char specialChars[] = "*()\\"; /* RFC 2254. We don't care about NULL */
     TRString *result = [[TRString alloc] init];
     TRString *unquotedString, *part;
-    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     /* Retain an instance of the string */
     unquotedString = [string retain];
@@ -114,7 +115,7 @@
         [unquotedString release];
     }
 
-    [pool release];
+    [pool drain];
 
     return (result);
 }
@@ -128,7 +129,7 @@
     TRString *result, *part;
     TRString *quotedName;
     const char userFormat[] = "%s";
-    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     /* Retain the template */
     templateString = [[_format retain] autorelease];
@@ -160,7 +161,7 @@
         [result appendString: templateString];
     }
 
-    [pool release];
+    [pool drain];
 
     return [result autorelease];
 }

@@ -39,7 +39,8 @@
 #import "PXTestCase.h"
 
 #import "TRString.h"
-#import "TRAutoreleasePool.h"
+
+#include <Foundation/NSAutoreleasePool.h>
 
 #import <string.h>
 #import <limits.h>
@@ -101,26 +102,26 @@
 
 
 - (void) test_stringWithFormat {
-    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     TRString *str;
     
     str = [TRString stringWithFormat: "%s %s", "Hello", "World"];
     fail_unless(strcmp([str cString], "Hello World") == 0,
         "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", "Hello, World", [str cString]);
 
-    [pool release];
+    [pool drain];
 }
 
 
 - (void) test_stringWithCString {
-    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     TRString *str;
     
     str = [TRString stringWithCString: "Hello World"];
     fail_unless(strcmp([str cString], "Hello World") == 0,
         "-[TRString cString] returned incorrect value. (Expected \"%s\", got \"%s\")", "Hello, World", [str cString]);
 
-    [pool release];
+    [pool drain];
 }
 
 
