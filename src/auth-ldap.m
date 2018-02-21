@@ -666,8 +666,8 @@ OPENVPN_PLUGIN_DEF int openvpn_plugin_func_v2 (
                 // pthread_mutex_lock(&ctx->ldap_ctx_lock);
                 ctx->username = malloc(sizeof(username));
                 ctx->password = malloc(sizeof(password));
-                strcpy(ctx->username, username);
-                strcpy(ctx->password, password);
+                strncpy(ctx->username, username, 256);
+                strncpy(ctx->password, password, 256); // really this shouldn't exceed this...
                 pthread_create(&ctx->async_auth_thread, NULL, &async_handle_auth_user_pass_verify, (void *) ctx);
                 ret = OPENVPN_PLUGIN_FUNC_DEFERRED;
             }
