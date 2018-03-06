@@ -53,6 +53,9 @@ typedef struct {
     /* Path to config file */
     const char *config_file;
 
+    /* OpenVPN per client context */
+    void *pcc;
+
     /* OpenVPN plugin environment */
     const char **envp;
 
@@ -61,6 +64,9 @@ typedef struct {
 
     /* OpenVPN 'command line' script arguments */
     const char **argp_script;
+
+    /* OpenVPN Plugin value strings and structured data return */
+    struct openvpn_plugin_string_list **return_list;
 } plugin_data;
 
 /**
@@ -116,6 +122,13 @@ static plugin_data *plugin_data_init (const char *config_file) {
     data->argp_script[1] = NULL;
     data->argp_script[2] = NULL;
 
+    /* Set up the plugin "per_client_context" argument -- NULL */
+    data->pcc = malloc(sizeof(void *));
+    data->pcc = NULL;
+
+    /* Set up the plugin string list return -- NULL */
+    data->return_list = malloc(sizeof(struct openvpn_plugin_string_list **));
+
     return data;
 }
 
@@ -155,7 +168,7 @@ int main(int argc, const char *argv[]) {
     /* Configure the plugin environment */
     data = plugin_data_init(config_file);
 
-    handle = openvpn_plugin_open_v1(&plugin_type, data->argp, data->envp);
+    handle = openvpn_plugin_open_v2(&plugin_type, data->argp, data->envp, data->return_list);
 
     if (!handle) {
         printf("Initialization Failed!\n");
@@ -163,7 +176,7 @@ int main(int argc, const char *argv[]) {
     }
 
     /* Authenticate */
-    err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY, data->argp_script, data->envp);
+    err = openvpn_plugin_func_v2(handle, OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY, data->argp_script, data->envp, data->pcc, data->return_list);
     if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
         printf("Authorization Failed!\n");
         goto cleanup;
@@ -172,7 +185,7 @@ int main(int argc, const char *argv[]) {
     }
 
     /* Client Connect */
-    err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_CONNECT, data->argp_script, data->envp);
+    err = openvpn_plugin_func_v2(handle, OPENVPN_PLUGIN_CLIENT_CONNECT, data->argp_script, data->envp, data->pcc, data->return_list);
     if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
         printf("client-connect failed!\n");
         goto cleanup;
@@ -181,7 +194,7 @@ int main(int argc, const char *argv[]) {
     }
 
     /* Client Disconnect */
-    err = openvpn_plugin_func_v1(handle, OPENVPN_PLUGIN_CLIENT_DISCONNECT, data->argp, data->envp);
+    err = openvpn_plugin_func_v2(handle, OPENVPN_PLUGIN_CLIENT_DISCONNECT, data->argp, data->envp, data->pcc, data->return_list);
     if (err != OPENVPN_PLUGIN_FUNC_SUCCESS) {
         printf("client-disconnect failed!\n");
         goto cleanup;

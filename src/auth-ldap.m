@@ -43,14 +43,29 @@
 
 #import <TRVPNPlugin.h>
 
+#include <Foundation/NSAutoreleasePool.h>
+
+#import <pthread.h>
+
+/* Per-client Context (for Async) */
+typedef struct per_client_ctx {
+	int n_calls;
+	bool generated_pf_file;
+} per_client_ctx;
+
 /* Plugin Context */
 typedef struct ldap_ctx {
     TRAuthLDAPConfig *config;
+    per_client_ctx *pcc;
+    char *username;
+    char *password;
+    const char *acf;
+    pthread_t async_auth_thread;
+    pthread_mutex_t ldap_ctx_lock;
 #ifdef HAVE_PF
     id<TRPacketFilter> pf;
 #endif
 } ldap_ctx;
-
 
 static const char *get_env(const char *key, const char *env[]) {
     int i;
@@ -78,7 +93,7 @@ static TRString *quoteForSearch(const char *string) {
     const char specialChars[] = "*()\\"; /* RFC 2254. We don't care about NULL */
     TRString *result = [[TRString alloc] init];
     TRString *unquotedString, *part;
-    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     /* Make a copy of the string */
     unquotedString = [[TRString alloc] initWithCString: string];
@@ -119,7 +134,7 @@ static TRString *quoteForSearch(const char *string) {
         [unquotedString release];
     }
 
-    [pool release];
+    [pool drain];
 
     return (result);
 }
@@ -129,7 +144,7 @@ static TRString *createSearchFilter(TRString *template, const char *username) {
     TRString *result, *part;
     TRString *quotedName;
     const char userFormat[] = "%u";
-    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     /* Copy the template */
     templateString = [[[TRString alloc] initWithString: template] autorelease];
@@ -161,7 +176,7 @@ static TRString *createSearchFilter(TRString *template, const char *username) {
         [result appendString: templateString];
     }
 
-    [pool release];
+    [pool drain];
 
     return (result);
 }
@@ -211,8 +226,12 @@ static BOOL pf_open(struct ldap_ctx *ctx) {
 }
 #endif /* HAVE_PF */
 
-OPENVPN_EXPORT openvpn_plugin_handle_t
-openvpn_plugin_open_v1(unsigned int *type, const char *argv[], const char *envp[]) {
+OPENVPN_EXPORT openvpn_plugin_handle_t openvpn_plugin_open_v2(
+    unsigned int *type,
+    const char *argv[],
+    const char *envp[],
+    struct openvpn_plugin_string_list **return_list)
+{
     ldap_ctx *ctx = xmalloc(sizeof(ldap_ctx));
 
 /* Read the configuration */
@@ -324,14 +343,18 @@ static TRLDAPEntry *find_ldap_user (TRLDAPConnection *ldap, TRAuthLDAPConfig *co
     TRLDAPEntry		*result = nil;
 
     /* Assemble our search filter */
+    [TRLog debug: "Generating a search filter for \"%s\".", username];
     searchFilter = createSearchFilter([config searchFilter], username);
 
     /* Search! */
+    [TRLog debug: "Locating LDAP entries."];
     ldapEntries = [ldap searchWithFilter: searchFilter
         scope: LDAP_SCOPE_SUBTREE
         baseDN: [config baseDN]
         attributes: NULL];
+
     [searchFilter release];
+
     if (!ldapEntries)
         return nil;
     if ([ldapEntries count] < 1) {
@@ -358,11 +381,15 @@ static BOOL auth_ldap_user(TRLDAPConnection *ldap, TRAuthLDAPConfig *config, TRL
     }
 
     /* Allocate the string to pass to bindWithDN */
+    // [TRLog debug: "Allocating password string."];
     passwordString = [[TRString alloc] initWithCString: password];
+    // [TRLog debug: "P: %s", [passwordString cString]];
 
     if ([authConn bindWithDN: [ldapUser dn] password: passwordString]) {
         result = YES;
     }
+
+    [TRLog debug: "authConn bindWithDN result: %d", result];
 
     [passwordString release];
     [authConn release];
@@ -377,7 +404,7 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
     TREnumerator *entryIter;
     TRLDAPEntry *entry;
     TRLDAPGroupConfig *result = nil;
-    int userNameLength;
+    // int userNameLength;
 
     /*
      * Groups are loaded into the array in the order that they are listed
@@ -426,13 +453,57 @@ static TRLDAPGroupConfig *find_ldap_group(TRLDAPConnection *ldap, TRAuthLDAPConf
 }
 
 /** Handle user authentication. */
-static int handle_auth_user_pass_verify(ldap_ctx *ctx, TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *password) {
+// static int handle_auth_user_pass_verify(ldap_ctx *ctx, per_client_ctx *pcc, const char *envp[], TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *password) {
+//     TRLDAPGroupConfig *groupConfig;
+//     int verified = NO;
+
+
+// }
+
+void *async_handle_auth_user_pass_verify(void *ctx_ptr) {
+    ldap_ctx *ctx = ctx_ptr;
+    TRLDAPConnection *ldap = nil;
+    TRLDAPEntry *ldapUser = nil;
+    TRString *userName;
     TRLDAPGroupConfig *groupConfig;
+    bool verified = NO;
+
+    /* Per-request allocation pool. */
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    /* At the very least, we need a username to work with */
+    if (!ctx->username) {
+        [TRLog debug: "No remote username supplied to OpenVPN LDAP Plugin."];
+        goto set_acf;
+    }
+
+    /* Create an LDAP connection */
+    [TRLog debug: "Attempting to connect to LDAP host"];
+    if (!(ldap = connect_ldap(ctx->config))) {
+        [TRLog error: "LDAP connect failed."];
+        goto set_acf;
+    }
+
+    /* Find the user record */
+    [TRLog debug: "Locating the LDAP user for username \"%s\"", ctx->username];
+    ldapUser = find_ldap_user(ldap, ctx->config, ctx->username);
+    [TRLog debug: "Found LDAP DN for user: \"%s\"", [[ldapUser dn] cString]];
+    userName = [[TRString alloc] initWithCString: ctx->username];
+    [ldapUser setRDN: userName];
+
+    if (!ldapUser) {
+        /* No such user. */
+        [TRLog warning: "LDAP user \"%s\" was not found", ctx->username];
+        verified = NO;
+        goto set_acf;
+    }
 
     /* Authenticate the user */
-    if (!auth_ldap_user(ldap, ctx->config, ldapUser, password)) {
-        [TRLog error: "Incorrect password supplied for LDAP DN \"%s\".", [[ldapUser dn] cString]];
-        return (OPENVPN_PLUGIN_FUNC_ERROR);
+    // [TRLog debug: "p2: %s", ctx->password];
+    if (!auth_ldap_user(ldap, ctx->config, ldapUser, ctx->password)) {
+        [TRLog error: "Incorrect password supplied for LDAP DN \"%s\"", [[ldapUser dn] cString]];
+        verified = NO;
+        goto set_acf;
     }
 
     /* User authenticated, find group, if any */
@@ -440,18 +511,48 @@ static int handle_auth_user_pass_verify(ldap_ctx *ctx, TRLDAPConnection *ldap, T
         groupConfig = find_ldap_group(ldap, ctx->config, ldapUser);
         if (!groupConfig && [ctx->config requireGroup]) {
             /* No group match, and group membership is required */
-            return OPENVPN_PLUGIN_FUNC_ERROR;
+            verified = NO;
         } else {
             /* Group match! */
-            return OPENVPN_PLUGIN_FUNC_SUCCESS;
+            verified = YES;
         }
     } else {
         // No groups, user OK
-        return OPENVPN_PLUGIN_FUNC_SUCCESS;
+        verified = YES;
     }
 
-    /* Never reached */
-    return OPENVPN_PLUGIN_FUNC_ERROR;
+set_acf:
+    // Set the auth_control_file value based on success or failure.
+    if (ctx->acf) {
+        FILE *acf;
+        acf = fopen(ctx->acf, "w");
+        if (verified) {
+            [TRLog debug: "\"%s\" was verified; setting acf to 1: \"%s\"", ctx->username, ctx->acf];
+            fputs("1", acf);
+        }
+        else {
+            [TRLog debug: "\"%s\" was unable to be verified; setting acf to 0: \"%s\"", ctx->username, ctx->acf];
+            fputs("0", acf);
+        }
+        fclose(acf);
+    }
+
+    if (ldapUser != nil)
+        [TRLog debug: "Releasing ldapUser"];
+        [ldapUser release];
+
+    if (ldap != nil)
+        [TRLog debug: "Releasing ldap"];
+        [ldap release];
+
+    if (pool != nil) {
+        [TRLog debug: "Draining pool"];
+        [pool drain];
+    }
+
+    // pthread_mutex_unlock(&ctx->ldap_ctx_lock);
+
+    // return ctx_ptr;
 }
 
 #ifdef HAVE_PF
@@ -464,6 +565,7 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, TRString *tableNa
     addressString = [[TRString alloc] initWithCString: remoteAddress];
     address = [[TRPFAddress alloc] initWithPresentationAddress: addressString];
     [addressString release];
+
     if (connecting) {
         [TRLog debug: "Adding address \"%s\" to packet filter table \"%s\".", remoteAddress, [tableName cString]];
 
@@ -472,7 +574,8 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, TRString *tableNa
             [address release];
             return NO;
         }
-    } else {
+    }
+    else {
         [TRLog debug: "Removing address \"%s\" from packet filter table \"%s\".", remoteAddress, [tableName cString]];
         if ((pferror = [ctx->pf deleteAddress: address fromTable: tableName]) != PF_SUCCESS) {
             [TRLog error: "Failed to remove address \"%s\" from table \"%s\": %s",
@@ -481,6 +584,7 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, TRString *tableNa
             return NO;
         }
     }
+
     [address release];
 
     return YES;
@@ -489,100 +593,101 @@ static BOOL pf_client_connect_disconnect(struct ldap_ctx *ctx, TRString *tableNa
 
 
 /** Handle both connection and disconnection events. */
-static int handle_client_connect_disconnect(ldap_ctx *ctx, TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *remoteAddress, BOOL connecting) {
-    TRLDAPGroupConfig *groupConfig = nil;
-#ifdef HAVE_PF
-    TRString *tableName = nil;
-#endif
 
-    /* Locate the group (config), if any */
-    if ([ctx->config ldapGroups]) {
-        groupConfig = find_ldap_group(ldap, ctx->config, ldapUser);
-        if (!groupConfig && [ctx->config requireGroup]) {
-            [TRLog error: "No matching LDAP group found for user DN \"%s\", and group membership is required.", [[ldapUser dn] cString]];
-            /* No group match, and group membership is required */
-            return OPENVPN_PLUGIN_FUNC_ERROR;
-        }
-    }
+// static int handle_client_connect_disconnect(ldap_ctx *ctx, TRLDAPConnection *ldap, TRLDAPEntry *ldapUser, const char *remoteAddress, BOOL connecting) {
+//     TRLDAPGroupConfig *groupConfig = nil;
+// #ifdef HAVE_PF
+//     TRString *tableName = nil;
+// #endif
 
-#ifdef HAVE_PF
-    /* Grab the requested PF table name, if any */
-    if (groupConfig) {
-        tableName = [groupConfig pfTable];
-    } else {
-        tableName = [ctx->config pfTable];
-    }
+//     /* Locate the group (config), if any */
+//     if ([ctx->config ldapGroups]) {
+//         groupConfig = find_ldap_group(ldap, ctx->config, ldapUser);
+//         if (!groupConfig && [ctx->config requireGroup]) {
+//             [TRLog error: "No matching LDAP group found for user DN \"%s\", and group membership is required.", [[ldapUser dn] cString]];
+//             /* No group match, and group membership is required */
+//             return OPENVPN_PLUGIN_FUNC_ERROR;
+//         }
+//     }
 
-    if (tableName)
-        if (!pf_client_connect_disconnect(ctx, tableName, remoteAddress, connecting))
-        return OPENVPN_PLUGIN_FUNC_ERROR;
-#endif /* HAVE_PF */
+// #ifdef HAVE_PF
+//     /* Grab the requested PF table name, if any */
+//     if (groupConfig) {
+//         tableName = [groupConfig pfTable];
+//     } else {
+//         tableName = [ctx->config pfTable];
+//     }
 
-    return OPENVPN_PLUGIN_FUNC_SUCCESS;
-}
+//     if (tableName)
+//         if (!pf_client_connect_disconnect(ctx, tableName, remoteAddress, connecting))
+//         return OPENVPN_PLUGIN_FUNC_ERROR;
+// #endif /* HAVE_PF */
 
+//     return OPENVPN_PLUGIN_FUNC_SUCCESS;
+// }
 
-
-OPENVPN_EXPORT int
-openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const char *argv[], const char *envp[]) {
-    const char *username, *password, *remoteAddress;
-    ldap_ctx *ctx = handle;
-    TRLDAPConnection *ldap = nil;
-    TRLDAPEntry *ldapUser = nil;
-    TRAutoreleasePool *pool = nil;
+OPENVPN_PLUGIN_DEF int openvpn_plugin_func_v2 (
+    openvpn_plugin_handle_t handle,
+    const int type,
+    const char *argv[],
+    const char *envp[],
+    void *per_client_context,
+    struct openvpn_plugin_string_list **return_list)
+{
+    const char *username;
+    const char *password;
+    const char *remoteAddress;
     int ret = OPENVPN_PLUGIN_FUNC_ERROR;
 
-    /* Per-request allocation pool. */
-    pool = [[TRAutoreleasePool alloc] init];
-
+    /* Context handle for the OpenVPN Plugin */
+    ldap_ctx *ctx = handle;
+    ctx->pcc = per_client_context;
     username = get_env("username", envp);
-    TRString *userName=[[TRString alloc]initWithCString: username];
     password = get_env("password", envp);
+    ctx->acf = get_env("auth_control_file", envp);
     remoteAddress = get_env("ifconfig_pool_remote_ip", envp);
 
-    /* At the very least, we need a username to work with */
-    if (!username) {
-        [TRLog debug: "No remote username supplied to OpenVPN LDAP Plugin."];
-        goto cleanup;
-    }
-
-    /* Create an LDAP connection */
-    if (!(ldap = connect_ldap(ctx->config))) {
-        [TRLog error: "LDAP connect failed."];
-        goto cleanup;
-    }
-
-    /* Find the user record */
-    ldapUser = find_ldap_user(ldap, ctx->config, username);
-    [ldapUser setRDN: userName];
-    if (!ldapUser) {
-        /* No such user. */
-        [TRLog warning: "LDAP user \"%s\" was not found.", username];
-        goto cleanup;
-    }
+    // [TRLog debug: "p0: %s %s", ctx->username, ctx->password];
 
     switch (type) {
         /* Password Authentication */
         case OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY:
-            if (!password) {
-                [TRLog debug: "No remote password supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY)."];
-            } else {
-                ret = handle_auth_user_pass_verify(ctx, ldap, ldapUser, password);
+            if (!ctx->password) {
+                [TRLog debug: "No remote password supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_AUTH_USER_PASS_VERIFY."];
+            }
+            else {
+                // ret = handle_auth_user_pass_verify(ctx, pcc, auth_control_file, ldap, ldapUser, password);
+                // if (pthread_mutex_lock(&ldap_ctx_lock, NULL) != 0) {
+                //     [TRLog error: "Could not mutex init!"];
+                //     ret = OPENVPN_PLUGIN_FUNC_ERROR;
+                //     break;
+                // }
+
+                // pthread_mutex_lock(&ctx->ldap_ctx_lock);
+                ctx->username = malloc(sizeof(char) * 256 + 1);
+                ctx->password = malloc(sizeof(char) * 256 + 1);
+                strncpy(ctx->username, username, 256);
+                strncpy(ctx->password, password, 256); // really this shouldn't exceed this...
+                pthread_create(&ctx->async_auth_thread, NULL, &async_handle_auth_user_pass_verify, (void *) ctx);
+                ret = OPENVPN_PLUGIN_FUNC_DEFERRED;
             }
             break;
         /* New connection established */
         case OPENVPN_PLUGIN_CLIENT_CONNECT:
             if (!remoteAddress) {
                 [TRLog debug: "No remote address supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_CLIENT_CONNECT)."];
-            } else {
-                ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, YES);
+            }
+            else {
+                // ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, YES);
+                ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
             }
             break;
         case OPENVPN_PLUGIN_CLIENT_DISCONNECT:
             if (!remoteAddress) {
                 [TRLog debug: "No remote address supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_CLIENT_DISCONNECT)."];
             } else {
-                ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, NO);
+                // ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, NO);
+                ret = OPENVPN_PLUGIN_FUNC_SUCCESS;
             }
             break;
         default:
@@ -590,15 +695,5 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
             break;
     }
 
-cleanup:
-    if (ldapUser != nil)
-        [ldapUser release];
-
-    if (ldap != nil)
-        [ldap release];
-
-    if (pool != nil)
-        [pool release];
-
-    return (ret);
+    return ret;
 }

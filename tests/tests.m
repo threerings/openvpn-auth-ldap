@@ -42,7 +42,8 @@
 #import <stdio.h>
 
 #import "TRLog.h"
-#import "TRAutoreleasePool.h"
+
+#include <Foundation/NSAutoreleasePool.h>
 
 #import "PXTestCaseRunner.h"
 #import "PXTestConsoleResultHandler.h"
@@ -53,7 +54,7 @@ void print_usage(const char *name) {
 }
 
 int main(int argc, char *argv[]) {
-    TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     /* Set up the test runner and reporting. */
     PXTestConsoleResultHandler *handler = [[[PXTestConsoleResultHandler alloc] init] autorelease];
