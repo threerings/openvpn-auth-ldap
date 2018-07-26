@@ -34,7 +34,9 @@ AUTH_OBJS=	TRArray.o \
 		TRVPNSession.o \
 		hash.o \
 		strlcpy.o \
-		xmalloc.o
+		xmalloc.o \
+		base64.o \
+		openvpn-cr.o
 		
 GEN_SRCS=	TRConfigParser.m \
 		TRConfigParser.h \

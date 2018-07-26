@@ -25,6 +25,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <time.h>
 #import "TRObject.h"
 #import "PXTestResultHandler.h"
 

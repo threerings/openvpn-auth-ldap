@@ -39,6 +39,7 @@
 
 #import <stdint.h>
 #import <stdbool.h>
+#include <stdarg.h>
 
 #import "PXObjCRuntime.h"
 
