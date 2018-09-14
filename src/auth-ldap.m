@@ -126,42 +126,115 @@ static TRString *quoteForSearch(const char *string) {
     return (result);
 }
 
-static TRString *createSearchFilter(TRString *template, const char *username) {
-    TRString *templateString;
-    TRString *result, *part;
-    TRString *quotedName;
-    const char userFormat[] = "%u";
+static TRString *createSearchFilter(TRString *template, const char *userName) {
+    TRString *templateString, *tempResult, part;
+    TRString *result;
+    TRString *login, *local, *domain;
+    TRString *quotedLogin, *quotedLocal, *quotedDomain;
+    const char loginFormat[] = "%u";
+    const char localFormat[] = "%n";
+    const char domainFormat[] = "%d";
+    const char separator[] = "@";
     TRAutoreleasePool *pool = [[TRAutoreleasePool alloc] init];
 
-    /* Copy the template */
+    /* Initialize the working areas */
     templateString = [[[TRString alloc] initWithString: template] autorelease];
-
-    /* Initialize the result */
+    tempResult = [[[TRString alloc] init] autorelease];
+    login = [[[TRString alloc] initWithCString: userName] autorelease];
+    local = [[[TRString alloc] init] autorelease];
+    domain = [[[TRString alloc] init] autorelease];
     result = [[TRString alloc] init];
-
-    /* Quote the username */
-    quotedName = quoteForSearch(username);
-
-    while ((part = [templateString substringToCString: userFormat]) != NULL) {
-        TRString *temp;
-
-        /* Append everything until the first %u */
-        [result appendString: part];
-
-        /* Append the username */
-        [result appendString: quotedName];
-
-        /* Move templateString past the %u */
-        temp = [templateString substringFromCString: userFormat];
-        templateString = temp;
+    
+    /* Split login into local and domain part, if possible */
+    if (local = [login substringToCString: separator] == NULL) {
+    	local = login;
+    } else {
+    	domain = [login substringFromCString: separator];
     }
 
-    [quotedName release];
+    /* Quote the different parts */
+    quotedLogin = quoteForSearch(login cString);
+    quotedLocal = quoteForSearch(local cString);
+    quotedDomain = quoteForSearch(domain cString);
+
+
+	/* Replace %u with login */
+    while ((part = [templateString substringToCString: loginFormat]) != NULL) {
+        TRString *tempLogin;
+
+        /* Append everything until the first %u */
+        [tempResult appendString: part];
+
+        /* Append the login */
+        [tempResult appendString: quotedLogin];
+
+        /* Move templateString past the %u */
+        tempLogin = [templateString substringFromCString: loginFormat];
+        templateString = tempLogin;
+    }
+
+    [quotedLogin release];
 
     /* Append the remainder, if any */
     if (templateString) {
-        [result appendString: templateString];
+        [tempResult appendString: templateString];
     }
+    
+    templateString = tempResult;
+    tempResult = "";
+    
+    
+    /* Replace %n with local part */
+    while ((part = [templateString substringToCString: localFormat]) != NULL) {
+        TRString *tempLocal;
+
+        /* Append everything until the first %n */
+        [tempResult appendString: part];
+
+        /* Append the local part */
+        [tempResult appendString: quotedLocal];
+
+        /* Move templateString past the %n */
+        tempLocal = [templateString substringFromCString: localFormat];
+        templateString = tempLocal;
+    }
+
+    [quotedLocal release];
+
+    /* Append the remainder, if any */
+    if (templateString) {
+        [tempResult appendString: templateString];
+    }
+    
+    templateString = tempResult;
+    tempResult = "";
+
+
+    /* Replace %d with domain part */
+    while ((part = [templateString substringToCString: domainFormat]) != NULL) {
+        TRString *tempDomain;
+
+        /* Append everything until the first %d */
+        [tempResult appendString: part];
+
+        /* Append the domain part */
+        [tempResult appendString: quotedDomain];
+
+        /* Move templateString past the %d */
+        tempDomain = [templateString substringFromCString: domainFormat];
+        templateString = tempDomain;
+    }
+
+    [quotedDomain release];
+
+    /* Append the remainder, if any */
+    if (templateString) {
+        [tempResult appendString: templateString];
+    }
+    
+    result = tempResult;
+    tempResult = "";
+
 
     [pool release];
 
