@@ -95,9 +95,9 @@ AC_DEFUN(OD_CONFIG_PLUGIN, [
 	    # A sensible default
 	    PLUGIN_CFLAGS="-fPIC"
 	    PLUGIN_LD="${CC} -shared"
-	    PLUGIN_LD_FLAGS=""
+	    PLUGIN_LD_FLAGS="${LDFLAGS}"
 	    PLUGIN_SUFFIX=".so"
-	    LDFLAGS="-export-dynamic"
+	    LDFLAGS="-export-dynamic ${LDFLAGS}"
 	    ;;
     esac
 
