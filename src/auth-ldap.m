@@ -523,7 +523,10 @@ static int handle_client_connect_disconnect(ldap_ctx *ctx, TRLDAPConnection *lda
     }
 
     if (tableName)
-        if (!pf_client_connect_disconnect(ctx, tableName, remoteAddress, connecting))
+        if (!remoteAddress) {
+            [TRLog debug: "No remote address supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_CLIENT_CONNECT)."];
+            return OPENVPN_PLUGIN_FUNC_ERROR;
+        } else if (!pf_client_connect_disconnect(ctx, tableName, remoteAddress, connecting))
         return OPENVPN_PLUGIN_FUNC_ERROR;
 #endif /* HAVE_PF */
 
@@ -582,18 +585,10 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
             break;
         /* New connection established */
         case OPENVPN_PLUGIN_CLIENT_CONNECT:
-            if (!remoteAddress) {
-                [TRLog debug: "No remote address supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_CLIENT_CONNECT)."];
-            } else {
-                ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, YES);
-            }
+            ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, YES);
             break;
         case OPENVPN_PLUGIN_CLIENT_DISCONNECT:
-            if (!remoteAddress) {
-                [TRLog debug: "No remote address supplied to OpenVPN LDAP Plugin (OPENVPN_PLUGIN_CLIENT_DISCONNECT)."];
-            } else {
-                ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, NO);
-            }
+            ret = handle_client_connect_disconnect(ctx, ldap, ldapUser, remoteAddress, NO);
             break;
         default:
             [TRLog debug: "Unhandled plugin type in OpenVPN LDAP Plugin (type=%d)", type];
