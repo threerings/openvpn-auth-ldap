@@ -17,7 +17,7 @@
  * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -281,12 +281,12 @@ TRLDAPConnection *connect_ldap(TRAuthLDAPConfig *config) {
     }
 
     /* Certificate file */
-    if ((value = [config tlsCACertFile])) 
+    if ((value = [config tlsCACertFile]))
         if (![ldap setTLSCACertFile: value])
             goto error;
 
     /* Certificate directory */
-    if ((value = [config tlsCACertDir])) 
+    if ((value = [config tlsCACertDir]))
         if (![ldap setTLSCACertDir: value])
             goto error;
 
@@ -298,6 +298,11 @@ TRLDAPConnection *connect_ldap(TRAuthLDAPConfig *config) {
     /* Cipher suite */
     if ((value = [config tlsCipherSuite]))
         if(![ldap setTLSCipherSuite: value])
+            goto error;
+
+    /* Do not require a valid certificate */
+    if (![config tlsReqCertEnabled])
+        if (![ldap TLSReqCert])
             goto error;
 
     /* Start TLS */

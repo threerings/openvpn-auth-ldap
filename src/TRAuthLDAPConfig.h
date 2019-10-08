@@ -16,7 +16,7 @@
  * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -43,6 +43,7 @@
     /* LDAP Settings */
     TRString *_url;
     BOOL _tlsEnabled;
+    BOOL _tlsReqCertEnabled;
     BOOL _referralEnabled;
     int _timeout;
     TRString *_tlsCACertFile;
@@ -60,7 +61,7 @@
     TRString *_pfTable;
     TRArray *_ldapGroups;
     BOOL _pfEnabled;
-	BOOL _passwordISCR;
+    BOOL _passwordISCR;
 
     /* Parser State */
     TRString *_configFileName;
@@ -85,6 +86,9 @@
 
 - (BOOL) tlsEnabled;
 - (void) setTLSEnabled: (BOOL) newTLSSetting;
+
+- (BOOL) tlsReqCertEnabled;
+- (void) setTLSReqCertEnabled: (BOOL) newTLSReqCertSetting;
 
 - (TRString *) tlsCACertFile;
 - (void) setTLSCACertFile: (TRString *) fileName;

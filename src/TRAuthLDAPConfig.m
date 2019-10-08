@@ -17,7 +17,7 @@
  * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -65,6 +65,7 @@ typedef enum {
     LF_LDAP_PASSWORD,           /* Associated Password */
     LF_LDAP_REFERRAL,           /* Enable Referrals */
     LF_LDAP_TLS,                /* Enable TLS */
+    LF_LDAP_TLS_REQCERT,        /* Enable TLS Require Cert */
     LF_LDAP_TLS_CA_CERTFILE,    /* TLS CA Certificate File */
     LF_LDAP_TLS_CA_CERTDIR,     /* TLS CA Certificate Dir */
     LF_LDAP_TLS_CERTFILE,       /* TLS Client Certificate File */
@@ -137,6 +138,7 @@ static OpcodeTable LDAPSectionVariables[] = {
     { "Password",           LF_LDAP_PASSWORD,           NO,     NO },
     { "FollowReferrals",    LF_LDAP_REFERRAL,           NO,     NO },
     { "TLSEnable",          LF_LDAP_TLS,                NO,     NO },
+    { "TLSRequireCert",     LF_LDAP_TLS_REQCERT,        NO,     NO },
     { "TLSCACertFile",      LF_LDAP_TLS_CA_CERTFILE,    NO,     NO },
     { "TLSCACertDir",       LF_LDAP_TLS_CA_CERTDIR,     NO,     NO },
     { "TLSCertFile",        LF_LDAP_TLS_CERTFILE,       NO,     NO },
@@ -613,6 +615,7 @@ error:
             switch (opcodeEntry->opcode) {
                 int timeout;
                 BOOL enableTLS;
+                BOOL enableTLSReqCert;
                 BOOL enableReferral;
 
                 /* LDAP URL */
@@ -655,6 +658,15 @@ error:
                         return;
                     }
                     [self setTLSEnabled: enableTLS];
+                    break;
+
+                /* LDAP TLS Require Cert */
+                case LF_LDAP_TLS_REQCERT:
+                    if (![value boolValue: &enableTLSReqCert]) {
+                        [self errorBoolValue: value];
+                        return;
+                    }
+                    [self setTLSReqCertEnabled: enableTLSReqCert];
                     break;
 
                 /* LDAP CA Certificate */
@@ -865,6 +877,14 @@ error:
     _tlsEnabled = newTLSSetting;
 }
 
+- (BOOL) tlsReqCertEnabled {
+    return (_tlsReqCertEnabled);
+}
+
+- (void) setTLSReqCertEnabled: (BOOL) newTLSReqCertSetting {
+    _tlsReqCertEnabled = newTLSReqCertSetting;
+}
+
 - (TRString *) url {
     return (_url);
 }
@@ -998,7 +1018,6 @@ error:
 - (TRString *) pfTable {
     return (_pfTable);
 }
-
 
 - (BOOL) pfEnabled {
     return (_pfEnabled);
