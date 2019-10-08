@@ -16,7 +16,7 @@
  * 3. Neither the name of Landon Fuller nor the names of any contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -91,17 +91,18 @@ static int ldap_get_errno(LDAP *ld) {
     return true;
 }
 
-/** 
- * Always require a valid certificate
- */    
+/**
+ * Always require a valid certificate.
+ */
 - (BOOL) setTLSRequireCert {
     int err;
     int arg;
     arg = LDAP_OPT_X_TLS_HARD;
     if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &arg)) != LDAP_SUCCESS) {
-        [TRLog debug: "Unable to set LDAP_OPT_X_TLS_HARD to %d: %d: %s", arg, err, ldap_err2string(err)];
+        [TRLog debug: "Unable to set LDAP_OPT_X_TLS_REQUIRE_CERT to %d: %d: %s", arg, err, ldap_err2string(err)];
         return (false);
     }
+
     return (true);
 }
 
@@ -153,6 +154,23 @@ static int ldap_get_errno(LDAP *ld) {
         [self log: TRLOG_WARNING withLDAPError: err message: "Unable to unbind from LDAP server"];
     }
     [super dealloc];
+}
+
+/**
+ * Do not require a valid certificate.
+ */
+
+- (BOOL) TLSReqCert {
+    int err;
+    int arg;
+    arg = LDAP_OPT_X_TLS_NEVER;
+
+    if ((err = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &arg)) != LDAP_SUCCESS) {
+        [TRLog debug: "Unable to set LDAP_OPT_X_TLS_REQUIRE_CERT to %d: %d: %s", arg, err, ldap_err2string(err)];
+        return (NO);
+    }
+
+    return (YES);
 }
 
 /**
@@ -331,7 +349,7 @@ static int ldap_get_errno(LDAP *ld) {
         dnCString = ldap_get_dn(ldapConn, entry);
         dn = [[TRString alloc] initWithCString: dnCString];
         ldap_memfree(dnCString);
-        
+
         /* Load all attributes and associated values */
         for (attr = ldap_first_attribute(ldapConn, entry, &ptr); attr != NULL; attr = ldap_next_attribute(ldapConn, entry, ptr)) {
             TRString *attrName;
