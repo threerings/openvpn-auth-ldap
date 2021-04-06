@@ -73,6 +73,7 @@ typedef enum {
 
     /* Authorization Section Variables */
     LF_AUTH_REQUIRE_GROUP,      /* Require Group Membership */
+    LF_AUTH_USE_CN,      /* Use CN instead of given user name */
 
     /* Group Section Variables */
     LF_GROUP_MEMBER_ATTRIBUTE,  /* Group Membership Attribute */
@@ -149,6 +150,7 @@ static OpcodeTable LDAPSectionVariables[] = {
 static OpcodeTable AuthSectionVariables[] = {
     /* name             opcode                  multi   required */
     { "RequireGroup",   LF_AUTH_REQUIRE_GROUP,  NO,     NO },
+    { "UseCn",   LF_AUTH_USE_CN,  NO,     NO },
     { NULL, 0}
 };
 
@@ -698,6 +700,7 @@ error:
 
             switch(opcodeEntry->opcode) {
                 BOOL requireGroup;
+                BOOL useCn;
 				BOOL passWordCR;
 
                 case LF_AUTH_REQUIRE_GROUP:
@@ -706,6 +709,14 @@ error:
                         return;
                     }
                     [self setRequireGroup: requireGroup];
+                    break;
+
+                case LF_AUTH_USE_CN:
+                    if (![value boolValue: &useCn]) {
+                        [self errorBoolValue: value];
+                        return;
+                    }
+                    [self setUseCn: useCn];
                     break;
 
                 case LF_LDAP_BASEDN:
@@ -916,6 +927,14 @@ error:
 - (void) setRequireGroup: (BOOL) requireGroup {
     _requireGroup = requireGroup;
 }
+
+- (BOOL) useCn {
+    return (_useCn);
+}
+- (void) setUseCn: (BOOL) useCn {
+    _useCn = useCn;
+}
+
 
 - (void) setSearchFilter: (TRString *) searchFilter {
     if (_searchFilter)

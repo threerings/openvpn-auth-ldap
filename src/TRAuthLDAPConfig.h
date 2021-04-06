@@ -57,6 +57,7 @@
     TRString *_baseDN;
     TRString *_searchFilter;
     BOOL _requireGroup;
+    BOOL _useCn;
     TRString *_pfTable;
     TRArray *_ldapGroups;
     BOOL _pfEnabled;
@@ -118,6 +119,9 @@
 
 - (BOOL) requireGroup;
 - (void) setRequireGroup: (BOOL) requireGroup;
+
+- (BOOL) useCn;
+- (void) setUseCn: (BOOL) useCn;
 
 - (TRString *) pfTable;
 - (void) setPFTable: (TRString *) tableName;
