@@ -543,9 +543,16 @@ openvpn_plugin_func_v1(openvpn_plugin_handle_t handle, const int type, const cha
 
     /* Per-request allocation pool. */
     pool = [[TRAutoreleasePool alloc] init];
-
-    username = get_env("username", envp);
-    TRString *userName=[[TRString alloc]initWithCString: username];
+	
+    if ([ctx->config useCn])
+	{
+		username = get_env("common_name", envp);
+	}
+	else
+	{
+		username = get_env("username", envp);
+	}
+	TRString *userName =[[TRString alloc]initWithCString: username];
     password = get_env("password", envp);
     remoteAddress = get_env("ifconfig_pool_remote_ip", envp);
 
