@@ -247,6 +247,9 @@ OPENVPN_EXPORT void
 {
     ldap_ctx *ctx = handle;
 
+    if (!ctx)
+        return;
+
     /* Clean up the configuration file */
     [ctx->config release];
 
